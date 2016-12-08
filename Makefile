@@ -28,6 +28,9 @@ PROFILE = # -pg
 CXXFLAGS = -MMD -g $(OPTIMIZATION) $(PROFILE) -fPIC -std=$(STD) $(WEVERYTHING) $(WARNINGS) -Icc -I$(BUILD)/include -I$(ACMACSD_ROOT)/include $(PKG_INCLUDES)
 LDFLAGS = $(OPTIMIZATION) $(PROFILE)
 
+LIB_DIR = $(ACMACSD_ROOT)/lib
+SIGP_LDLIBS = -L$(LIB_DIR) -lseqdb -lhidb $$(pkg-config --libs liblzma) $(PYTHON_LD_LIB)
+
 PYTHON_VERSION = $(shell python3 -c 'import sys; print("{0.major}.{0.minor}".format(sys.version_info))')
 PYTHON_CONFIG = python$(PYTHON_VERSION)-config
 PYTHON_MODULE_SUFFIX = $(shell $(PYTHON_CONFIG) --extension-suffix)
@@ -50,7 +53,7 @@ all: check-python $(DIST)/signature_page_cc$(PYTHON_MODULE_SUFFIX)
 #	g++ $(LDFLAGS) -o $@ $^
 
 $(DIST)/signature_page_cc$(PYTHON_MODULE_SUFFIX):  $(patsubst %.cc,$(BUILD)/%.o,$(SIGNATURE_PAGE_CC_PY_SOURCES)) | $(DIST) check-acmacsd-root
-	g++ -shared $(LDFLAGS) -o $@ $^ $(PYTHON_LD_LIB)
+	g++ -shared $(LDFLAGS) -o $@ $^ $(SIGP_LDLIBS)
 
 # ----------------------------------------------------------------------
 
