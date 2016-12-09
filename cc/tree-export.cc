@@ -95,7 +95,7 @@ class PhylogeneticV2Handler : public HandlerBase
 class TreeRootHandler : public HandlerBase
 {
  private:
-    enum class Keys { Unknown, Version };
+    enum class Keys { Unknown, Version, Tree };
     enum class TreeType { Unknown, Newick, PhylogeneticV2 };
 
  public:
@@ -109,16 +109,7 @@ class TreeRootHandler : public HandlerBase
                 mKey = Keys::Version;
             }
             else if (found_key == "tree") {
-                switch (mTreeType) {
-                  case TreeType::Newick:
-                      result = new NewickNodeHandler(mTarget);
-                      break;
-                  case TreeType::PhylogeneticV2:
-                      result = new PhylogeneticV2Handler(mTarget);
-                      break;
-                  case TreeType::Unknown:
-                      throw json_reader::Failure();
-                }
+                mKey = Keys::Tree;
             }
             else {
                 result = HandlerBase::Key(str, length);
@@ -142,11 +133,36 @@ class TreeRootHandler : public HandlerBase
                       throw json_reader::Failure();
                   }
                   break;
+              case Keys::Tree:
               case Keys::Unknown:
                   result = HandlerBase::String(str, length);
             }
             return result;
         }
+
+        inline virtual HandlerBase* StartObject()
+            {
+                HandlerBase* result = nullptr;
+                switch (mKey) {
+                  case Keys::Tree:
+                      switch (mTreeType) {
+                        case TreeType::Newick:
+                            result = new NewickNodeHandler(mTarget);
+                            break;
+                        case TreeType::PhylogeneticV2:
+                            result = new PhylogeneticV2Handler(mTarget);
+                            break;
+                        case TreeType::Unknown:
+                            throw json_reader::Failure();
+                      }
+                      break;
+                  case Keys::Unknown:
+                  case Keys::Version:
+                      result = HandlerBase::StartObject();
+                      break;
+                }
+                return result;
+            }
 
  private:
     Keys mKey;
