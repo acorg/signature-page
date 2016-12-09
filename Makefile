@@ -6,8 +6,8 @@ MAKEFLAGS = -w
 
 # ----------------------------------------------------------------------
 
-_SOURCES = tree-import.cc
-SIGNATURE_PAGE_CC_PY_SOURCES = py.cc
+SIGNATURE_PAGE_SOURCES = tree-export.cc
+SIGNATURE_PAGE_CC_PY_SOURCES = py.cc $(SIGNATURE_PAGE_SOURCES)
 
 # ----------------------------------------------------------------------
 

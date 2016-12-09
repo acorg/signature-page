@@ -7,9 +7,7 @@
 
 class Tree;
 
-class Error : public std::runtime_error { public: using std::runtime_error::runtime_error; };
-
-void read_tree(std::string buffer, Tree& aTree);
+void read_tree(std::string aFilename, Tree& aTree);
 
 // ----------------------------------------------------------------------
 /// Local Variables:

@@ -1,6 +1,6 @@
 #include "acmacs-base/pybind11.hh"
 #include "tree.hh"
-#include "tree-import.hh"
+#include "tree-export.hh"
 
 // ----------------------------------------------------------------------
 
@@ -15,6 +15,8 @@ PYBIND11_PLUGIN(signature_page_cc)
     py::class_<Tree, Node>(m, "Tree")
             .def(py::init<>())
             ;
+
+    m.def("import_tree", &read_tree, py::arg("filename"), py::arg("tree"), py::doc("Imports tree from newick or json file."));
 
     return m.ptr();
 }
