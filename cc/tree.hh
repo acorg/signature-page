@@ -17,7 +17,7 @@ class Node
     // inline Node& operator=(Node&&) = default; // needed for swap needed for sort
 
     double edge_length;              // indent of node or subtree
-    std::string sig_id;                // node name or branch annotation
+    std::string seq_id;                // node name or branch annotation
 
       // leaf part
       // Date date;
@@ -31,7 +31,7 @@ class Node
       // subtree part
     Subtree subtree;
 
-    inline bool is_leaf() const { return subtree.empty() && !sig_id.empty(); }
+    inline bool is_leaf() const { return subtree.empty() && !seq_id.empty(); }
       // int months_from(const Date& aStart) const; // returns negative if date of the node is earlier than aStart
 
 }; // class Node
