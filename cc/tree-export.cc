@@ -22,6 +22,9 @@ enum class TreeJsonKey : char
 template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const Node& aNode)
 {
     return writer << StartObject
+                  << if_not_empty(TreeJsonKey::SeqId, aNode.seq_id)
+                  << if_non_negative(TreeJsonKey::EdgeLength, aNode.edge_length)
+                  << if_not_empty(TreeJsonKey::Subtree, aNode.subtree)
                   << EndObject;
 }
 
@@ -204,3 +207,6 @@ void tree_import(std::string aFilename, Tree& aTree)
 }
 
 // ----------------------------------------------------------------------
+/// Local Variables:
+/// eval: (if (fboundp 'eu-rename-buffer) (eu-rename-buffer))
+/// End:
