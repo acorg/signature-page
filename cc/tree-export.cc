@@ -1,6 +1,7 @@
 #include "tree-export.hh"
-#include "acmacs-base/json-reader.hh"
 #include "tree.hh"
+#include "acmacs-base/json-reader.hh"
+#include "acmacs-base/json-writer.hh"
 
 // ----------------------------------------------------------------------
 
@@ -15,6 +16,13 @@ enum class TreeJsonKey : char
 
     Unknown
 };
+
+// ----------------------------------------------------------------------
+
+void tree_export(std::string aFilename, const Tree& aTree, size_t aIndent)
+{
+
+} // tree_export
 
 // ----------------------------------------------------------------------
 
@@ -171,7 +179,7 @@ class TreeRootHandler : public HandlerBase
 
 // ----------------------------------------------------------------------
 
-void read_tree(std::string aFilename, Tree& aTree)
+void tree_import(std::string aFilename, Tree& aTree)
 {
     json_reader::read_from_file<Node, TreeRootHandler>(aFilename, aTree);
 }

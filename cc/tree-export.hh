@@ -7,7 +7,8 @@
 
 class Tree;
 
-void read_tree(std::string aFilename, Tree& aTree);
+void tree_export(std::string aFilename, const Tree& aTree, size_t aIndent);
+void tree_import(std::string aFilename, Tree& aTree);
 
 // ----------------------------------------------------------------------
 /// Local Variables:

@@ -16,7 +16,8 @@ PYBIND11_PLUGIN(signature_page_cc)
             .def(py::init<>())
             ;
 
-    m.def("import_tree", &read_tree, py::arg("filename"), py::arg("tree"), py::doc("Imports tree from newick or json file."));
+    m.def("tree_import", &tree_import, py::arg("filename"), py::arg("tree"), py::doc("Imports tree from json file."));
+    m.def("tree_export", &tree_export, py::arg("filename"), py::arg("tree"), py::arg("indent") = 1, py::doc("Exports tree into json file."));
 
     return m.ptr();
 }

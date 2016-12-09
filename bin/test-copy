@@ -17,7 +17,8 @@ from acmacs_base import timeit
 
 def main(args):
     tree = signature_page_cc.Tree()
-    signature_page_cc.import_tree(args.input[0], tree)
+    signature_page_cc.tree_import(args.input[0], tree)
+    signature_page_cc.tree_export(args.output[0], tree)
 
 # ----------------------------------------------------------------------
 
