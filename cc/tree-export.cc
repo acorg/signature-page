@@ -19,8 +19,27 @@ enum class TreeJsonKey : char
 
 // ----------------------------------------------------------------------
 
+template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const Node& aNode)
+{
+    return writer << StartObject
+                  << EndObject;
+}
+
+// ----------------------------------------------------------------------
+
+template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const Tree& aTree)
+{
+    return writer << StartObject
+                  << JsonObjectKey("  version") << TREE_PHYLOGENETIC_VERSION
+                  << JsonObjectKey("tree") << static_cast<const Node&>(aTree)
+                  << EndObject;
+}
+
+// ----------------------------------------------------------------------
+
 void tree_export(std::string aFilename, const Tree& aTree, size_t aIndent)
 {
+    export_to_json(aTree, TREE_PHYLOGENETIC_VERSION, aFilename, aIndent);
 
 } // tree_export
 
