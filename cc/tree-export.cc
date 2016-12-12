@@ -118,6 +118,58 @@ class PhylogeneticV2Handler : public HandlerBase
  public:
     inline PhylogeneticV2Handler(Node& aTarget)
         : HandlerBase(aTarget) {}
+
+    inline virtual HandlerBase* Key(const char* str, rapidjson::SizeType length)
+        {
+            HandlerBase* result = nullptr;
+            if (length == 1) {
+                mKey = static_cast<TreeJsonKey>(*str);
+#pragma GCC diagnostic push
+#ifdef __clang__
+#pragma GCC diagnostic ignored "-Wswitch-enum"
+#endif
+                switch (mKey) {
+                  case TreeJsonKey::EdgeLength:
+                  case TreeJsonKey::SeqId:
+                      break;
+                  case TreeJsonKey::Subtree:
+                      result = new json_reader::ListHandler<Node, Node, PhylogeneticV2Handler>(mTarget, mTarget.subtree);
+                      break;
+                  default:
+                      result = HandlerBase::Key(str, length);
+                      break;
+                }
+#pragma GCC diagnostic pop
+            }
+            else {
+                result = HandlerBase::Key(str, length);
+            }
+            return result;
+        }
+
+    inline virtual HandlerBase* Double(double d)
+        {
+            if (mKey != TreeJsonKey::EdgeLength)
+                throw json_reader::Failure();
+            mTarget.edge_length = d;
+            return nullptr;
+        }
+
+    inline virtual HandlerBase* String(const char* str, rapidjson::SizeType length)
+        {
+            if (mKey != TreeJsonKey::SeqId)
+                throw json_reader::Failure();
+            mTarget.seq_id.assign(str, length);
+            return nullptr;
+        }
+
+ private:
+    TreeJsonKey mKey;
+
+    inline PhylogeneticV2Handler(Node& , Node& aTarget) // for json_reader::ListHandler
+        : HandlerBase(aTarget), mKey(TreeJsonKey::Unknown) {}
+
+    friend class json_reader::ListHandler<Node, Node, PhylogeneticV2Handler>;
 };
 
 // ----------------------------------------------------------------------
