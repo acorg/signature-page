@@ -6,8 +6,10 @@ MAKEFLAGS = -w
 
 # ----------------------------------------------------------------------
 
-SIGNATURE_PAGE_SOURCES = tree.cc tree-export.cc
+DRAW_SOURCES = surface-cairo.cc
+SIGNATURE_PAGE_SOURCES = tree.cc tree-export.cc $(DRAW_SOURCES)
 SIGNATURE_PAGE_CC_PY_SOURCES = py.cc $(SIGNATURE_PAGE_SOURCES)
+TEST_CAIRO_SOURCES = test-cairo.cc $(DRAW_SOURCES)
 
 # ----------------------------------------------------------------------
 
@@ -29,14 +31,14 @@ CXXFLAGS = -MMD -g $(OPTIMIZATION) $(PROFILE) -fPIC -std=$(STD) $(WEVERYTHING) $
 LDFLAGS = $(OPTIMIZATION) $(PROFILE)
 
 LIB_DIR = $(ACMACSD_ROOT)/lib
-SIGP_LDLIBS = -L$(LIB_DIR) -lseqdb -lhidb $$(pkg-config --libs liblzma) $(PYTHON_LD_LIB)
+SIGP_LDLIBS = -L$(LIB_DIR) -lseqdb -lhidb $$(pkg-config --libs cairo) $$(pkg-config --libs liblzma) $(PYTHON_LD_LIB)
 
 PYTHON_VERSION = $(shell python3 -c 'import sys; print("{0.major}.{0.minor}".format(sys.version_info))')
 PYTHON_CONFIG = python$(PYTHON_VERSION)-config
 PYTHON_MODULE_SUFFIX = $(shell $(PYTHON_CONFIG) --extension-suffix)
 PYTHON_LD_LIB = $$($(PYTHON_CONFIG) --ldflags | sed -E 's/-Wl,-stack_size,[0-9]+//')
 
-PKG_INCLUDES = $$($(PYTHON_CONFIG) --includes)
+PKG_INCLUDES = $$(pkg-config --cflags cairo) $$($(PYTHON_CONFIG) --includes)
 
 # ----------------------------------------------------------------------
 
@@ -45,7 +47,7 @@ DIST = $(abspath dist)
 
 # ----------------------------------------------------------------------
 
-all: check-python $(DIST)/signature_page_cc$(PYTHON_MODULE_SUFFIX)
+all: check-python $(DIST)/signature_page_cc$(PYTHON_MODULE_SUFFIX) $(DIST)/test-cairo
 
 # ----------------------------------------------------------------------
 
@@ -54,6 +56,9 @@ all: check-python $(DIST)/signature_page_cc$(PYTHON_MODULE_SUFFIX)
 
 $(DIST)/signature_page_cc$(PYTHON_MODULE_SUFFIX):  $(patsubst %.cc,$(BUILD)/%.o,$(SIGNATURE_PAGE_CC_PY_SOURCES)) | $(DIST) check-acmacsd-root
 	g++ -shared $(LDFLAGS) -o $@ $^ $(SIGP_LDLIBS)
+
+$(DIST)/test-cairo: $(patsubst %.cc,$(BUILD)/%.o,$(TEST_CAIRO_SOURCES)) | $(DIST)
+	g++ $(LDFLAGS) -o $@ $^ $(TEST_CAIRO_LDLIBS)
 
 # ----------------------------------------------------------------------
 
@@ -68,7 +73,7 @@ clean:
 distclean: clean
 	rm -rf $(BUILD)
 
-test: install
+test: install $(DIST)/test-cairo
 	test/test
 
 # ----------------------------------------------------------------------
