@@ -1,12 +1,16 @@
-#include "seqdb/seqdb.hh"
 #include "tree.hh"
+#include "tree-iterate.hh"
 
 // ----------------------------------------------------------------------
 
-void NodeData::match_seqdb(const seqdb::Seqdb& seqdb)
+void Tree::match_seqdb(const seqdb::Seqdb& seqdb)
 {
+    auto match = [&seqdb](Node& node) {
+        node.data.assign(seqdb.find_by_seq_id(node.seq_id));
+    };
+    tree::iterate_leaf(*this, match);
 
-} // NodeData::match_seqdb
+} // Tree::match_seqdb
 
 // ----------------------------------------------------------------------
 

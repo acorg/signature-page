@@ -3,12 +3,7 @@
 #include <string>
 #include <vector>
 
-// ----------------------------------------------------------------------
-
-namespace seqdb
-{
-    class Seqdb;
-}
+#include "seqdb/seqdb.hh"
 
 // ----------------------------------------------------------------------
 
@@ -18,7 +13,10 @@ class NodeData
  public:
     inline NodeData() = default;
 
-    void match_seqdb(const seqdb::Seqdb& seqdb);
+    inline void assign(seqdb::SeqdbEntrySeq&& entry_seq) { mSeqdbEntrySeq.assign(std::forward<seqdb::SeqdbEntrySeq>(entry_seq)); }
+
+ private:
+    seqdb::SeqdbEntrySeq mSeqdbEntrySeq;
 };
 
 // ----------------------------------------------------------------------
@@ -41,7 +39,6 @@ class Node
     NodeData data;
 
     inline bool is_leaf() const { return subtree.empty() && !seq_id.empty(); }
-    inline void match_seqdb(const seqdb::Seqdb& seqdb) { data.match_seqdb(seqdb); }
 
     //   // leaf part
     //   // Date date;
@@ -63,6 +60,8 @@ class Tree : public Node
 {
  public:
     inline Tree() : Node() {}
+
+    void match_seqdb(const seqdb::Seqdb& seqdb);
 
 }; // class Tree
 
