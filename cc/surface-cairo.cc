@@ -4,22 +4,30 @@
 
 SurfaceCairo::~SurfaceCairo()
 {
-    if (context)
-        cairo_destroy(context);
+    if (mContext)
+        cairo_destroy(mContext);
 
 } // SurfaceCairo::~SurfaceCairo
 
 // ----------------------------------------------------------------------
 
+SurfaceCairo* SurfaceCairo::clip(const Location& aOffset, double aScale, double aAspect)
+{
+    return new SurfaceCairo(mContext, mOffset + aOffset, mScale * aScale, mAspect * aAspect);
+
+} // SurfaceCairo::clip
+
+// ----------------------------------------------------------------------
+
 void SurfaceCairo::line(const Location& a, const Location& b, Color aColor, double aWidth, LineCap aLineCap)
 {
-    push_context pc(*this);
-    cairo_set_line_width(context, aWidth);
-    set_source_rgba(aColor);
-    cairo_set_line_cap(context, cairo_line_cap(aLineCap));
-    cairo_move_to(context, a.x, a.y);
-    cairo_line_to(context, b.x, b.y);
-    cairo_stroke(context);
+    context(*this)
+            .set_line_width(aWidth)
+            .set_source_rgba(aColor)
+            .set_line_cap(aLineCap)
+            .move_to(a)
+            .line_to(b)
+            .stroke();
 
 } // SurfaceCairo::line
 
@@ -27,12 +35,12 @@ void SurfaceCairo::line(const Location& a, const Location& b, Color aColor, doub
 
 void SurfaceCairo::rectangle(const Location& a, const Size& s, Color aColor, double aWidth, LineCap aLineCap)
 {
-    push_context pc(*this);
-    cairo_set_line_width(context, aWidth);
-    cairo_set_line_cap(context, cairo_line_cap(aLineCap));
-    cairo_rectangle(context, a.x, a.y, s.width, s.height);
-    set_source_rgba(aColor);
-    cairo_stroke(context);
+    context(*this)
+            .set_line_width(aWidth)
+            .set_line_cap(aLineCap)
+            .rectangle(a, s)
+            .set_source_rgba(aColor)
+            .stroke();
 
 } // SurfaceCairo::rectangle
 
@@ -40,14 +48,14 @@ void SurfaceCairo::rectangle(const Location& a, const Size& s, Color aColor, dou
 
 void SurfaceCairo::rectangle_filled(const Location& a, const Size& s, Color aOutlineColor, double aWidth, Color aFillColor, LineCap aLineCap)
 {
-    push_context pc(*this);
-    cairo_set_line_width(context, aWidth);
-    cairo_set_line_cap(context, cairo_line_cap(aLineCap));
-    cairo_rectangle(context, a.x, a.y, s.width, s.height);
-    set_source_rgba(aFillColor);
-    cairo_fill_preserve(context);
-    set_source_rgba(aOutlineColor);
-    cairo_stroke(context);
+    context(*this)
+            .set_line_width(aWidth)
+            .set_line_cap(aLineCap)
+            .rectangle(a, s)
+            .set_source_rgba(aFillColor)
+            .fill_preserve()
+            .set_source_rgba(aOutlineColor)
+            .stroke();
 
 } // SurfaceCairo::rectangle_filled
 
@@ -55,14 +63,14 @@ void SurfaceCairo::rectangle_filled(const Location& a, const Size& s, Color aOut
 
 void SurfaceCairo::circle(const Location& aCenter, double aDiameter, double aAspect, double aAngle, Color aOutlineColor, double aOutlineWidth)
 {
-    push_context pc(*this);
-    cairo_set_line_width(context, aOutlineWidth);
-    cairo_translate(context, aCenter.x, aCenter.y);
-    cairo_rotate(context, aAngle);
-    cairo_scale(context, aAspect, 1.0);
-    cairo_arc(context, 0, 0, aDiameter / 2, 0.0, 2.0 * M_PI);
-    set_source_rgba(aOutlineColor);
-    cairo_stroke(context);
+    context(*this)
+            .set_line_width(aOutlineWidth)
+            .translate(aCenter)
+            .rotate(aAngle)
+            .scale(aAspect)
+            .circle(aDiameter / 2)
+            .set_source_rgba(aOutlineColor)
+            .stroke();
 
 } // SurfaceCairo::circle
 
@@ -70,16 +78,16 @@ void SurfaceCairo::circle(const Location& aCenter, double aDiameter, double aAsp
 
 void SurfaceCairo::circle_filled(const Location& aCenter, double aDiameter, double aAspect, double aAngle, Color aOutlineColor, double aOutlineWidth, Color aFillColor)
 {
-    push_context pc(*this);
-    cairo_set_line_width(context, aOutlineWidth);
-    cairo_translate(context, aCenter.x, aCenter.y);
-    cairo_rotate(context, aAngle);
-    cairo_scale(context, aAspect, 1.0);
-    cairo_arc(context, 0, 0, aDiameter / 2, 0.0, 2.0 * M_PI);
-    set_source_rgba(aFillColor);
-    cairo_fill_preserve(context);
-    set_source_rgba(aOutlineColor);
-    cairo_stroke(context);
+    context(*this)
+            .set_line_width(aOutlineWidth)
+            .translate(aCenter)
+            .rotate(aAngle)
+            .scale(aAspect)
+            .circle(aDiameter / 2)
+            .set_source_rgba(aFillColor)
+            .fill_preserve()
+            .set_source_rgba(aOutlineColor)
+            .stroke();
 
 } // SurfaceCairo::circle_filled
 
@@ -87,7 +95,6 @@ void SurfaceCairo::circle_filled(const Location& aCenter, double aDiameter, doub
 
 void SurfaceCairo::square_filled(const Location& aCenter, double aSide, double aAspect, double aAngle, Color aOutlineColor, double aOutlineWidth, Color aFillColor, LineCap aLineCap)
 {
-    push_context pc(*this);
 
 } // SurfaceCairo::square_filled
 
@@ -95,7 +102,6 @@ void SurfaceCairo::square_filled(const Location& aCenter, double aSide, double a
 
 void SurfaceCairo::triangle_filled(const Location& aCenter, double aSide, double aAspect, double aAngle, Color aOutlineColor, double aOutlineWidth, Color aFillColor, LineCap aLineCap)
 {
-    push_context pc(*this);
 
 } // SurfaceCairo::triangle_filled
 
@@ -103,7 +109,6 @@ void SurfaceCairo::triangle_filled(const Location& aCenter, double aSide, double
 
 void SurfaceCairo::path_outline(std::vector<Location>::const_iterator first, std::vector<Location>::const_iterator last, Color aOutlineColor, double aOutlineWidth, bool aClose, LineCap aLineCap)
 {
-    push_context pc(*this);
 
 } // SurfaceCairo::path_outline
 
@@ -111,7 +116,6 @@ void SurfaceCairo::path_outline(std::vector<Location>::const_iterator first, std
 
 void SurfaceCairo::path_fill(std::vector<Location>::const_iterator first, std::vector<Location>::const_iterator last, Color aFillColor)
 {
-    push_context pc(*this);
 
 } // SurfaceCairo::path_fill
 
@@ -119,7 +123,6 @@ void SurfaceCairo::path_fill(std::vector<Location>::const_iterator first, std::v
 
 void SurfaceCairo::double_arrow(const Location& a, const Location& b, Color aColor, double aLineWidth, double aArrowWidth)
 {
-    push_context pc(*this);
 
 } // SurfaceCairo::double_arrow
 
@@ -127,15 +130,26 @@ void SurfaceCairo::double_arrow(const Location& a, const Location& b, Color aCol
 
 void SurfaceCairo::grid(double aStep, Color aLineColor, double aLineWidth)
 {
-    push_context pc(*this);
 
 } // SurfaceCairo::grid
 
 // ----------------------------------------------------------------------
 
+void SurfaceCairo::border(Color aLineColor, double aLineWidth)
+{
+    context(*this)
+            .set_line_width(aLineWidth)
+            .set_line_cap(LineCap::Butt)
+            .rectangle({0.0, 0.0}, {canvas_width, canvas_width * mAspect})
+            .set_source_rgba(aLineColor)
+            .stroke();
+
+} // SurfaceCairo::border
+
+// ----------------------------------------------------------------------
+
 void SurfaceCairo::text(const Location& a, std::string aText, Color aColor, double aSize, const TextStyle& aTextStyle, double aRotation)
 {
-    push_context pc(*this);
 
 } // SurfaceCairo::text
 
@@ -148,11 +162,31 @@ Size SurfaceCairo::text_size(std::string aText, double aSize, const TextStyle& a
 
 // ----------------------------------------------------------------------
 
+SurfaceCairo::context::context(SurfaceCairo& aSurface)
+    : mContext(cairo_reference(aSurface.mContext))
+{
+    cairo_save(mContext);
+    translate(aSurface.mOffset);
+    scale(aSurface.mScale, aSurface.mScale);
+    new_path();
+    move_to();
+    line_to({canvas_width, 0.0});
+    line_to({canvas_width, canvas_width * aSurface.mAspect});
+    line_to({0, canvas_width * aSurface.mAspect});
+    close_path();
+    clip();
+
+} // SurfaceCairo::context::context
+
+// ----------------------------------------------------------------------
+
 PdfCairo::PdfCairo(std::string aFilename, double aWidth, double aHeight)
 {
     auto surface = cairo_pdf_surface_create(aFilename.c_str(), aWidth, aHeight);
-    context = cairo_create(surface);
+    mContext = cairo_create(surface);
     cairo_surface_destroy(surface);
+    mScale = aWidth / canvas_width;
+    mAspect = aHeight / aWidth;
 
 } // PdfCairo::PdfCairo
 

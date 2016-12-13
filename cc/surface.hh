@@ -37,8 +37,11 @@ class Surface
  public:
     enum class LineCap { Butt, Round, Square };
 
-    inline Surface() = default;
     virtual ~Surface() {}
+
+    constexpr static const double canvas_width = 1000.0;
+
+    virtual Surface* clip(const Location& aOffset, double aScale, double aAspect) = 0;
 
     virtual void line(const Location& a, const Location& b, Color aColor, double aWidth, LineCap aLineCap = LineCap::Butt) = 0;
     virtual void rectangle(const Location& a, const Size& s, Color aColor, double aWidth, LineCap aLineCap = LineCap::Butt) = 0;
@@ -54,10 +57,14 @@ class Surface
 
     virtual void double_arrow(const Location& a, const Location& b, Color aColor, double aLineWidth, double aArrowWidth) = 0;
     virtual void grid(double aStep, Color aLineColor, double aLineWidth) = 0;
+    virtual void border(Color aLineColor, double aLineWidth) = 0;
 
     virtual void text(const Location& a, std::string aText, Color aColor, double aSize, const TextStyle& aTextStyle = TextStyle(), double aRotation = 0) = 0;
     virtual Size text_size(std::string aText, double aSize, const TextStyle& aTextStyle, double* x_bearing) = 0;
     inline Size text_size(std::string aText, double aSize, const TextStyle& aTextStyle) { return text_size(aText, aSize, aTextStyle, nullptr); }
+
+ protected:
+    inline Surface() = default;
 
 }; // class Surface
 
