@@ -33,7 +33,68 @@ def main(args):
     # mark_vaccines(tree)
     # if args.pdf_aspect_ratio is not None:
     #     tree.settings().signature_page.pdf_aspect_ratio = args.pdf_aspect_ratio
-    # open_file.write_binary(filename=args.output[0], data=tree.json(indent=1).encode("utf-8"))
+
+    # tree.settings().draw_tree.grid_step = args.grid_step
+    # tree.settings().draw_tree.aa_transition.show_node_for_left_line = args.aa_transition_left_line
+    # tree.settings().draw_tree.aa_transition.show_empty_left = args.aa_transition_empty_left
+    # if args.aa_transition_on_leaf:
+    #     tree.settings().draw_tree.aa_transition.number_strains_threshold = 0
+    # else:
+    #     tree.settings().draw_tree.aa_transition.number_strains_threshold = args.aa_transition_number_strains_threshold
+
+    # pdf_height = tree.settings().signature_page.pdf_height
+    # pdf_aspect_ratio = args.pdf_aspect_ratio or tree.settings().signature_page.pdf_aspect_ratio
+    # surface = seqdb.Surface(args.output[0], pdf_height * pdf_aspect_ratio, pdf_height)
+
+    # # surface.line(seqdb.Location(100, 100), seqdb.Location(300, 200), 0xFFA500, 5, seqdb.LINE_CAP_ROUND)
+    # # surface.double_arrow(seqdb.Location(100, 200), seqdb.Location(250, 50), 0x80FF00A5, 5, 10)
+    # # surface.text(seqdb.Location(100, 300), "Whatever that means", 0, 20, rotation=0.2)
+    # # print("Text size", surface.text_size("Text size", 50))
+
+    # # draw_tree = seqdb.DrawTree()
+    # # (draw_tree
+    # #  .title(seqdb.Text(seqdb.Location(0, 30), "Akvirrr", 0xC0000000, 30))
+    # #  .prepare(tree)
+    # #  .color_by_continent(args.color_by_continent)
+    # #  .color_by_pos(args.color_by_pos - 1)
+    # #  .draw(tree, surface, seqdb.Viewport(seqdb.Location(10, 10), seqdb.Size(680, 830))))
+
+    # parts = seqdb.Show.Title | seqdb.Show.Tree | seqdb.Show.Legend | seqdb.Show.TimeSeries
+    # if args.show_clades:
+    #     parts |= seqdb.Show.Clades
+
+    # if args.chart:
+    #     try:
+    #         chart = seqdb.import_chart(args.chart)
+    #     except Exception as err:
+    #         module_logger.error('chart {} import failed:\n{}'.format(args.chart, err))
+    #         exit(1)
+    #     parts |= seqdb.Show.AntigenicMaps
+    # else:
+    #     chart = None
+
+    # # if args.title is None:
+    # #     virus_type = tree.virus_type()
+    # #     lineage = tree.lineage()
+    # #     if virus_type:
+    # #         title = virus_type
+    # #         if lineage:
+    # #             if lineage in ["VICTORIA", "YAMAGATA"]:
+    # #                 lineage = lineage[:3].capitalize()
+    # #             title += "/" + lineage
+    # #     else:
+    # #         title = ""
+    # # else:
+    # #     title = args.title
+
+    # signature_page = seqdb.SignaturePage()
+    # signature_page.select_parts(parts)
+    # if args.title is not None:
+    #     signature_page.title(seqdb.Text(seqdb.Location(10, 20), args.title, 0, 18))   # 20
+    # signature_page.color_by_continent(args.color_by_continent)
+    # signature_page.color_by_pos(args.color_by_pos - 1)
+    # signature_page.prepare(tree, surface, chart)
+    # signature_page.draw(tree, surface, chart)
 
 # ----------------------------------------------------------------------
 
