@@ -5,6 +5,17 @@
 
 // ----------------------------------------------------------------------
 
+inline Tree::LadderizeMethod ladderize_type_decode(std::string ladderize_type)
+{
+    if (ladderize_type == "max-edge-length")
+        return Tree::LadderizeMethod::MaxEdgeLength;
+    if (ladderize_type == "number-of-leaves")
+        return Tree::LadderizeMethod::NumberOfLeaves;
+    throw std::runtime_error("Unrecognized ladderize type: " + ladderize_type);
+}
+
+// ----------------------------------------------------------------------
+
 PYBIND11_PLUGIN(signature_page_cc)
 {
     py::module m("signature_page_cc", "Tree and signature page generator plugin");
@@ -16,6 +27,7 @@ PYBIND11_PLUGIN(signature_page_cc)
     py::class_<Tree, Node>(m, "Tree")
             .def(py::init<>())
             .def("match_seqdb", &Tree::match_seqdb, py::arg("seqdb"))
+            .def("ladderize", [](Tree& tree, std::string ladderize_type) { tree.ladderize(ladderize_type_decode(ladderize_type)); }, py::arg("ladderize_type"))
             ;
 
     m.def("tree_import", &tree_import, py::arg("filename"), py::arg("tree"), py::doc("Imports tree from json file."));

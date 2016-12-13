@@ -22,10 +22,9 @@ def main(args):
     seqdb = seqdb_m.Seqdb()
     seqdb.load(args.seqdb)
     tree.match_seqdb(seqdb)
+    if args.ladderize != "none":
+        tree.ladderize(args.ladderize)        # must be before clade_setup()
 
-    # ladderize = ladderize_detect(args.ladderize)
-    # if ladderize is not None:
-    #     tree.ladderize(ladderize)        # must be before clade_setup()
     # tree.clade_setup()
     # if args.aa_transitions:
     #     tree.make_aa_transitions()
@@ -47,6 +46,8 @@ with timeit(sys.argv[0]):
         parser.add_argument('input', nargs=1, action='store')
         parser.add_argument('output', nargs=1, action='store', help="output pdf file")
         parser.add_argument('--seqdb', action='store', dest='seqdb', required=True, help='Path to sequence database.')
+
+        parser.add_argument('--ladderize', action='store', dest='ladderize', default="number-of-leaves", help='none, max-edge-length, number-of-leaves')
 
         args = parser.parse_args()
         logging.basicConfig(level=args.loglevel, format="%(levelname)s %(asctime)s: %(message)s")

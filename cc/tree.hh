@@ -11,12 +11,20 @@
 class NodeData
 {
  public:
-    inline NodeData() = default;
+    inline NodeData() : number_strains(1), ladderize_max_edge_length(0) {}
+
+    inline std::string date() const { return mSeqdbEntrySeq ? mSeqdbEntrySeq.entry().date() : std::string{}; }
 
     inline void assign(seqdb::SeqdbEntrySeq&& entry_seq) { mSeqdbEntrySeq.assign(std::forward<seqdb::SeqdbEntrySeq>(entry_seq)); }
 
+    size_t number_strains;
+    double ladderize_max_edge_length;
+    std::string ladderize_max_date;
+    std::string ladderize_max_name_alphabetically;
+
  private:
     seqdb::SeqdbEntrySeq mSeqdbEntrySeq;
+
 };
 
 // ----------------------------------------------------------------------
@@ -59,9 +67,14 @@ class Node
 class Tree : public Node
 {
  public:
+    enum class LadderizeMethod { MaxEdgeLength, NumberOfLeaves };
+
     inline Tree() : Node() {}
 
     void match_seqdb(const seqdb::Seqdb& seqdb);
+    void ladderize(LadderizeMethod aLadderizeMethod);
+
+    void set_number_strains();
 
 }; // class Tree
 

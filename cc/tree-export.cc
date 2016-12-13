@@ -256,6 +256,7 @@ class TreeRootHandler : public HandlerBase
 void tree_import(std::string aFilename, Tree& aTree)
 {
     json_reader::read_from_file<Node, TreeRootHandler>(aFilename, aTree);
+    aTree.set_number_strains();
 }
 
 // ----------------------------------------------------------------------
