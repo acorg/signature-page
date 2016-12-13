@@ -1,0 +1,62 @@
+#! /usr/bin/env python3
+# -*- Python -*-
+
+"""
+"""
+
+import sys, os, traceback
+if sys.version_info.major != 3: raise RuntimeError("Run script with python3")
+from pathlib import Path
+sys.path[:0] = [str(Path(os.environ["ACMACSD_ROOT"]).resolve().joinpath("py"))]
+import logging; module_logger = logging.getLogger(__name__)
+
+import seqdb as seqdb_m
+import signature_page_cc
+from acmacs_base import timeit
+
+# ----------------------------------------------------------------------
+
+def main(args):
+    tree = signature_page_cc.Tree()
+    signature_page_cc.tree_import(args.input[0], tree)
+    seqdb = seqdb_m.Seqdb()
+    seqdb.load(args.seqdb)
+    tree.match_seqdb(seqdb)
+
+    # ladderize = ladderize_detect(args.ladderize)
+    # if ladderize is not None:
+    #     tree.ladderize(ladderize)        # must be before clade_setup()
+    # tree.clade_setup()
+    # if args.aa_transitions:
+    #     tree.make_aa_transitions()
+    # if args.hz_line_section_tolerance > 0:
+    #     tree.make_hz_line_sections(args.hz_line_section_tolerance)
+    # mark_vaccines(tree)
+    # if args.pdf_aspect_ratio is not None:
+    #     tree.settings().signature_page.pdf_aspect_ratio = args.pdf_aspect_ratio
+    # open_file.write_binary(filename=args.output[0], data=tree.json(indent=1).encode("utf-8"))
+
+# ----------------------------------------------------------------------
+
+with timeit(sys.argv[0]):
+    try:
+        import argparse
+        parser = argparse.ArgumentParser(description=__doc__)
+        parser.add_argument('-d', '--debug', action='store_const', dest='loglevel', const=logging.DEBUG, default=logging.INFO, help='Enable debugging output.')
+
+        parser.add_argument('input', nargs=1, action='store')
+        parser.add_argument('output', nargs=1, action='store', help="output pdf file")
+        parser.add_argument('--seqdb', action='store', dest='seqdb', required=True, help='Path to sequence database.')
+
+        args = parser.parse_args()
+        logging.basicConfig(level=args.loglevel, format="%(levelname)s %(asctime)s: %(message)s")
+        exit_code = main(args)
+    except Exception as err:
+        logging.error('{}\n{}'.format(err, traceback.format_exc()))
+        exit_code = 1
+exit(exit_code)
+
+# ======================================================================
+### Local Variables:
+### eval: (if (fboundp 'eu-rename-buffer) (eu-rename-buffer))
+### End:

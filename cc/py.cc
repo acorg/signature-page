@@ -1,4 +1,6 @@
 #include "acmacs-base/pybind11.hh"
+#include "seqdb/seqdb.hh"
+
 #include "tree.hh"
 #include "tree-export.hh"
 
@@ -10,6 +12,7 @@ PYBIND11_PLUGIN(signature_page_cc)
 
     py::class_<Node>(m, "Node")
             .def(py::init<>())
+            .def("match_seqdb", &Node::match_seqdb, py::arg("seqdb"))
             ;
 
     py::class_<Tree, Node>(m, "Tree")

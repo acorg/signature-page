@@ -5,6 +5,24 @@
 
 // ----------------------------------------------------------------------
 
+namespace seqdb
+{
+    class Seqdb;
+}
+
+// ----------------------------------------------------------------------
+
+// SeqDb and HiDb access data, drawing related stuff
+class NodeData
+{
+ public:
+    inline NodeData() = default;
+
+    void match_seqdb(const seqdb::Seqdb& seqdb);
+};
+
+// ----------------------------------------------------------------------
+
 class Node
 {
  public:
@@ -18,20 +36,23 @@ class Node
 
     double edge_length;              // indent of node or subtree
     std::string seq_id;                // node name or branch annotation
-
-      // leaf part
-      // Date date;
-    std::string aa;             // aligned AA sequence for coloring by subst
-                                // for subtree: for each pos: space - children have different aa's at this pos (X not counted), letter - all children have the same aa at this pos (X not counted)
-
-      // for coloring
-    std::string continent;
-    std::vector<std::string> clades;
-
-      // subtree part
     Subtree subtree;
 
+    NodeData data;
+
     inline bool is_leaf() const { return subtree.empty() && !seq_id.empty(); }
+    inline void match_seqdb(const seqdb::Seqdb& seqdb) { data.match_seqdb(seqdb); }
+
+    //   // leaf part
+    //   // Date date;
+    // std::string aa;             // aligned AA sequence for coloring by subst
+    //                             // for subtree: for each pos: space - children have different aa's at this pos (X not counted), letter - all children have the same aa at this pos (X not counted)
+
+    //   // for coloring
+    // std::string continent;
+    // std::vector<std::string> clades;
+
+
       // int months_from(const Date& aStart) const; // returns negative if date of the node is earlier than aStart
 
 }; // class Node
