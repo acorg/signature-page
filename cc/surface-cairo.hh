@@ -1,12 +1,16 @@
 #pragma once
 
 #include "surface.hh"
+#include "cairo.hh"
 
 // ----------------------------------------------------------------------
 
 class SurfaceCairo : public Surface
 {
  public:
+    inline SurfaceCairo() : context(nullptr) {}
+    virtual ~SurfaceCairo();
+
     virtual void line(const Location& a, const Location& b, Color aColor, double aWidth, LineCap aLineCap = LineCap::Butt);
     virtual void rectangle(const Location& a, const Size& s, Color aColor, double aWidth, LineCap aLineCap = LineCap::Butt);
     virtual void rectangle_filled(const Location& a, const Size& s, Color aOutlineColor, double aWidth, Color aFillColor, LineCap aLineCap = LineCap::Butt);
@@ -25,7 +29,46 @@ class SurfaceCairo : public Surface
     virtual void text(const Location& a, std::string aText, Color aColor, double aSize, const TextStyle& aTextStyle = TextStyle(), double aRotation = 0);
     virtual Size text_size(std::string aText, double aSize, const TextStyle& aTextStyle, double* x_bearing);
 
+ protected:
+    cairo_t* context;
+
+    class push_context
+    {
+     public:
+        inline push_context(SurfaceCairo& aSurface) : context(aSurface.context) { cairo_save(context); }
+        inline ~push_context() { cairo_restore(context); }
+
+     private:
+        cairo_t* context;
+    };
+
+    inline cairo_line_cap_t cairo_line_cap(LineCap aLineCap) const
+        {
+            switch (aLineCap) {
+              case LineCap::Butt:
+                  return CAIRO_LINE_CAP_BUTT;
+              case LineCap::Round:
+                  return CAIRO_LINE_CAP_ROUND;
+              case LineCap::Square:
+                  return CAIRO_LINE_CAP_SQUARE;
+            }
+        }
+
+    inline void set_source_rgba(Color aColor) const
+        {
+            cairo_set_source_rgba(context, aColor.red(), aColor.green(), aColor.blue(), aColor.alpha());
+        }
+
 }; // class SurfaceCairo
+
+// ----------------------------------------------------------------------
+
+class PdfCairo : public SurfaceCairo
+{
+ public:
+    PdfCairo(std::string aFilename, double aWidth, double aHeight);
+
+}; // class PdfCairo
 
 // ----------------------------------------------------------------------
 /// Local Variables:
