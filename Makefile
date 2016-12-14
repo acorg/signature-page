@@ -11,6 +11,7 @@ SIGNATURE_PAGE_SOURCES = tree.cc tree-export.cc $(DRAW_SOURCES)
 SIGNATURE_PAGE_CC_PY_SOURCES = py.cc $(SIGNATURE_PAGE_SOURCES)
 TEST_CAIRO_SOURCES = test-cairo.cc $(DRAW_SOURCES)
 TEST_CAIRO_FONTS_SOURCES = test-cairo-fonts.cc $(DRAW_SOURCES)
+TEST_DRAW_TREE_SOURCES = test-draw-tree.cc $(SIGNATURE_PAGE_SOURCES)
 
 # ----------------------------------------------------------------------
 
@@ -34,6 +35,7 @@ LDFLAGS = $(OPTIMIZATION) $(PROFILE)
 LIB_DIR = $(ACMACSD_ROOT)/lib
 SIGP_LDLIBS = -L$(LIB_DIR) -lacmacsbase -lseqdb -lhidb $$(pkg-config --libs cairo) $$(pkg-config --libs liblzma) $(PYTHON_LD_LIB)
 TEST_CAIRO_LDLIBS = -L$(LIB_DIR) -lacmacsbase $$(pkg-config --libs cairo)
+TEST_DRAW_TREE_LDLIBS = -L$(LIB_DIR) -lacmacsbase -lseqdb -lhidb $$(pkg-config --libs cairo) $$(pkg-config --libs liblzma)
 
 PYTHON_VERSION = $(shell python3 -c 'import sys; print("{0.major}.{0.minor}".format(sys.version_info))')
 PYTHON_CONFIG = python$(PYTHON_VERSION)-config
@@ -49,7 +51,7 @@ DIST = $(abspath dist)
 
 # ----------------------------------------------------------------------
 
-all: check-python $(DIST)/signature_page_cc$(PYTHON_MODULE_SUFFIX) $(DIST)/test-cairo $(DIST)/test-cairo-fonts
+all: check-python $(DIST)/signature_page_cc$(PYTHON_MODULE_SUFFIX) $(DIST)/test-cairo $(DIST)/test-cairo-fonts $(DIST)/test-draw-tree
 
 # ----------------------------------------------------------------------
 
@@ -65,6 +67,9 @@ $(DIST)/test-cairo: $(patsubst %.cc,$(BUILD)/%.o,$(TEST_CAIRO_SOURCES)) | $(DIST
 $(DIST)/test-cairo-fonts: $(patsubst %.cc,$(BUILD)/%.o,$(TEST_CAIRO_FONTS_SOURCES)) | $(DIST)
 	g++ $(LDFLAGS) -o $@ $^ $(TEST_CAIRO_LDLIBS)
 
+$(DIST)/test-draw-tree: $(patsubst %.cc,$(BUILD)/%.o,$(TEST_DRAW_TREE_SOURCES)) | $(DIST)
+	g++ $(LDFLAGS) -o $@ $^ $(TEST_DRAW_TREE_LDLIBS)
+
 # ----------------------------------------------------------------------
 
 install: $(DIST)/signature_page_cc$(PYTHON_MODULE_SUFFIX) | check-acmacsd-root
@@ -78,7 +83,7 @@ clean:
 distclean: clean
 	rm -rf $(BUILD)
 
-test: install $(DIST)/test-cairo $(DIST)/test-cairo-fonts
+test: install $(DIST)/test-cairo $(DIST)/test-cairo-fonts $(DIST)/test-draw-tree
 	test/test
 
 # ----------------------------------------------------------------------

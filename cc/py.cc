@@ -2,6 +2,7 @@
 
 #include "tree.hh"
 #include "tree-export.hh"
+// #include "surface.hh"
 
 // ----------------------------------------------------------------------
 
@@ -29,6 +30,9 @@ PYBIND11_PLUGIN(signature_page_cc)
             .def("match_seqdb", &Tree::match_seqdb, py::arg("seqdb"))
             .def("ladderize", [](Tree& tree, std::string ladderize_type) { tree.ladderize(ladderize_type_decode(ladderize_type)); }, py::arg("ladderize_type"))
             ;
+
+    // py::class_<Surface>(m, "Surface")
+    //         ;
 
     m.def("tree_import", &tree_import, py::arg("filename"), py::arg("tree"), py::doc("Imports tree from json file."));
     m.def("tree_export", &tree_export, py::arg("filename"), py::arg("tree"), py::arg("indent") = 1, py::doc("Exports tree into json file."));
