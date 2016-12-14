@@ -80,6 +80,8 @@ class SurfaceCairo : public Surface
         inline context& new_path() { cairo_new_path(mContext); return *this; }
         inline context& close_path() { cairo_close_path(mContext); return *this; }
         inline context& close_path_if(bool aClose) { if (aClose) cairo_close_path(mContext); return *this; }
+        inline context& prepare_for_text(double aSize, const TextStyle& aTextStyle) { cairo_select_font_face(mContext, aTextStyle.font_family().c_str(), cairo_font_slant(aTextStyle.slant()), cairo_font_weight(aTextStyle.weight())); cairo_set_font_size(mContext, aSize); return *this; }
+        inline context& show_text(std::string aText) { cairo_show_text(mContext, aText.c_str()); return *this; }
 
      private:
         cairo_t* mContext;
@@ -105,6 +107,28 @@ class SurfaceCairo : public Surface
                       return CAIRO_LINE_JOIN_ROUND;
                   case LineJoin::Bevel:
                       return CAIRO_LINE_JOIN_ROUND;
+                }
+            }
+
+        inline cairo_font_slant_t  cairo_font_slant(TextStyle::Slant aSlant) const
+            {
+                switch (aSlant) {
+                  case TextStyle::Slant::Normal:
+                      return CAIRO_FONT_SLANT_NORMAL;
+                  case TextStyle::Slant::Italic:
+                      return CAIRO_FONT_SLANT_ITALIC;
+                  // case TextStyle::Slant::Oblique:
+                  //     return CAIRO_FONT_SLANT_OBLIQUE;
+                }
+            }
+
+        inline cairo_font_weight_t  cairo_font_weight(TextStyle::Weight aWeight) const
+            {
+                switch (aWeight) {
+                  case TextStyle::Weight::Normal:
+                      return CAIRO_FONT_WEIGHT_NORMAL;
+                  case TextStyle::Weight::Bold:
+                      return CAIRO_FONT_WEIGHT_BOLD;
                 }
             }
     };

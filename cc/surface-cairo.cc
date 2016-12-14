@@ -244,6 +244,12 @@ void SurfaceCairo::background(Color aColor)
 
 void SurfaceCairo::text(const Location& a, std::string aText, Color aColor, double aSize, const TextStyle& aTextStyle, double aRotation)
 {
+    context(*this)
+            .prepare_for_text(aSize, aTextStyle)
+            .move_to(a)
+            .rotate(aRotation)
+            .set_source_rgba(aColor)
+            .show_text(aText);
 
 } // SurfaceCairo::text
 
