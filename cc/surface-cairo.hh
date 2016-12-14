@@ -10,6 +10,8 @@ class SurfaceCairo : public Surface
  public:
     virtual ~SurfaceCairo();
 
+    virtual Size size() const;
+
     virtual SurfaceCairo* clip(const Location& aOffset, double aScale, double aAspect);
 
     virtual void line(const Location& a, const Location& b, Color aColor, double aWidth, LineCap aLineCap = LineCap::Butt);

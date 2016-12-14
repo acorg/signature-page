@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <string>
 #include <vector>
 #include <cmath>
@@ -28,6 +29,11 @@ class Location
 
 }; // class Location
 
+inline std::ostream& operator<<(std::ostream& out, const Location& loc)
+{
+    return out << '{' << loc.x << ", " << loc.y << '}';
+}
+
 // ----------------------------------------------------------------------
 
 class Size
@@ -45,6 +51,11 @@ class Size
     Size& operator += (const Size& sz) { width += sz.width; height += sz.height; return *this; }
 
 }; // class Size
+
+inline std::ostream& operator<<(std::ostream& out, const Size& size)
+{
+    return out << '{' << size.width << ", " << size.height << '}';
+}
 
 // ----------------------------------------------------------------------
 

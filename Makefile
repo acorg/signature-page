@@ -10,6 +10,7 @@ DRAW_SOURCES = surface-cairo.cc
 SIGNATURE_PAGE_SOURCES = tree.cc tree-export.cc $(DRAW_SOURCES)
 SIGNATURE_PAGE_CC_PY_SOURCES = py.cc $(SIGNATURE_PAGE_SOURCES)
 TEST_CAIRO_SOURCES = test-cairo.cc $(DRAW_SOURCES)
+TEST_CAIRO_FONTS_SOURCES = test-cairo-fonts.cc $(DRAW_SOURCES)
 
 # ----------------------------------------------------------------------
 
@@ -48,7 +49,7 @@ DIST = $(abspath dist)
 
 # ----------------------------------------------------------------------
 
-all: check-python $(DIST)/signature_page_cc$(PYTHON_MODULE_SUFFIX) $(DIST)/test-cairo
+all: check-python $(DIST)/signature_page_cc$(PYTHON_MODULE_SUFFIX) $(DIST)/test-cairo $(DIST)/test-cairo-fonts
 
 # ----------------------------------------------------------------------
 
@@ -59,6 +60,9 @@ $(DIST)/signature_page_cc$(PYTHON_MODULE_SUFFIX):  $(patsubst %.cc,$(BUILD)/%.o,
 	g++ -shared $(LDFLAGS) -o $@ $^ $(SIGP_LDLIBS)
 
 $(DIST)/test-cairo: $(patsubst %.cc,$(BUILD)/%.o,$(TEST_CAIRO_SOURCES)) | $(DIST)
+	g++ $(LDFLAGS) -o $@ $^ $(TEST_CAIRO_LDLIBS)
+
+$(DIST)/test-cairo-fonts: $(patsubst %.cc,$(BUILD)/%.o,$(TEST_CAIRO_FONTS_SOURCES)) | $(DIST)
 	g++ $(LDFLAGS) -o $@ $^ $(TEST_CAIRO_LDLIBS)
 
 # ----------------------------------------------------------------------
@@ -74,7 +78,7 @@ clean:
 distclean: clean
 	rm -rf $(BUILD)
 
-test: install $(DIST)/test-cairo
+test: install $(DIST)/test-cairo $(DIST)/test-cairo-fonts
 	test/test
 
 # ----------------------------------------------------------------------

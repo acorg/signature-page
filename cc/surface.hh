@@ -42,6 +42,8 @@ class Surface
 
     constexpr static const double canvas_width = 1000.0;
 
+    virtual Size size() const = 0;
+
     virtual Surface* clip(const Location& aOffset, double aScale, double aAspect) = 0;
 
     virtual void line(const Location& a, const Location& b, Color aColor, double aWidth, LineCap aLineCap = LineCap::Butt) = 0;

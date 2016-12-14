@@ -12,6 +12,14 @@ SurfaceCairo::~SurfaceCairo()
 
 // ----------------------------------------------------------------------
 
+Size SurfaceCairo::size() const
+{
+    return {canvas_width, canvas_width * mAspect};
+
+} // SurfaceCairo::size
+
+// ----------------------------------------------------------------------
+
 SurfaceCairo* SurfaceCairo::clip(const Location& aOffset, double aScale, double aAspect)
 {
     return new SurfaceCairo(mContext, mOffset + aOffset, mScale * aScale, mAspect * aAspect);
@@ -203,16 +211,15 @@ Location SurfaceCairo::arrow_head(const Location& a, double angle, double sign, 
 
 void SurfaceCairo::grid(double aStep, Color aLineColor, double aLineWidth)
 {
-    const double canvas_height = canvas_width * mAspect;
+    const auto canvas_size = size();
     std::vector<Location> lines;
-    for (double x = 0; x < canvas_width; x += aStep) {
+    for (double x = 0; x < canvas_size.width; x += aStep) {
         lines.emplace_back(x, 0);
-        lines.emplace_back(x, canvas_height);
+        lines.emplace_back(x, canvas_size.height);
     }
-    const double cw = canvas_width; // cannot emplace_back canvas_width below because it's a compile time constant
-    for (double y = 0; y < canvas_height; y += aStep) {
+    for (double y = 0; y < canvas_size.height; y += aStep) {
         lines.emplace_back(0, y);
-        lines.emplace_back(cw, y);
+        lines.emplace_back(canvas_size.width, y);
     }
 
     context(*this)
@@ -228,7 +235,7 @@ void SurfaceCairo::grid(double aStep, Color aLineColor, double aLineWidth)
 
 void SurfaceCairo::border(Color aLineColor, double aLineWidth)
 {
-    rectangle({0, 0}, {canvas_width, canvas_width * mAspect}, aLineColor, aLineWidth);
+    rectangle({0, 0}, size(), aLineColor, aLineWidth);
 
 } // SurfaceCairo::border
 
@@ -236,7 +243,7 @@ void SurfaceCairo::border(Color aLineColor, double aLineWidth)
 
 void SurfaceCairo::background(Color aColor)
 {
-    rectangle_filled({0, 0}, {canvas_width, canvas_width * mAspect}, aColor, 0, aColor);
+    rectangle_filled({0, 0}, size(), aColor, 0, aColor);
 
 } // SurfaceCairo::background
 
@@ -272,14 +279,15 @@ Size SurfaceCairo::text_size(std::string aText, double aSize, const TextStyle& a
 SurfaceCairo::context::context(SurfaceCairo& aSurface)
     : mContext(cairo_reference(aSurface.mContext))
 {
+    const auto canvas_size = aSurface.size();
     cairo_save(mContext);
     translate(aSurface.mOffset);
     scale(aSurface.mScale, aSurface.mScale);
     new_path();
     move_to();
-    line_to({canvas_width, 0.0});
-    line_to({canvas_width, canvas_width * aSurface.mAspect});
-    line_to({0, canvas_width * aSurface.mAspect});
+    line_to({canvas_size.width, 0.0});
+    line_to(Location() + canvas_size);
+    line_to({0, canvas_size.height});
     close_path();
     clip();
 
