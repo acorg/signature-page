@@ -39,6 +39,8 @@ void draw(Surface& aSurface)
     aSurface.rectangle_filled({120, 200}, {250, 70}, "brown", 5, "#8080ffff");
     aSurface.circle({150, 170}, 100, 0.5, M_PI / 4.0, "violet", 5);
     aSurface.circle_filled({200, 220}, 100, 2, 0, 0x80FFA0FF, 5, 0x80A0FFA0);
+    aSurface.square_filled({300, 420}, 100, 1.1, 0.1, 0x80A0A0FF, 5, 0x80C0FFA0);
+    aSurface.triangle_filled({100, 420}, 100, 1.0, 0.0, 0x80FFA080, 5, 0x80FFFFA0);
 
           // cairo_set_font_size(mContext, 30);
           // cairo_show_text(mContext, "JOPA");

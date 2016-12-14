@@ -36,6 +36,7 @@ class Surface
 {
  public:
     enum class LineCap { Butt, Round, Square };
+    enum class LineJoin { Miter, Round, Bevel };
 
     virtual ~Surface() {}
 

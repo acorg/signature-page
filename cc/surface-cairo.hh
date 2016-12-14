@@ -57,9 +57,11 @@ class SurfaceCairo : public Surface
         inline context& set_line_width(double aWidth) { cairo_set_line_width(mContext, aWidth); return *this; }
         inline context& set_source_rgba(Color aColor) { cairo_set_source_rgba(mContext, aColor.red(), aColor.green(), aColor.blue(), aColor.alpha()); return *this; }
         inline context& set_line_cap(LineCap aLineCap) { cairo_set_line_cap(mContext, cairo_line_cap(aLineCap)); return *this; }
+        inline context& set_line_join(LineJoin aLineJoin) { cairo_set_line_join(mContext, cairo_line_join(aLineJoin)); return *this; }
         inline context& move_to() { cairo_move_to(mContext, 0.0, 0.0); return *this; }
         inline context& move_to(const Location& a) { cairo_move_to(mContext, a.x, a.y); return *this; }
         inline context& line_to(const Location& a) { cairo_line_to(mContext, a.x, a.y); return *this; }
+        inline context& lines_to(std::vector<Location>::const_iterator first, std::vector<Location>::const_iterator last) { for ( ; first != last; ++first) { cairo_line_to(mContext, first->x, first->y); } return *this; }
         inline context& rectangle(const Location& a, const Size& s) { cairo_rectangle(mContext, a.x, a.y, s.width, s.height); return *this; }
         inline context& arc(const Location& a, double radius, double angle1, double angle2) { cairo_arc(mContext, a.x, a.y, radius, angle1, angle2); return *this; }
         inline context& circle(double radius) { cairo_arc(mContext, 0.0, 0.0, radius, 0.0, 2.0 * M_PI); return *this; }
@@ -72,6 +74,7 @@ class SurfaceCairo : public Surface
         inline context& clip() { cairo_clip(mContext); return *this; }
         inline context& new_path() { cairo_new_path(mContext); return *this; }
         inline context& close_path() { cairo_close_path(mContext); return *this; }
+        inline context& close_path_if(bool aClose) { if (aClose) cairo_close_path(mContext); return *this; }
 
      private:
         cairo_t* mContext;
@@ -87,6 +90,19 @@ class SurfaceCairo : public Surface
                       return CAIRO_LINE_CAP_SQUARE;
                 }
             }
+
+        inline cairo_line_join_t cairo_line_join(LineJoin aLineJoin) const
+            {
+                switch (aLineJoin) {
+                  case LineJoin::Miter:
+                      return CAIRO_LINE_JOIN_MITER;
+                  case LineJoin::Round:
+                      return CAIRO_LINE_JOIN_ROUND;
+                  case LineJoin::Bevel:
+                      return CAIRO_LINE_JOIN_ROUND;
+                }
+            }
+
     };
 
 }; // class SurfaceCairo

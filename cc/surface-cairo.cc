@@ -95,6 +95,16 @@ void SurfaceCairo::circle_filled(const Location& aCenter, double aDiameter, doub
 
 void SurfaceCairo::square_filled(const Location& aCenter, double aSide, double aAspect, double aAngle, Color aOutlineColor, double aOutlineWidth, Color aFillColor, LineCap aLineCap)
 {
+    context(*this)
+            .set_line_width(aOutlineWidth)
+            .set_line_cap(aLineCap)
+            .translate(aCenter)
+            .rotate(aAngle)
+            .rectangle({- aSide / 2 * aAspect, - aSide / 2}, {aSide * aAspect, aSide})
+            .set_source_rgba(aFillColor)
+            .fill_preserve()
+            .set_source_rgba(aOutlineColor)
+            .stroke();
 
 } // SurfaceCairo::square_filled
 
@@ -102,6 +112,21 @@ void SurfaceCairo::square_filled(const Location& aCenter, double aSide, double a
 
 void SurfaceCairo::triangle_filled(const Location& aCenter, double aSide, double aAspect, double aAngle, Color aOutlineColor, double aOutlineWidth, Color aFillColor, LineCap aLineCap)
 {
+    const auto cos_pi_6 = std::cos(M_PI / 6.0);
+    const auto radius = aSide * cos_pi_6;
+    context(*this)
+            .set_line_width(aOutlineWidth)
+            .set_line_cap(aLineCap)
+            .translate(aCenter)
+            .rotate(aAngle)
+            .move_to({0, - radius})
+            .line_to({- radius * cos_pi_6 * aAspect, radius * 0.5})
+            .line_to({radius * cos_pi_6 * aAspect, radius * 0.5})
+            .close_path()
+            .set_source_rgba(aFillColor)
+            .fill_preserve()
+            .set_source_rgba(aOutlineColor)
+            .stroke();
 
 } // SurfaceCairo::triangle_filled
 
@@ -109,6 +134,16 @@ void SurfaceCairo::triangle_filled(const Location& aCenter, double aSide, double
 
 void SurfaceCairo::path_outline(std::vector<Location>::const_iterator first, std::vector<Location>::const_iterator last, Color aOutlineColor, double aOutlineWidth, bool aClose, LineCap aLineCap)
 {
+    context(*this)
+            .new_path()
+            .set_line_cap(aLineCap)
+            .set_line_join(LineJoin::Miter)
+            .set_line_width(aOutlineWidth)
+            .set_source_rgba(aOutlineColor)
+            .move_to(*first)
+            .lines_to(first + 1, last)
+            .close_path_if(aClose)
+            .stroke();
 
 } // SurfaceCairo::path_outline
 
