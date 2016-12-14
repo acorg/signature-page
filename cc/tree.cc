@@ -89,7 +89,7 @@ void Tree::set_number_strains()
 
 size_t Tree::height() const
 {
-    size_t height = find_last_leaf(*this).data.line_no;
+    size_t height = find_last_leaf(*this).draw.line_no;
     if (height == 0) {
         height = data.number_strains; // lines were not numbered, use number of leaves
     }

@@ -7,12 +7,12 @@
 
 // ----------------------------------------------------------------------
 
-// SeqDb and HiDb access data, drawing related stuff
+// SeqDb and HiDb access data
 class NodeData
 {
  public:
     inline NodeData()
-        : number_strains(1), shown(true), ladderize_max_edge_length(0), line_no(0), vertical_gap_before(0), top(-1), bottom(-1)
+        : number_strains(1), ladderize_max_edge_length(0)
         {}
 
     inline std::string date() const { return mSeqdbEntrySeq ? mSeqdbEntrySeq.entry().date() : std::string{}; }
@@ -20,17 +20,30 @@ class NodeData
     inline void assign(seqdb::SeqdbEntrySeq&& entry_seq) { mSeqdbEntrySeq.assign(std::forward<seqdb::SeqdbEntrySeq>(entry_seq)); }
 
     size_t number_strains;
-    bool shown;
     double ladderize_max_edge_length;
     std::string ladderize_max_date;
     std::string ladderize_max_name_alphabetically;
     double cumulative_edge_length;
-    size_t line_no;
-    size_t vertical_gap_before;
-    double top, bottom;         // subtree boundaries
 
  private:
     seqdb::SeqdbEntrySeq mSeqdbEntrySeq;
+
+};
+
+// ----------------------------------------------------------------------
+
+//  drawing related stuff
+class NodeDrawData
+{
+ public:
+    inline NodeDrawData()
+        : shown(true), line_no(0), vertical_gap_before(0), top(-1), bottom(-1)
+        {}
+
+    bool shown;
+    size_t line_no;
+    size_t vertical_gap_before;
+    double top, bottom;         // subtree boundaries
 
 };
 
@@ -52,9 +65,11 @@ class Node
     Subtree subtree;
 
     NodeData data;
+    NodeDrawData draw;
 
     inline bool is_leaf() const { return subtree.empty() && !seq_id.empty(); }
-    inline double middle() const { return is_leaf() ? static_cast<double>(data.line_no) : ((data.top + data.bottom) / 2.0); }
+    inline double middle() const { return is_leaf() ? static_cast<double>(draw.line_no) : ((draw.top + draw.bottom) / 2.0); }
+    inline std::string display_name() const { return seq_id; }
 
     //   // leaf part
     //   // Date date;
