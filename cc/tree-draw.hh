@@ -49,7 +49,7 @@ class TreeDraw
     double mHorizontalStep;
     double mVerticalStep;
     double mLineWidth;
-    double mLabelScale;
+      // double mLabelScale;
     double mLabelHeight;
     double mFontSize;
     double mNameOffset;

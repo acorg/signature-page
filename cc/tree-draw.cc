@@ -25,7 +25,6 @@ void TreeDraw::draw()
     std::cout << "Tree line width: " << mLineWidth << "  Settings: " << mSettings.line_width << "  vertical_step/2: " << mVerticalStep * 0.5 << std::endl;
     set_label_scale();
 
-    // draw_grid(aSurface, aViewport, aSettings);
     draw_node(mTree, Location{mLineWidth / 2, (mLabelHeight + mLineWidth) / 2}, mSettings.root_edge);
 
     // mark_nodes(aSurface);
@@ -96,7 +95,14 @@ void TreeDraw::set_top_bottom()
 void TreeDraw::set_label_scale()
 {
     // const double width = mSurface.size().width;
-    mLabelScale = 1.0;
+    // mLabelScale = 1.0;
+    mFontSize = mVerticalStep; // * mLabelScale;
+
+      // $$$
+    // auto adjust_font_size = [this](Node& node) {
+    // };
+    // tree::iterate_leaf(mTree, adjust_font_size);
+
     // mWidth = tree_width(aSurface, aTree, aSettings);
     // for (int i = 0; (mLabelScale * mVerticalStep) > 1.0 && mWidth > aViewport.size.width; ++i) {
     //     mLabelScale *= 0.95;
@@ -104,7 +110,6 @@ void TreeDraw::set_label_scale()
     //       // std::cerr << i << " label scale: " << mLabelScale << "  width:" << mWidth << " right:" << tree_right_margin << std::endl;
     // }
 
-    mFontSize = mVerticalStep * mLabelScale;
     const auto tsize = mSurface.text_size("W", mFontSize, mSettings.label_style);
     mNameOffset  = mSettings.name_offset * tsize.width;
     mLabelHeight = tsize.height;
