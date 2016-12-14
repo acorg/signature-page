@@ -62,8 +62,7 @@ class Surface
     virtual void background(Color aColor) = 0;
 
     virtual void text(const Location& a, std::string aText, Color aColor, double aSize, const TextStyle& aTextStyle = TextStyle(), double aRotation = 0) = 0;
-    virtual Size text_size(std::string aText, double aSize, const TextStyle& aTextStyle, double* x_bearing) = 0;
-    inline Size text_size(std::string aText, double aSize, const TextStyle& aTextStyle) { return text_size(aText, aSize, aTextStyle, nullptr); }
+    virtual Size text_size(std::string aText, double aSize, const TextStyle& aTextStyle = TextStyle(), double* x_bearing = nullptr) = 0;
 
  protected:
     inline Surface() = default;

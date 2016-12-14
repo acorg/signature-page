@@ -257,6 +257,13 @@ void SurfaceCairo::text(const Location& a, std::string aText, Color aColor, doub
 
 Size SurfaceCairo::text_size(std::string aText, double aSize, const TextStyle& aTextStyle, double* x_bearing)
 {
+    cairo_text_extents_t text_extents;
+    context(*this)
+            .prepare_for_text(aSize, aTextStyle)
+            .text_extents(aText, text_extents);
+    if (x_bearing != nullptr)
+        *x_bearing = text_extents.x_bearing;
+    return {text_extents.x_advance, - text_extents.y_bearing};
 
 } // SurfaceCairo::text_size
 

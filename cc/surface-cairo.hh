@@ -30,7 +30,7 @@ class SurfaceCairo : public Surface
     virtual void background(Color aColor);
 
     virtual void text(const Location& a, std::string aText, Color aColor, double aSize, const TextStyle& aTextStyle = TextStyle(), double aRotation = 0);
-    virtual Size text_size(std::string aText, double aSize, const TextStyle& aTextStyle, double* x_bearing);
+    virtual Size text_size(std::string aText, double aSize, const TextStyle& aTextStyle = TextStyle(), double* x_bearing = nullptr);
 
  protected:
     cairo_t* mContext;
@@ -82,6 +82,7 @@ class SurfaceCairo : public Surface
         inline context& close_path_if(bool aClose) { if (aClose) cairo_close_path(mContext); return *this; }
         inline context& prepare_for_text(double aSize, const TextStyle& aTextStyle) { cairo_select_font_face(mContext, aTextStyle.font_family().c_str(), cairo_font_slant(aTextStyle.slant()), cairo_font_weight(aTextStyle.weight())); cairo_set_font_size(mContext, aSize); return *this; }
         inline context& show_text(std::string aText) { cairo_show_text(mContext, aText.c_str()); return *this; }
+        inline context& text_extents(std::string aText, cairo_text_extents_t& extents) { cairo_text_extents(mContext, aText.c_str(), &extents); return *this; }
 
      private:
         cairo_t* mContext;

@@ -47,11 +47,11 @@ void draw(Surface& aSurface)
     aSurface.double_arrow({300, 420}, {100, 550}, "blue4", 2, 10);
 
     aSurface.text({50, 600}, "Vozyaku", "green4", 100);
+    auto text_size = aSurface.text_size("Vozyak", 100);
+    aSurface.text({50 + text_size.width, 600}, "uVozyaku", "green3", 100);
     aSurface.text({500, 750}, "Vozyaku", "green4", 100, TextStyle("Arial", TextStyle::Slant::Italic, TextStyle::Weight::Bold), 0.5);
-
-          // cairo_set_font_size(mContext, 30);
-          // cairo_show_text(mContext, "JOPA");
-          // surface.text(Location(200, 100 + sz.height / 2), "Jopa", 0x00FF00, tsize, style);
+    aSurface.text({50, 800}, "Va", "red2", 100);
+    aSurface.text({50, 800 - text_size.height}, "Va", "red2", 100);
 }
 
 // ----------------------------------------------------------------------
