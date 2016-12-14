@@ -14,10 +14,12 @@ class TreeDrawSettings
 {
  public:
     inline TreeDrawSettings()
-        : hide_if_cumulative_edge_length_bigger_than(std::numeric_limits<double>::max()) {}
+        : hide_if_cumulative_edge_length_bigger_than(std::numeric_limits<double>::max()), force_line_width(false), line_width(1) {}
 
     std::string hide_isolated_before; // hide leaves isolated before the date (empty -> do not hide based on date)
     double hide_if_cumulative_edge_length_bigger_than; // hide long branches
+    bool force_line_width;
+    double line_width;
 
 }; // class TreeDrawSettings
 
@@ -36,6 +38,8 @@ class TreeDraw
     Surface& mSurface;
     Tree& mTree;
     TreeDrawSettings& mSettings;
+
+    double mLineWidth;
 
     void hide_leaves();
     void set_line_no();

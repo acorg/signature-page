@@ -87,6 +87,18 @@ void Tree::set_number_strains()
 
 // ----------------------------------------------------------------------
 
+size_t Tree::height() const
+{
+    size_t height = find_last_leaf(*this).data.line_no;
+    if (height == 0) {
+        height = data.number_strains; // lines were not numbered, use number of leaves
+    }
+    return height;
+
+} // Tree::height
+
+// ----------------------------------------------------------------------
+
 void Node::compute_cumulative_edge_length(double initial_edge_length, double& max_cumulative_edge_length)
 {
     data.cumulative_edge_length = initial_edge_length + edge_length;

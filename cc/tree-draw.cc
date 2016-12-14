@@ -18,6 +18,15 @@ void TreeDraw::prepare()
 
 void TreeDraw::draw()
 {
+    mLineWidth = 1; // mSettings.force_line_width ? aSettings.line_width : std::min(aSettings.line_width, mVerticalStep * 0.5);
+      // std::cout << "Tree line width: " << mLineWidth << "  Settings: " << aSettings.line_width << "  vertical_step/2: " << mVerticalStep * 0.5 << std::endl;
+    // set_label_scale(aSurface, aTree, aViewport, aSettings);
+    // set_horizontal_step(aSurface, aTree, aViewport, aSettings);
+
+    // draw_grid(aSurface, aViewport, aSettings);
+    // draw_node(aTree, aSurface, aViewport.origin, aSettings, aSettings.root_edge);
+
+    // mark_nodes(aSurface);
 
 } // TreeDraw::draw
 

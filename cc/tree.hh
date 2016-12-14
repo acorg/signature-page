@@ -75,6 +75,23 @@ class Node
 
 // ----------------------------------------------------------------------
 
+inline const Node& find_first_leaf(const Node& aNode)
+{
+    return aNode.is_leaf() ? aNode : find_first_leaf(aNode.subtree.front());
+}
+
+inline Node& find_first_leaf(Node& aNode)
+{
+    return aNode.is_leaf() ? aNode : find_first_leaf(aNode.subtree.front());
+}
+
+inline const Node& find_last_leaf(const Node& aNode)
+{
+    return aNode.is_leaf() ? aNode : find_last_leaf(aNode.subtree.back());
+}
+
+// ----------------------------------------------------------------------
+
 class Tree : public Node
 {
  public:
@@ -93,7 +110,7 @@ class Tree : public Node
                 Node::compute_cumulative_edge_length(0, mMaxCumulativeEdgeLength);
         }
 
-      // size_t height() const; // number of lines in the tree
+    size_t height() const; // number of lines in the tree
     inline double width() { compute_cumulative_edge_length(); return mMaxCumulativeEdgeLength; }
 
  private:
