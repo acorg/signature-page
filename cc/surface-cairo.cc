@@ -1,4 +1,5 @@
 #include "surface-cairo.hh"
+#include "acmacs-base/float.hh"
 
 // ----------------------------------------------------------------------
 
@@ -151,6 +152,13 @@ void SurfaceCairo::path_outline(std::vector<Location>::const_iterator first, std
 
 void SurfaceCairo::path_fill(std::vector<Location>::const_iterator first, std::vector<Location>::const_iterator last, Color aFillColor)
 {
+    context(*this)
+            .new_path()
+            .set_source_rgba(aFillColor)
+            .move_to(*first)
+            .lines_to(first + 1, last)
+            .close_path()
+            .fill();
 
 } // SurfaceCairo::path_fill
 
@@ -158,13 +166,61 @@ void SurfaceCairo::path_fill(std::vector<Location>::const_iterator first, std::v
 
 void SurfaceCairo::double_arrow(const Location& a, const Location& b, Color aColor, double aLineWidth, double aArrowWidth)
 {
+    const bool x_eq = float_equal(b.x, a.x);
+    const double sign2 = x_eq ? (a.y < b.y ? 1.0 : -1.0) : (b.x < a.x ? 1.0 : -1.0);
+    const double angle = x_eq ? -M_PI_2 : std::atan((b.y - a.y) / (b.x - a.x));
+    auto const la = arrow_head(a, angle, - sign2, aColor, aArrowWidth);
+    auto const lb = arrow_head(b, angle,   sign2, aColor, aArrowWidth);
+    line(la, lb, aColor, aLineWidth);
 
 } // SurfaceCairo::double_arrow
 
 // ----------------------------------------------------------------------
 
+Location SurfaceCairo::arrow_head(const Location& a, double angle, double sign, Color aColor, double aArrowWidth)
+{
+    constexpr double ARROW_WIDTH_TO_LENGTH_RATIO = 2.0;
+
+    const double arrow_length = aArrowWidth * ARROW_WIDTH_TO_LENGTH_RATIO;
+    const Location b(a.x + sign * arrow_length * std::cos(angle), a.y + sign * arrow_length * std::sin(angle));
+    const Location c(b.x + sign * aArrowWidth * std::cos(angle + M_PI_2) * 0.5, b.y + sign * aArrowWidth * std::sin(angle + M_PI_2) * 0.5);
+    const Location d(b.x + sign * aArrowWidth * std::cos(angle - M_PI_2) * 0.5, b.y + sign * aArrowWidth * std::sin(angle - M_PI_2) * 0.5);
+
+    context(*this)
+            .set_source_rgba(aColor)
+            .set_line_join(LineJoin::Miter)
+            .move_to(a)
+            .line_to(c)
+            .line_to(d)
+            .close_path()
+            .fill();
+
+    return b;
+
+} // SurfaceCairo::arrow_head
+
+// ----------------------------------------------------------------------
+
 void SurfaceCairo::grid(double aStep, Color aLineColor, double aLineWidth)
 {
+    const double canvas_height = canvas_width * mAspect;
+    std::vector<Location> lines;
+    for (double x = 0; x < canvas_width; x += aStep) {
+        lines.emplace_back(x, 0);
+        lines.emplace_back(x, canvas_height);
+    }
+    const double cw = canvas_width; // cannot emplace_back canvas_width below because it's a compile time constant
+    for (double y = 0; y < canvas_height; y += aStep) {
+        lines.emplace_back(0, y);
+        lines.emplace_back(cw, y);
+    }
+
+    context(*this)
+            .set_line_width(aLineWidth)
+            .set_source_rgba(aLineColor)
+            .set_line_cap(LineCap::Butt)
+            .move_to_line_to(lines.begin(), lines.end())
+            .stroke();
 
 } // SurfaceCairo::grid
 
@@ -172,14 +228,17 @@ void SurfaceCairo::grid(double aStep, Color aLineColor, double aLineWidth)
 
 void SurfaceCairo::border(Color aLineColor, double aLineWidth)
 {
-    context(*this)
-            .set_line_width(aLineWidth)
-            .set_line_cap(LineCap::Butt)
-            .rectangle({0.0, 0.0}, {canvas_width, canvas_width * mAspect})
-            .set_source_rgba(aLineColor)
-            .stroke();
+    rectangle({0, 0}, {canvas_width, canvas_width * mAspect}, aLineColor, aLineWidth);
 
 } // SurfaceCairo::border
+
+// ----------------------------------------------------------------------
+
+void SurfaceCairo::background(Color aColor)
+{
+    rectangle_filled({0, 0}, {canvas_width, canvas_width * mAspect}, aColor, 0, aColor);
+
+} // SurfaceCairo::background
 
 // ----------------------------------------------------------------------
 

@@ -27,6 +27,7 @@ class SurfaceCairo : public Surface
     virtual void double_arrow(const Location& a, const Location& b, Color aColor, double aLineWidth, double aArrowWidth);
     virtual void grid(double aStep, Color aLineColor, double aLineWidth);
     virtual void border(Color aLineColor, double aLineWidth);
+    virtual void background(Color aColor);
 
     virtual void text(const Location& a, std::string aText, Color aColor, double aSize, const TextStyle& aTextStyle = TextStyle(), double aRotation = 0);
     virtual Size text_size(std::string aText, double aSize, const TextStyle& aTextStyle, double* x_bearing);
@@ -43,6 +44,8 @@ class SurfaceCairo : public Surface
         {
             cairo_reference(mContext);
         }
+
+    virtual Location arrow_head(const Location& a, double angle, double sign, Color aColor, double aArrowWidth);
 
     class context
     {
@@ -61,12 +64,14 @@ class SurfaceCairo : public Surface
         inline context& move_to() { cairo_move_to(mContext, 0.0, 0.0); return *this; }
         inline context& move_to(const Location& a) { cairo_move_to(mContext, a.x, a.y); return *this; }
         inline context& line_to(const Location& a) { cairo_line_to(mContext, a.x, a.y); return *this; }
-        inline context& lines_to(std::vector<Location>::const_iterator first, std::vector<Location>::const_iterator last) { for ( ; first != last; ++first) { cairo_line_to(mContext, first->x, first->y); } return *this; }
+        inline context& lines_to(std::vector<Location>::const_iterator first, std::vector<Location>::const_iterator last) { for ( ; first != last; ++first) { line_to(*first); } return *this; }
+        inline context& move_to_line_to(std::vector<Location>::const_iterator first, std::vector<Location>::const_iterator last) { for ( ; first != last; ++first) { move_to(*first); if (++first != last) line_to(*first); } return *this; }
         inline context& rectangle(const Location& a, const Size& s) { cairo_rectangle(mContext, a.x, a.y, s.width, s.height); return *this; }
         inline context& arc(const Location& a, double radius, double angle1, double angle2) { cairo_arc(mContext, a.x, a.y, radius, angle1, angle2); return *this; }
         inline context& circle(double radius) { cairo_arc(mContext, 0.0, 0.0, radius, 0.0, 2.0 * M_PI); return *this; }
         inline context& circle(const Location& a, double radius) { cairo_arc(mContext, a.x, a.y, radius, 0.0, 2.0 * M_PI); return *this; }
         inline context& stroke() { cairo_stroke(mContext); return *this; }
+        inline context& fill() { cairo_fill(mContext); return *this; }
         inline context& fill_preserve() { cairo_fill_preserve(mContext); return *this; }
         inline context& translate(const Location& a) { cairo_translate(mContext, a.x, a.y); return *this; }
         inline context& rotate(double aAngle) { cairo_rotate(mContext, aAngle); return *this; }
@@ -102,7 +107,6 @@ class SurfaceCairo : public Surface
                       return CAIRO_LINE_JOIN_ROUND;
                 }
             }
-
     };
 
 }; // class SurfaceCairo

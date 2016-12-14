@@ -59,6 +59,7 @@ class Surface
     virtual void double_arrow(const Location& a, const Location& b, Color aColor, double aLineWidth, double aArrowWidth) = 0;
     virtual void grid(double aStep, Color aLineColor, double aLineWidth) = 0;
     virtual void border(Color aLineColor, double aLineWidth) = 0;
+    virtual void background(Color aColor) = 0;
 
     virtual void text(const Location& a, std::string aText, Color aColor, double aSize, const TextStyle& aTextStyle = TextStyle(), double aRotation = 0) = 0;
     virtual Size text_size(std::string aText, double aSize, const TextStyle& aTextStyle, double* x_bearing) = 0;
@@ -66,6 +67,8 @@ class Surface
 
  protected:
     inline Surface() = default;
+
+    virtual Location arrow_head(const Location& a, double angle, double sign, Color aColor, double aArrowWidth) = 0;
 
 }; // class Surface
 

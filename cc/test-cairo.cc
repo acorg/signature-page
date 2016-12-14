@@ -30,6 +30,8 @@ int main(int /*argc*/, const char */*argv*/[])
 
 void draw(Surface& aSurface)
 {
+    aSurface.background(0x40F0F0FF);
+    aSurface.grid(200, "grey80", 5);
     aSurface.border("grey50", 20);
     aSurface.circle({500, 100}, 200, 1.0, 0.0, "black", 10);
     aSurface.circle({1000, 0}, 200, 1.0, 0.0, "black", 10);
@@ -41,6 +43,8 @@ void draw(Surface& aSurface)
     aSurface.circle_filled({200, 220}, 100, 2, 0, 0x80FFA0FF, 5, 0x80A0FFA0);
     aSurface.square_filled({300, 420}, 100, 1.1, 0.1, 0x80A0A0FF, 5, 0x80C0FFA0);
     aSurface.triangle_filled({100, 420}, 100, 1.0, 0.0, 0x80FFA080, 5, 0x80FFFFA0);
+    aSurface.double_arrow({100, 420}, {300, 550}, "blue", 2, 10);
+    aSurface.double_arrow({300, 420}, {100, 550}, "blue4", 2, 10);
 
           // cairo_set_font_size(mContext, 30);
           // cairo_show_text(mContext, "JOPA");
