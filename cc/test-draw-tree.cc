@@ -5,6 +5,7 @@
 #include "surface-cairo.hh"
 #include "tree.hh"
 #include "tree-export.hh"
+#include "tree-draw.hh"
 
 // ----------------------------------------------------------------------
 
@@ -39,6 +40,10 @@ int main(int argc, const char *argv[])
 void draw(Surface& aSurface, Tree& tree)
 {
     aSurface.background("white");
+    TreeDrawSettings settings{};
+    TreeDraw tree_draw{aSurface, tree, settings};
+    tree_draw.prepare();
+    tree_draw.draw();
 }
 
 // ----------------------------------------------------------------------

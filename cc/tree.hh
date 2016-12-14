@@ -11,16 +11,23 @@
 class NodeData
 {
  public:
-    inline NodeData() : number_strains(1), ladderize_max_edge_length(0) {}
+    inline NodeData()
+        : number_strains(1), shown(true), ladderize_max_edge_length(0), line_no(0), vertical_gap_before(0), top(-1), bottom(-1)
+        {}
 
     inline std::string date() const { return mSeqdbEntrySeq ? mSeqdbEntrySeq.entry().date() : std::string{}; }
 
     inline void assign(seqdb::SeqdbEntrySeq&& entry_seq) { mSeqdbEntrySeq.assign(std::forward<seqdb::SeqdbEntrySeq>(entry_seq)); }
 
     size_t number_strains;
+    bool shown;
     double ladderize_max_edge_length;
     std::string ladderize_max_date;
     std::string ladderize_max_name_alphabetically;
+    double cumulative_edge_length;
+    size_t line_no;
+    size_t vertical_gap_before;
+    double top, bottom;         // subtree boundaries
 
  private:
     seqdb::SeqdbEntrySeq mSeqdbEntrySeq;
@@ -47,6 +54,7 @@ class Node
     NodeData data;
 
     inline bool is_leaf() const { return subtree.empty() && !seq_id.empty(); }
+    inline double middle() const { return is_leaf() ? static_cast<double>(data.line_no) : ((data.top + data.bottom) / 2.0); }
 
     //   // leaf part
     //   // Date date;
@@ -60,6 +68,9 @@ class Node
 
       // int months_from(const Date& aStart) const; // returns negative if date of the node is earlier than aStart
 
+ protected:
+    void compute_cumulative_edge_length(double initial_edge_length, double& max_cumulative_edge_length);
+
 }; // class Node
 
 // ----------------------------------------------------------------------
@@ -69,12 +80,24 @@ class Tree : public Node
  public:
     enum class LadderizeMethod { MaxEdgeLength, NumberOfLeaves };
 
-    inline Tree() : Node() {}
+    inline Tree() : Node(), mMaxCumulativeEdgeLength(-1) {}
 
     void match_seqdb(const seqdb::Seqdb& seqdb);
     void ladderize(LadderizeMethod aLadderizeMethod);
 
     void set_number_strains();
+
+    inline void compute_cumulative_edge_length()
+        {
+            if (mMaxCumulativeEdgeLength < 0)
+                Node::compute_cumulative_edge_length(0, mMaxCumulativeEdgeLength);
+        }
+
+      // size_t height() const; // number of lines in the tree
+    inline double width() { compute_cumulative_edge_length(); return mMaxCumulativeEdgeLength; }
+
+ private:
+    double mMaxCumulativeEdgeLength;
 
 }; // class Tree
 

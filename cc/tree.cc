@@ -87,6 +87,22 @@ void Tree::set_number_strains()
 
 // ----------------------------------------------------------------------
 
+void Node::compute_cumulative_edge_length(double initial_edge_length, double& max_cumulative_edge_length)
+{
+    data.cumulative_edge_length = initial_edge_length + edge_length;
+    if (!is_leaf()) {
+        for (auto& node: subtree) {
+            node.compute_cumulative_edge_length(data.cumulative_edge_length, max_cumulative_edge_length);
+        }
+    }
+    else if (data.cumulative_edge_length > max_cumulative_edge_length) {
+        max_cumulative_edge_length = data.cumulative_edge_length;
+    }
+
+} // Node::compute_cumulative_edge_length
+
+// ----------------------------------------------------------------------
+
 
 // ----------------------------------------------------------------------
 /// Local Variables:
