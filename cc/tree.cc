@@ -1,6 +1,7 @@
 #include "tree.hh"
 #include "tree-iterate.hh"
 #include "acmacs-base/float.hh"
+#include "locationdb/locdb.hh"
 
 // ----------------------------------------------------------------------
 
@@ -84,6 +85,18 @@ void Tree::set_number_strains()
     tree::iterate_post(*this, set_number_strains);
 
 } // Tree::set_number_strains
+
+// ----------------------------------------------------------------------
+
+void Tree::set_continents(const LocDb& locdb)
+{
+    auto set_continents = [&locdb](Node& aNode) {
+        std::cerr << name_decode(aNode.seq_id) << std::endl;
+          // aNode.data.continent = "NORTH-AMERICA";
+    };
+    tree::iterate_leaf(*this, set_continents);
+
+} // Tree::set_continents
 
 // ----------------------------------------------------------------------
 

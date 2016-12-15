@@ -7,6 +7,10 @@
 
 // ----------------------------------------------------------------------
 
+class LocDb;
+
+// ----------------------------------------------------------------------
+
 // SeqDb and HiDb access data
 class NodeData
 {
@@ -24,6 +28,7 @@ class NodeData
     std::string ladderize_max_date;
     std::string ladderize_max_name_alphabetically;
     double cumulative_edge_length;
+    std::string continent;
 
  private:
     seqdb::SeqdbEntrySeq mSeqdbEntrySeq;
@@ -118,6 +123,7 @@ class Tree : public Node
     void ladderize(LadderizeMethod aLadderizeMethod);
 
     void set_number_strains();
+    void set_continents(const LocDb& locdb);
 
     inline void compute_cumulative_edge_length()
         {

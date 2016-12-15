@@ -1,7 +1,9 @@
 #include <iostream>
 #include <string>
 #include <memory>
+#include <cstdlib>
 
+#include "locationdb/locdb.hh"
 #include "surface-cairo.hh"
 #include "tree.hh"
 #include "tree-export.hh"
@@ -9,6 +11,7 @@
 
 // ----------------------------------------------------------------------
 
+void read(Tree& tree, std::string aFilename);
 void draw(Surface& aSurface, Tree& tree);
 
 // ----------------------------------------------------------------------
@@ -19,7 +22,7 @@ int main(int argc, const char *argv[])
     if (argc == 3) {
         try {
             Tree tree;
-            tree_import(argv[1], tree);
+            read(tree, argv[1]);
             PdfCairo surface(argv[2], 500, 850);
             surface.background("white");
               // surface.rectangle({50, 50}, {50, 50}, "black", 5);
@@ -41,6 +44,17 @@ int main(int argc, const char *argv[])
     }
     return exit_code;
 }
+
+// ----------------------------------------------------------------------
+
+void read(Tree& tree, std::string aFilename)
+{
+    tree_import(aFilename, tree);
+    LocDb locdb;
+    locdb.importFrom(std::getenv("ACMACSD_ROOT") + std::string("/data/locationdb.json.xz"));
+    tree.set_continents(locdb);
+
+} // read
 
 // ----------------------------------------------------------------------
 

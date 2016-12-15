@@ -26,17 +26,13 @@ const std::map<std::string, Color> ColoringByContinent::mContinents = {
     {"UNKNOWN",           0x808080},
 };
 
-// ----------------------------------------------------------------------
-
-// ----------------------------------------------------------------------
-
 #pragma GCC diagnostic pop
 
 // ----------------------------------------------------------------------
 
 Color ColoringByContinent::color(const Node& aNode) const
 {
-    return "red"; // color(aNode.continent);
+    return color(aNode.data.continent);
 
 } // ColoringByContinent::color
 
