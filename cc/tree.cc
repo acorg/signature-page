@@ -1,6 +1,7 @@
 #include "tree.hh"
 #include "tree-iterate.hh"
 #include "acmacs-base/float.hh"
+#include "acmacs-base/virus-name.hh"
 #include "locationdb/locdb.hh"
 
 // ----------------------------------------------------------------------
@@ -91,8 +92,12 @@ void Tree::set_number_strains()
 void Tree::set_continents(const LocDb& locdb)
 {
     auto set_continents = [&locdb](Node& aNode) {
-        std::cerr << name_decode(aNode.seq_id) << std::endl;
-          // aNode.data.continent = "NORTH-AMERICA";
+        try {
+            aNode.data.continent = locdb.continent(virus_name::location(name_decode(aNode.seq_id)), "UNKNOWN");
+        }
+        catch (virus_name::Unrecognized&) {
+            aNode.data.continent = "UNKNOWN";
+        }
     };
     tree::iterate_leaf(*this, set_continents);
 
