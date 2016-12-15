@@ -3,6 +3,7 @@
 #include <string>
 #include <limits>
 #include <utility>
+#include <memory>
 
 #include "surface.hh"
 
@@ -10,6 +11,7 @@
 
 class Node;
 class Tree;
+class Coloring;
 
 // ----------------------------------------------------------------------
 
@@ -18,7 +20,7 @@ class TreeDrawSettings
  public:
     inline TreeDrawSettings()
         : hide_if_cumulative_edge_length_bigger_than(std::numeric_limits<double>::max()), force_line_width(false),
-          line_width(1), root_edge(0), line_color(0), name_offset(0.3) {}
+          line_width(1), root_edge(0), line_color(0), name_offset(0.3), color_nodes("continent") {}
 
     std::string hide_isolated_before; // hide leaves isolated before the date (empty -> do not hide based on date)
     double hide_if_cumulative_edge_length_bigger_than; // hide long branches
@@ -28,6 +30,7 @@ class TreeDrawSettings
     Color line_color;
     TextStyle label_style;
     double name_offset;         // offset of the label from the line right end, in W widths
+    std::string color_nodes;
 
 }; // class TreeDrawSettings
 
@@ -36,8 +39,8 @@ class TreeDrawSettings
 class TreeDraw
 {
  public:
-    inline TreeDraw(Surface& aSurface, Tree& aTree, TreeDrawSettings& aSettings)
-        : mSurface(aSurface), mTree(aTree), mSettings(aSettings) {}
+    TreeDraw(Surface& aSurface, Tree& aTree, TreeDrawSettings& aSettings);
+    ~TreeDraw();
 
     void prepare();
     void draw();
@@ -46,6 +49,7 @@ class TreeDraw
     Surface& mSurface;
     Tree& mTree;
     TreeDrawSettings& mSettings;
+    std::unique_ptr<Coloring> mColoring;
 
     double mHorizontalStep;
     double mVerticalStep;
@@ -63,6 +67,8 @@ class TreeDraw
 
     inline double text_width(std::string text) { return mSurface.text_size(text, mFontSize, mSettings.label_style).width; }
     double max_label_offset();
+
+    void make_coloring();
 
 }; // class TreeDraw
 

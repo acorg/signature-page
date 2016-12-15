@@ -4,6 +4,38 @@
 #include "tree.hh"
 #include "tree-iterate.hh"
 #include "surface.hh"
+#include "coloring.hh"
+
+// ----------------------------------------------------------------------
+
+TreeDraw::TreeDraw(Surface& aSurface, Tree& aTree, TreeDrawSettings& aSettings)
+    : mSurface(aSurface), mTree(aTree), mSettings(aSettings)
+{
+    make_coloring();
+}
+
+// ----------------------------------------------------------------------
+
+// explicit destructor made here to allow proper mColoring destruction
+TreeDraw::~TreeDraw()
+{
+
+} // TreeDraw::~TreeDraw
+
+// ----------------------------------------------------------------------
+
+void TreeDraw::make_coloring()
+{
+    if (mSettings.color_nodes == "black")
+        mColoring = std::unique_ptr<Coloring>(new ColoringBlack());
+    else if (mSettings.color_nodes == "continent")
+        mColoring = std::unique_ptr<Coloring>(new ColoringByContinent());
+    // else if (mSettings.color_nodes == "pos")
+    //     mColoring = std::unique_ptr<Coloring>(new ColoringByPos());
+    else
+        throw std::runtime_error("Unrecognized TreeDrawSettings.color_nodes: " + mSettings.color_nodes);
+
+} // TreeDraw::make_coloring
 
 // ----------------------------------------------------------------------
 
@@ -151,7 +183,7 @@ void TreeDraw::draw_node(const Node& aNode, const Location& aOrigin, double aEdg
             const std::string text = aNode.display_name();
             const auto tsize = mSurface.text_size(text, mFontSize, mSettings.label_style);
             const Location text_origin{right + mNameOffset, origin.y + tsize.height / 2};
-            mSurface.text(text_origin, text, 0 /*mColoring->color(aNode)*/, mFontSize, mSettings.label_style);
+            mSurface.text(text_origin, text, mColoring->color(aNode), mFontSize, mSettings.label_style);
               //         auto mark_node = mNodesToMark.find(aNode.name);
               //         if (mark_node != mNodesToMark.end())
               //             mark_node->second.set(text_origin, aNode);
