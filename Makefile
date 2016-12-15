@@ -33,7 +33,7 @@ CXXFLAGS = -MMD -g $(OPTIMIZATION) $(PROFILE) -fPIC -std=$(STD) $(WEVERYTHING) $
 LDFLAGS = $(OPTIMIZATION) $(PROFILE)
 
 LIB_DIR = $(ACMACSD_ROOT)/lib
-ACMACSD_LIBS = -L$(LIB_DIR) -lacmacsbase -lseqdb -lhidb -llocationdb
+ACMACSD_LIBS = -L$(LIB_DIR) -lacmacsbase -lseqdb -lhidb -llocationdb -lboost_program_options
 SIGP_LDLIBS = $(ACMACSD_LIBS) $$(pkg-config --libs cairo) $$(pkg-config --libs liblzma) $(PYTHON_LD_LIB)
 TEST_CAIRO_LDLIBS = -L$(LIB_DIR) -lacmacsbase $$(pkg-config --libs cairo)
 TEST_DRAW_TREE_LDLIBS = $(ACMACSD_LIBS) $$(pkg-config --libs cairo) $$(pkg-config --libs liblzma)
