@@ -99,6 +99,7 @@ class SurfaceCairo : public Surface
                   case LineCap::Square:
                       return CAIRO_LINE_CAP_SQUARE;
                 }
+                return CAIRO_LINE_CAP_BUTT; // gcc wants return
             }
 
         inline cairo_line_join_t cairo_line_join(LineJoin aLineJoin) const
@@ -111,6 +112,7 @@ class SurfaceCairo : public Surface
                   case LineJoin::Bevel:
                       return CAIRO_LINE_JOIN_ROUND;
                 }
+                return CAIRO_LINE_JOIN_MITER; // gcc wants return
             }
 
         inline cairo_font_slant_t  cairo_font_slant(TextStyle::Slant aSlant) const
@@ -123,6 +125,7 @@ class SurfaceCairo : public Surface
                   // case TextStyle::Slant::Oblique:
                   //     return CAIRO_FONT_SLANT_OBLIQUE;
                 }
+                return CAIRO_FONT_SLANT_NORMAL; // gcc wants return
             }
 
         inline cairo_font_weight_t  cairo_font_weight(TextStyle::Weight aWeight) const
@@ -133,6 +136,7 @@ class SurfaceCairo : public Surface
                   case TextStyle::Weight::Bold:
                       return CAIRO_FONT_WEIGHT_BOLD;
                 }
+                  return CAIRO_FONT_WEIGHT_NORMAL; // gcc wants return
             }
     };
 

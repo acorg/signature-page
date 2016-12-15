@@ -1,5 +1,6 @@
 #include <fstream>
 #include <cstdlib>
+#include  <algorithm>
 
 #include "surface-cairo.hh"
 
@@ -73,7 +74,8 @@ void get_fonts(std::vector<std::string>& fonts)
     fonts.push_back("sans-serif");
     fonts.push_back("monospace");
 
-    std::system("fc-list :lang=en -f '%{?fullname{%{fullname[0]}}{%{family}}}\n' | sort -u >/tmp/cairo-fonts.txt");
+    if (std::system("fc-list :lang=en -f '%{?fullname{%{fullname[0]}}{%{family}}}\n' | sort -u >/tmp/cairo-fonts.txt"))
+        throw std::runtime_error("Cannot obtain font list with fc-list command");
     std::ifstream input("/tmp/cairo-fonts.txt");
     while (input) {
         std::string line;
