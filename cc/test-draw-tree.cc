@@ -3,7 +3,13 @@
 #include <memory>
 #include <cstdlib>
 
+#pragma GCC diagnostic push
+#include "acmacs-base/boost-diagnostics.hh"
+#include "boost/program_options.hpp"
+#pragma GCC diagnostic pop
+
 #include "locationdb/locdb.hh"
+#include "seqdb/seqdb.hh"
 #include "surface-cairo.hh"
 #include "tree.hh"
 #include "tree-export.hh"
@@ -11,19 +17,21 @@
 
 // ----------------------------------------------------------------------
 
-void read(Tree& tree, std::string aFilename);
+int get_args(int argc, const char *argv[], std::string& aTreeFilename, std::string& aOutputPdf, std::string& aSeqdbFilename);
+void read(Tree& tree, std::string aTreeFilename, std::string aSeqdbFilename);
 void draw(Surface& aSurface, Tree& tree);
 
 // ----------------------------------------------------------------------
 
 int main(int argc, const char *argv[])
 {
-    int exit_code = 0;
-    if (argc == 3) {
+    std::string tree_filename, output_filename, seqdb_filename;
+    int exit_code = get_args(argc, argv, tree_filename, output_filename, seqdb_filename);
+    if (exit_code == 0) {
         try {
             Tree tree;
-            read(tree, argv[1]);
-            PdfCairo surface(argv[2], 500, 850);
+            read(tree, tree_filename, seqdb_filename);
+            PdfCairo surface(output_filename, 500, 850);
             surface.background("white");
               // surface.rectangle({50, 50}, {50, 50}, "black", 5);
             const double offset = 50;
@@ -38,21 +46,63 @@ int main(int argc, const char *argv[])
             exit_code = 1;
         }
     }
-    else {
-        std::cerr << "Usage: " << argv[0] << " <tree.json> <output.pdf>" << std::endl;
-        exit_code = 2;
-    }
     return exit_code;
 }
 
 // ----------------------------------------------------------------------
 
-void read(Tree& tree, std::string aFilename)
+int get_args(int argc, const char *argv[], std::string& aTreeFilename, std::string& aOutputPdf, std::string& aSeqdbFilename)
 {
-    tree_import(aFilename, tree);
+    using namespace boost::program_options;
+    options_description desc("Options");
+    desc.add_options()
+            ("help", "Print help messages")
+            ("seqdb", value<std::string>(&aSeqdbFilename)/* ->required() */, "path to seqdb")
+            ;
+    positional_options_description pos_opt;
+    pos_opt.add("tree.json", 1);
+    pos_opt.add("output.pdf", 1);
+
+    variables_map vm;
+    try {
+        store(command_line_parser(argc, argv).options(desc).positional(pos_opt).run(), vm);
+        if (vm.count("help")) {
+            std::cout << desc << std::endl;
+            return 0;
+        }
+        notify(vm);
+        aTreeFilename = vm["tree.json"].as<std::string>();
+        aOutputPdf = vm["output.pdf"].as<std::string>();
+        aSeqdbFilename = vm["seqdb"].as<std::string>();
+        return 0;
+    }
+    catch(required_option& e) {
+        std::cerr << "ERROR: " << e.what() << std::endl;
+        std::cerr << desc << std::endl;
+          // std::cerr << "Usage: " << argv[0] << " <tree.json> <output.pdf>" << std::endl;
+        return 1;
+    }
+    catch(error& e) {
+        std::cerr << "ERROR: " << e.what() << std::endl;
+        std::cerr << desc << std::endl;
+        return 2;
+    }
+
+} // get_args
+
+// ----------------------------------------------------------------------
+
+void read(Tree& tree, std::string aTreeFilename, std::string aSeqdbFilename)
+{
+    tree_import(aTreeFilename, tree);
     LocDb locdb;
     locdb.importFrom(std::getenv("ACMACSD_ROOT") + std::string("/data/locationdb.json.xz"));
     tree.set_continents(locdb);
+    if (!aSeqdbFilename.empty()) {
+        seqdb::Seqdb seqdb;
+        seqdb.load(aSeqdbFilename);
+        tree.match_seqdb(seqdb);
+    }
 
 } // read
 
