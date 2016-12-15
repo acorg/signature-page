@@ -266,13 +266,15 @@ SurfaceCairo::context::context(SurfaceCairo& aSurface)
     cairo_save(mContext);
     translate(aSurface.mOffset);
     scale(aSurface.mScale, aSurface.mScale);
-    new_path();
-    move_to();
-    line_to({canvas_size.width, 0.0});
-    line_to(Location() + canvas_size);
-    line_to({0, canvas_size.height});
-    close_path();
-    clip();
+    if (aSurface.mClip) {
+        new_path();
+        move_to();
+        line_to({canvas_size.width, 0.0});
+        line_to(Location() + canvas_size);
+        line_to({0, canvas_size.height});
+        close_path();
+        clip();
+    }
 
 } // SurfaceCairo::context::context
 

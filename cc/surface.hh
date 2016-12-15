@@ -44,7 +44,7 @@ class Surface
 
     virtual Size size() const = 0;
 
-    virtual Surface* clip(const Location& aOffset, const Size& aSize, double aScale) = 0;
+    virtual Surface* subsurface(const Location& aOffset, const Size& aSize, double aScale, bool aClip) = 0;
 
     virtual void line(const Location& a, const Location& b, Color aColor, double aWidth, LineCap aLineCap = LineCap::Butt) = 0;
     virtual void rectangle(const Location& a, const Size& s, Color aColor, double aWidth, LineCap aLineCap = LineCap::Butt) = 0;

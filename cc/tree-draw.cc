@@ -12,8 +12,8 @@ void TreeDraw::prepare()
     set_line_no();
     set_top_bottom();
     const auto canvas_size = mSurface.size();
-    mHorizontalStep = canvas_size.width / mTree.width() * 0.9;
-    mVerticalStep = canvas_size.height / (mTree.height() + 2); // +2 to add space at the top and bottom
+    mHorizontalStep = canvas_size.width / mTree.width(); // * 0.9;
+    mVerticalStep = canvas_size.height / mTree.height(); // + 2); // +2 to add space at the top and bottom
 
 } // TreeDraw::prepare
 

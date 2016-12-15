@@ -14,7 +14,7 @@ class SurfaceCairo : public Surface
     virtual inline double width() const { return mSize.width; }
     virtual inline double height() const { return mSize.height; }
 
-    virtual inline SurfaceCairo* clip(const Location& aOffset, const Size& aSize, double aScale) { return new SurfaceCairo(mContext, mOffset + aOffset, aSize, mScale * aScale); }
+    virtual inline SurfaceCairo* subsurface(const Location& aOffset, const Size& aSize, double aScale, bool aClip) { return new SurfaceCairo(mContext, mOffset + aOffset, aSize, mScale * aScale, aClip); }
 
     virtual void line(const Location& a, const Location& b, Color aColor, double aWidth, LineCap aLineCap = LineCap::Butt);
     virtual void rectangle(const Location& a, const Size& s, Color aColor, double aWidth, LineCap aLineCap = LineCap::Butt);
@@ -41,10 +41,11 @@ class SurfaceCairo : public Surface
     Location mOffset;
     Size mSize;
     double mScale;
+    bool mClip;                 // force surface area clipping
 
     inline SurfaceCairo() : mContext(nullptr), mScale(1.0) {}
-    inline SurfaceCairo(cairo_t* aContext, const Location& aOffset, const Size& aSize, double aScale)
-        : mContext(aContext), mOffset(aOffset), mSize(aSize), mScale(aScale)
+    inline SurfaceCairo(cairo_t* aContext, const Location& aOffset, const Size& aSize, double aScale, bool aClip)
+        : mContext(aContext), mOffset(aOffset), mSize(aSize), mScale(aScale), mClip(aClip)
         {
             cairo_reference(mContext);
         }
