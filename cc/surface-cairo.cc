@@ -264,8 +264,8 @@ SurfaceCairo::context::context(SurfaceCairo& aSurface)
 {
     const auto canvas_size = aSurface.size();
     cairo_save(mContext);
-    translate(aSurface.mOffset);
     scale(aSurface.mScale, aSurface.mScale);
+    translate(aSurface.mOffset);
     if (aSurface.mClip) {
         new_path();
         move_to();

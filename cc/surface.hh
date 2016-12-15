@@ -43,6 +43,7 @@ class Surface
     constexpr static const double default_canvas_width = 1000.0;
 
     virtual Size size() const = 0;
+    inline double aspect() const { const auto s = size(); return s.width / s.height; }
 
     virtual Surface* subsurface(const Location& aOffset, const Size& aSize, double aScale, bool aClip) = 0;
 

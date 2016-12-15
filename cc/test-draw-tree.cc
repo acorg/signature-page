@@ -21,7 +21,14 @@ int main(int argc, const char *argv[])
             Tree tree;
             tree_import(argv[1], tree);
             PdfCairo surface(argv[2], 500, 850);
-            draw(surface, tree);
+            surface.background("white");
+              // surface.rectangle({50, 50}, {50, 50}, "black", 5);
+            const double offset = 50;
+            const double scale = (surface.width() - offset * 2) / surface.width();
+            std::cout << "Sub scale:" << scale << std::endl;
+            std::unique_ptr<Surface> sub{surface.subsurface({offset, offset / surface.aspect()}, surface.size(), scale, false)};
+            sub->border(0xA0FFA000, 10);
+            draw(*sub, tree);
         }
         catch (std::exception& err) {
             std::cerr << err.what() << std::endl;
