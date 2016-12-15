@@ -33,9 +33,10 @@ CXXFLAGS = -MMD -g $(OPTIMIZATION) $(PROFILE) -fPIC -std=$(STD) $(WEVERYTHING) $
 LDFLAGS = $(OPTIMIZATION) $(PROFILE)
 
 LIB_DIR = $(ACMACSD_ROOT)/lib
-SIGP_LDLIBS = -L$(LIB_DIR) -lacmacsbase -lseqdb -lhidb $$(pkg-config --libs cairo) $$(pkg-config --libs liblzma) $(PYTHON_LD_LIB)
+ACMACSD_LIBS = -L$(LIB_DIR) -lacmacsbase -lseqdb -lhidb -llocationdb
+SIGP_LDLIBS = $(ACMACSD_LIBS) $$(pkg-config --libs cairo) $$(pkg-config --libs liblzma) $(PYTHON_LD_LIB)
 TEST_CAIRO_LDLIBS = -L$(LIB_DIR) -lacmacsbase $$(pkg-config --libs cairo)
-TEST_DRAW_TREE_LDLIBS = -L$(LIB_DIR) -lacmacsbase -lseqdb -lhidb $$(pkg-config --libs cairo) $$(pkg-config --libs liblzma)
+TEST_DRAW_TREE_LDLIBS = $(ACMACSD_LIBS) $$(pkg-config --libs cairo) $$(pkg-config --libs liblzma)
 
 PYTHON_VERSION = $(shell python3 -c 'import sys; print("{0.major}.{0.minor}".format(sys.version_info))')
 PYTHON_CONFIG = python$(PYTHON_VERSION)-config
