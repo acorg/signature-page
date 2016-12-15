@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include "tree-draw.hh"
 #include "tree.hh"
 #include "tree-iterate.hh"
@@ -12,8 +14,8 @@ void TreeDraw::prepare()
     set_line_no();
     set_top_bottom();
     const auto canvas_size = mSurface.size();
-    mHorizontalStep = canvas_size.width / mTree.width(); // * 0.9;
-    mVerticalStep = canvas_size.height / mTree.height(); // + 2); // +2 to add space at the top and bottom
+    mHorizontalStep = canvas_size.width / mTree.width();
+    mVerticalStep = canvas_size.height / (mTree.height() + 2); // +2 to add space at the top and bottom
 
 } // TreeDraw::prepare
 
@@ -23,9 +25,9 @@ void TreeDraw::draw()
 {
     mLineWidth = mSettings.force_line_width ? mSettings.line_width : std::min(mSettings.line_width, mVerticalStep * 0.5);
     std::cout << "Tree line width: " << mLineWidth << "  Settings: " << mSettings.line_width << "  vertical_step/2: " << mVerticalStep * 0.5 << std::endl;
-    set_label_scale();
+    fit_labels_into_viewport();
 
-    draw_node(mTree, Location{mLineWidth / 2, (mLabelHeight + mLineWidth) / 2}, mSettings.root_edge);
+    draw_node(mTree, Location{mLineWidth / 2, 0}, mSettings.root_edge);
 
     // mark_nodes(aSurface);
 
@@ -57,7 +59,7 @@ void TreeDraw::hide_leaves()
 
 void TreeDraw::set_line_no()
 {
-    size_t current_line = 0;
+    size_t current_line = 1;    // line of the first node is 1, we have 1 line space at the top and bottom of the tree
     auto set_line_no = [&current_line](Node& aNode) {
         current_line += aNode.draw.vertical_gap_before;
         if (aNode.draw.shown) {
@@ -92,29 +94,47 @@ void TreeDraw::set_top_bottom()
 
 // ----------------------------------------------------------------------
 
-void TreeDraw::set_label_scale()
+void TreeDraw::calculate_name_offset()
 {
-    // const double width = mSurface.size().width;
-    // mLabelScale = 1.0;
-    mFontSize = mVerticalStep; // * mLabelScale;
-
-      // $$$
-    // auto adjust_font_size = [this](Node& node) {
-    // };
-    // tree::iterate_leaf(mTree, adjust_font_size);
-
-    // mWidth = tree_width(aSurface, aTree, aSettings);
-    // for (int i = 0; (mLabelScale * mVerticalStep) > 1.0 && mWidth > aViewport.size.width; ++i) {
-    //     mLabelScale *= 0.95;
-    //     mWidth = tree_width(aSurface, aTree, aSettings, aSettings.root_edge);
-    //       // std::cerr << i << " label scale: " << mLabelScale << "  width:" << mWidth << " right:" << tree_right_margin << std::endl;
-    // }
-
     const auto tsize = mSurface.text_size("W", mFontSize, mSettings.label_style);
     mNameOffset  = mSettings.name_offset * tsize.width;
-    mLabelHeight = tsize.height;
+      // mLabelHeight = tsize.height;
 
-} // TreeDraw::set_label_scale
+} // TreeDraw::calculate_name_offset
+
+// ----------------------------------------------------------------------
+
+void TreeDraw::fit_labels_into_viewport()
+{
+    mFontSize = mVerticalStep;
+
+    const double canvas_width = mSurface.size().width;
+
+    for (double label_offset = max_label_offset(); label_offset > canvas_width; label_offset = max_label_offset()) {
+        const double scale = std::min(canvas_width / label_offset, 0.99); // to avoid too much looping
+          // std::cerr << "Canvas:" << canvas_width << " label_right:" << label_offset << " scale: " << scale << std::endl;
+        mHorizontalStep *= scale;
+        mFontSize *= scale;
+    }
+
+} // TreeDraw::fit_labels_into_viewport
+
+// ----------------------------------------------------------------------
+
+double TreeDraw::max_label_offset()
+{
+    calculate_name_offset();
+
+    double max_label_origin = 0, max_label_right = 0;
+    auto label_offset = [&](Node& node) {
+        const double label_origin = node.data.cumulative_edge_length * mHorizontalStep + mNameOffset;
+        max_label_origin = std::max(max_label_origin, label_origin);
+        max_label_right = std::max(max_label_right, label_origin + this->text_width(node.display_name()));
+    };
+    tree::iterate_leaf(mTree, label_offset);
+    return max_label_right; // std::make_pair(max_label_origin, max_label_right);
+
+} // TreeDraw::max_label_offset
 
 // ----------------------------------------------------------------------
 
@@ -143,7 +163,7 @@ void TreeDraw::draw_node(const Node& aNode, const Location& aOrigin, double aEdg
               // if (!aNode.name.empty() && aNode.number_strains > aNumberStrainsThreshold) {
               //     show_branch_annotation(aSurface, aNode.branch_id, aNode.name, aLeft, right, y);
               // }
-            mSurface.line({right, aOrigin.y + mVerticalStep * aNode.draw.top}, {right, aOrigin.y + mVerticalStep * aNode.draw.bottom}, mSettings.line_color, mLineWidth);
+            mSurface.line({right, aOrigin.y + mVerticalStep * aNode.draw.top}, {right, aOrigin.y + mVerticalStep * aNode.draw.bottom}, mSettings.line_color, mLineWidth, Surface::LineCap::Square);
               // draw_aa_transition(aNode, aSurface, viewport, aSettings.aa_transition);
             for (auto& node: aNode.subtree) {
                 draw_node(node, {right, aOrigin.y});
