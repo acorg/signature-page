@@ -30,10 +30,14 @@ void TreeDraw::make_coloring()
         mColoring = std::unique_ptr<Coloring>(new ColoringBlack());
     else if (mSettings.color_nodes == "continent")
         mColoring = std::unique_ptr<Coloring>(new ColoringByContinent());
-    // else if (mSettings.color_nodes == "pos")
-    //     mColoring = std::unique_ptr<Coloring>(new ColoringByPos());
-    else
-        throw std::runtime_error("Unrecognized TreeDrawSettings.color_nodes: " + mSettings.color_nodes);
+    else {
+        try {
+            mColoring = std::unique_ptr<Coloring>(new ColoringByPos(std::stoul(mSettings.color_nodes)));
+        }
+        catch (std::exception&) {
+            throw std::runtime_error("Unrecognized TreeDrawSettings.color_nodes: " + mSettings.color_nodes);
+        }
+    }
 
 } // TreeDraw::make_coloring
 

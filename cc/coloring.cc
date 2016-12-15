@@ -89,18 +89,21 @@ Color ColoringByContinent::color(const Node& aNode) const
 
 Color ColoringByPos::color(const Node& aNode) const
 {
-    Color c(0);
-    // if (aNode.aa.size() > mPos) {
-    //     const char aa = aNode.aa[mPos];
-    //     try {
-    //         c = mUsed.at(aa);
-    //     }
-    //     catch (std::out_of_range&) {
-    //         if (aa != 'X')      // X is always black
-    //             c = Color::DistinctColors[mColorsUsed++];
-    //         mUsed[aa] = c;
-    //     }
-    // }
+    Color c("pink");
+    const auto amino_acids = aNode.data.amino_acids();
+    std::cerr << aNode.seq_id << " " << mPos << " " << amino_acids.size() << std::endl;
+    if (amino_acids.size() > mPos) {
+        const char aa = amino_acids[mPos];
+        std::cerr << aa << std::endl;
+        // try {
+        //     c = mUsed.at(aa);
+        // }
+        // catch (std::out_of_range&) {
+        //     if (aa != 'X')      // X is always black
+        //         c = Color::DistinctColors[mColorsUsed++];
+        //     mUsed[aa] = c;
+        // }
+    }
     return c;
 
 } // ColoringByPos::color

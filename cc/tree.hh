@@ -20,7 +20,7 @@ class NodeData
         {}
 
     inline std::string date() const { return mSeqdbEntrySeq ? mSeqdbEntrySeq.entry().date() : std::string{}; }
-
+    inline std::string amino_acids() const { return mSeqdbEntrySeq ? mSeqdbEntrySeq.seq().amino_acids(true) : std::string{}; }
     inline void assign(seqdb::SeqdbEntrySeq&& entry_seq) { mSeqdbEntrySeq.assign(std::forward<seqdb::SeqdbEntrySeq>(entry_seq)); }
 
     size_t number_strains;

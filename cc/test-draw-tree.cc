@@ -58,34 +58,33 @@ int get_args(int argc, const char *argv[], std::string& aTreeFilename, std::stri
     desc.add_options()
             ("help", "Print help messages")
             ("seqdb", value<std::string>(&aSeqdbFilename)/* ->required() */, "path to seqdb")
+            ("tree", value<std::string>(&aTreeFilename)->required(), "path to tree to draw")
+            ("output,o", value<std::string>(&aOutputPdf)->required(), "output pdf")
             ;
     positional_options_description pos_opt;
-    pos_opt.add("tree.json", 1);
-    pos_opt.add("output.pdf", 1);
+    pos_opt.add("tree", 1);
+    pos_opt.add("output", 1);
 
     variables_map vm;
     try {
         store(command_line_parser(argc, argv).options(desc).positional(pos_opt).run(), vm);
         if (vm.count("help")) {
-            std::cout << desc << std::endl;
-            return 0;
+            std::cerr << desc << std::endl;
+            return 1;
         }
         notify(vm);
-        aTreeFilename = vm["tree.json"].as<std::string>();
-        aOutputPdf = vm["output.pdf"].as<std::string>();
-        aSeqdbFilename = vm["seqdb"].as<std::string>();
         return 0;
     }
     catch(required_option& e) {
         std::cerr << "ERROR: " << e.what() << std::endl;
         std::cerr << desc << std::endl;
           // std::cerr << "Usage: " << argv[0] << " <tree.json> <output.pdf>" << std::endl;
-        return 1;
+        return 2;
     }
     catch(error& e) {
         std::cerr << "ERROR: " << e.what() << std::endl;
         std::cerr << desc << std::endl;
-        return 2;
+        return 3;
     }
 
 } // get_args
