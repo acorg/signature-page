@@ -12,22 +12,6 @@ SurfaceCairo::~SurfaceCairo()
 
 // ----------------------------------------------------------------------
 
-Size SurfaceCairo::size() const
-{
-    return {canvas_width, canvas_width * mAspect};
-
-} // SurfaceCairo::size
-
-// ----------------------------------------------------------------------
-
-SurfaceCairo* SurfaceCairo::clip(const Location& aOffset, double aScale, double aAspect)
-{
-    return new SurfaceCairo(mContext, mOffset + aOffset, mScale * aScale, mAspect * aAspect);
-
-} // SurfaceCairo::clip
-
-// ----------------------------------------------------------------------
-
 void SurfaceCairo::line(const Location& a, const Location& b, Color aColor, double aWidth, LineCap aLineCap)
 {
     context(*this)
@@ -211,15 +195,14 @@ Location SurfaceCairo::arrow_head(const Location& a, double angle, double sign, 
 
 void SurfaceCairo::grid(double aStep, Color aLineColor, double aLineWidth)
 {
-    const auto canvas_size = size();
     std::vector<Location> lines;
-    for (double x = 0; x < canvas_size.width; x += aStep) {
+    for (double x = 0; x < width(); x += aStep) {
         lines.emplace_back(x, 0);
-        lines.emplace_back(x, canvas_size.height);
+        lines.emplace_back(x, height());
     }
-    for (double y = 0; y < canvas_size.height; y += aStep) {
+    for (double y = 0; y < height(); y += aStep) {
         lines.emplace_back(0, y);
-        lines.emplace_back(canvas_size.width, y);
+        lines.emplace_back(width(), y);
     }
 
     context(*this)
@@ -300,8 +283,8 @@ PdfCairo::PdfCairo(std::string aFilename, double aWidth, double aHeight)
     auto surface = cairo_pdf_surface_create(aFilename.c_str(), aWidth, aHeight);
     mContext = cairo_create(surface);
     cairo_surface_destroy(surface);
-    mScale = aWidth / canvas_width;
-    mAspect = aHeight / aWidth;
+    mScale = aWidth / default_canvas_width;
+    mSize.set(default_canvas_width, aHeight / mScale);
 
 } // PdfCairo::PdfCairo
 

@@ -10,9 +10,11 @@ class SurfaceCairo : public Surface
  public:
     virtual ~SurfaceCairo();
 
-    virtual Size size() const;
+    virtual inline Size size() const { return mSize; }
+    virtual inline double width() const { return mSize.width; }
+    virtual inline double height() const { return mSize.height; }
 
-    virtual SurfaceCairo* clip(const Location& aOffset, double aScale, double aAspect);
+    virtual inline SurfaceCairo* clip(const Location& aOffset, const Size& aSize, double aScale) { return new SurfaceCairo(mContext, mOffset + aOffset, aSize, mScale * aScale); }
 
     virtual void line(const Location& a, const Location& b, Color aColor, double aWidth, LineCap aLineCap = LineCap::Butt);
     virtual void rectangle(const Location& a, const Size& s, Color aColor, double aWidth, LineCap aLineCap = LineCap::Butt);
@@ -37,12 +39,12 @@ class SurfaceCairo : public Surface
  protected:
     cairo_t* mContext;
     Location mOffset;
+    Size mSize;
     double mScale;
-    double mAspect;
 
-    inline SurfaceCairo() : mContext(nullptr), mScale(1.0), mAspect(1.0) {}
-    inline SurfaceCairo(cairo_t* aContext, const Location& aOffset, double aScale, double aAspect)
-        : mContext(aContext), mOffset(aOffset), mScale(aScale), mAspect(aAspect)
+    inline SurfaceCairo() : mContext(nullptr), mScale(1.0) {}
+    inline SurfaceCairo(cairo_t* aContext, const Location& aOffset, const Size& aSize, double aScale)
+        : mContext(aContext), mOffset(aOffset), mSize(aSize), mScale(aScale)
         {
             cairo_reference(mContext);
         }

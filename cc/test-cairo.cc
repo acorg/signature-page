@@ -16,7 +16,7 @@ int main(int /*argc*/, const char */*argv*/[])
     try {
         PdfCairo surface("/tmp/tc.pdf", 500, 850);
         draw(surface);
-        std::unique_ptr<Surface> sub{surface.clip({100, 500}, 0.3, 1.0)};
+        std::unique_ptr<Surface> sub{surface.clip({100, 500}, surface.size(), 0.3)};
         draw(*sub);
     }
     catch (std::exception& err) {
