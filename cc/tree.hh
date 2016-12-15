@@ -69,7 +69,7 @@ class Node
 
     inline bool is_leaf() const { return subtree.empty() && !seq_id.empty(); }
     inline double middle() const { return is_leaf() ? static_cast<double>(draw.line_no) : ((draw.top + draw.bottom) / 2.0); }
-    inline std::string display_name() const { return seq_id; }
+    std::string display_name() const;
 
     //   // leaf part
     //   // Date date;

@@ -115,6 +115,14 @@ void Node::compute_cumulative_edge_length(double initial_edge_length, double& ma
 
 // ----------------------------------------------------------------------
 
+std::string Node::display_name() const
+{
+    return string::replace(name_decode(seq_id), "__", " ");
+
+} // Node::display_name
+
+// ----------------------------------------------------------------------
+
 
 // ----------------------------------------------------------------------
 /// Local Variables:
