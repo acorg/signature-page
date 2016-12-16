@@ -14,6 +14,7 @@
 #include "tree.hh"
 #include "tree-export.hh"
 #include "tree-draw.hh"
+#include "legend.hh"
 
 // ----------------------------------------------------------------------
 
@@ -35,9 +36,8 @@ int main(int argc, const char *argv[])
             read(tree, locdb, seqdb, tree_filename, seqdb_filename);
             PdfCairo surface(output_filename, 500, 850);
             surface.background("white");
-              // surface.rectangle({50, 50}, {50, 50}, "black", 5);
-            const double offset = 50;
-            const double scale = (surface.width() - offset * 2) / surface.width();
+            const double offset = 20;
+            const double scale = (surface.width() - offset * 4) / surface.width();
             std::cout << "Sub scale:" << scale << std::endl;
             std::unique_ptr<Surface> sub{surface.subsurface({offset, offset / surface.aspect()}, surface.size(), scale, false)};
             sub->border(0xA0FFA000, 10);
@@ -114,6 +114,12 @@ void draw(Surface& aSurface, Tree& tree)
     TreeDraw tree_draw{aSurface, tree, settings};
     tree_draw.prepare();
     tree_draw.draw();
+    std::unique_ptr<Legend> legend{tree_draw.coloring_legend()};
+    if (legend) {
+        std::unique_ptr<Surface> legend_surface{aSurface.subsurface({300, 100}, legend->size(), 0.4, false)};
+        legend->draw(*legend_surface);
+        legend_surface->border("red", 10);
+    }
 }
 
 // ----------------------------------------------------------------------

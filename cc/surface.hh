@@ -63,7 +63,9 @@ class Surface
     virtual void triangle_filled(const Location& aCenter, double aSide, double aAspect, double aAngle, Color aOutlineColor, double aOutlineWidth, Color aFillColor, LineCap aLineCap = LineCap::Butt) = 0;
 
     virtual void path_outline(std::vector<Location>::const_iterator first, std::vector<Location>::const_iterator last, Color aOutlineColor, double aOutlineWidth, bool aClose = false, LineCap aLineCap = LineCap::Butt) = 0;
+    virtual void path_outline(const double* first, const double* last, Color aOutlineColor, double aOutlineWidth, bool aClose = false, LineCap aLineCap = LineCap::Butt) = 0;
     virtual void path_fill(std::vector<Location>::const_iterator first, std::vector<Location>::const_iterator last, Color aFillColor) = 0;
+    virtual void path_fill(const double* first, const double* last, Color aFillColor) = 0;
 
     virtual void double_arrow(const Location& a, const Location& b, Color aColor, double aLineWidth, double aArrowWidth) = 0;
     virtual void grid(double aStep, Color aLineColor, double aLineWidth) = 0;

@@ -212,6 +212,14 @@ void TreeDraw::draw_node(const Node& aNode, const Location& aOrigin, double aEdg
 
 // ----------------------------------------------------------------------
 
+Legend* TreeDraw::coloring_legend() const
+{
+    return mColoring ? mColoring->legend() : nullptr;
+
+} // TreeDraw::coloring_legend
+
+// ----------------------------------------------------------------------
+
 
 // ----------------------------------------------------------------------
 /// Local Variables:

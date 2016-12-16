@@ -14,7 +14,10 @@ class SurfaceCairo : public Surface
     virtual inline double width() const { return mSize.width; }
     virtual inline double height() const { return mSize.height; }
 
-    virtual inline SurfaceCairo* subsurface(const Location& aOffset, const Size& aSize, double aScale, bool aClip) { return new SurfaceCairo(mContext, mOffset + aOffset, aSize, mScale * aScale, aClip); }
+    virtual inline SurfaceCairo* subsurface(const Location& aOffset, const Size& aSize, double aScale, bool aClip)
+        {
+            return new SurfaceCairo(mContext, mOffset + aOffset, aSize, mScale * aScale, aClip);
+        }
 
     virtual void line(const Location& a, const Location& b, Color aColor, double aWidth, LineCap aLineCap = LineCap::Butt);
     virtual void rectangle(const Location& a, const Size& s, Color aColor, double aWidth, LineCap aLineCap = LineCap::Butt);
@@ -26,7 +29,9 @@ class SurfaceCairo : public Surface
     virtual void triangle_filled(const Location& aCenter, double aSide, double aAspect, double aAngle, Color aOutlineColor, double aOutlineWidth, Color aFillColor, LineCap aLineCap = LineCap::Butt);
 
     virtual void path_outline(std::vector<Location>::const_iterator first, std::vector<Location>::const_iterator last, Color aOutlineColor, double aOutlineWidth, bool aClose = false, LineCap aLineCap = LineCap::Butt);
+    virtual void path_outline(const double* first, const double* last, Color aOutlineColor, double aOutlineWidth, bool aClose = false, LineCap aLineCap = LineCap::Butt);
     virtual void path_fill(std::vector<Location>::const_iterator first, std::vector<Location>::const_iterator last, Color aFillColor);
+    virtual void path_fill(const double* first, const double* last, Color aFillColor);
 
     virtual void double_arrow(const Location& a, const Location& b, Color aColor, double aLineWidth, double aArrowWidth);
     virtual void grid(double aStep, Color aLineColor, double aLineWidth);
@@ -96,6 +101,31 @@ class SurfaceCairo : public Surface
                         move_to({std::abs(first->x), std::abs(first->y)});
                     else
                         line_to(*first);
+                }
+                return *this;
+            }
+
+          // the same as above but with raw data
+        inline context& move_to_line_to(const double* first, const double* last)
+            {
+                for ( ; first != last; first += 2) {
+                    if (*first < 0)
+                        move_to({std::abs(*first), std::abs(*(first+1))});
+                    else
+                        line_to({*first, *(first+1)});
+                }
+                return *this;
+            }
+
+        inline context& close_move_to_line_to(const double* first, const double* last)
+            {
+                for ( ; first != last; first += 2) {
+                    if (*first < 0) {
+                        close_path();
+                        move_to({std::abs(*first), std::abs(*(first+1))});
+                    }
+                    else
+                        line_to({*first, *(first+1)});
                 }
                 return *this;
             }

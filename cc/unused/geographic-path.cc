@@ -3,7 +3,7 @@
 
 #include <map>
 
-#include "surface.hh"
+#include "geographic-path.hh"
 
 #ifdef __clang__
 #pragma GCC diagnostic push
@@ -11,7 +11,6 @@
 #pragma GCC diagnostic ignored "-Wexit-time-destructors"
 #endif
 
-constexpr const double geographic_map_size[2] = {1261, 632};
 // constexpr const double geographic_map_offset[2] = {-41.2, 0.4};
 // constexpr const double geographic_map_bounds[4] = {-168.237905, 90, 191.762094, -90};
 
@@ -28,7 +27,7 @@ constexpr const double geographic_map_size[2] = {1261, 632};
 // http://commons.wikimedia.org/wiki/File:World_map_with_equator.svg
 // World_map_with_equator.svg
 
-static Path geographic_map_path {
+Path geographic_map::path = {
 {-431.67899999999997, 27.854009999999995}, {431.67899999999997, 27.854009999999995}, {430.79999999999995, 27.504010000000001}, {428.16499999999996, 27.152009999999997}, {425.52999999999997, 26.799009999999996}, {422.48499999999996, 25.862009999999998}, {423.12799999999999, 25.804009999999998}, {428.10699999999997, 25.745010000000001}, {431.67899999999997, 27.854009999999995},
 {-408.608, 28.206009999999999}, {408.608, 28.206009999999999}, {403.80500000000001, 27.738009999999996}, {403.27999999999997, 27.679009999999998}, {403.92499999999995, 26.918009999999995}, {405.44599999999997, 27.094009999999997}, {405.74000000000001, 27.327010000000001}, {409.60399999999998, 27.914009999999998}, {408.608, 28.206009999999999},
 {-793.72899999999993, 29.026009999999999}, {793.72899999999993, 29.026009999999999}, {794.54899999999998, 28.909009999999995}, {799.05700000000002, 28.732009999999995}, {798.70699999999999, 28.851009999999995}, {793.72899999999993, 29.026009999999999},
@@ -2595,6 +2594,12 @@ static std::map<std::string, Path> continent_corners {
     {"SOUTH-AMERICA", {{300, 280}, {470, 520}}}
 };
 
+#ifdef __clang__
+#pragma GCC diagnostic pop
+#endif
+
+// ----------------------------------------------------------------------
+
 // static Path continent_path_sq(std::string aContinent)
 // {
 //     Path path;
@@ -2607,12 +2612,14 @@ static std::map<std::string, Path> continent_corners {
 //     return path;
 // }
 
-static Path continent_path(std::string aContinent)
+// ----------------------------------------------------------------------
+
+Path geographic_map::continent_path(std::string aContinent)
 {
     const Path& corners = continent_corners[aContinent];
     Path path;
     bool reset = false;
-    for (const auto& element: geographic_map_path) {
+    for (const auto& element: path) {
         const auto x = std::abs(element.x), y = std::abs(element.y);
         if (x >= corners[0].x && x <= corners[1].x && y >= corners[0].y && y <= corners[1].y) {
             Location e = element;
@@ -2627,12 +2634,6 @@ static Path continent_path(std::string aContinent)
     }
     return path;
 }
-
-// ----------------------------------------------------------------------
-
-#ifdef __clang__
-#pragma GCC diagnostic pop
-#endif
 
 //======================================================================
 // Local Variables:

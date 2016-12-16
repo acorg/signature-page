@@ -1,5 +1,12 @@
 #include "coloring.hh"
 #include "tree.hh"
+#include "continent-map.hh"
+
+// ----------------------------------------------------------------------
+
+const char* const ColoringByContinent::ContinentLabels[9] = {
+    "EUROPE", "CENTRAL-AMERICA", "MIDDLE-EAST", "NORTH-AMERICA", "AFRICA", "ASIA", "RUSSIA", "AUSTRALIA-OCEANIA", "SOUTH-AMERICA" //, "ANTARCTICA"
+};
 
 // ----------------------------------------------------------------------
 
@@ -71,19 +78,19 @@ Color ColoringByContinent::color(const Node& aNode) const
 
 // }; // class ColoringByContinentLegend
 
-// // ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
 
-// Legend* ColoringByContinent::legend(const SettingsLegend& aSettings) const
-// {
-//     Legend* legend;
-//     if (aSettings.geographic_map)
-//           // legend = new ColoringByGeographyMapLegend(*this);
-//         legend = new ColoringByContinentMapLegend(*this);
-//     else
-//         legend = new ColoringByContinentLegend(*this);
-//     return legend;
+Legend* ColoringByContinent::legend() const
+{
+    return new ColoringByContinentMapLegend(*this);
+    // Legend* legend;
+    // if (aSettings.geographic_map)
+    //       // legend = new ColoringByGeographyMapLegend(*this);
+    // else
+    //     legend = new ColoringByContinentLegend(*this);
+    // return legend;
 
-// } // ColoringByContinent::legend
+} // ColoringByContinent::legend
 
 // ----------------------------------------------------------------------
 
@@ -152,11 +159,11 @@ void ColoringByPos::report() const
 
 // }; // class ColoringByContinentLegend
 
-// Legend* ColoringByPos::legend(const SettingsLegend& /*aSettings*/) const
-// {
-//     return new ColoringByPosLegend(*this);
+Legend* ColoringByPos::legend() const
+{
+    return nullptr; // new ColoringByPosLegend(*this);
 
-// } // ColoringByPos::legend
+} // ColoringByPos::legend
 
 // ----------------------------------------------------------------------
 /// Local Variables:

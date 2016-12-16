@@ -7,7 +7,7 @@ MAKEFLAGS = -w
 # ----------------------------------------------------------------------
 
 DRAW_SOURCES = surface-cairo.cc
-SIGNATURE_PAGE_SOURCES = tree.cc tree-export.cc tree-draw.cc coloring.cc geographic-map.cc $(DRAW_SOURCES)
+SIGNATURE_PAGE_SOURCES = tree.cc tree-export.cc tree-draw.cc coloring.cc continent-map.cc continent-path.cc $(DRAW_SOURCES)
 SIGNATURE_PAGE_CC_PY_SOURCES = py.cc $(SIGNATURE_PAGE_SOURCES)
 TEST_CAIRO_SOURCES = test-cairo.cc $(DRAW_SOURCES)
 TEST_CAIRO_FONTS_SOURCES = test-cairo-fonts.cc $(DRAW_SOURCES)

@@ -1,19 +1,17 @@
 #pragma once
 
+#include <utility>
+#include <string>
+
 #include "surface.hh"
 
 // ----------------------------------------------------------------------
 
-class Legend
-{
- public:
-    inline Legend() {}
-    virtual inline ~Legend() = default;
+constexpr const double continent_map_size[2] = {686.475, 346.750};
 
-    virtual void draw(Surface& aSurface) const = 0;
-    virtual Size size() const = 0;
+// extern std::map<std::string, Path> continent_map_path;
 
-}; // class Legend
+std::pair<const double*, const double*> continent_map_path(std::string continent);
 
 // ----------------------------------------------------------------------
 /// Local Variables:

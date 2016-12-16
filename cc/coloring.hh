@@ -17,7 +17,7 @@ class Coloring
  public:
     virtual ~Coloring() = default;
     virtual Color color(const Node&) const = 0;
-      // virtual Legend* legend(const SettingsLegend& aSettings) const = 0;
+    virtual Legend* legend() const = 0;
     virtual inline void report() const {}
 };
 
@@ -27,7 +27,7 @@ class ColoringBlack : public Coloring
 {
  public:
     virtual inline Color color(const Node&) const { return 0; }
-      // virtual Legend* legend(const SettingsLegend& /*aSettings*/) const { return nullptr; }
+    virtual Legend* legend() const { return nullptr; }
 };
 
 // ----------------------------------------------------------------------
@@ -46,10 +46,9 @@ class ColoringByContinent : public Coloring
         }
 
     virtual Color color(const Node& aNode) const;
+    virtual Legend* legend() const;
 
-      // virtual Legend* legend(const SettingsLegend& aSettings) const;
-
-    constexpr static const char* const ContinentLabels[] = {"EUROPE", "CENTRAL-AMERICA", "MIDDLE-EAST", "NORTH-AMERICA", "AFRICA", "ASIA", "RUSSIA", "AUSTRALIA-OCEANIA", "SOUTH-AMERICA"};
+    static const char* const ContinentLabels[9];
 
  private:
     static const std::map<std::string, Color> mContinents;
@@ -66,7 +65,7 @@ class ColoringByPos : public Coloring
     inline ColoringByPos(size_t aPos) : mPos(aPos) {}
 
     virtual Color color(const Node& aNode) const;
-    // virtual Legend* legend(const SettingsLegend& aSettings) const;
+    virtual Legend* legend() const;
     size_t pos() const { return mPos; }
 
     virtual void report() const;

@@ -15,6 +15,7 @@ class ColoringByGeographyMapLegend : public Legend
     inline ColoringByGeographyMapLegend(const ColoringByContinent& aColoring) : Legend(), mColoring(aColoring) {}
 
     virtual void draw(Surface& aSurface) const;
+    virtual Size size() const;
 
  private:
     const ColoringByContinent& mColoring;

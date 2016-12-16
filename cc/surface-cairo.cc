@@ -141,12 +141,41 @@ void SurfaceCairo::path_outline(std::vector<Location>::const_iterator first, std
 
 // ----------------------------------------------------------------------
 
+void SurfaceCairo::path_outline(const double* first, const double* last, Color aOutlineColor, double aOutlineWidth, bool aClose, LineCap aLineCap)
+{
+    context(*this)
+            .new_path()
+            .set_line_cap(aLineCap)
+            .set_line_join(LineJoin::Miter)
+            .set_line_width(aOutlineWidth)
+            .set_source_rgba(aOutlineColor)
+            .move_to_line_to(first, last)
+            .close_path_if(aClose)
+            .stroke();
+
+} // SurfaceCairo::path_outline
+
+// ----------------------------------------------------------------------
+
 void SurfaceCairo::path_fill(std::vector<Location>::const_iterator first, std::vector<Location>::const_iterator last, Color aFillColor)
 {
     context(*this)
             .new_path()
             .set_source_rgba(aFillColor)
             .move_to_line_to(first, last)
+            .close_path()
+            .fill();
+
+} // SurfaceCairo::path_fill
+
+// ----------------------------------------------------------------------
+
+void SurfaceCairo::path_fill(const double* first, const double* last, Color aFillColor)
+{
+    context(*this)
+            .new_path()
+            .set_source_rgba(aFillColor)
+            .close_move_to_line_to(first, last)
             .close_path()
             .fill();
 
@@ -262,8 +291,8 @@ SurfaceCairo::context::context(SurfaceCairo& aSurface)
 {
     const auto canvas_size = aSurface.size();
     cairo_save(mContext);
-    scale(aSurface.mScale, aSurface.mScale);
     translate(aSurface.mOffset);
+    scale(aSurface.mScale, aSurface.mScale);
     if (aSurface.mClip) {
         new_path();
         move_to();

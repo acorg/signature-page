@@ -4,16 +4,13 @@
 
 // ----------------------------------------------------------------------
 
-class Legend
+namespace geographic_map
 {
- public:
-    inline Legend() {}
-    virtual inline ~Legend() = default;
+    constexpr const double size[2] = {1261, 632};
+    extern Path path;
+    Path continent_path(std::string aContinent);
 
-    virtual void draw(Surface& aSurface) const = 0;
-    virtual Size size() const = 0;
-
-}; // class Legend
+} // namespace geographic_map
 
 // ----------------------------------------------------------------------
 /// Local Variables:
