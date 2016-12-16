@@ -91,22 +91,33 @@ Color ColoringByPos::color(const Node& aNode) const
 {
     Color c("pink");
     const auto amino_acids = aNode.data.amino_acids();
-    std::cerr << aNode.seq_id << " " << mPos << " " << amino_acids.size() << std::endl;
     if (amino_acids.size() > mPos) {
         const char aa = amino_acids[mPos];
-        std::cerr << aa << std::endl;
-        // try {
-        //     c = mUsed.at(aa);
-        // }
-        // catch (std::out_of_range&) {
-        //     if (aa != 'X')      // X is always black
-        //         c = Color::DistinctColors[mColorsUsed++];
-        //     mUsed[aa] = c;
-        // }
+        try {
+            auto& cc = mUsed.at(aa);
+            ++cc.second;
+            c = cc.first;
+        }
+        catch (std::out_of_range&) {
+            if (aa != 'X')      // X is always black
+                c = Color::DistinctColors[mUsed.size()];
+            mUsed[aa] = std::make_pair(c, 1);
+        }
     }
     return c;
 
 } // ColoringByPos::color
+
+// ----------------------------------------------------------------------
+
+void ColoringByPos::report() const
+{
+    std::cout << "ColoringByPos: " << mUsed.size();
+    for (const auto& u: mUsed)
+        std::cout << " [" << u.first << ' ' << u.second.first << ' ' << u.second.second << ']';
+    std::cout << std::endl;
+
+} // ColoringByPos::report
 
 // ----------------------------------------------------------------------
 
@@ -124,7 +135,7 @@ Color ColoringByPos::color(const Node& aNode) const
 //             aSurface.text({x, y}, title, BLACK, aSettings.font_size, aSettings.style);
 //             x += (aSurface.text_size(title, aSettings.font_size, aSettings.style).width - label_size.width) / 2;
 //             y += label_size.height * aSettings.interline;
-//             for (auto& label_color: mColoring.aa_color()) {
+//             for (auto& label_color: mColoring.used_colors()) {
 //                 aSurface.text({x, y}, std::string(1, label_color.first), label_color.second, aSettings.font_size, aSettings.style);
 //                 y += label_size.height * aSettings.interline;
 //             }
@@ -133,7 +144,7 @@ Color ColoringByPos::color(const Node& aNode) const
 //     virtual Size size(Surface& aSurface, const SettingsLegend& aSettings) const
 //         {
 //             const auto label_size = aSurface.text_size("W", aSettings.font_size, aSettings.style);
-//             return {label_size.width, label_size.height * aSettings.interline * (mColoring.aa_color().size() + 1)};
+//             return {label_size.width, label_size.height * aSettings.interline * (mColoring.used_colors().size() + 1)};
 //         }
 
 //  private:

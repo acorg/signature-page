@@ -20,7 +20,7 @@ class TreeDrawSettings
  public:
     inline TreeDrawSettings()
         : hide_if_cumulative_edge_length_bigger_than(std::numeric_limits<double>::max()), force_line_width(false),
-          line_width(1), root_edge(0), line_color(0), name_offset(0.3), color_nodes("100") {}
+          line_width(1), root_edge(0), line_color(0), name_offset(0.3), color_nodes("172") {}
 
     std::string hide_isolated_before; // hide leaves isolated before the date (empty -> do not hide based on date)
     double hide_if_cumulative_edge_length_bigger_than; // hide long branches

@@ -64,6 +64,7 @@ void TreeDraw::draw()
     fit_labels_into_viewport();
 
     draw_node(mTree, Location{mLineWidth / 2, 0}, mSettings.root_edge);
+    mColoring->report();
 
     // mark_nodes(aSurface);
 

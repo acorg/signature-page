@@ -18,7 +18,7 @@
 // ----------------------------------------------------------------------
 
 int get_args(int argc, const char *argv[], std::string& aTreeFilename, std::string& aOutputPdf, std::string& aSeqdbFilename);
-void read(Tree& tree, std::string aTreeFilename, std::string aSeqdbFilename);
+void read(Tree& tree, LocDb& locdb, seqdb::Seqdb& seqdb, std::string aTreeFilename, std::string aSeqdbFilename);
 void draw(Surface& aSurface, Tree& tree);
 
 // ----------------------------------------------------------------------
@@ -29,8 +29,10 @@ int main(int argc, const char *argv[])
     int exit_code = get_args(argc, argv, tree_filename, output_filename, seqdb_filename);
     if (exit_code == 0) {
         try {
+            LocDb locdb;
+            seqdb::Seqdb seqdb;
             Tree tree;
-            read(tree, tree_filename, seqdb_filename);
+            read(tree, locdb, seqdb, tree_filename, seqdb_filename);
             PdfCairo surface(output_filename, 500, 850);
             surface.background("white");
               // surface.rectangle({50, 50}, {50, 50}, "black", 5);
@@ -91,14 +93,12 @@ int get_args(int argc, const char *argv[], std::string& aTreeFilename, std::stri
 
 // ----------------------------------------------------------------------
 
-void read(Tree& tree, std::string aTreeFilename, std::string aSeqdbFilename)
+void read(Tree& tree, LocDb& locdb, seqdb::Seqdb& seqdb, std::string aTreeFilename, std::string aSeqdbFilename)
 {
     tree_import(aTreeFilename, tree);
-    LocDb locdb;
     locdb.importFrom(std::getenv("ACMACSD_ROOT") + std::string("/data/locationdb.json.xz"));
     tree.set_continents(locdb);
     if (!aSeqdbFilename.empty()) {
-        seqdb::Seqdb seqdb;
         seqdb.load(aSeqdbFilename);
         tree.match_seqdb(seqdb);
     }
