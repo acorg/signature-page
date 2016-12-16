@@ -85,7 +85,7 @@ Legend* ColoringByContinent::legend() const
     return new ColoringByContinentMapLegend(*this);
     // Legend* legend;
     // if (aSettings.geographic_map)
-    //       // legend = new ColoringByGeographyMapLegend(*this);
+    //       // legend = new ColoringByContinentMapLegend(*this);
     // else
     //     legend = new ColoringByContinentLegend(*this);
     // return legend;

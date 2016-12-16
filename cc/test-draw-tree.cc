@@ -118,7 +118,7 @@ void draw(Surface& aSurface, Tree& tree)
     if (legend) {
         std::unique_ptr<Surface> legend_surface{aSurface.subsurface({300, 100}, legend->size(), 0.4, false)};
         legend->draw(*legend_surface);
-        legend_surface->border("red", 10);
+        // legend_surface->border("red", 10);
     }
 }
 
