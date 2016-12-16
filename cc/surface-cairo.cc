@@ -133,8 +133,7 @@ void SurfaceCairo::path_outline(std::vector<Location>::const_iterator first, std
             .set_line_join(LineJoin::Miter)
             .set_line_width(aOutlineWidth)
             .set_source_rgba(aOutlineColor)
-            .move_to(*first)
-            .lines_to(first + 1, last)
+            .move_to_line_to(first, last)
             .close_path_if(aClose)
             .stroke();
 
@@ -147,8 +146,7 @@ void SurfaceCairo::path_fill(std::vector<Location>::const_iterator first, std::v
     context(*this)
             .new_path()
             .set_source_rgba(aFillColor)
-            .move_to(*first)
-            .lines_to(first + 1, last)
+            .move_to_line_to(first, last)
             .close_path()
             .fill();
 
@@ -196,12 +194,12 @@ Location SurfaceCairo::arrow_head(const Location& a, double angle, double sign, 
 void SurfaceCairo::grid(double aStep, Color aLineColor, double aLineWidth)
 {
     std::vector<Location> lines;
-    for (double x = 0; x < width(); x += aStep) {
-        lines.emplace_back(x, 0);
+    for (double x = 1e-8; x < width(); x += aStep) {
+        lines.emplace_back(-x, 0);
         lines.emplace_back(x, height());
     }
-    for (double y = 0; y < height(); y += aStep) {
-        lines.emplace_back(0, y);
+    for (double y = 1e-8; y < height(); y += aStep) {
+        lines.emplace_back(-y, y);
         lines.emplace_back(width(), y);
     }
 

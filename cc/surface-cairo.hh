@@ -70,7 +70,6 @@ class SurfaceCairo : public Surface
         inline context& move_to(const Location& a) { cairo_move_to(mContext, a.x, a.y); return *this; }
         inline context& line_to(const Location& a) { cairo_line_to(mContext, a.x, a.y); return *this; }
         inline context& lines_to(std::vector<Location>::const_iterator first, std::vector<Location>::const_iterator last) { for ( ; first != last; ++first) { line_to(*first); } return *this; }
-        inline context& move_to_line_to(std::vector<Location>::const_iterator first, std::vector<Location>::const_iterator last) { for ( ; first != last; ++first) { move_to(*first); if (++first != last) line_to(*first); } return *this; }
         inline context& rectangle(const Location& a, const Size& s) { cairo_rectangle(mContext, a.x, a.y, s.width, s.height); return *this; }
         inline context& arc(const Location& a, double radius, double angle1, double angle2) { cairo_arc(mContext, a.x, a.y, radius, angle1, angle2); return *this; }
         inline context& circle(double radius) { cairo_arc(mContext, 0.0, 0.0, radius, 0.0, 2.0 * M_PI); return *this; }
@@ -88,6 +87,18 @@ class SurfaceCairo : public Surface
         inline context& prepare_for_text(double aSize, const TextStyle& aTextStyle) { cairo_select_font_face(mContext, aTextStyle.font_family().c_str(), cairo_font_slant(aTextStyle.slant()), cairo_font_weight(aTextStyle.weight())); cairo_set_font_size(mContext, aSize); return *this; }
         inline context& show_text(std::string aText) { cairo_show_text(mContext, aText.c_str()); return *this; }
         inline context& text_extents(std::string aText, cairo_text_extents_t& extents) { cairo_text_extents(mContext, aText.c_str(), &extents); return *this; }
+
+          // if Location::x is negative - move_to, else - path_to
+        inline context& move_to_line_to(std::vector<Location>::const_iterator first, std::vector<Location>::const_iterator last)
+            {
+                for ( ; first != last; ++first) {
+                    if (first->x < 0)
+                        move_to({std::abs(first->x), std::abs(first->y)});
+                    else
+                        line_to(*first);
+                }
+                return *this;
+            }
 
      private:
         cairo_t* mContext;

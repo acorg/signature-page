@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 #include "acmacs-base/color.hh"
 #include "size.hh"
 
@@ -29,6 +31,10 @@ class TextStyle
     // static Weight weight_from_string(weight, std::string source);
 
 }; // class TextStyle
+
+// ----------------------------------------------------------------------
+
+using Path = std::vector<Location>;
 
 // ----------------------------------------------------------------------
 
