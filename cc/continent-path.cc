@@ -3,6 +3,8 @@
 // Map data downloaded from http://freevectormaps.com and processed using /Users/eu/ac/results/eu/2016-0706-world-map/world-map-convert on 2016-07-07
 //======================================================================
 
+#include <stdexcept>
+
 #include "continent-path.hh"
 
 // ----------------------------------------------------------------------
