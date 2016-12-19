@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------
 
 void draw(Surface& aSurface);
+void draw1(Surface& aSurface);
 
 // ----------------------------------------------------------------------
 
@@ -16,9 +17,9 @@ int main(int /*argc*/, const char */*argv*/[])
     try {
         PdfCairo surface("/tmp/tc.pdf", 500, 850);
         draw(surface);
-        std::unique_ptr<Surface> sub1{surface.subsurface({20, 500}, surface.size(), 0.3, true)};
+        std::unique_ptr<Surface> sub1{surface.subsurface({surface.width() / 10.0, surface.height() / 10.0}, surface.size(), 0.5, true)};
         draw(*sub1);
-        std::unique_ptr<Surface> sub2{surface.subsurface({270, 550}, surface.size(), 0.2, false)};
+        std::unique_ptr<Surface> sub2{sub1->subsurface({100, 100}, surface.size(), 0.2, false)};
         draw(*sub2);
     }
     catch (std::exception& err) {
@@ -31,6 +32,21 @@ int main(int /*argc*/, const char */*argv*/[])
 // ----------------------------------------------------------------------
 
 void draw(Surface& aSurface)
+{
+    aSurface.background("white");
+    aSurface.border(0x80808080, 20);
+    const double width = aSurface.size().width;
+    const double height = aSurface.size().height;
+    for (double x = width / 10.0; x < width; x += width / 5.0) {
+        aSurface.line({x, height / 10}, {x + width / 10.0, height / 10}, "red", 10);
+    }
+    for (double y = height / 10.0; y < height; y += height / 5.0) {
+        aSurface.line({width / 10, y}, {width / 10.0, y + height / 10}, "red", 10);
+    }
+}
+// ----------------------------------------------------------------------
+
+void draw1(Surface& aSurface)
 {
     aSurface.background(0x40F0F0FF);
     aSurface.grid(200, "grey80", 5);
