@@ -14,9 +14,10 @@ class SurfaceCairo : public Surface
     virtual inline double width() const { return mSize.width; }
     virtual inline double height() const { return mSize.height; }
 
-    virtual inline SurfaceCairo* subsurface(const Location& aOffset, const Size& aSize, double aScale, bool aClip)
+    virtual inline Surface* subsurface(const Size& aOffset, const Size& aOuterSize, double aInnerWidth, bool aClip)
         {
-            return new SurfaceCairo(mContext, mOffset + aOffset, aSize, mScale * aScale, aClip);
+            const double scale = aOuterSize.width / aInnerWidth;
+            return new SurfaceCairo(this, mContext, aOffset, aOuterSize / scale, scale, aClip);
         }
 
     virtual void line(const Location& a, const Location& b, Color aColor, double aWidth, LineCap aLineCap = LineCap::Butt);
@@ -42,15 +43,16 @@ class SurfaceCairo : public Surface
     virtual Size text_size(std::string aText, double aSize, const TextStyle& aTextStyle = TextStyle(), double* x_bearing = nullptr);
 
  protected:
+    SurfaceCairo* mParent;
     cairo_t* mContext;
-    Location mOffset;
+    Size mOffset;
     Size mSize;
     double mScale;
     bool mClip;                 // force surface area clipping
 
-    inline SurfaceCairo() : mContext(nullptr), mScale(1.0) {}
-    inline SurfaceCairo(cairo_t* aContext, const Location& aOffset, const Size& aSize, double aScale, bool aClip)
-        : mContext(aContext), mOffset(aOffset), mSize(aSize), mScale(aScale), mClip(aClip)
+    inline SurfaceCairo() : mParent(nullptr), mContext(nullptr), mScale(1.0) {}
+    inline SurfaceCairo(SurfaceCairo* aParent, cairo_t* aContext, const Size& aOffset, const Size& aSize, double aScale, bool aClip)
+        : mParent(aParent), mContext(aContext), mOffset(aOffset), mSize(aSize), mScale(aScale), mClip(aClip)
         {
             cairo_reference(mContext);
         }
@@ -61,11 +63,7 @@ class SurfaceCairo : public Surface
     {
      public:
         context(SurfaceCairo& aSurface);
-        inline ~context()
-            {
-                cairo_restore(mContext);
-                cairo_destroy(mContext);
-            }
+        ~context();
 
         inline context& set_line_width(double aWidth) { cairo_set_line_width(mContext, aWidth); return *this; }
         inline context& set_source_rgba(Color aColor) { cairo_set_source_rgba(mContext, aColor.red(), aColor.green(), aColor.blue(), aColor.alpha()); return *this; }
@@ -82,9 +80,11 @@ class SurfaceCairo : public Surface
         inline context& stroke() { cairo_stroke(mContext); return *this; }
         inline context& fill() { cairo_fill(mContext); return *this; }
         inline context& fill_preserve() { cairo_fill_preserve(mContext); return *this; }
+        inline context& translate(const Size& a) { cairo_translate(mContext, a.width, a.height); return *this; }
         inline context& translate(const Location& a) { cairo_translate(mContext, a.x, a.y); return *this; }
         inline context& rotate(double aAngle) { cairo_rotate(mContext, aAngle); return *this; }
-        inline context& scale(double x, double y = 1.0) { cairo_scale(mContext, x, y); return *this; }
+        inline context& scale(double x, double y) { cairo_scale(mContext, x, y); return *this; }
+        inline context& scale(double x) { cairo_scale(mContext, x, x); return *this; }
         inline context& clip() { cairo_clip(mContext); return *this; }
         inline context& new_path() { cairo_new_path(mContext); return *this; }
         inline context& close_path() { cairo_close_path(mContext); return *this; }
@@ -131,6 +131,7 @@ class SurfaceCairo : public Surface
             }
 
      private:
+        context* mParent;
         cairo_t* mContext;
 
         inline cairo_line_cap_t cairo_line_cap(LineCap aLineCap) const

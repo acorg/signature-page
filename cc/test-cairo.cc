@@ -17,9 +17,9 @@ int main(int /*argc*/, const char */*argv*/[])
     try {
         PdfCairo surface("/tmp/tc.pdf", 500, 850);
         draw(surface);
-        std::unique_ptr<Surface> sub1{surface.subsurface({surface.width() / 10.0, surface.height() / 10.0}, surface.size(), 0.5, true)};
+        std::unique_ptr<Surface> sub1{surface.subsurface({surface.width() / 10.0, surface.width() / 10.0}, surface.size() / 2, surface.size().width, true)};
         draw(*sub1);
-        std::unique_ptr<Surface> sub2{sub1->subsurface({100, 100}, surface.size(), 0.2, false)};
+        std::unique_ptr<Surface> sub2{sub1->subsurface({surface.width() / 10.0, surface.width() / 10.0}, surface.size() / 2, surface.size().width, false)};
         draw(*sub2);
     }
     catch (std::exception& err) {
@@ -33,16 +33,18 @@ int main(int /*argc*/, const char */*argv*/[])
 
 void draw(Surface& aSurface)
 {
-    aSurface.background("white");
-    aSurface.border(0x80808080, 20);
+      //aSurface.background("white");
+    aSurface.border(0xC0808080, 20);
     const double width = aSurface.size().width;
+    const double step = width / 10.0;
     const double height = aSurface.size().height;
-    for (double x = width / 10.0; x < width; x += width / 5.0) {
-        aSurface.line({x, height / 10}, {x + width / 10.0, height / 10}, "red", 10);
+    for (double x = step; x < width; x += step * 2) {
+        aSurface.line({x, step}, {x + step, step}, "red", 10);
     }
-    for (double y = height / 10.0; y < height; y += height / 5.0) {
-        aSurface.line({width / 10, y}, {width / 10.0, y + height / 10}, "red", 10);
+    for (double y = step; y < height; y += step * 2) {
+        aSurface.line({step, y}, {step, y + step}, "red", 10);
     }
+    aSurface.circle({1000, 0}, 200, 1.0, 0.0, "blue", 10);
 }
 // ----------------------------------------------------------------------
 

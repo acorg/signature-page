@@ -45,6 +45,7 @@ class Size
     inline Size(double aWidth, double aHeight) : width(aWidth), height(aHeight) {}
     inline Size(const Location& a, const Location& b) : width(std::abs(a.x - b.x)), height(std::abs(a.y - b.y)) {}
     inline void set(double aWidth, double aHeight) { width = aWidth; height = aHeight; }
+    inline double aspect() const { return width / height; }
 
     inline std::string to_string() const { return "Size(" + std::to_string(width) + ", " + std::to_string(height) + ")"; }
 
@@ -95,9 +96,19 @@ inline Size operator - (const Size& a, const Size& b)
     return {a.width - b.width, a.height - b.height};
 }
 
+inline Size operator + (const Size& a, const Size& b)
+{
+    return {a.width + b.width, a.height + b.height};
+}
+
 inline Size operator * (const Size& a, double v)
 {
     return {a.width * v, a.height * v};
+}
+
+inline Size operator / (const Size& a, double v)
+{
+    return {a.width / v, a.height / v};
 }
 
 // ----------------------------------------------------------------------

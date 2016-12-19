@@ -49,9 +49,9 @@ class Surface
     constexpr static const double default_canvas_width = 1000.0;
 
     virtual Size size() const = 0;
-    inline double aspect() const { const auto s = size(); return s.width / s.height; }
+    inline double aspect() const { return size().aspect(); }
 
-    virtual Surface* subsurface(const Location& aOffset, const Size& aSize, double aScale, bool aClip) = 0;
+    virtual Surface* subsurface(const Size& aOffset, const Size& aOuterSize, double aInnerWidth, bool aClip) = 0;
 
     virtual void line(const Location& a, const Location& b, Color aColor, double aWidth, LineCap aLineCap = LineCap::Butt) = 0;
     virtual void rectangle(const Location& a, const Size& s, Color aColor, double aWidth, LineCap aLineCap = LineCap::Butt) = 0;

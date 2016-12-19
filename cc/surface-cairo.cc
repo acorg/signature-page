@@ -287,13 +287,13 @@ Size SurfaceCairo::text_size(std::string aText, double aSize, const TextStyle& a
 // ----------------------------------------------------------------------
 
 SurfaceCairo::context::context(SurfaceCairo& aSurface)
-    : mContext(cairo_reference(aSurface.mContext))
+    : mParent(aSurface.mParent ? new context(*aSurface.mParent) : nullptr), mContext(cairo_reference(aSurface.mContext))
 {
-    const auto canvas_size = aSurface.size();
     cairo_save(mContext);
     translate(aSurface.mOffset);
-    scale(aSurface.mScale, aSurface.mScale);
+    scale(aSurface.mScale);
     if (aSurface.mClip) {
+        const auto canvas_size = aSurface.size();
         new_path();
         move_to();
         line_to({canvas_size.width, 0.0});
@@ -304,6 +304,15 @@ SurfaceCairo::context::context(SurfaceCairo& aSurface)
     }
 
 } // SurfaceCairo::context::context
+
+// ----------------------------------------------------------------------
+
+SurfaceCairo::context::~context()
+{
+    cairo_restore(mContext);
+    cairo_destroy(mContext);
+    delete mParent;
+}
 
 // ----------------------------------------------------------------------
 
