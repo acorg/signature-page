@@ -62,19 +62,18 @@ class ColoringByPos : public Coloring
  public:
     using UsedColors = std::map<char, std::pair<Color, size_t>>;
 
-    inline ColoringByPos(size_t aPos) : mPos(aPos) {}
+    inline ColoringByPos(size_t aPos) : mPos(aPos - 1) {}
 
     virtual Color color(const Node& aNode) const;
     virtual Legend* legend() const;
     size_t pos() const { return mPos; }
+    inline const UsedColors& used_colors() const { return mUsed; }
 
     virtual void report() const;
 
  private:
     size_t mPos;
     mutable UsedColors mUsed;
-
-    inline const UsedColors& used_colors() const { return mUsed; }
 };
 
 // ----------------------------------------------------------------------

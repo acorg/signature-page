@@ -36,10 +36,10 @@ int main(int argc, const char *argv[])
             read(tree, locdb, seqdb, tree_filename, seqdb_filename);
             PdfCairo surface(output_filename, 500, 850);
             surface.background("white");
-            const double offset = 20;
-            const double scale = (surface.width() - offset * 4) / surface.width();
-            std::cout << "Sub scale:" << scale << std::endl;
-            std::unique_ptr<Surface> sub{surface.subsurface({offset, offset / surface.aspect()}, surface.size() - Size(offset * 2, offset * 2 / surface.aspect()), surface.size().width, false)};
+            const double offset = 100;
+            // const double scale = (surface.width() - offset * 4) / surface.width();
+            // std::cout << "Sub scale:" << scale << std::endl;
+            std::unique_ptr<Surface> sub{surface.subsurface({offset, offset}, surface.size() - Size(offset * 2, offset * 2), surface.size().width, false)};
             sub->border(0xA0FFA000, 10);
             draw(*sub, tree);
         }
@@ -116,7 +116,8 @@ void draw(Surface& aSurface, Tree& tree)
     tree_draw.draw();
     std::unique_ptr<Legend> legend{tree_draw.coloring_legend()};
     if (legend) {
-        std::unique_ptr<Surface> legend_surface{aSurface.subsurface({300, 100}, {200, 200 / legend->size().aspect()}, legend->size().width, false)};
+        const double legend_width = 200;
+        std::unique_ptr<Surface> legend_surface{aSurface.subsurface({800, 100}, {legend_width, legend_width / legend->size().aspect()}, legend->size().width, false)};
         legend->draw(*legend_surface);
         // legend_surface->border("red", 10);
     }

@@ -7,6 +7,8 @@
 
 // ----------------------------------------------------------------------
 
+class Size;
+
 class Location
 {
  public:
@@ -17,6 +19,7 @@ class Location
 
     inline Location& operator -= (const Location& a) { x -= a.x; y -= a.y; return *this; }
     inline Location& operator += (const Location& a) { x += a.x; y += a.y; return *this; }
+    Location& operator += (const Size& a);
     inline std::string to_string() const { return "Location(" + std::to_string(x) + ", " + std::to_string(y) + ")"; }
 
     inline void min(const Location& a) { x = std::min(x, a.x); y = std::min(y, a.y); }
@@ -59,6 +62,13 @@ inline std::ostream& operator<<(std::ostream& out, const Size& size)
 }
 
 // ----------------------------------------------------------------------
+
+inline Location& Location::operator += (const Size& a)
+{
+    x += a.width;
+    y += a.height;
+    return *this;
+}
 
 inline Location operator + (const Location& a, const Size& s)
 {

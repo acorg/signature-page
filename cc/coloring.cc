@@ -128,40 +128,44 @@ void ColoringByPos::report() const
 
 // ----------------------------------------------------------------------
 
-// class ColoringByPosLegend : public Legend
-// {
-//  public:
-//     inline ColoringByPosLegend(const ColoringByPos& aColoring) : Legend(), mColoring(aColoring) {}
+class ColoringByPosLegend : public Legend
+{
+ public:
+    inline ColoringByPosLegend(const ColoringByPos& aColoring)
+        : Legend(), mColoring(aColoring), mTitle(std::to_string(mColoring.pos() + 1)), mFontSize(10), mInterline(1.5) {}
 
-//     virtual void draw(Surface& aSurface, const Viewport& aViewport, const SettingsLegend& aSettings) const
-//         {
-//             const auto label_size = aSurface.text_size("W", aSettings.font_size, aSettings.style);
-//             auto x = aViewport.origin.x;
-//             auto y = aViewport.origin.y + label_size.height;
-//             const std::string title = std::to_string(mColoring.pos() + 1);
-//             aSurface.text({x, y}, title, BLACK, aSettings.font_size, aSettings.style);
-//             x += (aSurface.text_size(title, aSettings.font_size, aSettings.style).width - label_size.width) / 2;
-//             y += label_size.height * aSettings.interline;
-//             for (auto& label_color: mColoring.used_colors()) {
-//                 aSurface.text({x, y}, std::string(1, label_color.first), label_color.second, aSettings.font_size, aSettings.style);
-//                 y += label_size.height * aSettings.interline;
-//             }
-//         }
+    virtual void draw(Surface& aSurface) const
+        {
+              // aSurface.border(0xA0FFA000, 1);
+            const auto label_size = aSurface.text_size("W", mFontSize, mStyle);
+            Location origin{0, label_size.height};
+            aSurface.text(origin, mTitle, "black", mFontSize, mStyle);
+              //origin += Size((aSurface.text_size(mTitle, mFontSize, mStyle).width - label_size.width) / 2, label_size.height * mInterline);
+            for (auto& label_color: mColoring.used_colors()) {
+                origin.y += label_size.height * mInterline;
+                const std::string text = std::string(1, label_color.first) + " (" + std::to_string(label_color.second.second) + ")";
+                aSurface.text(origin, text, label_color.second.first, mFontSize, mStyle);
+            }
+        }
 
-//     virtual Size size(Surface& aSurface, const SettingsLegend& aSettings) const
-//         {
-//             const auto label_size = aSurface.text_size("W", aSettings.font_size, aSettings.style);
-//             return {label_size.width, label_size.height * aSettings.interline * (mColoring.used_colors().size() + 1)};
-//         }
+    virtual Size size() const
+        {
+            const Size label_size{mFontSize * mTitle.size(), mFontSize}; // = aSurface.text_size("W", mFontSize, mStyle);
+            return {label_size.width, label_size.height * (mColoring.used_colors().size() + 1)};
+        }
 
-//  private:
-//     const ColoringByPos& mColoring;
+ private:
+    const ColoringByPos& mColoring;
+    std::string mTitle;
+    double mFontSize;
+    TextStyle mStyle;
+    double mInterline;
 
-// }; // class ColoringByContinentLegend
+}; // class ColoringByContinentLegend
 
 Legend* ColoringByPos::legend() const
 {
-    return nullptr; // new ColoringByPosLegend(*this);
+    return new ColoringByPosLegend(*this);
 
 } // ColoringByPos::legend
 
