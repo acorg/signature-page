@@ -50,7 +50,7 @@ void TreeDraw::prepare()
     set_line_no();
     set_top_bottom();
     const auto canvas_size = mSurface.size();
-    mHorizontalStep = canvas_size.width / mTree.width();
+    mHorizontalStep = canvas_size.width / mTree.width(mSettings.hide_if_cumulative_edge_length_bigger_than);
     mVerticalStep = canvas_size.height / (mTree.height() + 2); // +2 to add space at the top and bottom
 
 } // TreeDraw::prepare
@@ -164,9 +164,11 @@ double TreeDraw::max_label_offset()
 
     double max_label_origin = 0, max_label_right = 0;
     auto label_offset = [&](Node& node) {
-        const double label_origin = node.data.cumulative_edge_length * mHorizontalStep + mNameOffset;
-        max_label_origin = std::max(max_label_origin, label_origin);
-        max_label_right = std::max(max_label_right, label_origin + this->text_width(node.display_name()));
+        if (node.draw.shown) {
+            const double label_origin = node.data.cumulative_edge_length * mHorizontalStep + mNameOffset;
+            max_label_origin = std::max(max_label_origin, label_origin);
+            max_label_right = std::max(max_label_right, label_origin + this->text_width(node.display_name()));
+        }
     };
     tree::iterate_leaf(mTree, label_offset);
     return max_label_right; // std::make_pair(max_label_origin, max_label_right);

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <string>
 #include <vector>
 
@@ -133,6 +134,9 @@ class Tree : public Node
 
     size_t height() const; // number of lines in the tree
     inline double width() { compute_cumulative_edge_length(); return mMaxCumulativeEdgeLength; }
+    double width(double ignore_if_cumulative_edge_length_bigger_than);
+
+    void report_cumulative_edge_length(std::ostream& out);
 
  private:
     double mMaxCumulativeEdgeLength;
