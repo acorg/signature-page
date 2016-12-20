@@ -16,6 +16,7 @@ class Location
 
     inline Location() : x(0), y(0) {}
     inline Location(double aX, double aY) : x(aX), y(aY) {}
+    Location(const Size& s);
 
     inline Location& operator -= (const Location& a) { x -= a.x; y -= a.y; return *this; }
     inline Location& operator += (const Location& a) { x += a.x; y += a.y; return *this; }
@@ -62,6 +63,11 @@ inline std::ostream& operator<<(std::ostream& out, const Size& size)
 }
 
 // ----------------------------------------------------------------------
+
+inline Location::Location(const Size& s)
+    : x(s.width), y(s.height)
+{
+}
 
 inline Location& Location::operator += (const Size& a)
 {

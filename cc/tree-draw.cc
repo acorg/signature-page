@@ -185,7 +185,7 @@ void TreeDraw::draw_node(const Node& aNode, const Location& aOrigin, double aEdg
         const double right = aOrigin.x + size.width;
 
         mSurface.line(origin, {right, origin.y}, mSettings.line_color, mLineWidth);
-          // draw_aa_transition(aNode, aSurface, viewport, aSettings.aa_transition);
+        draw_aa_transition(aNode, origin, right);
         if (aNode.is_leaf()) {
             const std::string text = aNode.display_name();
             const auto tsize = mSurface.text_size(text, mFontSize, mSettings.label_style);
@@ -203,7 +203,6 @@ void TreeDraw::draw_node(const Node& aNode, const Location& aOrigin, double aEdg
               //     show_branch_annotation(aSurface, aNode.branch_id, aNode.name, aLeft, right, y);
               // }
             mSurface.line({right, aOrigin.y + mVerticalStep * aNode.draw.top}, {right, aOrigin.y + mVerticalStep * aNode.draw.bottom}, mSettings.line_color, mLineWidth, Surface::LineCap::Square);
-              // draw_aa_transition(aNode, aSurface, viewport, aSettings.aa_transition);
             for (auto& node: aNode.subtree) {
                 draw_node(node, {right, aOrigin.y});
             }
@@ -211,6 +210,49 @@ void TreeDraw::draw_node(const Node& aNode, const Location& aOrigin, double aEdg
     }
 
 } // TreeDraw::draw_node
+
+// ----------------------------------------------------------------------
+
+void TreeDraw::draw_aa_transition(const Node& aNode, const Location& aOrigin, double aRight)
+{
+    const auto& settings = mSettings.aa_transition;
+    if (settings.show && !aNode.data.aa_transitions.empty() && aNode.data.number_strains >= settings.number_strains_threshold) {
+        std::vector<std::pair<std::string, const Node*>> labels;
+        aNode.data.aa_transitions.make_labels(labels, settings.show_empty_left);
+        if (!labels.empty()) {
+            const auto& branch_settings = settings.per_branch;
+            const auto longest_label = std::max_element(labels.begin(), labels.end(), [](const auto& a, const auto& b) { return a.first.size() < b.first.size(); });
+            const auto longest_label_size = mSurface.text_size(longest_label->first, branch_settings.size, branch_settings.style);
+            const auto node_line_width = aRight - aOrigin.x;
+            Size offset(node_line_width > longest_label_size.width ? (node_line_width - longest_label_size.width) / 2 : (node_line_width - longest_label_size.width),
+                        longest_label_size.height * branch_settings.interline);
+            offset += branch_settings.label_offset;
+            Location origin = aOrigin + offset;
+            for (const auto& label: labels) {
+                const auto label_width = mSurface.text_size(label.first, branch_settings.size, branch_settings.style).width;
+                const Location label_xy(origin.x + (longest_label_size.width - label_width) / 2, origin.y);
+                mSurface.text(label_xy, label.first, branch_settings.color, branch_settings.size, branch_settings.style);
+                if (settings.show_node_for_left_line && label.second) {
+                    mSurface.line(Location{},
+                                  Location(mHorizontalStep * label.second->data.cumulative_edge_length, mVerticalStep * label.second->draw.line_no),
+                                  settings.node_for_left_line_color, settings.node_for_left_line_width);
+                }
+                origin.y += longest_label_size.height * branch_settings.interline;
+            }
+
+            const Location connection_line_start{(aOrigin.x + aRight) / 2, aOrigin.y};
+            const Location connection_line_end{aOrigin.x + longest_label_size.width / 2 + offset.width, aOrigin.y - longest_label_size.height + offset.height};
+            if (distance(connection_line_start, connection_line_end) > 10) {
+                mSurface.line(connection_line_start, connection_line_end, branch_settings.label_connection_line_color, mLineWidth /*branch_settings.label_connection_line_width*/);
+            }
+
+            std::cout << "AA transitions: ";
+            std::transform(labels.begin(), labels.end(), std::ostream_iterator<std::string>(std::cout, " "), [](const auto& e) -> std::string { return e.first; });
+            std::cout << " --> " << /* aNode.branch_id << */ " number_strains: " << aNode.data.number_strains << std::endl;
+        }
+    }
+
+} // TreeDraw::draw_aa_transition
 
 // ----------------------------------------------------------------------
 

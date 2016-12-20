@@ -303,7 +303,7 @@ void Tree::make_aa_transitions(const std::vector<size_t>& aPositions)
         if (aNode.data.aa_transitions) {
             std::vector<std::string> labels;
             aNode.data.aa_transitions.make_labels(labels);
-            std::cout << labels << std::endl;
+              // std::cerr << labels << std::endl;
 
               // std::vector<std::pair<std::string, const Node*>> labels;
               // aNode.data.aa_transitions.make_labels(labels);
@@ -311,12 +311,6 @@ void Tree::make_aa_transitions(const std::vector<size_t>& aPositions)
         }
     };
     tree::iterate_leaf_pre(*this, add_left_part, add_left_part);
-
-    //   // cleanup
-    // auto erase_aa_at = [](Node& aNode) {
-    //     aNode.aa.clear();
-    // };
-    // iterate_post(*this, erase_aa_at);
 
 } // Tree::make_aa_transitions
 

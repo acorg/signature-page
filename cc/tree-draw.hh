@@ -16,6 +16,47 @@ class Legend;
 
 // ----------------------------------------------------------------------
 
+class AATransitionPerBranchDrawSettings
+{
+ public:
+    inline AATransitionPerBranchDrawSettings()
+        : size(8), color("black"), style("Courier New"), interline(1.2),
+          label_offset{-40, 20}, label_connection_line_width(0.1), label_connection_line_color("black") {}
+
+    double size;
+    Color color;
+    TextStyle style;
+    double interline;
+      // std::string branch_id;
+      // std::vector<std::string> labels;
+    Size label_offset;
+    double label_connection_line_width;
+    Color label_connection_line_color;
+
+}; // class AATransitionPerBranchDrawSettings
+
+// ----------------------------------------------------------------------
+
+class AATransitionDrawSettings
+{
+ public:
+    inline AATransitionDrawSettings()
+        : show(true), number_strains_threshold(20), show_empty_left(false), show_node_for_left_line(false),
+          node_for_left_line_color("green"), node_for_left_line_width(1)
+        {}
+
+    bool show;
+    size_t number_strains_threshold; // Do not show aa transition label if number_strains (leaf nodes) for the branch is less than this value.
+    bool show_empty_left;
+    AATransitionPerBranchDrawSettings per_branch;
+    bool show_node_for_left_line;
+    Color node_for_left_line_color;
+    double node_for_left_line_width;
+
+}; // class AATransitionDrawSettings
+
+// ----------------------------------------------------------------------
+
 class TreeDrawSettings
 {
  public:
@@ -33,6 +74,7 @@ class TreeDrawSettings
     TextStyle label_style;
     double name_offset;         // offset of the label from the line right end, in W widths
     std::string color_nodes;    // black, continent, position number (e.g. 162)
+    AATransitionDrawSettings aa_transition;
 
 }; // class TreeDrawSettings
 
@@ -65,6 +107,7 @@ class TreeDraw
     void set_line_no();
     void set_top_bottom();
     void draw_node(const Node& aNode, const Location& aOrigin, double aEdgeLength = -1);
+    void draw_aa_transition(const Node& aNode, const Location& aOrigin, double aRight);
     void fit_labels_into_viewport();
     void calculate_name_offset();
 
