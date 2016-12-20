@@ -191,9 +191,14 @@ void TreeDraw::draw_node(const Node& aNode, const Location& aOrigin, double aEdg
             const auto tsize = mSurface.text_size(text, mFontSize, mSettings.label_style);
             const Location text_origin{right + mNameOffset, origin.y + tsize.height / 2};
             mSurface.text(text_origin, text, mColoring->color(aNode), mFontSize, mSettings.label_style);
-              //         auto mark_node = mNodesToMark.find(aNode.name);
-              //         if (mark_node != mNodesToMark.end())
-              //             mark_node->second.set(text_origin, aNode);
+            if (!aNode.draw.vaccine_label.empty()) {
+                Size label_offset{-20, 20}; // TODO: settings
+                const Location label_origin = text_origin + label_offset;
+                mSurface.text(label_origin, aNode.draw.vaccine_label, mSettings.vaccine_label_color, mSettings.vaccine_label_size, mSettings.vaccine_label_style);
+                const auto vlsize = mSurface.text_size(aNode.draw.vaccine_label, mSettings.vaccine_label_size, mSettings.vaccine_label_style);
+                const auto line_origin = label_origin + Size(vlsize.width / 2, label_offset.height > 0 ? - vlsize.height : 0);
+                mSurface.line(line_origin, text_origin, mSettings.vaccine_line_color, mSettings.vaccine_line_width);
+            }
         }
         else {
               // if (aShowBranchIds && !aNode.branch_id.empty()) {

@@ -329,6 +329,31 @@ size_t Tree::longest_aa() const
 
 // ----------------------------------------------------------------------
 
+void Tree::add_vaccine(std::string aSeqId, std::string aLabel)
+{
+    Node* v = find_leaf_by_seqid(aSeqId);
+    if (v)
+        v->draw.vaccine_label = aLabel;
+
+} // Tree::add_vaccine
+
+// ----------------------------------------------------------------------
+
+Node* Tree::find_leaf_by_seqid(std::string aSeqId)
+{
+    Node* result = nullptr;
+    auto find_node = [&aSeqId,&result](Node& aNode) -> bool {
+        if (aNode.seq_id == aSeqId)
+            result = &aNode;
+        return result != nullptr;
+    };
+    tree::iterate_leaf_stop(*this, find_node);
+    return result;
+
+} // Tree::find_leaf_by_seqid
+
+// ----------------------------------------------------------------------
+
 
 // ----------------------------------------------------------------------
 /// Local Variables:

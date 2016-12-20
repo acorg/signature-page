@@ -56,6 +56,7 @@ class NodeDrawData
     size_t line_no;
     size_t vertical_gap_before;
     double top, bottom;         // subtree boundaries
+    std::string vaccine_label;
 
 };
 
@@ -135,6 +136,7 @@ class Tree : public Node
     void set_continents(const LocDb& locdb);
     void make_aa_transitions(); // for all positions
     void make_aa_transitions(const std::vector<size_t>& aPositions);
+    void add_vaccine(std::string aSeqId, std::string aLabel);
 
     inline void compute_cumulative_edge_length()
         {
@@ -164,6 +166,9 @@ class Tree : public Node
     //         compute_cumulative_edge_length();
     //         leaf_nodes_sorted_by(nodes, [](const Node* a, const Node* b) -> bool { return b->data.edge_length_to_next < a->data.edge_length_to_next; });
     //     }
+
+    // returns nullptr if not found
+    Node* find_leaf_by_seqid(std::string aSeqId);
 
  private:
     double mMaxCumulativeEdgeLength;

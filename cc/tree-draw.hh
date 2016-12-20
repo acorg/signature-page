@@ -20,7 +20,7 @@ class AATransitionPerBranchDrawSettings
 {
  public:
     inline AATransitionPerBranchDrawSettings()
-        : size(8), color("black"), style("Courier New"), interline(1.2),
+        : size(20), color("black"), style("Courier New"), interline(1.2),
           label_offset{-40, 20}, label_connection_line_width(0.1), label_connection_line_color("black") {}
 
     double size;
@@ -63,7 +63,9 @@ class TreeDrawSettings
     inline TreeDrawSettings()
         : hide_if_cumulative_edge_length_bigger_than(0.05), //(std::numeric_limits<double>::max()),
           force_line_width(false),
-          line_width(1), root_edge(0), line_color(0), name_offset(0.3), color_nodes("159") {}
+          line_width(1), root_edge(0), line_color(0), name_offset(0.3), color_nodes("159"),
+          vaccine_label_color("black"), vaccine_label_size(20), vaccine_line_color("black"), vaccine_line_width(1)
+        {}
 
     std::string hide_isolated_before; // hide leaves isolated before the date (empty -> do not hide based on date)
     double hide_if_cumulative_edge_length_bigger_than; // hide long branches
@@ -75,6 +77,12 @@ class TreeDrawSettings
     double name_offset;         // offset of the label from the line right end, in W widths
     std::string color_nodes;    // black, continent, position number (e.g. 162)
     AATransitionDrawSettings aa_transition;
+
+    Color vaccine_label_color;
+    double vaccine_label_size;
+    TextStyle vaccine_label_style;
+    Color vaccine_line_color;
+    double vaccine_line_width;
 
 }; // class TreeDrawSettings
 

@@ -21,7 +21,7 @@ namespace tree
 
 // ----------------------------------------------------------------------
 
-// stops iterating if f_name returns true
+      // stops iterating if f_name returns true
     template <typename N, typename F1> inline bool iterate_leaf_stop(N& aNode, F1 f_name)
     {
         bool stop = false;

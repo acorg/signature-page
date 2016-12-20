@@ -105,6 +105,7 @@ void read(Tree& tree, LocDb& locdb, seqdb::Seqdb& seqdb, std::string aTreeFilena
       // tree.report_cumulative_edge_length(std::cout);
     tree.ladderize(Tree::LadderizeMethod::NumberOfLeaves);           // must be before clade_setup
     tree.make_aa_transitions();
+    tree.add_vaccine("A/SOUTH%20AUCKLAND/17/2016__MDCK%3F/SIAT1", "A/SOUTH AUCKLAND/17/2016 C");
 
 } // read
 
