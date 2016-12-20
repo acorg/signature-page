@@ -25,7 +25,6 @@ def main(args):
     if args.ladderize != "none":
         tree.ladderize(args.ladderize)        # must be before clade_setup()
 
-    # tree.clade_setup()
     # if args.aa_transitions:
     #     tree.make_aa_transitions()
     # if args.hz_line_section_tolerance > 0:
