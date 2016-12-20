@@ -104,7 +104,7 @@ void read(Tree& tree, LocDb& locdb, seqdb::Seqdb& seqdb, std::string aTreeFilena
     }
       // tree.report_cumulative_edge_length(std::cout);
     tree.ladderize(Tree::LadderizeMethod::NumberOfLeaves);           // must be before clade_setup
-      // tree.make_aa_transitions();
+    tree.make_aa_transitions();
 
 } // read
 

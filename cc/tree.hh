@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "seqdb/seqdb.hh"
+#include "aa_transitions.hh"
 
 // ----------------------------------------------------------------------
 
@@ -32,6 +33,9 @@ class NodeData
     std::string ladderize_max_name_alphabetically;
     double cumulative_edge_length;
     std::string continent;
+
+    std::string aa_at;          // see make_aa_at()
+    AA_Transitions aa_transitions;
 
  private:
     seqdb::SeqdbEntrySeq mSeqdbEntrySeq;
@@ -91,6 +95,8 @@ class Node
 
       // int months_from(const Date& aStart) const; // returns negative if date of the node is earlier than aStart
 
+    void remove_aa_transition(size_t aPos, char aRight, bool aDescentUponRemoval); // recursively
+
  protected:
     void compute_cumulative_edge_length(double initial_edge_length, double& max_cumulative_edge_length);
 
@@ -127,6 +133,8 @@ class Tree : public Node
 
     void set_number_strains();
     void set_continents(const LocDb& locdb);
+    void make_aa_transitions(); // for all positions
+    void make_aa_transitions(const std::vector<size_t>& aPositions);
 
     inline void compute_cumulative_edge_length()
         {
@@ -140,8 +148,29 @@ class Tree : public Node
 
     void report_cumulative_edge_length(std::ostream& out);
 
+    inline void leaf_nodes_sorted_by_cumulative_edge_length(std::vector<const Node*>& nodes)
+        {
+            compute_cumulative_edge_length();
+            leaf_nodes_sorted_by(nodes, [](const Node* a, const Node* b) -> bool { return a->data.cumulative_edge_length > b->data.cumulative_edge_length; });
+        }
+
+    inline void leaf_nodes_sorted_by_date(std::vector<const Node*>& nodes) const
+        {
+            leaf_nodes_sorted_by(nodes, [](const Node* a, const Node* b) -> bool { return a->data.date() < b->data.date(); });
+        }
+
+    // inline leaf_nodes_sorted_by_edge_length_to_next(std::vector<const Node*>& nodes) const // longest first!
+    //     {
+    //         compute_cumulative_edge_length();
+    //         leaf_nodes_sorted_by(nodes, [](const Node* a, const Node* b) -> bool { return b->data.edge_length_to_next < a->data.edge_length_to_next; });
+    //     }
+
  private:
     double mMaxCumulativeEdgeLength;
+
+    size_t longest_aa() const;
+    void make_aa_at(const std::vector<size_t>& aPositions);
+    void leaf_nodes_sorted_by(std::vector<const Node*>& nodes, const std::function<bool(const Node*,const Node*)>& cmp) const;
 
 }; // class Tree
 

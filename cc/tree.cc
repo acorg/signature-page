@@ -143,18 +143,23 @@ std::string Node::display_name() const
 
 // ----------------------------------------------------------------------
 
+void Tree::leaf_nodes_sorted_by(std::vector<const Node*>& nodes, const std::function<bool(const Node*,const Node*)>& cmp) const
+{
+    tree::iterate_leaf(*this, [&nodes](const Node& aNode) -> void { nodes.push_back(&aNode); });
+    std::sort(nodes.begin(), nodes.end(), cmp);
+
+} // Tree::leaf_nodes_sorted_by
+
+// ----------------------------------------------------------------------
+
 void Tree::report_cumulative_edge_length(std::ostream& out)
 {
     compute_cumulative_edge_length();
 
-    std::vector<std::pair<double, std::string>> cumulative_edge_length; // cumulative_edge_length and seq_id
-    auto set_cumulative_edge_length = [&cumulative_edge_length](Node& aNode) {
-        cumulative_edge_length.emplace_back(aNode.data.cumulative_edge_length, aNode.seq_id);
-    };
-    tree::iterate_leaf(*this, set_cumulative_edge_length);
-    std::sort(cumulative_edge_length.begin(), cumulative_edge_length.end(), [](const auto& a, const auto& b) { return b.first < a.first; }); // descending
-    for (const auto& e: cumulative_edge_length)
-        out << std::fixed << std::setprecision(8) << std::setw(10) << e.first << ' ' << e.second << std::endl;
+    std::vector<const Node*> nodes;
+    leaf_nodes_sorted_by_cumulative_edge_length(nodes);
+    for (const auto& node: nodes)
+        out << std::fixed << std::setprecision(8) << std::setw(10) << node->data.cumulative_edge_length << ' ' << node->seq_id << std::endl;
 
 } // Tree::report_cumulative_edge_length
 
@@ -172,6 +177,161 @@ double Tree::width(double ignore_if_cumulative_edge_length_bigger_than)
     return width;
 
 } // Tree::width
+
+// ----------------------------------------------------------------------
+
+  // for all positions
+void Tree::make_aa_transitions()
+{
+    const auto num_positions = longest_aa();
+    if (num_positions) {
+        std::vector<size_t> all_positions(num_positions);
+        std::iota(all_positions.begin(), all_positions.end(), 0);
+        make_aa_transitions(all_positions);
+    }
+    else {
+        std::cerr << "WARNING: cannot make AA transition labels: no AA sequences present (match with seqdb?)" << std::endl;
+    }
+
+} // Tree::make_aa_transitions
+
+// ----------------------------------------------------------------------
+
+void Tree::make_aa_at(const std::vector<size_t>& aPositions)
+{
+    auto reset_aa_at = [&aPositions](Node& aNode) {
+        aNode.data.aa_at = aNode.data.amino_acids();
+        aNode.data.aa_at.resize(aPositions.back() + 1, AA_Transition::Empty); // actual max length of aa in child leaf nodes may be less than aPositions.back()
+    };
+    tree::iterate_leaf(*this, reset_aa_at);
+
+    auto make_aa_at = [&aPositions](Node& aNode) {
+        aNode.data.aa_at.assign(aPositions.back() + 1, 'X');
+        for (size_t pos: aPositions) {
+            for (const auto& child: aNode.subtree) {
+                if (child.data.aa_at[pos] != 'X') {
+                    if (aNode.data.aa_at[pos] == 'X')
+                        aNode.data.aa_at[pos] = child.data.aa_at[pos];
+                    else if (aNode.data.aa_at[pos] != child.data.aa_at[pos])
+                        aNode.data.aa_at[pos] = AA_Transition::Empty;
+                    if (aNode.data.aa_at[pos] == AA_Transition::Empty)
+                        break;
+                }
+            }
+              // If this node has AA_Transition::Empty and a child node has letter, then set aa_transition for the child (unless child is a leaf)
+            if (aNode.data.aa_at[pos] == AA_Transition::Empty) {
+                std::map<char, size_t> aa_count;
+                for (auto& child: aNode.subtree) {
+                    if (child.data.aa_at[pos] != AA_Transition::Empty && child.data.aa_at[pos] != 'X') {
+                        child.data.aa_transitions.add(pos, child.data.aa_at[pos]);
+                        ++aa_count[child.data.aa_at[pos]];
+                          // std::cout << "aa_transition " << child.aa_transitions << " " << child.name << std::endl;
+                    }
+                    else {
+                        const auto found = child.data.aa_transitions.find(pos);
+                        if (found)
+                            ++aa_count[found->right];
+                    }
+                }
+                if (!aa_count.empty()) {
+                    const auto max_aa_count = std::max_element(aa_count.begin(), aa_count.end(), [](const auto& e1, const auto& e2) { return e1.second < e2.second; });
+                      // std::cout << "aa_count " << aa_count << "   max: " << max_aa_count->first << ':' << max_aa_count->second << std::endl;
+                    if (max_aa_count->second > 1) {
+                        aNode.remove_aa_transition(pos, max_aa_count->first, false);
+                        aNode.data.aa_transitions.add(pos, max_aa_count->first);
+                    }
+                }
+            }
+        }
+          // std::cout << "aa  " << aNode.aa << std::endl;
+    };
+    tree::iterate_post(*this, make_aa_at);
+
+} // Tree::make_aa_at
+
+// ----------------------------------------------------------------------
+
+void Node::remove_aa_transition(size_t aPos, char aRight, bool aDescentUponRemoval)
+{
+    auto remove_aa_transition = [=](Node& aNode) -> bool {
+        const bool present_any = aNode.data.aa_transitions.find(aPos);
+        aNode.data.aa_transitions.remove(aPos, aRight);
+        return !present_any;
+    };
+    if (aDescentUponRemoval)
+        tree::iterate_leaf_pre(*this, remove_aa_transition, remove_aa_transition);
+    else
+        tree::iterate_leaf_pre_stop(*this, remove_aa_transition, remove_aa_transition);
+
+} // Node::remove_aa_transition
+
+// ----------------------------------------------------------------------
+
+void Tree::make_aa_transitions(const std::vector<size_t>& aPositions)
+{
+    make_aa_at(aPositions);
+
+    std::vector<const Node*> leaf_nodes;
+    leaf_nodes_sorted_by_cumulative_edge_length(leaf_nodes);
+
+      // add left part to aa transitions (Derek's algorithm)
+    auto add_left_part = [&](Node& aNode) {
+        if (!aNode.data.aa_transitions.empty()) {
+            const auto node_left_edge = aNode.data.cumulative_edge_length - aNode.edge_length;
+
+            auto lb = leaf_nodes.begin();
+            for (auto ln = leaf_nodes.begin() + 1; ln != leaf_nodes.end(); ++ln) {
+                if ((*ln)->data.cumulative_edge_length < node_left_edge) {
+                    lb = ln;
+                    break;
+                }
+            }
+
+            const Node* node_for_left = lb == leaf_nodes.begin() ? nullptr : *(lb - 1);
+            for (auto& transition: aNode.data.aa_transitions) {
+                if (node_for_left && node_for_left->data.amino_acids().size() > transition.pos) { // node_for_left can have shorter aa
+                    transition.left = node_for_left->data.amino_acids()[transition.pos];
+                    transition.for_left = node_for_left;
+                }
+            }
+        }
+
+          // remove transitions having left and right parts the same
+        aNode.data.aa_transitions.erase(std::remove_if(aNode.data.aa_transitions.begin(), aNode.data.aa_transitions.end(), [](auto& e) { return e.left_right_same(); }), aNode.data.aa_transitions.end());
+
+          // add transition labels information to settings
+        if (aNode.data.aa_transitions) {
+            std::vector<std::string> labels;
+            aNode.data.aa_transitions.make_labels(labels);
+            std::cout << labels << std::endl;
+
+              // std::vector<std::pair<std::string, const Node*>> labels;
+              // aNode.data.aa_transitions.make_labels(labels);
+              // settings().draw_tree.aa_transition.add(aNode.branch_id, labels);
+        }
+    };
+    tree::iterate_leaf_pre(*this, add_left_part, add_left_part);
+
+    //   // cleanup
+    // auto erase_aa_at = [](Node& aNode) {
+    //     aNode.aa.clear();
+    // };
+    // iterate_post(*this, erase_aa_at);
+
+} // Tree::make_aa_transitions
+
+// ----------------------------------------------------------------------
+
+size_t Tree::longest_aa() const
+{
+    size_t longest_aa = 0;
+    auto find_longest_aa = [&longest_aa](const Node& aNode) {
+        longest_aa = std::max(longest_aa, aNode.data.amino_acids().size());
+    };
+    tree::iterate_leaf(*this, find_longest_aa);
+    return longest_aa;
+
+} // Tree::longest_aa
 
 // ----------------------------------------------------------------------
 
