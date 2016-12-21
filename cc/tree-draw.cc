@@ -275,9 +275,8 @@ void TreeDraw::draw_legend()
 {
     std::unique_ptr<Legend> legend{coloring_legend()};
     if (legend) {
-        const double legend_width = 200;
-        std::unique_ptr<Surface> legend_surface{mSurface.subsurface({800, 100}, {legend_width, legend_width / legend->size().aspect()}, legend->size().width, false)};
-        legend->draw(*legend_surface);
+        std::unique_ptr<Surface> legend_surface{mSurface.subsurface(mSettings.legend.offset, {mSettings.legend.width,  mSettings.legend.width / legend->size().aspect()}, legend->size().width, false)};
+        legend->draw(*legend_surface, mSettings.legend);
         legend_surface->border("red", 1);
     }
 

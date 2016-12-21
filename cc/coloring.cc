@@ -87,7 +87,7 @@ class ColoringByContinentMapLegend : public Legend
  public:
     inline ColoringByContinentMapLegend(const ColoringByContinent& aColoring) : Legend(), mColoring(aColoring) {}
 
-    virtual void draw(Surface& aSurface) const
+    virtual void draw(Surface& aSurface, const LegendSettings& aSettings) const
         {
               // aSurface.border(0xA0FFA000, 10);
               // Color geographic_map_outline_color = 0;
@@ -163,34 +163,33 @@ class ColoringByPosLegend : public Legend
 {
  public:
     inline ColoringByPosLegend(const ColoringByPos& aColoring)
-        : Legend(), mColoring(aColoring), mTitle(std::to_string(mColoring.pos() + 1)), mFontSize(10), mInterline(1.5) {}
+        : Legend(), mColoring(aColoring), mTitle(std::to_string(mColoring.pos() + 1)) {}
 
-    virtual void draw(Surface& aSurface) const
+    virtual void draw(Surface& aSurface, const LegendSettings& aSettings) const
         {
               // aSurface.border(0xA0FFA000, 1);
-            const auto label_size = aSurface.text_size("W", mFontSize, mStyle);
-            Location origin{0, label_size.height};
-            aSurface.text(origin, mTitle, "black", mFontSize, mStyle);
+            const auto title_size = aSurface.text_size(mTitle, aSettings.title_size, aSettings.title_style);
+            Location origin{0, title_size.height};
               //origin += Size((aSurface.text_size(mTitle, mFontSize, mStyle).width - label_size.width) / 2, label_size.height * mInterline);
+            const auto text_size = aSurface.text_size("W", aSettings.text_size, aSettings.text_style);
+            double max_width = 0;
             for (auto& label_color: mColoring.used_colors()) {
-                origin.y += label_size.height * mInterline;
+                origin.y += text_size.height * aSettings.interline;
                 const std::string text = std::string(1, label_color.first) + " (" + std::to_string(label_color.second.second) + ")";
-                aSurface.text(origin, text, label_color.second.first, mFontSize, mStyle);
+                aSurface.text(origin, text, label_color.second.first, aSettings.text_size, aSettings.text_style);
+                max_width = std::max(max_width, aSurface.text_size(text, aSettings.text_size, aSettings.text_style).width);
             }
+            aSurface.text({(max_width - title_size.width) / 2, title_size.height}, mTitle, "black", aSettings.title_size, aSettings.title_style);
         }
 
     virtual Size size() const
         {
-            const Size label_size{mFontSize * mTitle.size(), mFontSize}; // = aSurface.text_size("W", mFontSize, mStyle);
-            return {label_size.width, label_size.height * (mColoring.used_colors().size() + 1)};
+            return {mTitle.size() * 10.0, (mColoring.used_colors().size() + 1) * 10.0};
         }
 
  private:
     const ColoringByPos& mColoring;
     std::string mTitle;
-    double mFontSize;
-    TextStyle mStyle;
-    double mInterline;
 
 }; // class ColoringByContinentLegend
 
