@@ -33,7 +33,7 @@ class AATransitionPerBranchDrawSettings
 
       // std::string branch_id;
       // std::vector<std::string> labels;
-    
+
 }; // class AATransitionPerBranchDrawSettings
 
 // ----------------------------------------------------------------------

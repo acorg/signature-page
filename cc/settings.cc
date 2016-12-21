@@ -314,6 +314,94 @@ const std::map<std::string, AATransitionDrawSettingsHandler::Keys> AATransitionD
 
 // ----------------------------------------------------------------------
 
+class TreeDrawVaccineSettingsHandler : public HandlerBase
+{
+ private:
+    enum class Keys {Unknown, name, label_color, label_size, label_style, line_color, line_width};
+
+ public:
+    inline TreeDrawVaccineSettingsHandler(Settings& aSettings, TreeDrawVaccineSettings& aField) : HandlerBase{aSettings}, mKey(Keys::Unknown), mField(aField) {}
+
+    inline virtual HandlerBase* Key(const char* str, rapidjson::SizeType length)
+        {
+            HandlerBase* result = nullptr;
+            try {
+                mKey = key_mapper.at(std::string(str, length));
+            }
+            catch (std::out_of_range&) {
+                result = HandlerBase::Key(str, length);
+            }
+            return result;
+        }
+
+    inline virtual HandlerBase* String(const char* str, rapidjson::SizeType length)
+        {
+            HandlerBase* result = nullptr;
+            switch (mKey) {
+              case Keys::name:
+                  mField.name.assign(str, length);
+                  break;
+              case Keys::label_color:
+                  mField.label_color.from_string(str, length);
+                  break;
+              case Keys::line_color:
+                  mField.line_color.from_string(str, length);
+                  break;
+              default:
+                  result = HandlerBase::String(str, length);
+                  break;
+            }
+            return result;
+        }
+
+    inline virtual HandlerBase* Double(double d)
+        {
+            switch (mKey) {
+              case Keys::label_size:
+                  mField.label_size = d;
+                  break;
+              case Keys::line_width:
+                  mField.line_width = d;
+                  break;
+              default:
+                  HandlerBase::Double(d);
+                  break;
+            }
+            return nullptr;
+        }
+
+    inline virtual HandlerBase* StartObject()
+        {
+            HandlerBase* result = nullptr;
+            switch (mKey) {
+              case Keys::label_style:
+                  result = new SettingsTextStyleHandler(mTarget, mField.label_style);
+                  break;
+              default:
+                  result = HandlerBase::StartObject();
+                  break;
+            }
+            return result;
+        }
+
+ private:
+    Keys mKey;
+    TreeDrawVaccineSettings& mField;
+    static const std::map<std::string, Keys> key_mapper;
+
+}; // class TreeDrawVaccineSettingsHandler
+
+const std::map<std::string, TreeDrawVaccineSettingsHandler::Keys> TreeDrawVaccineSettingsHandler::key_mapper {
+    {"name", Keys::name},
+    {"label_color", Keys::label_color},
+    {"label_size", Keys::label_size},
+    {"label_style", Keys::label_style},
+    {"line_color", Keys::line_color},
+    {"line_width", Keys::line_width}
+};
+
+// ----------------------------------------------------------------------
+
 class SettingsTreeHandler : public HandlerBase
 {
  private:
@@ -329,6 +417,13 @@ class SettingsTreeHandler : public HandlerBase
             HandlerBase* result = nullptr;
             try {
                 mKey = key_mapper.at(std::string(str, length));
+                switch (mKey) {
+                  case Keys::vaccines:
+                      result = new json_reader::ListHandler<Settings, TreeDrawVaccineSettings, TreeDrawVaccineSettingsHandler>(mTarget, mTarget.tree_draw.vaccines);
+                      break;
+                  default:
+                      break;
+                }
             }
             catch (std::out_of_range&) {
                 result = HandlerBase::Key(str, length);
