@@ -263,9 +263,11 @@ void TreeDraw::draw_aa_transition(const Node& aNode, const Location& aOrigin, do
 
 // ----------------------------------------------------------------------
 
-Legend* TreeDraw::coloring_legend() const
+const Legend* TreeDraw::coloring_legend() const
 {
-    return mColoring ? mColoring->legend() : nullptr;
+    if (!mColoringLegend && mColoring)
+        mColoringLegend = std::unique_ptr<Legend>(mColoring->legend());
+    return mColoringLegend.get();
 
 } // TreeDraw::coloring_legend
 
@@ -273,7 +275,7 @@ Legend* TreeDraw::coloring_legend() const
 
 void TreeDraw::draw_legend()
 {
-    std::unique_ptr<Legend> legend{coloring_legend()};
+    const Legend* legend = coloring_legend();
     if (legend) {
         std::unique_ptr<Surface> legend_surface{mSurface.subsurface(mSettings.legend.offset, {mSettings.legend.width,  mSettings.legend.width / legend->size().aspect()}, legend->size().width, false)};
         legend->draw(*legend_surface, mSettings.legend);

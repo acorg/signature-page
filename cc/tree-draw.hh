@@ -13,7 +13,6 @@
 class Node;
 class Tree;
 class Coloring;
-class Legend;
 
 // ----------------------------------------------------------------------
 
@@ -121,13 +120,14 @@ class TreeDraw
 
     void prepare();
     void draw();
-    Legend* coloring_legend() const; // new instance returned, caller must free it
+    const Legend* coloring_legend() const;
 
  private:
     Surface& mSurface;
     Tree& mTree;
     const TreeDrawSettings& mSettings;
     std::unique_ptr<Coloring> mColoring;
+    mutable std::unique_ptr<Legend> mColoringLegend;
 
     double mHorizontalStep;
     double mVerticalStep;
