@@ -192,12 +192,13 @@ void TreeDraw::draw_node(const Node& aNode, const Location& aOrigin, double aEdg
             const Location text_origin{right + mNameOffset, origin.y + tsize.height / 2};
             mSurface.text(text_origin, text, mColoring->color(aNode), mFontSize, mSettings.label_style);
             if (!aNode.draw.vaccine_label.empty()) {
+                const auto& settings = mSettings.vaccine(aNode.draw.vaccine_label);
                 Size label_offset{-20, 20}; // TODO: settings
                 const Location label_origin = text_origin + label_offset;
-                mSurface.text(label_origin, aNode.draw.vaccine_label, mSettings.vaccine_label_color, mSettings.vaccine_label_size, mSettings.vaccine_label_style);
-                const auto vlsize = mSurface.text_size(aNode.draw.vaccine_label, mSettings.vaccine_label_size, mSettings.vaccine_label_style);
+                mSurface.text(label_origin, aNode.draw.vaccine_label, settings.label_color, settings.label_size, settings.label_style);
+                const auto vlsize = mSurface.text_size(aNode.draw.vaccine_label, settings.label_size, settings.label_style);
                 const auto line_origin = label_origin + Size(vlsize.width / 2, label_offset.height > 0 ? - vlsize.height : 0);
-                mSurface.line(line_origin, text_origin, mSettings.vaccine_line_color, mSettings.vaccine_line_width);
+                mSurface.line(line_origin, text_origin, settings.line_color, settings.line_width);
             }
         }
         else {

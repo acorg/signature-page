@@ -57,6 +57,23 @@ class AATransitionDrawSettings
 
 // ----------------------------------------------------------------------
 
+class TreeDrawVaccineSettings
+{
+ public:
+    inline TreeDrawVaccineSettings()
+        : label_color("black"), label_size(20), line_color("black"), line_width(1) {}
+
+    std::string name;           // empty for default settings
+    Color label_color;
+    double label_size;
+    TextStyle label_style;
+    Color line_color;
+    double line_width;
+
+}; // class TreeDrawVaccineSettings
+
+// ----------------------------------------------------------------------
+
 class TreeDrawSettings
 {
  public:
@@ -64,8 +81,18 @@ class TreeDrawSettings
         : hide_if_cumulative_edge_length_bigger_than(0.05), //(std::numeric_limits<double>::max()),
           force_line_width(false),
           line_width(1), root_edge(0), line_color(0), name_offset(0.3), color_nodes("159"),
-          vaccine_label_color("black"), vaccine_label_size(20), vaccine_line_color("black"), vaccine_line_width(1)
+          vaccines{{TreeDrawVaccineSettings{}}}
         {}
+
+    inline const TreeDrawVaccineSettings& vaccine(std::string aName) const
+        {
+            auto p = std::find_if(vaccines.begin(), vaccines.end(), [&aName](const auto& e) { return e.name == aName; });
+            if (p == vaccines.end())
+                p = std::find_if(vaccines.begin(), vaccines.end(), [](const auto& e) { return e.name.empty(); });
+            if (p == vaccines.end())
+                throw std::runtime_error("Invalid tree.vaccines settings: neither default entry (with empty name) nor entry with name " + aName);
+            return *p;
+        }
 
     std::string hide_isolated_before; // hide leaves isolated before the date (empty -> do not hide based on date)
     double hide_if_cumulative_edge_length_bigger_than; // hide long branches
@@ -77,12 +104,7 @@ class TreeDrawSettings
     double name_offset;         // offset of the label from the line right end, in W widths
     std::string color_nodes;    // black, continent, position number (e.g. 162)
     AATransitionDrawSettings aa_transition;
-
-    Color vaccine_label_color;
-    double vaccine_label_size;
-    TextStyle vaccine_label_style;
-    Color vaccine_line_color;
-    double vaccine_line_width;
+    std::vector<TreeDrawVaccineSettings> vaccines;
 
 }; // class TreeDrawSettings
 

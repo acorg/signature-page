@@ -65,6 +65,21 @@ template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writ
 
 // ----------------------------------------------------------------------
 
+template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const TreeDrawVaccineSettings& aSettings)
+{
+    return writer << StartObject
+                  << JsonObjectKey("name") << aSettings.name
+                  << JsonObjectKey("name?") << "empty for default settings"
+                  << JsonObjectKey("label_color") << aSettings.label_color
+                  << JsonObjectKey("label_size") << aSettings.label_size
+                  << JsonObjectKey("label_style") << aSettings.label_style
+                  << JsonObjectKey("line_color") << aSettings.line_color
+                  << JsonObjectKey("line_width") << aSettings.line_width
+                  << EndObject;
+}
+
+// ----------------------------------------------------------------------
+
 template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const TreeDrawSettings& aSettings)
 {
     return writer << StartObject
@@ -78,12 +93,8 @@ template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writ
                   << JsonObjectKey("name_offset") << aSettings.name_offset
                   << JsonObjectKey("color_nodes") << aSettings.color_nodes
                   << JsonObjectKey("color_nodes?") << "black, continent, position number (e.g. 162)"
-                  << JsonObjectKey("vaccine_label_color") << aSettings.vaccine_label_color
-                  << JsonObjectKey("vaccine_label_size") << aSettings.vaccine_label_size
-                  << JsonObjectKey("vaccine_label_style") << aSettings.vaccine_label_style
-                  << JsonObjectKey("vaccine_line_color") << aSettings.vaccine_line_color
-                  << JsonObjectKey("vaccine_line_width") << aSettings.vaccine_line_width
                   << JsonObjectKey("aa_transition") << aSettings.aa_transition
+                  << JsonObjectKey("vaccines") << aSettings.vaccines
                   << EndObject;
 }
 
