@@ -11,7 +11,7 @@ SIGNATURE_PAGE_SOURCES = tree.cc tree-export.cc signature-page.cc tree-draw.cc t
 SIGNATURE_PAGE_CC_PY_SOURCES = py.cc $(SIGNATURE_PAGE_SOURCES)
 TEST_CAIRO_SOURCES = test-cairo.cc $(DRAW_SOURCES)
 TEST_CAIRO_FONTS_SOURCES = test-cairo-fonts.cc $(DRAW_SOURCES)
-TEST_DRAW_TREE_SOURCES = test-draw-tree.cc $(SIGNATURE_PAGE_SOURCES)
+SIGP_SOURCES = sigp.cc $(SIGNATURE_PAGE_SOURCES)
 SETTINGS_CREATE_SOURCES = settings-create.cc settings.cc
 TEST_SETTINGS_COPY_SOURCES = test-settings-copy.cc settings.cc
 
@@ -34,19 +34,18 @@ PROFILE = # -pg
 CXXFLAGS = -MMD -g $(OPTIMIZATION) $(PROFILE) -fPIC -std=$(STD) $(WEVERYTHING) $(WARNINGS) -Icc -I$(BUILD)/include -I$(ACMACSD_ROOT)/include $(PKG_INCLUDES)
 LDFLAGS = $(OPTIMIZATION) $(PROFILE)
 
-LIB_DIR = $(ACMACSD_ROOT)/lib
-ACMACSD_LIBS = -L$(LIB_DIR) -lacmacsbase -lseqdb -lhidb -llocationdb -lboost_program_options
-SIGP_LDLIBS = $(ACMACSD_LIBS) $$(pkg-config --libs cairo) $$(pkg-config --libs liblzma) $(PYTHON_LD_LIB)
-SETTINGS_CREATE_LDLIBS = -L$(LIB_DIR) -lacmacsbase $$(pkg-config --libs liblzma)
-TEST_CAIRO_LDLIBS = -L$(LIB_DIR) -lacmacsbase $$(pkg-config --libs cairo)
-TEST_DRAW_TREE_LDLIBS = $(ACMACSD_LIBS) $$(pkg-config --libs cairo) $$(pkg-config --libs liblzma)
-
 PYTHON_VERSION = $(shell python3 -c 'import sys; print("{0.major}.{0.minor}".format(sys.version_info))')
 PYTHON_CONFIG = python$(PYTHON_VERSION)-config
 PYTHON_MODULE_SUFFIX = $(shell $(PYTHON_CONFIG) --extension-suffix)
 PYTHON_LD_LIB = $$($(PYTHON_CONFIG) --ldflags | sed -E 's/-Wl,-stack_size,[0-9]+//')
 
 PKG_INCLUDES = $$(pkg-config --cflags cairo) $$($(PYTHON_CONFIG) --includes)
+
+LIB_DIR = $(ACMACSD_ROOT)/lib
+ACMACSD_LIBS = -L$(LIB_DIR) -lacmacsbase -lseqdb -lhidb -llocationdb -lboost_program_options
+SETTINGS_CREATE_LDLIBS = -L$(LIB_DIR) -lacmacsbase $$(pkg-config --libs liblzma)
+TEST_CAIRO_LDLIBS = -L$(LIB_DIR) -lacmacsbase $$(pkg-config --libs cairo)
+SIGP_LDLIBS = $(ACMACSD_LIBS) $$(pkg-config --libs cairo) $$(pkg-config --libs liblzma)
 
 # ----------------------------------------------------------------------
 
@@ -55,7 +54,7 @@ DIST = $(abspath dist)
 
 # ----------------------------------------------------------------------
 
-all: check-python $(DIST)/signature_page_cc$(PYTHON_MODULE_SUFFIX) $(DIST)/sigp-settings-create $(DIST)/test-settings-copy $(DIST)/test-cairo $(DIST)/test-cairo-fonts $(DIST)/test-draw-tree
+all: check-python $(DIST)/signature_page_cc$(PYTHON_MODULE_SUFFIX) $(DIST)/sigp-settings-create $(DIST)/test-settings-copy $(DIST)/test-cairo $(DIST)/test-cairo-fonts $(DIST)/sigp
 
 # ----------------------------------------------------------------------
 
@@ -63,7 +62,7 @@ all: check-python $(DIST)/signature_page_cc$(PYTHON_MODULE_SUFFIX) $(DIST)/sigp-
 #	g++ $(LDFLAGS) -o $@ $^
 
 $(DIST)/signature_page_cc$(PYTHON_MODULE_SUFFIX):  $(patsubst %.cc,$(BUILD)/%.o,$(SIGNATURE_PAGE_CC_PY_SOURCES)) | $(DIST) check-acmacsd-root
-	g++ -shared $(LDFLAGS) -o $@ $^ $(SIGP_LDLIBS)
+	g++ -shared $(LDFLAGS) -o $@ $^ $(SIGP_LDLIBS) $(PYTHON_LD_LIB)
 
 $(DIST)/sigp-settings-create: $(patsubst %.cc,$(BUILD)/%.o,$(SETTINGS_CREATE_SOURCES)) | $(DIST)
 	g++ $(LDFLAGS) -o $@ $^ $(SETTINGS_CREATE_LDLIBS)
@@ -77,13 +76,14 @@ $(DIST)/test-cairo: $(patsubst %.cc,$(BUILD)/%.o,$(TEST_CAIRO_SOURCES)) | $(DIST
 $(DIST)/test-cairo-fonts: $(patsubst %.cc,$(BUILD)/%.o,$(TEST_CAIRO_FONTS_SOURCES)) | $(DIST)
 	g++ $(LDFLAGS) -o $@ $^ $(TEST_CAIRO_LDLIBS)
 
-$(DIST)/test-draw-tree: $(patsubst %.cc,$(BUILD)/%.o,$(TEST_DRAW_TREE_SOURCES)) | $(DIST)
-	g++ $(LDFLAGS) -o $@ $^ $(TEST_DRAW_TREE_LDLIBS)
+$(DIST)/sigp: $(patsubst %.cc,$(BUILD)/%.o,$(SIGP_SOURCES)) | $(DIST)
+	g++ $(LDFLAGS) -o $@ $^ $(SIGP_LDLIBS)
 
 # ----------------------------------------------------------------------
 
-install: $(DIST)/signature_page_cc$(PYTHON_MODULE_SUFFIX) | check-acmacsd-root
+install: $(DIST)/signature_page_cc$(PYTHON_MODULE_SUFFIX) $(DIST)/sigp | check-acmacsd-root
 	ln -sf $(abspath bin)/sigp-* $(ACMACSD_ROOT)/bin
+	ln -sf $(DIST)/sigp $(ACMACSD_ROOT)/bin
 	ln -sf $(abspath py)/* $(ACMACSD_ROOT)/py
 	ln -sf $(DIST)/signature_page_cc$(PYTHON_MODULE_SUFFIX) $(ACMACSD_ROOT)/py
 
@@ -93,7 +93,7 @@ clean:
 distclean: clean
 	rm -rf $(BUILD)
 
-test: install $(DIST)/test-cairo $(DIST)/test-cairo-fonts $(DIST)/test-draw-tree
+test: install $(DIST)/test-cairo $(DIST)/test-cairo-fonts $(DIST)/sigp
 	test/test
 
 # ----------------------------------------------------------------------
