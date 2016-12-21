@@ -87,11 +87,8 @@ class ColoringByContinentMapLegend : public Legend
  public:
     inline ColoringByContinentMapLegend(const ColoringByContinent& aColoring) : Legend(), mColoring(aColoring) {}
 
-    virtual void draw(Surface& aSurface, const LegendSettings& aSettings) const
+    virtual void draw(Surface& aSurface, const LegendSettings& /*aSettings*/) const
         {
-              // aSurface.border(0xA0FFA000, 10);
-              // Color geographic_map_outline_color = 0;
-              // double geographic_map_outline_width = 1;
             for (const auto& continent: ColoringByContinent::ContinentLabels) {
                 const auto& path = continent_map_path(continent);
                   // aSurface.path_outline(path.first, path.second, geographic_map_outline_color, geographic_map_outline_width);
