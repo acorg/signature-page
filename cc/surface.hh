@@ -43,9 +43,10 @@ class TextStyle
         }
 
     inline std::string& font_family() { return mFontFamily; }
-    inline void slant(Slant aSlant) { mSlant = aSlant; }
-    inline void weight(Weight aWeight) { mWeight = aWeight; }
+    inline void font_family(std::string s) { mFontFamily = s; }
+    inline void font_family(const char* s, size_t len) { mFontFamily.assign(s, len); }
 
+    inline void slant(Slant aSlant) { mSlant = aSlant; }
     inline void slant(std::string aSlant)
         {
             if (aSlant == "normal")
@@ -55,7 +56,9 @@ class TextStyle
             else
                 throw std::runtime_error("Unrecognized TextStyle slant: " + aSlant);
         }
+    inline void slant(const char* s, size_t len) { slant(std::string(s, len)); }
 
+    inline void weight(Weight aWeight) { mWeight = aWeight; }
     inline void weight(std::string aWeight)
         {
             if (aWeight == "normal")
@@ -65,16 +68,12 @@ class TextStyle
             else
                 throw std::runtime_error("Unrecognized TextStyle weight: " + aWeight);
         }
+    inline void weight(const char* s, size_t len) { weight(std::string(s, len)); }
 
  private:
     std::string mFontFamily;
     Slant mSlant;
     Weight mWeight;
-
-    // static std::string slant_to_string(Slant a);
-    // static std::string weight_to_string(Weight a);
-    // static Slant slant_from_string(std::string source);
-    // static Weight weight_from_string(weight, std::string source);
 
 }; // class TextStyle
 

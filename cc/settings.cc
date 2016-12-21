@@ -19,6 +19,60 @@ using HandlerBase = json_reader::HandlerBase<Settings>;
 
 // ----------------------------------------------------------------------
 
+class SettingsTextStyleHandler : public HandlerBase
+{
+ private:
+    enum class Keys {Unknown, family, slant, weight};
+
+ public:
+    inline SettingsTextStyleHandler(Settings& aSettings, TextStyle& aField) : HandlerBase{aSettings}, mKey(Keys::Unknown), mField(aField) {}
+
+    inline virtual HandlerBase* Key(const char* str, rapidjson::SizeType length)
+        {
+            HandlerBase* result = nullptr;
+            try {
+                mKey = key_mapper.at(std::string(str, length));
+            }
+            catch (std::out_of_range&) {
+                result = HandlerBase::Key(str, length);
+            }
+            return result;
+        }
+
+    inline virtual HandlerBase* String(const char* str, rapidjson::SizeType length)
+        {
+            HandlerBase* result = nullptr;
+            switch (mKey) {
+              case Keys::family:
+                  mField.font_family(str, length);
+                  break;
+              case Keys::slant:
+                  mField.slant(str, length);
+                  break;
+              case Keys::weight:
+                  mField.weight(str, length);
+                  break;
+              default:
+                  result = HandlerBase::String(str, length);
+                  break;
+            }
+            return result;
+        }
+
+ private:
+    Keys mKey;
+    TextStyle& mField;
+    static const std::map<std::string, Keys> key_mapper;
+};
+
+const std::map<std::string, SettingsTextStyleHandler::Keys> SettingsTextStyleHandler::key_mapper {
+    {"family", Keys::family},
+    {"slant", Keys::slant},
+    {"weight", Keys::weight}
+};
+
+// ----------------------------------------------------------------------
+
 class SettingsTreeHandler : public HandlerBase
 {
  private:
@@ -94,6 +148,23 @@ class SettingsTreeHandler : public HandlerBase
                   break;
             }
             return nullptr;
+        }
+
+    inline virtual HandlerBase* StartObject()
+        {
+            HandlerBase* result = nullptr;
+            switch (mKey) {
+              case Keys::label_style:
+                  result = new SettingsTextStyleHandler(mTarget, mTarget.tree_draw.label_style);
+                  break;
+                    // case Keys::aa_transition:
+                    //     result = new (mTarget);
+                    //     break;
+              default:
+                  result = HandlerBase::StartObject();
+                  break;
+            }
+            return result;
         }
 
  private:
