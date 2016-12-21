@@ -7,11 +7,12 @@ MAKEFLAGS = -w
 # ----------------------------------------------------------------------
 
 DRAW_SOURCES = surface-cairo.cc
-SIGNATURE_PAGE_SOURCES = tree.cc tree-export.cc tree-draw.cc coloring.cc continent-map.cc continent-path.cc $(DRAW_SOURCES)
+SIGNATURE_PAGE_SOURCES = tree.cc tree-export.cc tree-draw.cc coloring.cc continent-map.cc continent-path.cc settings.cc $(DRAW_SOURCES)
 SIGNATURE_PAGE_CC_PY_SOURCES = py.cc $(SIGNATURE_PAGE_SOURCES)
 TEST_CAIRO_SOURCES = test-cairo.cc $(DRAW_SOURCES)
 TEST_CAIRO_FONTS_SOURCES = test-cairo-fonts.cc $(DRAW_SOURCES)
 TEST_DRAW_TREE_SOURCES = test-draw-tree.cc $(SIGNATURE_PAGE_SOURCES)
+SETTINGS_CREATE_SOURCES = settings-create.cc settings.cc
 
 # ----------------------------------------------------------------------
 
@@ -35,6 +36,7 @@ LDFLAGS = $(OPTIMIZATION) $(PROFILE)
 LIB_DIR = $(ACMACSD_ROOT)/lib
 ACMACSD_LIBS = -L$(LIB_DIR) -lacmacsbase -lseqdb -lhidb -llocationdb -lboost_program_options
 SIGP_LDLIBS = $(ACMACSD_LIBS) $$(pkg-config --libs cairo) $$(pkg-config --libs liblzma) $(PYTHON_LD_LIB)
+SETTINGS_CREATE_LDLIBS = -L$(LIB_DIR) -lacmacsbase $$(pkg-config --libs liblzma)
 TEST_CAIRO_LDLIBS = -L$(LIB_DIR) -lacmacsbase $$(pkg-config --libs cairo)
 TEST_DRAW_TREE_LDLIBS = $(ACMACSD_LIBS) $$(pkg-config --libs cairo) $$(pkg-config --libs liblzma)
 
@@ -52,7 +54,7 @@ DIST = $(abspath dist)
 
 # ----------------------------------------------------------------------
 
-all: check-python $(DIST)/signature_page_cc$(PYTHON_MODULE_SUFFIX) $(DIST)/test-cairo $(DIST)/test-cairo-fonts $(DIST)/test-draw-tree
+all: check-python $(DIST)/signature_page_cc$(PYTHON_MODULE_SUFFIX) $(DIST)/sigp-settings-create $(DIST)/test-cairo $(DIST)/test-cairo-fonts $(DIST)/test-draw-tree
 
 # ----------------------------------------------------------------------
 
@@ -61,6 +63,9 @@ all: check-python $(DIST)/signature_page_cc$(PYTHON_MODULE_SUFFIX) $(DIST)/test-
 
 $(DIST)/signature_page_cc$(PYTHON_MODULE_SUFFIX):  $(patsubst %.cc,$(BUILD)/%.o,$(SIGNATURE_PAGE_CC_PY_SOURCES)) | $(DIST) check-acmacsd-root
 	g++ -shared $(LDFLAGS) -o $@ $^ $(SIGP_LDLIBS)
+
+$(DIST)/sigp-settings-create: $(patsubst %.cc,$(BUILD)/%.o,$(SETTINGS_CREATE_SOURCES)) | $(DIST)
+	g++ $(LDFLAGS) -o $@ $^ $(SETTINGS_CREATE_LDLIBS)
 
 $(DIST)/test-cairo: $(patsubst %.cc,$(BUILD)/%.o,$(TEST_CAIRO_SOURCES)) | $(DIST)
 	g++ $(LDFLAGS) -o $@ $^ $(TEST_CAIRO_LDLIBS)

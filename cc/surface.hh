@@ -20,6 +20,52 @@ class TextStyle
     inline Slant slant() const { return mSlant; }
     inline Weight weight() const { return mWeight; }
 
+    inline std::string slant_as_stirng() const
+        {
+            switch (mSlant) {
+              case Slant::Normal:
+                  return "normal";
+              case Slant::Italic:
+                  return "italic";
+            }
+            return "normal";
+        }
+
+    inline std::string weight_as_stirng() const
+        {
+            switch (mWeight) {
+              case Weight::Normal:
+                  return "normal";
+              case Weight::Bold:
+                  return "bold";
+            }
+            return "normal";
+        }
+
+    inline std::string& font_family() { return mFontFamily; }
+    inline void slant(Slant aSlant) { mSlant = aSlant; }
+    inline void weight(Weight aWeight) { mWeight = aWeight; }
+
+    inline void slant(std::string aSlant)
+        {
+            if (aSlant == "normal")
+                mSlant = Slant::Normal;
+            else if (aSlant == "italic")
+                mSlant = Slant::Italic;
+            else
+                throw std::runtime_error("Unrecognized TextStyle slant: " + aSlant);
+        }
+
+    inline void weight(std::string aWeight)
+        {
+            if (aWeight == "normal")
+                mWeight = Weight::Normal;
+            else if (aWeight == "bold")
+                mWeight = Weight::Bold;
+            else
+                throw std::runtime_error("Unrecognized TextStyle weight: " + aWeight);
+        }
+
  private:
     std::string mFontFamily;
     Slant mSlant;
