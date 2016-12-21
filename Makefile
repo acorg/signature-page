@@ -13,6 +13,7 @@ TEST_CAIRO_SOURCES = test-cairo.cc $(DRAW_SOURCES)
 TEST_CAIRO_FONTS_SOURCES = test-cairo-fonts.cc $(DRAW_SOURCES)
 TEST_DRAW_TREE_SOURCES = test-draw-tree.cc $(SIGNATURE_PAGE_SOURCES)
 SETTINGS_CREATE_SOURCES = settings-create.cc settings.cc
+TEST_SETTINGS_COPY_SOURCES = test-settings-copy.cc settings.cc
 
 # ----------------------------------------------------------------------
 
@@ -54,7 +55,7 @@ DIST = $(abspath dist)
 
 # ----------------------------------------------------------------------
 
-all: check-python $(DIST)/signature_page_cc$(PYTHON_MODULE_SUFFIX) $(DIST)/sigp-settings-create $(DIST)/test-cairo $(DIST)/test-cairo-fonts $(DIST)/test-draw-tree
+all: check-python $(DIST)/signature_page_cc$(PYTHON_MODULE_SUFFIX) $(DIST)/sigp-settings-create $(DIST)/test-settings-copy $(DIST)/test-cairo $(DIST)/test-cairo-fonts $(DIST)/test-draw-tree
 
 # ----------------------------------------------------------------------
 
@@ -65,6 +66,9 @@ $(DIST)/signature_page_cc$(PYTHON_MODULE_SUFFIX):  $(patsubst %.cc,$(BUILD)/%.o,
 	g++ -shared $(LDFLAGS) -o $@ $^ $(SIGP_LDLIBS)
 
 $(DIST)/sigp-settings-create: $(patsubst %.cc,$(BUILD)/%.o,$(SETTINGS_CREATE_SOURCES)) | $(DIST)
+	g++ $(LDFLAGS) -o $@ $^ $(SETTINGS_CREATE_LDLIBS)
+
+$(DIST)/test-settings-copy: $(patsubst %.cc,$(BUILD)/%.o,$(TEST_SETTINGS_COPY_SOURCES)) | $(DIST)
 	g++ $(LDFLAGS) -o $@ $^ $(SETTINGS_CREATE_LDLIBS)
 
 $(DIST)/test-cairo: $(patsubst %.cc,$(BUILD)/%.o,$(TEST_CAIRO_SOURCES)) | $(DIST)

@@ -8,11 +8,188 @@ static constexpr const char* SETTINGS_VERSION = "signature-page-settings-v2";
 
 // ----------------------------------------------------------------------
 
+#pragma GCC diagnostic push
+#ifdef __clang__
+#pragma GCC diagnostic ignored "-Wswitch-enum"
+#pragma GCC diagnostic ignored "-Wexit-time-destructors"
+#pragma GCC diagnostic ignored "-Wglobal-constructors"
+#endif
+
+using HandlerBase = json_reader::HandlerBase<Settings>;
+
+// ----------------------------------------------------------------------
+
+class SettingsTreeHandler : public HandlerBase
+{
+ private:
+    enum class Keys {Unknown, hide_isolated_before, hide_if_cumulative_edge_length_bigger_than,
+                force_line_width, line_width, root_edge, line_color, label_style,
+                name_offset, color_nodes, aa_transition, vaccines};
+
+ public:
+    inline SettingsTreeHandler(Settings& aSettings) : HandlerBase{aSettings}, mKey(Keys::Unknown) {}
+
+    inline virtual HandlerBase* Key(const char* str, rapidjson::SizeType length)
+        {
+            HandlerBase* result = nullptr;
+            try {
+                mKey = key_mapper.at(std::string(str, length));
+            }
+            catch (std::out_of_range&) {
+                result = HandlerBase::Key(str, length);
+            }
+            return result;
+        }
+
+    inline virtual HandlerBase* String(const char* str, rapidjson::SizeType length)
+        {
+            HandlerBase* result = nullptr;
+            switch (mKey) {
+              case Keys::hide_isolated_before:
+                  mTarget.tree_draw.hide_isolated_before.assign(str, length);
+                  break;
+              case Keys::line_color:
+                  mTarget.tree_draw.line_color.from_string(str, length);
+                  break;
+              case Keys::color_nodes:
+                  mTarget.tree_draw.color_nodes.assign(str, length);
+                  break;
+              default:
+                  result = HandlerBase::String(str, length);
+                  break;
+            }
+            return result;
+        }
+
+    inline virtual HandlerBase* Double(double d)
+        {
+            switch (mKey) {
+              case Keys::hide_if_cumulative_edge_length_bigger_than:
+                  mTarget.tree_draw.hide_if_cumulative_edge_length_bigger_than = d;
+                  break;
+              case Keys::line_width:
+                  mTarget.tree_draw.line_width = d;
+                  break;
+              case Keys::root_edge:
+                  mTarget.tree_draw.root_edge = d;
+                  break;
+              case Keys::name_offset:
+                  mTarget.tree_draw.name_offset = d;
+                  break;
+              default:
+                  HandlerBase::Double(d);
+                  break;
+            }
+            return nullptr;
+        }
+
+    inline virtual HandlerBase* Bool(bool b)
+        {
+            switch (mKey) {
+              case Keys::force_line_width:
+                  mTarget.tree_draw.force_line_width = b;
+                  break;
+              default:
+                  HandlerBase::Bool(b);
+                  break;
+            }
+            return nullptr;
+        }
+
+ private:
+    Keys mKey;
+    static const std::map<std::string, Keys> key_mapper;
+
+}; // class SettingsTreeHandler
+
+const std::map<std::string, SettingsTreeHandler::Keys> SettingsTreeHandler::key_mapper {
+    {"hide_isolated_before", Keys::hide_isolated_before},
+    {"hide_if_cumulative_edge_length_bigger_than", Keys::hide_if_cumulative_edge_length_bigger_than},
+    {"force_line_width", Keys::force_line_width},
+    {"line_width", Keys::line_width},
+    {"root_edge", Keys::root_edge},
+    {"line_color", Keys::line_color},
+    {"label_style", Keys::label_style},
+    {"name_offset", Keys::name_offset},
+    {"color_nodes", Keys::color_nodes},
+    {"aa_transition", Keys::aa_transition},
+    {"vaccines", Keys::vaccines}
+};
+
+// ----------------------------------------------------------------------
+
+class SettingsRootHandler : public HandlerBase
+{
+ private:
+    enum class Keys { Unknown, Version, Tree };
+
+ public:
+    inline SettingsRootHandler(Settings& aSettings) : HandlerBase{aSettings}, mKey(Keys::Unknown) {}
+
+    inline virtual HandlerBase* Key(const char* str, rapidjson::SizeType length)
+        {
+            HandlerBase* result = nullptr;
+            const std::string found_key(str, length);
+            if (found_key == "  version") {
+                mKey = Keys::Version;
+            }
+            else if (found_key == "tree") {
+                mKey = Keys::Tree;
+            }
+            else {
+                result = HandlerBase::Key(str, length);
+            }
+            return result;
+        }
+
+    inline virtual HandlerBase* String(const char* str, rapidjson::SizeType length)
+        {
+            HandlerBase* result = nullptr;
+            switch (mKey) {
+              case Keys::Version:
+                  if (strncmp(str, SETTINGS_VERSION, std::min(length, static_cast<rapidjson::SizeType>(strlen(SETTINGS_VERSION))))) {
+                      std::cerr << "Unsupported version: \"" << std::string(str, length) << '"' << std::endl;
+                      throw json_reader::Failure();
+                  }
+                  break;
+              default:
+                  result = HandlerBase::String(str, length);
+                  break;
+            }
+            return result;
+        }
+
+        inline virtual HandlerBase* StartObject()
+            {
+                HandlerBase* result = nullptr;
+                switch (mKey) {
+                  case Keys::Tree:
+                      result = new SettingsTreeHandler(mTarget);
+                      break;
+                  default:
+                      result = HandlerBase::StartObject();
+                      break;
+                }
+                return result;
+            }
+
+ private:
+    Keys mKey;
+};
+
+// ----------------------------------------------------------------------
+
+#pragma GCC diagnostic pop
+
+// ----------------------------------------------------------------------
+
 void read_settings(Settings& aSettings, std::string aFilename)
 {
+    json_reader::read_from_file<Settings, SettingsRootHandler>(aFilename, aSettings);
 
 } // read_settings
 
+// ----------------------------------------------------------------------
 // ----------------------------------------------------------------------
 
 template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const TextStyle& aStyle)
