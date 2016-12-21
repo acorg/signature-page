@@ -1,6 +1,6 @@
 #include <fstream>
 #include <cstdlib>
-#include  <algorithm>
+#include <algorithm>
 
 #include "surface-cairo.hh"
 

@@ -34,6 +34,7 @@ class SettingsTextStyleHandler : public HandlerBase
                 mKey = key_mapper.at(std::string(str, length));
             }
             catch (std::out_of_range&) {
+                mKey = Keys::Unknown;
                 result = HandlerBase::Key(str, length);
             }
             return result;
@@ -116,6 +117,7 @@ class AATransitionPerBranchDrawSettingsHandler : public HandlerBase
                 mKey = key_mapper.at(std::string(str, length));
             }
             catch (std::out_of_range&) {
+                mKey = Keys::Unknown;
                 result = HandlerBase::Key(str, length);
             }
             return result;
@@ -218,6 +220,7 @@ class AATransitionDrawSettingsHandler : public HandlerBase
                 mKey = key_mapper.at(std::string(str, length));
             }
             catch (std::out_of_range&) {
+                mKey = Keys::Unknown;
                 result = HandlerBase::Key(str, length);
             }
             return result;
@@ -329,6 +332,7 @@ class TreeDrawVaccineSettingsHandler : public HandlerBase
                 mKey = key_mapper.at(std::string(str, length));
             }
             catch (std::out_of_range&) {
+                mKey = Keys::Unknown;
                 result = HandlerBase::Key(str, length);
             }
             return result;
@@ -419,6 +423,7 @@ class SettingsTreeHandler : public HandlerBase
                 mKey = key_mapper.at(std::string(str, length));
                 switch (mKey) {
                   case Keys::vaccines:
+                      mTarget.tree_draw.vaccines.clear();
                       result = new json_reader::ListHandler<Settings, TreeDrawVaccineSettings, TreeDrawVaccineSettingsHandler>(mTarget, mTarget.tree_draw.vaccines);
                       break;
                   default:
@@ -426,6 +431,7 @@ class SettingsTreeHandler : public HandlerBase
                 }
             }
             catch (std::out_of_range&) {
+                mKey = Keys::Unknown;
                 result = HandlerBase::Key(str, length);
             }
             return result;
