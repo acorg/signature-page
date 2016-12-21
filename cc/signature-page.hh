@@ -22,7 +22,10 @@ class SignaturePageDrawSettings
 {
  public:
     inline SignaturePageDrawSettings()
+        : border_space(0.05)
         {}
+
+    double border_space;        // fraction of the surface width
 
 }; // class SignaturePageDrawSettings
 

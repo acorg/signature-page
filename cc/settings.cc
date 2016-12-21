@@ -628,10 +628,83 @@ const std::map<std::string, SettingsTreeHandler::Keys> SettingsTreeHandler::key_
 
 // ----------------------------------------------------------------------
 
+class SignaturePageDrawSettingsHandler : public HandlerBase
+{
+ private:
+    enum class Keys {Unknown, border_space};
+
+ public:
+    inline SignaturePageDrawSettingsHandler(Settings& aSettings) : HandlerBase{aSettings}, mKey(Keys::Unknown) {}
+
+    inline virtual HandlerBase* Key(const char* str, rapidjson::SizeType length)
+        {
+            HandlerBase* result = nullptr;
+            try {
+                mKey = key_mapper.at(std::string(str, length));
+            }
+            catch (std::out_of_range&) {
+                mKey = Keys::Unknown;
+                result = HandlerBase::Key(str, length);
+            }
+            return result;
+        }
+
+    // inline virtual HandlerBase* String(const char* str, rapidjson::SizeType length)
+    //     {
+    //         HandlerBase* result = nullptr;
+    //         switch (mKey) {
+    //           case Keys:::
+    //               mTarget.signature_page..assign(str, length);
+    //               break;
+    //           default:
+    //               result = HandlerBase::String(str, length);
+    //               break;
+    //         }
+    //         return result;
+    //     }
+
+    inline virtual HandlerBase* Double(double d)
+        {
+            switch (mKey) {
+              case Keys::border_space:
+                  mTarget.signature_page.border_space = d;
+                  break;
+              default:
+                  HandlerBase::Double(d);
+                  break;
+            }
+            return nullptr;
+        }
+
+    // inline virtual HandlerBase* Bool(bool b)
+    //     {
+    //         switch (mKey) {
+    //           case Keys:::
+    //               mTarget.signature_page. = b;
+    //               break;
+    //           default:
+    //               HandlerBase::Bool(b);
+    //               break;
+    //         }
+    //         return nullptr;
+    //     }
+
+ private:
+    Keys mKey;
+    static const std::map<std::string, Keys> key_mapper;
+
+}; // class SignaturePageDrawSettingsHandler
+
+const std::map<std::string, SignaturePageDrawSettingsHandler::Keys> SignaturePageDrawSettingsHandler::key_mapper {
+    {"border_space", Keys::border_space},
+};
+
+// ----------------------------------------------------------------------
+
 class SettingsRootHandler : public HandlerBase
 {
  private:
-    enum class Keys { Unknown, Version, Tree };
+    enum class Keys { Unknown, version, signature_page, tree };
 
  public:
     inline SettingsRootHandler(Settings& aSettings) : HandlerBase{aSettings}, mKey(Keys::Unknown) {}
@@ -639,14 +712,11 @@ class SettingsRootHandler : public HandlerBase
     inline virtual HandlerBase* Key(const char* str, rapidjson::SizeType length)
         {
             HandlerBase* result = nullptr;
-            const std::string found_key(str, length);
-            if (found_key == "  version") {
-                mKey = Keys::Version;
+            try {
+                mKey = key_mapper.at(std::string(str, length));
             }
-            else if (found_key == "tree") {
-                mKey = Keys::Tree;
-            }
-            else {
+            catch (std::out_of_range&) {
+                mKey = Keys::Unknown;
                 result = HandlerBase::Key(str, length);
             }
             return result;
@@ -656,7 +726,7 @@ class SettingsRootHandler : public HandlerBase
         {
             HandlerBase* result = nullptr;
             switch (mKey) {
-              case Keys::Version:
+              case Keys::version:
                   if (strncmp(str, SETTINGS_VERSION, std::min(length, static_cast<rapidjson::SizeType>(strlen(SETTINGS_VERSION))))) {
                       std::cerr << "Unsupported version: \"" << std::string(str, length) << '"' << std::endl;
                       throw json_reader::Failure();
@@ -673,7 +743,10 @@ class SettingsRootHandler : public HandlerBase
             {
                 HandlerBase* result = nullptr;
                 switch (mKey) {
-                  case Keys::Tree:
+                  case Keys::signature_page:
+                      result = new SignaturePageDrawSettingsHandler(mTarget);
+                      break;
+                  case Keys::tree:
                       result = new SettingsTreeHandler(mTarget);
                       break;
                   default:
@@ -685,6 +758,13 @@ class SettingsRootHandler : public HandlerBase
 
  private:
     Keys mKey;
+    static const std::map<std::string, Keys> key_mapper;
+};
+
+const std::map<std::string, SettingsRootHandler::Keys> SettingsRootHandler::key_mapper {
+    {"  version", Keys::version},
+    {"signature_page", Keys::signature_page},
+    {"tree", Keys::tree},
 };
 
 // ----------------------------------------------------------------------
@@ -803,10 +883,20 @@ template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writ
 
 // ----------------------------------------------------------------------
 
+template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const SignaturePageDrawSettings& aSettings)
+{
+    return writer << StartObject
+                  << JsonObjectKey("border_space") << aSettings.border_space
+                  << EndObject;
+}
+
+// ----------------------------------------------------------------------
+
 template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const Settings& aSettings)
 {
     return writer << StartObject
                   << JsonObjectKey("  version") << SETTINGS_VERSION
+                  << JsonObjectKey("signature_page") << aSettings.signature_page
                   << JsonObjectKey("tree") << aSettings.tree_draw
                   << EndObject;
 }

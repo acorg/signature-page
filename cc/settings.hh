@@ -1,5 +1,6 @@
 #pragma once
 
+#include "signature-page.hh"
 #include "tree-draw.hh"
 
 // ----------------------------------------------------------------------
@@ -9,6 +10,7 @@ class Settings
  public:
     inline Settings() = default;
 
+    SignaturePageDrawSettings signature_page;
     TreeDrawSettings tree_draw;
 
 }; // class Settings
