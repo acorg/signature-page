@@ -406,12 +406,105 @@ const std::map<std::string, TreeDrawVaccineSettingsHandler::Keys> TreeDrawVaccin
 
 // ----------------------------------------------------------------------
 
+class TreeDrawLegendSettingsHandler : public HandlerBase
+{
+ private:
+    enum class Keys {Unknown, offset, width, title_style, title_size, text_style, text_size, interline};
+
+ public:
+    inline TreeDrawLegendSettingsHandler(Settings& aSettings, LegendSettings& aField) : HandlerBase{aSettings}, mKey(Keys::Unknown), mField(aField) {}
+
+    inline virtual HandlerBase* Key(const char* str, rapidjson::SizeType length)
+        {
+            HandlerBase* result = nullptr;
+            try {
+                mKey = key_mapper.at(std::string(str, length));
+            }
+            catch (std::out_of_range&) {
+                mKey = Keys::Unknown;
+                result = HandlerBase::Key(str, length);
+            }
+            return result;
+        }
+
+    inline virtual HandlerBase* Double(double d)
+        {
+            switch (mKey) {
+              case Keys::width:
+                  mField.width = d;
+                  break;
+              case Keys::title_size:
+                  mField.title_size = d;
+                  break;
+              case Keys::text_size:
+                  mField.text_size = d;
+                  break;
+              case Keys::interline:
+                  mField.interline = d;
+                  break;
+              default:
+                  HandlerBase::Double(d);
+                  break;
+            }
+            return nullptr;
+        }
+
+    inline virtual HandlerBase* StartObject()
+        {
+            HandlerBase* result = nullptr;
+            switch (mKey) {
+              case Keys::title_style:
+                  result = new SettingsTextStyleHandler(mTarget, mField.title_style);
+                  break;
+              case Keys::text_style:
+                  result = new SettingsTextStyleHandler(mTarget, mField.text_style);
+                  break;
+              default:
+                  result = HandlerBase::StartObject();
+                  break;
+            }
+            return result;
+        }
+
+    inline virtual HandlerBase* StartArray()
+        {
+            HandlerBase* result = nullptr;
+            switch (mKey) {
+              case Keys::offset:
+                  result = new SettingsSizeHandler(mTarget, mField.offset);
+                  break;
+              default:
+                  result = HandlerBase::StartArray();
+                  break;
+            }
+            return result;
+        }
+
+ private:
+    Keys mKey;
+    LegendSettings& mField;
+    static const std::map<std::string, Keys> key_mapper;
+
+}; // class TreeDrawLegendSettingsHandler
+
+const std::map<std::string, TreeDrawLegendSettingsHandler::Keys> TreeDrawLegendSettingsHandler::key_mapper {
+    {"offset", Keys::offset},
+    {"width", Keys::width},
+    {"title_style", Keys::title_style},
+    {"title_size", Keys::title_size},
+    {"text_style", Keys::text_style},
+    {"text_size", Keys::text_size},
+    {"interline", Keys::interline}
+};
+
+// ----------------------------------------------------------------------
+
 class SettingsTreeHandler : public HandlerBase
 {
  private:
     enum class Keys {Unknown, hide_isolated_before, hide_if_cumulative_edge_length_bigger_than,
                 force_line_width, line_width, root_edge, line_color, label_style,
-                name_offset, color_nodes, aa_transition, vaccines};
+                name_offset, color_nodes, aa_transition, vaccines, legend};
 
  public:
     inline SettingsTreeHandler(Settings& aSettings) : HandlerBase{aSettings}, mKey(Keys::Unknown) {}
@@ -502,6 +595,9 @@ class SettingsTreeHandler : public HandlerBase
               case Keys::aa_transition:
                   result = new AATransitionDrawSettingsHandler(mTarget);
                   break;
+              case Keys::legend:
+                  result = new TreeDrawLegendSettingsHandler(mTarget, mTarget.tree_draw.legend);
+                  break;
               default:
                   result = HandlerBase::StartObject();
                   break;
@@ -526,7 +622,8 @@ const std::map<std::string, SettingsTreeHandler::Keys> SettingsTreeHandler::key_
     {"name_offset", Keys::name_offset},
     {"color_nodes", Keys::color_nodes},
     {"aa_transition", Keys::aa_transition},
-    {"vaccines", Keys::vaccines}
+    {"vaccines", Keys::vaccines},
+    {"legend", Keys::legend}
 };
 
 // ----------------------------------------------------------------------
@@ -670,6 +767,21 @@ template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writ
 
 // ----------------------------------------------------------------------
 
+template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const LegendSettings& aSettings)
+{
+    return writer << StartObject
+                  << JsonObjectKey("offset") << aSettings.offset
+                  << JsonObjectKey("width") << aSettings.width
+                  << JsonObjectKey("title_style") << aSettings.title_style
+                  << JsonObjectKey("title_size") << aSettings.title_size
+                  << JsonObjectKey("text_style") << aSettings.text_style
+                  << JsonObjectKey("text_size") << aSettings.text_size
+                  << JsonObjectKey("interline") << aSettings.interline
+                  << EndObject;
+}
+
+// ----------------------------------------------------------------------
+
 template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const TreeDrawSettings& aSettings)
 {
     return writer << StartObject
@@ -685,6 +797,7 @@ template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writ
                   << JsonObjectKey("color_nodes?") << "black, continent, position number (e.g. 162)"
                   << JsonObjectKey("aa_transition") << aSettings.aa_transition
                   << JsonObjectKey("vaccines") << aSettings.vaccines
+                  << JsonObjectKey("legend") << aSettings.legend
                   << EndObject;
 }
 

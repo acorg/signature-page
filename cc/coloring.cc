@@ -1,6 +1,7 @@
 #include "coloring.hh"
 #include "tree.hh"
-#include "continent-map.hh"
+#include "continent-path.hh"
+#include "legend.hh"
 
 // ----------------------------------------------------------------------
 
@@ -77,6 +78,36 @@ Color ColoringByContinent::color(const Node& aNode) const
 //     const ColoringByContinent& mColoring;
 
 // }; // class ColoringByContinentLegend
+
+// ----------------------------------------------------------------------
+
+class ColoringByContinentMapLegend : public Legend
+{
+
+ public:
+    inline ColoringByContinentMapLegend(const ColoringByContinent& aColoring) : Legend(), mColoring(aColoring) {}
+
+    virtual void draw(Surface& aSurface) const
+        {
+              // aSurface.border(0xA0FFA000, 10);
+              // Color geographic_map_outline_color = 0;
+              // double geographic_map_outline_width = 1;
+            for (const auto& continent: ColoringByContinent::ContinentLabels) {
+                const auto& path = continent_map_path(continent);
+                  // aSurface.path_outline(path.first, path.second, geographic_map_outline_color, geographic_map_outline_width);
+                aSurface.path_fill(path.first, path.second, mColoring.color(continent));
+            }
+        }
+
+    virtual Size size() const
+        {
+            return {continent_map_size[0], continent_map_size[1]};
+        }
+
+ private:
+    const ColoringByContinent& mColoring;
+
+}; // class ColoringByContinentMapLegend
 
 // ----------------------------------------------------------------------
 

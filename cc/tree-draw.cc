@@ -65,6 +65,7 @@ void TreeDraw::draw()
 
     draw_node(mTree, Location{mLineWidth / 2, 0}, mSettings.root_edge);
     mColoring->report();
+    draw_legend();
 
     // mark_nodes(aSurface);
 
@@ -267,6 +268,20 @@ Legend* TreeDraw::coloring_legend() const
     return mColoring ? mColoring->legend() : nullptr;
 
 } // TreeDraw::coloring_legend
+
+// ----------------------------------------------------------------------
+
+void TreeDraw::draw_legend()
+{
+    std::unique_ptr<Legend> legend{coloring_legend()};
+    if (legend) {
+        const double legend_width = 200;
+        std::unique_ptr<Surface> legend_surface{mSurface.subsurface({800, 100}, {legend_width, legend_width / legend->size().aspect()}, legend->size().width, false)};
+        legend->draw(*legend_surface);
+        legend_surface->border("red", 1);
+    }
+
+} // TreeDraw::draw_legend
 
 // ----------------------------------------------------------------------
 

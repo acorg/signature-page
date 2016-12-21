@@ -6,6 +6,7 @@
 #include <memory>
 
 #include "surface.hh"
+#include "legend.hh"
 
 // ----------------------------------------------------------------------
 
@@ -106,6 +107,7 @@ class TreeDrawSettings
     std::string color_nodes;    // black, continent, position number (e.g. 162)
     AATransitionDrawSettings aa_transition;
     std::vector<TreeDrawVaccineSettings> vaccines;
+    LegendSettings legend;
 
 }; // class TreeDrawSettings
 
@@ -138,6 +140,7 @@ class TreeDraw
     void set_line_no();
     void set_top_bottom();
     void draw_node(const Node& aNode, const Location& aOrigin, double aEdgeLength = -1);
+    void draw_legend();
     void draw_aa_transition(const Node& aNode, const Location& aOrigin, double aRight);
     void fit_labels_into_viewport();
     void calculate_name_offset();

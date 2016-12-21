@@ -14,7 +14,6 @@
 #include "tree.hh"
 #include "tree-export.hh"
 #include "tree-draw.hh"
-#include "legend.hh"
 #include "settings.hh"
 
 // ----------------------------------------------------------------------
@@ -122,13 +121,6 @@ void draw(const Settings& aSettings, Surface& aSurface, Tree& tree)
     TreeDraw tree_draw{aSurface, tree, aSettings.tree_draw};
     tree_draw.prepare();
     tree_draw.draw();
-    std::unique_ptr<Legend> legend{tree_draw.coloring_legend()};
-    if (legend) {
-        const double legend_width = 200;
-        std::unique_ptr<Surface> legend_surface{aSurface.subsurface({800, 100}, {legend_width, legend_width / legend->size().aspect()}, legend->size().width, false)};
-        legend->draw(*legend_surface);
-        // legend_surface->border("red", 10);
-    }
 }
 
 // ----------------------------------------------------------------------
