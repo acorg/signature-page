@@ -114,7 +114,7 @@ class TreeDrawSettings
 class TreeDraw
 {
  public:
-    TreeDraw(Surface& aSurface, Tree& aTree, TreeDrawSettings& aSettings);
+    TreeDraw(Surface& aSurface, Tree& aTree, const TreeDrawSettings& aSettings);
     ~TreeDraw();
 
     void prepare();
@@ -124,7 +124,7 @@ class TreeDraw
  private:
     Surface& mSurface;
     Tree& mTree;
-    TreeDrawSettings& mSettings;
+    const TreeDrawSettings& mSettings;
     std::unique_ptr<Coloring> mColoring;
 
     double mHorizontalStep;

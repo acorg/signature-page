@@ -8,7 +8,7 @@
 
 // ----------------------------------------------------------------------
 
-TreeDraw::TreeDraw(Surface& aSurface, Tree& aTree, TreeDrawSettings& aSettings)
+TreeDraw::TreeDraw(Surface& aSurface, Tree& aTree, const TreeDrawSettings& aSettings)
     : mSurface(aSurface), mTree(aTree), mSettings(aSettings)
 {
     make_coloring();

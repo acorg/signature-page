@@ -15,24 +15,28 @@
 #include "tree-export.hh"
 #include "tree-draw.hh"
 #include "legend.hh"
+#include "settings.hh"
 
 // ----------------------------------------------------------------------
 
-int get_args(int argc, const char *argv[], std::string& aTreeFilename, std::string& aOutputPdf, std::string& aSeqdbFilename);
+int get_args(int argc, const char *argv[], std::string& aSettingsFilename, std::string& aTreeFilename, std::string& aOutputPdf, std::string& aSeqdbFilename);
 void read(Tree& tree, LocDb& locdb, seqdb::Seqdb& seqdb, std::string aTreeFilename, std::string aSeqdbFilename);
-void draw(Surface& aSurface, Tree& tree);
+void draw(const Settings& aSettings, Surface& aSurface, Tree& tree);
 
 // ----------------------------------------------------------------------
 
 int main(int argc, const char *argv[])
 {
-    std::string tree_filename, output_filename, seqdb_filename;
-    int exit_code = get_args(argc, argv, tree_filename, output_filename, seqdb_filename);
+    std::string settings_filename, tree_filename, output_filename, seqdb_filename;
+    int exit_code = get_args(argc, argv, settings_filename, tree_filename, output_filename, seqdb_filename);
     if (exit_code == 0) {
         try {
             LocDb locdb;
             seqdb::Seqdb seqdb;
             Tree tree;
+            Settings settings;
+            if (!settings_filename.empty())
+                read_settings(settings, settings_filename);
             read(tree, locdb, seqdb, tree_filename, seqdb_filename);
             PdfCairo surface(output_filename, 500, 850);
             surface.background("white");
@@ -41,7 +45,7 @@ int main(int argc, const char *argv[])
             // std::cout << "Sub scale:" << scale << std::endl;
             std::unique_ptr<Surface> sub{surface.subsurface({offset, offset}, surface.size() - Size(offset * 2, offset * 2), surface.size().width, false)};
             sub->border(0xA0FFA000, 10);
-            draw(*sub, tree);
+            draw(settings, *sub, tree);
         }
         catch (std::exception& err) {
             std::cerr << err.what() << std::endl;
@@ -53,13 +57,14 @@ int main(int argc, const char *argv[])
 
 // ----------------------------------------------------------------------
 
-int get_args(int argc, const char *argv[], std::string& aTreeFilename, std::string& aOutputPdf, std::string& aSeqdbFilename)
+int get_args(int argc, const char *argv[], std::string& aSettingsFilename, std::string& aTreeFilename, std::string& aOutputPdf, std::string& aSeqdbFilename)
 {
     using namespace boost::program_options;
     options_description desc("Options");
     desc.add_options()
             ("help", "Print help messages")
             ("seqdb", value<std::string>(&aSeqdbFilename)/* ->required() */, "path to seqdb")
+            ("settings,s", value<std::string>(&aSettingsFilename), "signature page drawing settings (json) filename")
             ("tree", value<std::string>(&aTreeFilename)->required(), "path to tree to draw")
             ("output,o", value<std::string>(&aOutputPdf)->required(), "output pdf")
             ;
@@ -111,11 +116,10 @@ void read(Tree& tree, LocDb& locdb, seqdb::Seqdb& seqdb, std::string aTreeFilena
 
 // ----------------------------------------------------------------------
 
-void draw(Surface& aSurface, Tree& tree)
+void draw(const Settings& aSettings, Surface& aSurface, Tree& tree)
 {
     aSurface.background("white");
-    TreeDrawSettings settings{};
-    TreeDraw tree_draw{aSurface, tree, settings};
+    TreeDraw tree_draw{aSurface, tree, aSettings.tree_draw};
     tree_draw.prepare();
     tree_draw.draw();
     std::unique_ptr<Legend> legend{tree_draw.coloring_legend()};
