@@ -21,7 +21,46 @@ template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writ
                   << JsonObjectKey("family") << aStyle.font_family()
                   << JsonObjectKey("slant") << aStyle.slant_as_stirng()
                   << JsonObjectKey("weight") << aStyle.weight_as_stirng()
-            << EndObject;
+                  << EndObject;
+}
+
+// ----------------------------------------------------------------------
+
+template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const Size& aSize)
+{
+    return writer << StartArray << aSize.width << aSize.height << EndArray;
+}
+
+// ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
+
+template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const AATransitionPerBranchDrawSettings& aSettings)
+{
+    return writer << StartObject
+                  << JsonObjectKey("size") << aSettings.size
+                  << JsonObjectKey("color") << aSettings.color
+                  << JsonObjectKey("style") << aSettings.style
+                  << JsonObjectKey("interline") << aSettings.interline
+                  << JsonObjectKey("label_offset") << aSettings.label_offset
+                  << JsonObjectKey("label_connection_line_width") << aSettings.label_connection_line_width
+                  << JsonObjectKey("label_connection_line_color") << aSettings.label_connection_line_color
+                  << EndObject;
+}
+
+// ----------------------------------------------------------------------
+
+template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const AATransitionDrawSettings& aSettings)
+{
+    return writer << StartObject
+                  << JsonObjectKey("show") << aSettings.show
+                  << JsonObjectKey("number_strains_threshold") << aSettings.number_strains_threshold
+                  << JsonObjectKey("number_strains_threshold?") << "do not show aa transition label if number_strains (leaf nodes) for the branch is less than this value"
+                  << JsonObjectKey("show_empty_left") << aSettings.show_empty_left
+                  << JsonObjectKey("show_node_for_left_line") << aSettings.show_node_for_left_line
+                  << JsonObjectKey("node_for_left_line_color") << aSettings.node_for_left_line_color
+                  << JsonObjectKey("node_for_left_line_width") << aSettings.node_for_left_line_width
+                  << JsonObjectKey("per_branch") << aSettings.per_branch
+                  << EndObject;
 }
 
 // ----------------------------------------------------------------------
@@ -39,12 +78,12 @@ template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writ
                   << JsonObjectKey("name_offset") << aSettings.name_offset
                   << JsonObjectKey("color_nodes") << aSettings.color_nodes
                   << JsonObjectKey("color_nodes?") << "black, continent, position number (e.g. 162)"
-              // << JsonObjectKey("aa_transition") << aSettings.aa_transition
                   << JsonObjectKey("vaccine_label_color") << aSettings.vaccine_label_color
                   << JsonObjectKey("vaccine_label_size") << aSettings.vaccine_label_size
                   << JsonObjectKey("vaccine_label_style") << aSettings.vaccine_label_style
                   << JsonObjectKey("vaccine_line_color") << aSettings.vaccine_line_color
                   << JsonObjectKey("vaccine_line_width") << aSettings.vaccine_line_width
+                  << JsonObjectKey("aa_transition") << aSettings.aa_transition
                   << EndObject;
 }
 
