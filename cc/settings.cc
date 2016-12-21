@@ -73,6 +73,247 @@ const std::map<std::string, SettingsTextStyleHandler::Keys> SettingsTextStyleHan
 
 // ----------------------------------------------------------------------
 
+class SettingsSizeHandler : public HandlerBase
+{
+ public:
+    inline SettingsSizeHandler(Settings& aSettings, Size& aField) : HandlerBase{aSettings}, mElement(0), mField(aField) {}
+
+    inline virtual HandlerBase* Double(double d)
+        {
+            switch (mElement) {
+              case 0:
+                  mField.width = d;
+                  break;
+              case 1:
+                  mField.height = d;
+                  break;
+              default:
+                  throw json_reader::Failure{};
+            }
+            ++mElement;
+            return nullptr;
+        }
+
+ private:
+    size_t mElement;
+    Size& mField;
+};
+
+// ----------------------------------------------------------------------
+
+class AATransitionPerBranchDrawSettingsHandler : public HandlerBase
+{
+ private:
+    enum class Keys {Unknown, size, color, style, interline, label_offset, label_connection_line_width, label_connection_line_color};
+
+ public:
+    inline AATransitionPerBranchDrawSettingsHandler(Settings& aSettings) : HandlerBase{aSettings}, mKey(Keys::Unknown) {}
+
+    inline virtual HandlerBase* Key(const char* str, rapidjson::SizeType length)
+        {
+            HandlerBase* result = nullptr;
+            try {
+                mKey = key_mapper.at(std::string(str, length));
+            }
+            catch (std::out_of_range&) {
+                result = HandlerBase::Key(str, length);
+            }
+            return result;
+        }
+
+    inline virtual HandlerBase* String(const char* str, rapidjson::SizeType length)
+        {
+            HandlerBase* result = nullptr;
+            switch (mKey) {
+              case Keys::color:
+                  mTarget.tree_draw.aa_transition.per_branch.color.from_string(str, length);
+                  break;
+              case Keys::label_connection_line_color:
+                  mTarget.tree_draw.aa_transition.per_branch.label_connection_line_color.from_string(str, length);
+                  break;
+              default:
+                  result = HandlerBase::String(str, length);
+                  break;
+            }
+            return result;
+        }
+
+    inline virtual HandlerBase* Double(double d)
+        {
+            switch (mKey) {
+              case Keys::size:
+                  mTarget.tree_draw.aa_transition.per_branch.size = d;
+                  break;
+              case Keys::interline:
+                  mTarget.tree_draw.aa_transition.per_branch.interline = d;
+                  break;
+              case Keys::label_connection_line_width:
+                  mTarget.tree_draw.aa_transition.per_branch.label_connection_line_width = d;
+                  break;
+              default:
+                  HandlerBase::Double(d);
+                  break;
+            }
+            return nullptr;
+        }
+
+    inline virtual HandlerBase* StartObject()
+        {
+            HandlerBase* result = nullptr;
+            switch (mKey) {
+              case Keys::style:
+                  result = new SettingsTextStyleHandler(mTarget, mTarget.tree_draw.aa_transition.per_branch.style);
+                  break;
+              default:
+                  result = HandlerBase::StartObject();
+                  break;
+            }
+            return result;
+        }
+
+    inline virtual HandlerBase* StartArray()
+        {
+            HandlerBase* result = nullptr;
+            switch (mKey) {
+              case Keys::label_offset:
+                  result = new SettingsSizeHandler(mTarget, mTarget.tree_draw.aa_transition.per_branch.label_offset);
+                  break;
+              default:
+                  result = HandlerBase::StartArray();
+                  break;
+            }
+            return result;
+        }
+
+ private:
+    Keys mKey;
+    static const std::map<std::string, Keys> key_mapper;
+
+}; // class AATransitionPerBranchDrawSettingsHandler
+
+const std::map<std::string, AATransitionPerBranchDrawSettingsHandler::Keys> AATransitionPerBranchDrawSettingsHandler::key_mapper {
+    {"size", Keys::size},
+    {"color", Keys::color},
+    {"style", Keys::style},
+    {"interline", Keys::interline},
+    {"label_offset", Keys::label_offset},
+    {"label_connection_line_width", Keys::label_connection_line_width},
+    {"label_connection_line_color", Keys::label_connection_line_color}
+};
+
+// ----------------------------------------------------------------------
+
+class AATransitionDrawSettingsHandler : public HandlerBase
+{
+ private:
+    enum class Keys {Unknown, show, number_strains_threshold, show_empty_left, per_branch, show_node_for_left_line, node_for_left_line_color, node_for_left_line_width};
+
+ public:
+    inline AATransitionDrawSettingsHandler(Settings& aSettings) : HandlerBase{aSettings}, mKey(Keys::Unknown) {}
+
+    inline virtual HandlerBase* Key(const char* str, rapidjson::SizeType length)
+        {
+            HandlerBase* result = nullptr;
+            try {
+                mKey = key_mapper.at(std::string(str, length));
+            }
+            catch (std::out_of_range&) {
+                result = HandlerBase::Key(str, length);
+            }
+            return result;
+        }
+
+    inline virtual HandlerBase* String(const char* str, rapidjson::SizeType length)
+        {
+            HandlerBase* result = nullptr;
+            switch (mKey) {
+              case Keys::node_for_left_line_color:
+                  mTarget.tree_draw.aa_transition.node_for_left_line_color.from_string(str, length);
+                  break;
+              default:
+                  result = HandlerBase::String(str, length);
+                  break;
+            }
+            return result;
+        }
+
+    inline virtual HandlerBase* Double(double d)
+        {
+            switch (mKey) {
+              case Keys::node_for_left_line_width:
+                  mTarget.tree_draw.aa_transition.node_for_left_line_width = d;
+                  break;
+              default:
+                  HandlerBase::Double(d);
+                  break;
+            }
+            return nullptr;
+        }
+
+    inline virtual HandlerBase* Uint(unsigned u)
+        {
+            switch (mKey) {
+              case Keys::number_strains_threshold:
+                  mTarget.tree_draw.aa_transition.number_strains_threshold = u;
+                  break;
+              default:
+                  HandlerBase::Uint(u);
+                  break;
+            }
+            return nullptr;
+        }
+
+    inline virtual HandlerBase* Bool(bool b)
+        {
+            switch (mKey) {
+              case Keys::show:
+                  mTarget.tree_draw.aa_transition.show = b;
+                  break;
+              case Keys::show_empty_left:
+                  mTarget.tree_draw.aa_transition.show_empty_left = b;
+                  break;
+              case Keys::show_node_for_left_line:
+                  mTarget.tree_draw.aa_transition.show_node_for_left_line = b;
+                  break;
+              default:
+                  HandlerBase::Bool(b);
+                  break;
+            }
+            return nullptr;
+        }
+
+    inline virtual HandlerBase* StartObject()
+        {
+            HandlerBase* result = nullptr;
+            switch (mKey) {
+              case Keys::per_branch:
+                  result = new AATransitionPerBranchDrawSettingsHandler(mTarget);
+                  break;
+              default:
+                  result = HandlerBase::StartObject();
+                  break;
+            }
+            return result;
+        }
+
+ private:
+    Keys mKey;
+    static const std::map<std::string, Keys> key_mapper;
+
+}; // class AATransitionDrawSettingsHandler
+
+const std::map<std::string, AATransitionDrawSettingsHandler::Keys> AATransitionDrawSettingsHandler::key_mapper {
+    {"show", Keys::show},
+    {"number_strains_threshold", Keys::number_strains_threshold},
+    {"show_empty_left", Keys::show_empty_left},
+    {"per_branch", Keys::per_branch},
+    {"show_node_for_left_line", Keys::show_node_for_left_line},
+    {"node_for_left_line_color", Keys::node_for_left_line_color},
+    {"node_for_left_line_width", Keys::node_for_left_line_width}
+};
+
+// ----------------------------------------------------------------------
+
 class SettingsTreeHandler : public HandlerBase
 {
  private:
@@ -157,9 +398,9 @@ class SettingsTreeHandler : public HandlerBase
               case Keys::label_style:
                   result = new SettingsTextStyleHandler(mTarget, mTarget.tree_draw.label_style);
                   break;
-                    // case Keys::aa_transition:
-                    //     result = new (mTarget);
-                    //     break;
+              case Keys::aa_transition:
+                  result = new AATransitionDrawSettingsHandler(mTarget);
+                  break;
               default:
                   result = HandlerBase::StartObject();
                   break;

@@ -27,12 +27,13 @@ class AATransitionPerBranchDrawSettings
     Color color;
     TextStyle style;
     double interline;
-      // std::string branch_id;
-      // std::vector<std::string> labels;
     Size label_offset;
     double label_connection_line_width;
     Color label_connection_line_color;
 
+      // std::string branch_id;
+      // std::vector<std::string> labels;
+    
 }; // class AATransitionPerBranchDrawSettings
 
 // ----------------------------------------------------------------------
