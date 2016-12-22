@@ -3,12 +3,163 @@
 
 // ----------------------------------------------------------------------
 
-SurfaceCairo::~SurfaceCairo()
+class context
 {
-    if (mContext)
-        cairo_destroy(mContext);
+ public:
+    context(SurfaceCairo& aSurface)
+        : mSurface(aSurface), mParent(aSurface.parent() ? new context(*aSurface.parent()) : nullptr)
+        {
+            cairo_save(cairo_context());
+            translate(aSurface.offset());
+            scale(aSurface.scale());
+            if (aSurface.clip()) {
+                const auto canvas_size = aSurface.size();
+                new_path();
+                move_to();
+                line_to({canvas_size.width, 0.0});
+                line_to(Location() + canvas_size);
+                line_to({0, canvas_size.height});
+                close_path();
+                clip();
+            }
+        }
+    ~context()
+        {
+            cairo_restore(cairo_context());
+            delete mParent;
+        }
 
-} // SurfaceCairo::~SurfaceCairo
+    inline context& set_line_width(double aWidth) { cairo_set_line_width(cairo_context(), aWidth); return *this; }
+    inline context& set_source_rgba(Color aColor) { cairo_set_source_rgba(cairo_context(), aColor.red(), aColor.green(), aColor.blue(), aColor.alpha()); return *this; }
+    inline context& set_line_cap(Surface::LineCap aLineCap) { cairo_set_line_cap(cairo_context(), cairo_line_cap(aLineCap)); return *this; }
+    inline context& set_line_join(Surface::LineJoin aLineJoin) { cairo_set_line_join(cairo_context(), cairo_line_join(aLineJoin)); return *this; }
+    inline context& move_to() { cairo_move_to(cairo_context(), 0.0, 0.0); return *this; }
+    inline context& move_to(const Location& a) { cairo_move_to(cairo_context(), a.x, a.y); return *this; }
+    inline context& line_to(const Location& a) { cairo_line_to(cairo_context(), a.x, a.y); return *this; }
+    inline context& lines_to(std::vector<Location>::const_iterator first, std::vector<Location>::const_iterator last) { for ( ; first != last; ++first) { line_to(*first); } return *this; }
+    inline context& rectangle(const Location& a, const Size& s) { cairo_rectangle(cairo_context(), a.x, a.y, s.width, s.height); return *this; }
+    inline context& arc(const Location& a, double radius, double angle1, double angle2) { cairo_arc(cairo_context(), a.x, a.y, radius, angle1, angle2); return *this; }
+    inline context& circle(double radius) { cairo_arc(cairo_context(), 0.0, 0.0, radius, 0.0, 2.0 * M_PI); return *this; }
+    inline context& circle(const Location& a, double radius) { cairo_arc(cairo_context(), a.x, a.y, radius, 0.0, 2.0 * M_PI); return *this; }
+    inline context& stroke() { cairo_stroke(cairo_context()); return *this; }
+    inline context& fill() { cairo_fill(cairo_context()); return *this; }
+    inline context& fill_preserve() { cairo_fill_preserve(cairo_context()); return *this; }
+    inline context& translate(const Size& a) { cairo_translate(cairo_context(), a.width, a.height); return *this; }
+    inline context& translate(const Location& a) { cairo_translate(cairo_context(), a.x, a.y); return *this; }
+    inline context& rotate(double aAngle) { cairo_rotate(cairo_context(), aAngle); return *this; }
+    inline context& scale(double x, double y) { cairo_scale(cairo_context(), x, y); return *this; }
+    inline context& scale(double x) { cairo_scale(cairo_context(), x, x); return *this; }
+    inline context& clip() { cairo_clip(cairo_context()); return *this; }
+    inline context& new_path() { cairo_new_path(cairo_context()); return *this; }
+    inline context& close_path() { cairo_close_path(cairo_context()); return *this; }
+    inline context& close_path_if(bool aClose) { if (aClose) cairo_close_path(cairo_context()); return *this; }
+    inline context& prepare_for_text(double aSize, const TextStyle& aTextStyle) { cairo_select_font_face(cairo_context(), aTextStyle.font_family().c_str(), cairo_font_slant(aTextStyle.slant()), cairo_font_weight(aTextStyle.weight())); cairo_set_font_size(cairo_context(), aSize); return *this; }
+    inline context& show_text(std::string aText) { cairo_show_text(cairo_context(), aText.c_str()); return *this; }
+    inline context& text_extents(std::string aText, cairo_text_extents_t& extents) { cairo_text_extents(cairo_context(), aText.c_str(), &extents); return *this; }
+
+      // if Location::x is negative - move_to, else - path_to
+    inline context& move_to_line_to(std::vector<Location>::const_iterator first, std::vector<Location>::const_iterator last)
+        {
+            for ( ; first != last; ++first) {
+                if (first->x < 0)
+                    move_to({std::abs(first->x), std::abs(first->y)});
+                else
+                    line_to(*first);
+            }
+            return *this;
+        }
+
+      // the same as above but with raw data
+    inline context& move_to_line_to(const double* first, const double* last)
+        {
+            for ( ; first != last; first += 2) {
+                if (*first < 0)
+                    move_to({std::abs(*first), std::abs(*(first+1))});
+                else
+                    line_to({*first, *(first+1)});
+            }
+            return *this;
+        }
+
+    inline context& close_move_to_line_to(const double* first, const double* last)
+        {
+            for ( ; first != last; first += 2) {
+                if (*first < 0) {
+                    close_path();
+                    move_to({std::abs(*first), std::abs(*(first+1))});
+                }
+                else
+                    line_to({*first, *(first+1)});
+            }
+            return *this;
+        }
+
+ private:
+    SurfaceCairo& mSurface;
+    context* mParent;
+
+    inline cairo_t* cairo_context() { return mSurface.cairo_context(); }
+
+    inline cairo_line_cap_t cairo_line_cap(Surface::LineCap aLineCap) const
+        {
+            switch (aLineCap) {
+              case Surface::LineCap::Butt:
+                  return CAIRO_LINE_CAP_BUTT;
+              case Surface::LineCap::Round:
+                  return CAIRO_LINE_CAP_ROUND;
+              case Surface::LineCap::Square:
+                  return CAIRO_LINE_CAP_SQUARE;
+            }
+            return CAIRO_LINE_CAP_BUTT; // gcc wants return
+        }
+
+    inline cairo_line_join_t cairo_line_join(Surface::LineJoin aLineJoin) const
+        {
+            switch (aLineJoin) {
+              case Surface::LineJoin::Miter:
+                  return CAIRO_LINE_JOIN_MITER;
+              case Surface::LineJoin::Round:
+                  return CAIRO_LINE_JOIN_ROUND;
+              case Surface::LineJoin::Bevel:
+                  return CAIRO_LINE_JOIN_ROUND;
+            }
+            return CAIRO_LINE_JOIN_MITER; // gcc wants return
+        }
+
+    inline cairo_font_slant_t  cairo_font_slant(TextStyle::Slant aSlant) const
+        {
+            switch (aSlant) {
+              case TextStyle::Slant::Normal:
+                  return CAIRO_FONT_SLANT_NORMAL;
+              case TextStyle::Slant::Italic:
+                  return CAIRO_FONT_SLANT_ITALIC;
+                    // case TextStyle::Slant::Oblique:
+                    //     return CAIRO_FONT_SLANT_OBLIQUE;
+            }
+            return CAIRO_FONT_SLANT_NORMAL; // gcc wants return
+        }
+
+    inline cairo_font_weight_t  cairo_font_weight(TextStyle::Weight aWeight) const
+        {
+            switch (aWeight) {
+              case TextStyle::Weight::Normal:
+                  return CAIRO_FONT_WEIGHT_NORMAL;
+              case TextStyle::Weight::Bold:
+                  return CAIRO_FONT_WEIGHT_BOLD;
+            }
+            return CAIRO_FONT_WEIGHT_NORMAL; // gcc wants return
+        }
+};
+
+// ----------------------------------------------------------------------
+
+Surface& SurfaceCairo::subsurface(const Size& aOffset, const Size& aOuterSize, double aInnerWidth, bool aClip)
+{
+    const double scale = aOuterSize.width / aInnerWidth;
+    mChildren.emplace_back(*this, aOffset, aOuterSize / scale, scale, aClip);
+    return mChildren.back();
+
+} // SurfaceCairo::subsurface
 
 // ----------------------------------------------------------------------
 
@@ -223,13 +374,14 @@ Location SurfaceCairo::arrow_head(const Location& a, double angle, double sign, 
 void SurfaceCairo::grid(double aStep, Color aLineColor, double aLineWidth)
 {
     std::vector<Location> lines;
-    for (double x = 1e-8; x < width(); x += aStep) {
+    const Size sz = size();
+    for (double x = 1e-8; x < sz.width; x += aStep) {
         lines.emplace_back(-x, 0);
-        lines.emplace_back(x, height());
+        lines.emplace_back(x, sz.height);
     }
-    for (double y = 1e-8; y < height(); y += aStep) {
+    for (double y = 1e-8; y < sz.height; y += aStep) {
         lines.emplace_back(-y, y);
-        lines.emplace_back(width(), y);
+        lines.emplace_back(sz.width, y);
     }
 
     context(*this)
@@ -286,40 +438,10 @@ Size SurfaceCairo::text_size(std::string aText, double aSize, const TextStyle& a
 
 // ----------------------------------------------------------------------
 
-SurfaceCairo::context::context(SurfaceCairo& aSurface)
-    : mParent(aSurface.mParent ? new context(*aSurface.mParent) : nullptr), mContext(cairo_reference(aSurface.mContext))
-{
-    cairo_save(mContext);
-    translate(aSurface.mOffset);
-    scale(aSurface.mScale);
-    if (aSurface.mClip) {
-        const auto canvas_size = aSurface.size();
-        new_path();
-        move_to();
-        line_to({canvas_size.width, 0.0});
-        line_to(Location() + canvas_size);
-        line_to({0, canvas_size.height});
-        close_path();
-        clip();
-    }
-
-} // SurfaceCairo::context::context
-
-// ----------------------------------------------------------------------
-
-SurfaceCairo::context::~context()
-{
-    cairo_restore(mContext);
-    cairo_destroy(mContext);
-    delete mParent;
-}
-
-// ----------------------------------------------------------------------
-
 PdfCairo::PdfCairo(std::string aFilename, double aWidth, double aHeight)
 {
     auto surface = cairo_pdf_surface_create(aFilename.c_str(), aWidth, aHeight);
-    mContext = cairo_create(surface);
+    mCairoContext = cairo_create(surface);
     cairo_surface_destroy(surface);
     mScale = aWidth / default_canvas_width;
     mSize.set(default_canvas_width, aHeight / mScale);
@@ -328,6 +450,12 @@ PdfCairo::PdfCairo(std::string aFilename, double aWidth, double aHeight)
 
 // ----------------------------------------------------------------------
 
+PdfCairo::~PdfCairo()
+{
+    if (mCairoContext)
+        cairo_destroy(mCairoContext);
+
+} // PdfCairo::~PdfCairo
 
 // ----------------------------------------------------------------------
 /// Local Variables:

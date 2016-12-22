@@ -89,6 +89,7 @@ class Surface
     enum class LineCap { Butt, Round, Square };
     enum class LineJoin { Miter, Round, Bevel };
 
+    [[noreturn]] inline Surface(const Surface&) { throw std::runtime_error("Surface copying forbidden!"); } // cannto make it private due to using vector<SurfaceCairoChild>
     virtual ~Surface() {}
 
     constexpr static const double default_canvas_width = 1000.0;
@@ -96,7 +97,7 @@ class Surface
     virtual Size size() const = 0;
     inline double aspect() const { return size().aspect(); }
 
-    virtual Surface* subsurface(const Size& aOffset, const Size& aOuterSize, double aInnerWidth, bool aClip) = 0;
+    virtual Surface& subsurface(const Size& aOffset, const Size& aOuterSize, double aInnerWidth, bool aClip) = 0;
 
     virtual void line(const Location& a, const Location& b, Color aColor, double aWidth, LineCap aLineCap = LineCap::Butt) = 0;
     virtual void rectangle(const Location& a, const Size& s, Color aColor, double aWidth, LineCap aLineCap = LineCap::Butt) = 0;

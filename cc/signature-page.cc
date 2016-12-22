@@ -58,11 +58,10 @@ void SignaturePageDraw::tree(std::string aTreeFilename, std::string aSeqdbFilena
 
 void SignaturePageDraw::prepare()
 {
-    // const double offset = mSurface.size().width * mSettings->signature_page.border_space;
-    // Surface* tree_draw_surface = mSurface.subsurface({offset, offset}, mSurface.size() - Size(offset * 2, offset * 2), mSurface.size().width, false);
-    // tree_draw_surface->border(0xA0FFA000, 10);
-    // mTreeDraw = std::unique_ptr<TreeDraw>{new TreeDraw{*tree_draw_surface, *mTree, mSettings->tree_draw}};
-    mTreeDraw = std::unique_ptr<TreeDraw>{new TreeDraw{mSurface, *mTree, mSettings->tree_draw}};
+    const double offset = mSurface.size().width * mSettings->signature_page.border_space;
+    Surface& tree_draw_surface = mSurface.subsurface({offset, offset}, mSurface.size() - Size(offset * 2, offset * 2), mSurface.size().width, false);
+    mTreeDraw = std::unique_ptr<TreeDraw>{new TreeDraw{tree_draw_surface, *mTree, mSettings->tree_draw}};
+      // mTreeDraw = std::unique_ptr<TreeDraw>{new TreeDraw{mSurface, *mTree, mSettings->tree_draw}};
 
     mTreeDraw->prepare();
       // mTimeSeriesDraw->prepare();

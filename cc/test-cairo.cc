@@ -16,11 +16,12 @@ int main(int /*argc*/, const char */*argv*/[])
     int exit_code = 0;
     try {
         PdfCairo surface("/tmp/tc.pdf", 500, 850);
+        const Size size = surface.size();
         draw(surface);
-        std::unique_ptr<Surface> sub1{surface.subsurface({surface.width() / 10.0, surface.width() / 10.0}, surface.size() / 2, surface.size().width, true)};
-        draw(*sub1);
-        std::unique_ptr<Surface> sub2{sub1->subsurface({surface.width() / 10.0, surface.width() / 10.0}, surface.size() / 2, surface.size().width, false)};
-        draw(*sub2);
+        Surface& sub1{surface.subsurface({size.width / 10.0, size.width / 10.0}, size / 2, size.width, true)};
+        draw(sub1);
+        Surface& sub2{sub1.subsurface({size.width / 10.0, size.width / 10.0}, size / 2, size.width, false)};
+        draw(sub2);
     }
     catch (std::exception& err) {
         std::cerr << err.what() << std::endl;
