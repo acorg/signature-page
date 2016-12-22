@@ -11,7 +11,7 @@ void TimeSeriesDraw::prepare()
 
 void TimeSeriesDraw::draw()
 {
-    mSurface.border("green3", 1);
+    mSurface.border("green3", 20);
 
 } // TimeSeriesDraw::draw
 
