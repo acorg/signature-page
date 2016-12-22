@@ -1,6 +1,8 @@
 #include "time-series-draw.hh"
 #include "tree.hh"
 #include "tree-iterate.hh"
+#include "tree-draw.hh"
+#include "coloring.hh"
 
 // ----------------------------------------------------------------------
 
@@ -21,13 +23,6 @@ void TimeSeriesDraw::prepare()
                 mEnd = ms->first;
         }
     }
-
-    // auto const mmd = aTree.min_max_date();
-    // std::cout << "dates in source tree: " << mmd.first << " .. " << mmd.second << "  months: " << (months_between_dates(mmd) + 1) << std::endl;
-    // if (mBegin.empty())
-    //     mBegin.assign_and_remove_day(mmd.first);
-    // if (mEnd.empty())
-    //     mEnd.assign_and_remove_day(mmd.second);
 
     mNumberOfMonths = static_cast<size_t>(months_between_dates(mBegin, mEnd)) + 1;
     std::cout << "dates to show: " << mBegin << " .. " << mEnd << "  months: " << mNumberOfMonths << std::endl;
@@ -92,15 +87,14 @@ void TimeSeriesDraw::draw_month_separators(double month_width)
 void TimeSeriesDraw::draw_dashes(double month_width)
 {
     const double base_x = month_width * (1.0 - mSettings.dash_width) / 2;
-    // const auto vertical_step = mDrawTree.vertical_step();
-    // const auto& coloring = mTreeDraw.coloring();
+    const Coloring& coloring = mTreeDraw.coloring();
 
     auto draw_dash = [&](const Node& aNode) {
         if (aNode.draw.shown) {
             const int month_no = months_between_dates(mBegin, Date(aNode.data.date()));
             if (month_no >= 0) {
                 const Location a{base_x + month_width * month_no, aNode.draw.line_vertical_offset};
-                mSurface.line(a, {a.x + month_width * mSettings.dash_width, a.y}, "blue" /*coloring.color(aNode)*/, mSettings.dash_line_width, Surface::LineCap::Round);
+                mSurface.line(a, {a.x + month_width * mSettings.dash_width, a.y}, coloring.color(aNode), mSettings.dash_line_width, Surface::LineCap::Round);
             }
         }
     };

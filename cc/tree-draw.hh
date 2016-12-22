@@ -123,6 +123,7 @@ class TreeDraw
     void prepare();
     void draw();
     const Legend* coloring_legend() const;
+    const Coloring& coloring() const { return *mColoring; }
 
  private:
     Surface& mSurface;
