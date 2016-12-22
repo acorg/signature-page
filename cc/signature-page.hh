@@ -15,6 +15,7 @@ namespace seqdb { class Seqdb; }
 class LocDb;
 class TreeDraw;
 class TimeSeriesDraw;
+class CladesDraw;
 
 // ----------------------------------------------------------------------
 
@@ -25,13 +26,14 @@ class SignaturePageDrawSettings
 
     inline SignaturePageDrawSettings()
         : layout(Layout::TreeTSClades), top(80), bottom(80), left(50), right(0),
-          tree_margin_right(50), time_series_width(400)
+          tree_margin_right(50), time_series_width(400), clades_width(50)
         {}
 
     Layout layout;
     double top, bottom, left, right;
     double tree_margin_right;
     double time_series_width;
+    double clades_width;
 
     inline std::string layout_to_string() const
         {
@@ -78,6 +80,7 @@ class SignaturePageDraw
     std::unique_ptr<Tree> mTree;
     std::unique_ptr<TreeDraw> mTreeDraw;
     std::unique_ptr<TimeSeriesDraw> mTimeSeriesDraw;
+    std::unique_ptr<CladesDraw> mCladesDraw;
 
 }; // class SignaturePageDraw
 

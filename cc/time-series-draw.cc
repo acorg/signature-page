@@ -103,9 +103,6 @@ void TimeSeriesDraw::draw_dashes(double month_width)
 } // TimeSeriesDraw::draw_dashes
 
 // ----------------------------------------------------------------------
-
-
-// ----------------------------------------------------------------------
 /// Local Variables:
 /// eval: (if (fboundp 'eu-rename-buffer) (eu-rename-buffer))
 /// End:

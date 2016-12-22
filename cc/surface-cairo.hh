@@ -67,6 +67,9 @@ class SurfaceCairoChild : public SurfaceCairo
     virtual inline cairo_t* cairo_context() { return mParent.cairo_context(); }
     virtual inline Size size() const { return mSize; }
 
+    virtual inline void resize(const Size& aNewSize) { mScale *= mSize.width / aNewSize.width; mSize = aNewSize; }
+    virtual inline void move(const Size& aNewOffset) { mOffset = aNewOffset; }
+
  private:
     SurfaceCairo& mParent;
     Size mOffset;
@@ -91,6 +94,9 @@ class PdfCairo : public SurfaceCairo
 
     virtual inline cairo_t* cairo_context() { return mCairoContext; }
     virtual inline Size size() const { return mSize; }
+
+    virtual inline void resize(const Size& aNewSize) { mScale *= mSize.width / aNewSize.width; mSize = aNewSize; }
+    virtual inline void move(const Size& aNewOffset) { mOffset = aNewOffset; }
 
  private:
     Size mSize;

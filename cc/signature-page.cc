@@ -60,24 +60,35 @@ void SignaturePageDraw::prepare()
 {
     const Size page_size = mSurface.size();
     if (mSettings->signature_page.layout == SignaturePageDrawSettings::Layout::TreeTSClades) {
-        const double ts_width = mSettings->signature_page.time_series_width;
-        const double tree_width = page_size.width - (mSettings->signature_page.left + mSettings->signature_page.tree_margin_right + ts_width + mSettings->signature_page.right);
         const double section_height = page_size.height - (mSettings->signature_page.top + mSettings->signature_page.bottom);
+
+        const double clades_width = mSettings->signature_page.clades_width;
+        const double ts_width = mSettings->signature_page.time_series_width;
+        const double tree_width = page_size.width - (mSettings->signature_page.left + mSettings->signature_page.tree_margin_right + ts_width + clades_width + mSettings->signature_page.right);
+
+        const double ts_left = mSettings->signature_page.left + tree_width + mSettings->signature_page.tree_margin_right;
+        const double clades_left = ts_left + ts_width;
 
         Surface& tree_draw_surface = mSurface.subsurface({mSettings->signature_page.left, mSettings->signature_page.top}, {tree_width, section_height}, page_size.width, false);
         mTreeDraw = std::unique_ptr<TreeDraw>{new TreeDraw{tree_draw_surface, *mTree, mSettings->tree_draw}};
 
-        const double ts_left = mSettings->signature_page.left + tree_width + mSettings->signature_page.tree_margin_right;
 
         Surface& ts_surface = mSurface.subsurface({ts_left, mSettings->signature_page.top}, {ts_width, section_height}, page_size.width * ts_width / tree_width, false);
         mTimeSeriesDraw = std::make_unique<TimeSeriesDraw>(ts_surface, *mTree, *mTreeDraw, mSettings->time_series);
+
+        Surface& clades_surface = mSurface.subsurface({clades_left, mSettings->signature_page.top}, {clades_width, section_height}, page_size.width * clades_width / tree_width, false);
+        mCladesDraw = std::make_unique<CladesDraw>(clades_surface, *mTree, *mTreeDraw, mSettings->clades);
     }
     else {
         throw std::runtime_error("layout not implemented");
     }
 
-    mTreeDraw->prepare();
-    mTimeSeriesDraw->prepare();
+    if (mTreeDraw)
+        mTreeDraw->prepare();
+    if (mTimeSeriesDraw)
+        mTimeSeriesDraw->prepare();
+    if (mCladesDraw)
+        mCladesDraw->prepare();
 
 } // SignaturePageDraw::prepare
 
@@ -86,8 +97,13 @@ void SignaturePageDraw::prepare()
 void SignaturePageDraw::draw()
 {
     mSurface.background("white");
-    mTreeDraw->draw();
-    mTimeSeriesDraw->draw();
+
+    if (mTreeDraw)
+        mTreeDraw->draw();
+    if (mTimeSeriesDraw)
+        mTimeSeriesDraw->draw();
+    if (mCladesDraw)
+        mCladesDraw->draw();
 
 } // SignaturePageDraw::draw
 

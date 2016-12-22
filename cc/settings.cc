@@ -23,6 +23,15 @@ TreeDrawSettings::~TreeDrawSettings()
 {
 }
 
+TimeSeriesDrawSettings::~TimeSeriesDrawSettings()
+{
+}
+
+CladesDrawSettings::~CladesDrawSettings()
+{
+}
+
+
 // ----------------------------------------------------------------------
 
 class SettingsTextStyleHandler : public HandlerBase
@@ -637,7 +646,7 @@ const std::map<std::string, TreeDrawSettingsHandler::Keys> TreeDrawSettingsHandl
 class SignaturePageDrawSettingsHandler : public HandlerBase
 {
  private:
-    enum class Keys {Unknown, layout, top, bottom, left, right, tree_margin_right, time_series_width};
+    enum class Keys {Unknown, layout, top, bottom, left, right, tree_margin_right, time_series_width, clades_width};
 
  public:
     inline SignaturePageDrawSettingsHandler(Settings& aSettings) : HandlerBase{aSettings}, mKey(Keys::Unknown) {}
@@ -690,6 +699,9 @@ class SignaturePageDrawSettingsHandler : public HandlerBase
               case Keys::time_series_width:
                   mTarget.signature_page.time_series_width = d;
                   break;
+              case Keys::clades_width:
+                  mTarget.signature_page.clades_width = d;
+                  break;
               default:
                   HandlerBase::Double(d);
                   break;
@@ -738,6 +750,7 @@ const std::map<std::string, SignaturePageDrawSettingsHandler::Keys> SignaturePag
     {"right", Keys::right},
     {"tree_margin_right", Keys::tree_margin_right},
     {"time_series_width", Keys::time_series_width},
+    {"clades_width", Keys::clades_width},
 };
 
 // ----------------------------------------------------------------------
@@ -842,10 +855,110 @@ const std::map<std::string, TimeSeriesDrawSettingsHandler::Keys> TimeSeriesDrawS
 
 // ----------------------------------------------------------------------
 
+class CladesDrawSettingsHandler : public HandlerBase
+{
+ private:
+    enum class Keys {Unknown, begin, end, label_size, label_style, month_year_to_timeseries_gap, month_separator_color, month_separator_width, dash_width, dash_line_width};
+
+ public:
+    inline CladesDrawSettingsHandler(Settings& aSettings) : HandlerBase{aSettings}, mKey(Keys::Unknown) {}
+
+    inline virtual HandlerBase* Key(const char* str, rapidjson::SizeType length)
+        {
+            HandlerBase* result = nullptr;
+            try {
+                mKey = key_mapper.at(std::string(str, length));
+            }
+            catch (std::out_of_range&) {
+                mKey = Keys::Unknown;
+                result = HandlerBase::Key(str, length);
+            }
+            return result;
+        }
+
+    inline virtual HandlerBase* String(const char* str, rapidjson::SizeType length)
+        {
+            HandlerBase* result = nullptr;
+            switch (mKey) {
+              case Keys::begin:
+                  mTarget.time_series.begin.assign(str, length);
+                  break;
+              case Keys::end:
+                  mTarget.time_series.end.assign(str, length);
+                  break;
+              case Keys::month_separator_color:
+                  mTarget.time_series.month_separator_color.from_string(str, length);
+                  break;
+              default:
+                  result = HandlerBase::String(str, length);
+                  break;
+            }
+            return result;
+        }
+
+    inline virtual HandlerBase* Double(double d)
+        {
+            switch (mKey) {
+              case Keys::label_size:
+                  mTarget.time_series.label_size = d;
+                  break;
+              case Keys::month_year_to_timeseries_gap:
+                  mTarget.time_series.month_year_to_timeseries_gap = d;
+                  break;
+              case Keys::month_separator_width:
+                  mTarget.time_series.month_separator_width = d;
+                  break;
+              case Keys::dash_width:
+                  mTarget.time_series.dash_width = d;
+                  break;
+              case Keys::dash_line_width:
+                  mTarget.time_series.dash_line_width = d;
+                  break;
+              default:
+                  HandlerBase::Double(d);
+                  break;
+            }
+            return nullptr;
+        }
+
+    inline virtual HandlerBase* StartObject()
+        {
+            HandlerBase* result = nullptr;
+            switch (mKey) {
+              case Keys::label_style:
+                  result = new SettingsTextStyleHandler(mTarget, mTarget.time_series.label_style);
+                  break;
+              default:
+                  result = HandlerBase::StartObject();
+                  break;
+            }
+            return result;
+        }
+
+ private:
+    Keys mKey;
+    static const std::map<std::string, Keys> key_mapper;
+
+}; // class CladesDrawSettingsHandler
+
+const std::map<std::string, CladesDrawSettingsHandler::Keys> CladesDrawSettingsHandler::key_mapper {
+    {"begin", Keys::begin},
+    {"end", Keys::end},
+    {"label_size", Keys::label_size},
+    {"label_style", Keys::label_style},
+    {"month_year_to_timeseries_gap", Keys::month_year_to_timeseries_gap},
+    {"month_separator_color", Keys::month_separator_color},
+    {"month_separator_width", Keys::month_separator_width},
+    {"dash_width", Keys::dash_width},
+    {"dash_line_width", Keys::dash_line_width}
+};
+
+// ----------------------------------------------------------------------
+
 class SettingsRootHandler : public HandlerBase
 {
  private:
-    enum class Keys { Unknown, version, signature_page, tree, time_series };
+    enum class Keys { Unknown, version, signature_page, tree, time_series, clades };
 
  public:
     inline SettingsRootHandler(Settings& aSettings) : HandlerBase{aSettings}, mKey(Keys::Unknown) {}
@@ -893,6 +1006,9 @@ class SettingsRootHandler : public HandlerBase
                   case Keys::time_series:
                       result = new TimeSeriesDrawSettingsHandler(mTarget);
                       break;
+                  case Keys::clades:
+                      result = new CladesDrawSettingsHandler(mTarget);
+                      break;
                   default:
                       result = HandlerBase::StartObject();
                       break;
@@ -910,6 +1026,7 @@ const std::map<std::string, SettingsRootHandler::Keys> SettingsRootHandler::key_
     {"signature_page", Keys::signature_page},
     {"tree", Keys::tree},
     {"time_series", Keys::time_series},
+    {"clades", Keys::clades},
 };
 
 // ----------------------------------------------------------------------
@@ -1038,6 +1155,7 @@ template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writ
                   << JsonObjectKey("right") << aSettings.right
                   << JsonObjectKey("tree_margin_right") << aSettings.tree_margin_right
                   << JsonObjectKey("time_series_width") << aSettings.time_series_width
+                  << JsonObjectKey("clades_width") << aSettings.clades_width
                   << EndObject;
 }
 
@@ -1060,6 +1178,14 @@ template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writ
 
 // ----------------------------------------------------------------------
 
+template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const CladesDrawSettings& aSettings)
+{
+    return writer << StartObject
+                  << EndObject;
+}
+
+// ----------------------------------------------------------------------
+
 template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const Settings& aSettings)
 {
     return writer << StartObject
@@ -1067,6 +1193,7 @@ template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writ
                   << JsonObjectKey("signature_page") << aSettings.signature_page
                   << JsonObjectKey("tree") << aSettings.tree_draw
                   << JsonObjectKey("time_series") << aSettings.time_series
+                  << JsonObjectKey("clades") << aSettings.clades
                   << EndObject;
 }
 

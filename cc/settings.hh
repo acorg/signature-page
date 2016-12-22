@@ -3,6 +3,7 @@
 #include "signature-page.hh"
 #include "tree-draw.hh"
 #include "time-series-draw.hh"
+#include "clades-draw.hh"
 
 // ----------------------------------------------------------------------
 
@@ -14,6 +15,7 @@ class Settings
     SignaturePageDrawSettings signature_page;
     TreeDrawSettings tree_draw;
     TimeSeriesDrawSettings time_series;
+    CladesDrawSettings clades;
 
 }; // class Settings
 

@@ -1,18 +1,13 @@
 #pragma once
 
 #include <string>
-#include <limits>
-// #include <utility>
-// #include <memory>
 
 #include "surface.hh"
 #include "acmacs-base/date.hh"
 
 // ----------------------------------------------------------------------
 
-class Node;
 class Tree;
-class Coloring;
 class TreeDraw;
 
 // ----------------------------------------------------------------------
@@ -24,6 +19,7 @@ class TimeSeriesDrawSettings
         : label_size(40), month_year_to_timeseries_gap(10), month_separator_color("black"),
           month_separator_width(1), dash_width(0.5), dash_line_width(5)
         {}
+    ~TimeSeriesDrawSettings();
 
     std::string begin, end;
     double label_size;
