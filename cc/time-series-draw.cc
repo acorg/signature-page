@@ -33,7 +33,7 @@ void TimeSeriesDraw::prepare()
 
 void TimeSeriesDraw::draw()
 {
-    mSurface.border("green3", 1);
+    // mSurface.border("green3", 1);
 
     const double month_width = mSurface.size().width / mNumberOfMonths;
     draw_labels(month_width);

@@ -745,7 +745,7 @@ const std::map<std::string, SignaturePageDrawSettingsHandler::Keys> SignaturePag
 class TimeSeriesDrawSettingsHandler : public HandlerBase
 {
  private:
-    enum class Keys {Unknown};
+    enum class Keys {Unknown, begin, end, label_size, label_style, month_year_to_timeseries_gap, month_separator_color, month_separator_width, dash_width, dash_line_width};
 
  public:
     inline TimeSeriesDrawSettingsHandler(Settings& aSettings) : HandlerBase{aSettings}, mKey(Keys::Unknown) {}
@@ -763,26 +763,44 @@ class TimeSeriesDrawSettingsHandler : public HandlerBase
             return result;
         }
 
-    // inline virtual HandlerBase* String(const char* str, rapidjson::SizeType length)
-    //     {
-    //         HandlerBase* result = nullptr;
-    //         switch (mKey) {
-    //           case Keys::layout:
-    //               mTarget.time_series.
-    //               break;
-    //           default:
-    //               result = HandlerBase::String(str, length);
-    //               break;
-    //         }
-    //         return result;
-    //     }
+    inline virtual HandlerBase* String(const char* str, rapidjson::SizeType length)
+        {
+            HandlerBase* result = nullptr;
+            switch (mKey) {
+              case Keys::begin:
+                  mTarget.time_series.begin.assign(str, length);
+                  break;
+              case Keys::end:
+                  mTarget.time_series.end.assign(str, length);
+                  break;
+              case Keys::month_separator_color:
+                  mTarget.time_series.month_separator_color.from_string(str, length);
+                  break;
+              default:
+                  result = HandlerBase::String(str, length);
+                  break;
+            }
+            return result;
+        }
 
     inline virtual HandlerBase* Double(double d)
         {
             switch (mKey) {
-              // case Keys:::
-              //     mTarget.time_series. = d;
-              //     break;
+              case Keys::label_size:
+                  mTarget.time_series.label_size = d;
+                  break;
+              case Keys::month_year_to_timeseries_gap:
+                  mTarget.time_series.month_year_to_timeseries_gap = d;
+                  break;
+              case Keys::month_separator_width:
+                  mTarget.time_series.month_separator_width = d;
+                  break;
+              case Keys::dash_width:
+                  mTarget.time_series.dash_width = d;
+                  break;
+              case Keys::dash_line_width:
+                  mTarget.time_series.dash_line_width = d;
+                  break;
               default:
                   HandlerBase::Double(d);
                   break;
@@ -790,32 +808,19 @@ class TimeSeriesDrawSettingsHandler : public HandlerBase
             return nullptr;
         }
 
-    // inline virtual HandlerBase* Bool(bool b)
-    //     {
-    //         switch (mKey) {
-    //           case Keys:::
-    //               mTarget.time_series. = b;
-    //               break;
-    //           default:
-    //               HandlerBase::Bool(b);
-    //               break;
-    //         }
-    //         return nullptr;
-    //     }
-
-    // inline virtual HandlerBase* StartArray()
-    //     {
-    //         HandlerBase* result = nullptr;
-    //         switch (mKey) {
-    //           case Keys::offset:
-    //               result = new SettingsSizeHandler(mTarget, mTarget.time_series.offset);
-    //               break;
-    //           default:
-    //               result = HandlerBase::StartArray();
-    //               break;
-    //         }
-    //         return result;
-    //     }
+    inline virtual HandlerBase* StartObject()
+        {
+            HandlerBase* result = nullptr;
+            switch (mKey) {
+              case Keys::label_style:
+                  result = new SettingsTextStyleHandler(mTarget, mTarget.time_series.label_style);
+                  break;
+              default:
+                  result = HandlerBase::StartObject();
+                  break;
+            }
+            return result;
+        }
 
  private:
     Keys mKey;
@@ -824,6 +829,15 @@ class TimeSeriesDrawSettingsHandler : public HandlerBase
 }; // class TimeSeriesDrawSettingsHandler
 
 const std::map<std::string, TimeSeriesDrawSettingsHandler::Keys> TimeSeriesDrawSettingsHandler::key_mapper {
+    {"begin", Keys::begin},
+    {"end", Keys::end},
+    {"label_size", Keys::label_size},
+    {"label_style", Keys::label_style},
+    {"month_year_to_timeseries_gap", Keys::month_year_to_timeseries_gap},
+    {"month_separator_color", Keys::month_separator_color},
+    {"month_separator_width", Keys::month_separator_width},
+    {"dash_width", Keys::dash_width},
+    {"dash_line_width", Keys::dash_line_width}
 };
 
 // ----------------------------------------------------------------------
@@ -1032,6 +1046,15 @@ template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writ
 template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const TimeSeriesDrawSettings& aSettings)
 {
     return writer << StartObject
+                  << JsonObjectKey("begin") << aSettings.begin
+                  << JsonObjectKey("end") << aSettings.end
+                  << JsonObjectKey("label_size") << aSettings.label_size
+                  << JsonObjectKey("label_style") << aSettings.label_style
+                  << JsonObjectKey("month_year_to_timeseries_gap") << aSettings.month_year_to_timeseries_gap
+                  << JsonObjectKey("month_separator_color") << aSettings.month_separator_color
+                  << JsonObjectKey("month_separator_width") << aSettings.month_separator_width
+                  << JsonObjectKey("dash_width") << aSettings.dash_width
+                  << JsonObjectKey("dash_line_width") << aSettings.dash_line_width
                   << EndObject;
 }
 
