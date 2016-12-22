@@ -3,7 +3,9 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <map>
 
+#include "acmacs-base/date.hh"
 #include "seqdb/seqdb.hh"
 #include "aa_transitions.hh"
 
@@ -56,6 +58,7 @@ class NodeDrawData
     size_t line_no;
     size_t vertical_gap_before;
     double top, bottom;         // subtree boundaries
+    double line_vertical_offset; // set by TreeDraw::draw_node
     std::string vaccine_label;
 
 };
@@ -78,7 +81,7 @@ class Node
     Subtree subtree;
 
     NodeData data;
-    NodeDrawData draw;
+    mutable NodeDrawData draw;
 
     inline bool is_leaf() const { return subtree.empty() && !seq_id.empty(); }
     inline double middle() const { return is_leaf() ? static_cast<double>(draw.line_no) : ((draw.top + draw.bottom) / 2.0); }
@@ -169,6 +172,8 @@ class Tree : public Node
 
     // returns nullptr if not found
     Node* find_leaf_by_seqid(std::string aSeqId);
+
+    void sequences_per_month(std::map<Date, size_t>& spm) const;
 
  private:
     double mMaxCumulativeEdgeLength;

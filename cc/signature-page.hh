@@ -24,7 +24,7 @@ class SignaturePageDrawSettings
     enum class Layout { TreeTSClades, TreeCladesTSMaps };
 
     inline SignaturePageDrawSettings()
-        : layout(Layout::TreeTSClades), top(50), bottom(50), left(50), right(0),
+        : layout(Layout::TreeTSClades), top(80), bottom(80), left(50), right(0),
           tree_margin_right(50), time_series_width(400)
         {}
 

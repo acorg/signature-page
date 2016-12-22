@@ -188,6 +188,7 @@ void TreeDraw::draw_node(const Node& aNode, const Location& aOrigin, double aEdg
         mSurface.line(origin, {right, origin.y}, mSettings.line_color, mLineWidth);
         draw_aa_transition(aNode, origin, right);
         if (aNode.is_leaf()) {
+            aNode.draw.line_vertical_offset = origin.y;
             const std::string text = aNode.display_name();
             const auto tsize = mSurface.text_size(text, mFontSize, mSettings.label_style);
             const Location text_origin{right + mNameOffset, origin.y + tsize.height / 2};

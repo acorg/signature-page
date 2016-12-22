@@ -354,6 +354,20 @@ Node* Tree::find_leaf_by_seqid(std::string aSeqId)
 
 // ----------------------------------------------------------------------
 
+void Tree::sequences_per_month(std::map<Date, size_t>& spm) const
+{
+    auto worker = [&spm](const Node& aNode) -> void {
+        const auto d = aNode.data.date();
+        if (!d.empty() && aNode.draw.shown) {
+            ++spm[Date(d).remove_day()];
+        }
+    };
+    tree::iterate_leaf(*this, worker);
+
+} // Tree::sequences_per_month
+
+// ----------------------------------------------------------------------
+
 
 // ----------------------------------------------------------------------
 /// Local Variables:
