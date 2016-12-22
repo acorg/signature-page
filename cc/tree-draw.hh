@@ -4,6 +4,7 @@
 #include <limits>
 #include <utility>
 #include <memory>
+#include <algorithm>
 
 #include "surface.hh"
 #include "legend.hh"
