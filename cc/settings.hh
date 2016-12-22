@@ -2,6 +2,7 @@
 
 #include "signature-page.hh"
 #include "tree-draw.hh"
+#include "time-series-draw.hh"
 
 // ----------------------------------------------------------------------
 
@@ -12,6 +13,7 @@ class Settings
 
     SignaturePageDrawSettings signature_page;
     TreeDrawSettings tree_draw;
+    TimeSeriesDrawSettings time_series;
 
 }; // class Settings
 

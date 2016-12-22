@@ -21,11 +21,38 @@ class TimeSeriesDraw;
 class SignaturePageDrawSettings
 {
  public:
+    enum class Layout { TreeTSClades, TreeCladesTSMaps };
+
     inline SignaturePageDrawSettings()
-        : top(50), bottom(50), left(50), right(0)
+        : layout(Layout::TreeTSClades), top(50), bottom(50), left(50), right(0),
+          tree_margin_right(50), time_series_width(400)
         {}
 
+    Layout layout;
     double top, bottom, left, right;
+    double tree_margin_right;
+    double time_series_width;
+
+    inline std::string layout_to_string() const
+        {
+            switch (layout) {
+              case Layout::TreeTSClades:
+                  return "tree-ts-clades";
+              case Layout::TreeCladesTSMaps:
+                  return "tree-clades-ts-maps";
+            }
+            return "tree-ts-clades";
+        }
+
+    inline void set_layot(std::string s)
+        {
+            if (s == "tree-ts-clades")
+                layout = Layout::TreeTSClades;
+            else if (s == "tree-clades-ts-maps")
+                layout = Layout::TreeCladesTSMaps;
+            else
+                throw std::runtime_error("Unrecognized layout: " + s);
+        }
 
 }; // class SignaturePageDrawSettings
 

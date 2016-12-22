@@ -19,6 +19,12 @@ using HandlerBase = json_reader::HandlerBase<Settings>;
 
 // ----------------------------------------------------------------------
 
+TreeDrawSettings::~TreeDrawSettings()
+{
+}
+
+// ----------------------------------------------------------------------
+
 class SettingsTextStyleHandler : public HandlerBase
 {
  private:
@@ -499,7 +505,7 @@ const std::map<std::string, TreeDrawLegendSettingsHandler::Keys> TreeDrawLegendS
 
 // ----------------------------------------------------------------------
 
-class SettingsTreeHandler : public HandlerBase
+class TreeDrawSettingsHandler : public HandlerBase
 {
  private:
     enum class Keys {Unknown, hide_isolated_before, hide_if_cumulative_edge_length_bigger_than,
@@ -507,7 +513,7 @@ class SettingsTreeHandler : public HandlerBase
                 name_offset, color_nodes, aa_transition, vaccines, legend};
 
  public:
-    inline SettingsTreeHandler(Settings& aSettings) : HandlerBase{aSettings}, mKey(Keys::Unknown) {}
+    inline TreeDrawSettingsHandler(Settings& aSettings) : HandlerBase{aSettings}, mKey(Keys::Unknown) {}
 
     inline virtual HandlerBase* Key(const char* str, rapidjson::SizeType length)
         {
@@ -609,9 +615,9 @@ class SettingsTreeHandler : public HandlerBase
     Keys mKey;
     static const std::map<std::string, Keys> key_mapper;
 
-}; // class SettingsTreeHandler
+}; // class TreeDrawSettingsHandler
 
-const std::map<std::string, SettingsTreeHandler::Keys> SettingsTreeHandler::key_mapper {
+const std::map<std::string, TreeDrawSettingsHandler::Keys> TreeDrawSettingsHandler::key_mapper {
     {"hide_isolated_before", Keys::hide_isolated_before},
     {"hide_if_cumulative_edge_length_bigger_than", Keys::hide_if_cumulative_edge_length_bigger_than},
     {"force_line_width", Keys::force_line_width},
@@ -631,7 +637,7 @@ const std::map<std::string, SettingsTreeHandler::Keys> SettingsTreeHandler::key_
 class SignaturePageDrawSettingsHandler : public HandlerBase
 {
  private:
-    enum class Keys {Unknown, top, bottom, left, right};
+    enum class Keys {Unknown, layout, top, bottom, left, right, tree_margin_right, time_series_width};
 
  public:
     inline SignaturePageDrawSettingsHandler(Settings& aSettings) : HandlerBase{aSettings}, mKey(Keys::Unknown) {}
@@ -649,19 +655,19 @@ class SignaturePageDrawSettingsHandler : public HandlerBase
             return result;
         }
 
-    // inline virtual HandlerBase* String(const char* str, rapidjson::SizeType length)
-    //     {
-    //         HandlerBase* result = nullptr;
-    //         switch (mKey) {
-    //           case Keys:::
-    //               mTarget.signature_page..assign(str, length);
-    //               break;
-    //           default:
-    //               result = HandlerBase::String(str, length);
-    //               break;
-    //         }
-    //         return result;
-    //     }
+    inline virtual HandlerBase* String(const char* str, rapidjson::SizeType length)
+        {
+            HandlerBase* result = nullptr;
+            switch (mKey) {
+              case Keys::layout:
+                  mTarget.signature_page.set_layot(std::string(str, length));
+                  break;
+              default:
+                  result = HandlerBase::String(str, length);
+                  break;
+            }
+            return result;
+        }
 
     inline virtual HandlerBase* Double(double d)
         {
@@ -677,6 +683,12 @@ class SignaturePageDrawSettingsHandler : public HandlerBase
                   break;
               case Keys::right:
                   mTarget.signature_page.right = d;
+                  break;
+              case Keys::tree_margin_right:
+                  mTarget.signature_page.tree_margin_right = d;
+                  break;
+              case Keys::time_series_width:
+                  mTarget.signature_page.time_series_width = d;
                   break;
               default:
                   HandlerBase::Double(d);
@@ -719,10 +731,99 @@ class SignaturePageDrawSettingsHandler : public HandlerBase
 }; // class SignaturePageDrawSettingsHandler
 
 const std::map<std::string, SignaturePageDrawSettingsHandler::Keys> SignaturePageDrawSettingsHandler::key_mapper {
+    {"layout", Keys::layout},
     {"top", Keys::top},
     {"bottom", Keys::bottom},
     {"left", Keys::left},
-    {"right", Keys::right}
+    {"right", Keys::right},
+    {"tree_margin_right", Keys::tree_margin_right},
+    {"time_series_width", Keys::time_series_width},
+};
+
+// ----------------------------------------------------------------------
+
+class TimeSeriesDrawSettingsHandler : public HandlerBase
+{
+ private:
+    enum class Keys {Unknown};
+
+ public:
+    inline TimeSeriesDrawSettingsHandler(Settings& aSettings) : HandlerBase{aSettings}, mKey(Keys::Unknown) {}
+
+    inline virtual HandlerBase* Key(const char* str, rapidjson::SizeType length)
+        {
+            HandlerBase* result = nullptr;
+            try {
+                mKey = key_mapper.at(std::string(str, length));
+            }
+            catch (std::out_of_range&) {
+                mKey = Keys::Unknown;
+                result = HandlerBase::Key(str, length);
+            }
+            return result;
+        }
+
+    // inline virtual HandlerBase* String(const char* str, rapidjson::SizeType length)
+    //     {
+    //         HandlerBase* result = nullptr;
+    //         switch (mKey) {
+    //           case Keys::layout:
+    //               mTarget.time_series.
+    //               break;
+    //           default:
+    //               result = HandlerBase::String(str, length);
+    //               break;
+    //         }
+    //         return result;
+    //     }
+
+    inline virtual HandlerBase* Double(double d)
+        {
+            switch (mKey) {
+              // case Keys:::
+              //     mTarget.time_series. = d;
+              //     break;
+              default:
+                  HandlerBase::Double(d);
+                  break;
+            }
+            return nullptr;
+        }
+
+    // inline virtual HandlerBase* Bool(bool b)
+    //     {
+    //         switch (mKey) {
+    //           case Keys:::
+    //               mTarget.time_series. = b;
+    //               break;
+    //           default:
+    //               HandlerBase::Bool(b);
+    //               break;
+    //         }
+    //         return nullptr;
+    //     }
+
+    // inline virtual HandlerBase* StartArray()
+    //     {
+    //         HandlerBase* result = nullptr;
+    //         switch (mKey) {
+    //           case Keys::offset:
+    //               result = new SettingsSizeHandler(mTarget, mTarget.time_series.offset);
+    //               break;
+    //           default:
+    //               result = HandlerBase::StartArray();
+    //               break;
+    //         }
+    //         return result;
+    //     }
+
+ private:
+    Keys mKey;
+    static const std::map<std::string, Keys> key_mapper;
+
+}; // class TimeSeriesDrawSettingsHandler
+
+const std::map<std::string, TimeSeriesDrawSettingsHandler::Keys> TimeSeriesDrawSettingsHandler::key_mapper {
 };
 
 // ----------------------------------------------------------------------
@@ -730,7 +831,7 @@ const std::map<std::string, SignaturePageDrawSettingsHandler::Keys> SignaturePag
 class SettingsRootHandler : public HandlerBase
 {
  private:
-    enum class Keys { Unknown, version, signature_page, tree };
+    enum class Keys { Unknown, version, signature_page, tree, time_series };
 
  public:
     inline SettingsRootHandler(Settings& aSettings) : HandlerBase{aSettings}, mKey(Keys::Unknown) {}
@@ -773,7 +874,10 @@ class SettingsRootHandler : public HandlerBase
                       result = new SignaturePageDrawSettingsHandler(mTarget);
                       break;
                   case Keys::tree:
-                      result = new SettingsTreeHandler(mTarget);
+                      result = new TreeDrawSettingsHandler(mTarget);
+                      break;
+                  case Keys::time_series:
+                      result = new TimeSeriesDrawSettingsHandler(mTarget);
                       break;
                   default:
                       result = HandlerBase::StartObject();
@@ -791,6 +895,7 @@ const std::map<std::string, SettingsRootHandler::Keys> SettingsRootHandler::key_
     {"  version", Keys::version},
     {"signature_page", Keys::signature_page},
     {"tree", Keys::tree},
+    {"time_series", Keys::time_series},
 };
 
 // ----------------------------------------------------------------------
@@ -912,10 +1017,21 @@ template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writ
 template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const SignaturePageDrawSettings& aSettings)
 {
     return writer << StartObject
+                  << JsonObjectKey("layout") << aSettings.layout_to_string()
                   << JsonObjectKey("top") << aSettings.top
                   << JsonObjectKey("bottom") << aSettings.bottom
                   << JsonObjectKey("left") << aSettings.left
                   << JsonObjectKey("right") << aSettings.right
+                  << JsonObjectKey("tree_margin_right") << aSettings.tree_margin_right
+                  << JsonObjectKey("time_series_width") << aSettings.time_series_width
+                  << EndObject;
+}
+
+// ----------------------------------------------------------------------
+
+template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const TimeSeriesDrawSettings& aSettings)
+{
+    return writer << StartObject
                   << EndObject;
 }
 
@@ -927,6 +1043,7 @@ template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writ
                   << JsonObjectKey("  version") << SETTINGS_VERSION
                   << JsonObjectKey("signature_page") << aSettings.signature_page
                   << JsonObjectKey("tree") << aSettings.tree_draw
+                  << JsonObjectKey("time_series") << aSettings.time_series
                   << EndObject;
 }
 

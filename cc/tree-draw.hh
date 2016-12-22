@@ -85,6 +85,7 @@ class TreeDrawSettings
           line_width(1), root_edge(0), line_color(0), name_offset(0.3), color_nodes("159"),
           vaccines{{TreeDrawVaccineSettings{}}}
         {}
+    ~TreeDrawSettings();
 
     inline const TreeDrawVaccineSettings& vaccine(std::string aName) const
         {

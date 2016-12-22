@@ -58,14 +58,24 @@ void SignaturePageDraw::tree(std::string aTreeFilename, std::string aSeqdbFilena
 
 void SignaturePageDraw::prepare()
 {
-    Surface& tree_draw_surface = mSurface.subsurface({mSettings->signature_page.left, mSettings->signature_page.top},
-                                                     mSurface.size() - Size(mSettings->signature_page.left, mSettings->signature_page.top + mSettings->signature_page.bottom),
-                                                     mSurface.size().width, false);
-    mTreeDraw = std::unique_ptr<TreeDraw>{new TreeDraw{tree_draw_surface, *mTree, mSettings->tree_draw}};
-      // mTreeDraw = std::unique_ptr<TreeDraw>{new TreeDraw{mSurface, *mTree, mSettings->tree_draw}};
+    const Size page_size = mSurface.size();
+    if (mSettings->signature_page.layout == SignaturePageDrawSettings::Layout::TreeTSClades) {
+        double time_series_width = mSettings->signature_page.time_series_width;
+        double tree_width = page_size.width - time_series_width - mSettings->signature_page.tree_margin_right;
+        double section_height = page_size.height - mSettings->signature_page.top + mSettings->signature_page.bottom;
+
+        Surface& tree_draw_surface = mSurface.subsurface({mSettings->signature_page.left, mSettings->signature_page.top}, {tree_width, section_height}, page_size.width, false);
+        mTreeDraw = std::unique_ptr<TreeDraw>{new TreeDraw{tree_draw_surface, *mTree, mSettings->tree_draw}};
+
+        Surface& ts_surface = mSurface.subsurface({mSettings->signature_page.left, mSettings->signature_page.top}, {tree_width, section_height}, page_size.width, false);
+        mTimeSeriesDraw = std::make_unique<TimeSeriesDraw>(ts_surface, *mTree, *mTreeDraw, mSettings->time_series);
+    }
+    else {
+        throw std::runtime_error("layout not implemented");
+    }
 
     mTreeDraw->prepare();
-      // mTimeSeriesDraw->prepare();
+    mTimeSeriesDraw->prepare();
 
 } // SignaturePageDraw::prepare
 
@@ -75,7 +85,7 @@ void SignaturePageDraw::draw()
 {
     mSurface.background("white");
     mTreeDraw->draw();
-      // mTimeSeriesDraw->draw();
+    mTimeSeriesDraw->draw();
 
 } // SignaturePageDraw::draw
 
