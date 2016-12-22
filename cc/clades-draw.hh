@@ -1,11 +1,13 @@
 #pragma once
 
 #include <string>
+#include <map>
 
 #include "surface.hh"
 
 // ----------------------------------------------------------------------
 
+class Node;
 class Tree;
 class TreeDraw;
 
@@ -32,10 +34,30 @@ class CladesDraw
     void draw();
 
  private:
+    class CladeData
+    {
+     public:
+        inline CladeData() = default;
+        CladeData(const Node& node);
+        void extend(const Node& node);
+
+        std::string first_id;
+        size_t first_line;
+        std::string last_id;
+        size_t last_line;
+    };
+
+    using Clades = std::map<std::string, CladeData>; // clade name to data
+
     Surface& mSurface;
     Tree& mTree;
     const TreeDraw& mTreeDraw;
     const CladesDrawSettings& mSettings;
+    Clades mClades;
+
+    void add_clade(const std::pair<std::string, size_t>& aBegin, const std::pair<std::string, size_t>& aEnd, std::string aLabel, std::string aId);
+    void hide_old_clades();
+    void assign_slots();
 
 }; // class CladesDraw
 
