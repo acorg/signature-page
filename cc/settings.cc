@@ -631,7 +631,7 @@ const std::map<std::string, SettingsTreeHandler::Keys> SettingsTreeHandler::key_
 class SignaturePageDrawSettingsHandler : public HandlerBase
 {
  private:
-    enum class Keys {Unknown, border_space};
+    enum class Keys {Unknown, top, bottom, left, right};
 
  public:
     inline SignaturePageDrawSettingsHandler(Settings& aSettings) : HandlerBase{aSettings}, mKey(Keys::Unknown) {}
@@ -666,8 +666,17 @@ class SignaturePageDrawSettingsHandler : public HandlerBase
     inline virtual HandlerBase* Double(double d)
         {
             switch (mKey) {
-              case Keys::border_space:
-                  mTarget.signature_page.border_space = d;
+              case Keys::top:
+                  mTarget.signature_page.top = d;
+                  break;
+              case Keys::bottom:
+                  mTarget.signature_page.bottom = d;
+                  break;
+              case Keys::left:
+                  mTarget.signature_page.left = d;
+                  break;
+              case Keys::right:
+                  mTarget.signature_page.right = d;
                   break;
               default:
                   HandlerBase::Double(d);
@@ -689,6 +698,20 @@ class SignaturePageDrawSettingsHandler : public HandlerBase
     //         return nullptr;
     //     }
 
+    // inline virtual HandlerBase* StartArray()
+    //     {
+    //         HandlerBase* result = nullptr;
+    //         switch (mKey) {
+    //           case Keys::offset:
+    //               result = new SettingsSizeHandler(mTarget, mTarget.signature_page.offset);
+    //               break;
+    //           default:
+    //               result = HandlerBase::StartArray();
+    //               break;
+    //         }
+    //         return result;
+    //     }
+
  private:
     Keys mKey;
     static const std::map<std::string, Keys> key_mapper;
@@ -696,7 +719,10 @@ class SignaturePageDrawSettingsHandler : public HandlerBase
 }; // class SignaturePageDrawSettingsHandler
 
 const std::map<std::string, SignaturePageDrawSettingsHandler::Keys> SignaturePageDrawSettingsHandler::key_mapper {
-    {"border_space", Keys::border_space},
+    {"top", Keys::top},
+    {"bottom", Keys::bottom},
+    {"left", Keys::left},
+    {"right", Keys::right}
 };
 
 // ----------------------------------------------------------------------
@@ -886,7 +912,10 @@ template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writ
 template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const SignaturePageDrawSettings& aSettings)
 {
     return writer << StartObject
-                  << JsonObjectKey("border_space") << aSettings.border_space
+                  << JsonObjectKey("top") << aSettings.top
+                  << JsonObjectKey("bottom") << aSettings.bottom
+                  << JsonObjectKey("left") << aSettings.left
+                  << JsonObjectKey("right") << aSettings.right
                   << EndObject;
 }
 
