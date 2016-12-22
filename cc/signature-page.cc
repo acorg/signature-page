@@ -68,7 +68,8 @@ void SignaturePageDraw::prepare()
         mTreeDraw = std::unique_ptr<TreeDraw>{new TreeDraw{tree_draw_surface, *mTree, mSettings->tree_draw}};
 
         const double ts_left = mSettings->signature_page.left + tree_width + mSettings->signature_page.tree_margin_right;
-        Surface& ts_surface = mSurface.subsurface({ts_left, mSettings->signature_page.top}, {ts_width, section_height}, page_size.width, false);
+
+        Surface& ts_surface = mSurface.subsurface({ts_left, mSettings->signature_page.top}, {ts_width, section_height}, page_size.width * ts_width / tree_width, false);
         mTimeSeriesDraw = std::make_unique<TimeSeriesDraw>(ts_surface, *mTree, *mTreeDraw, mSettings->time_series);
     }
     else {
