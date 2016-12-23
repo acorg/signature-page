@@ -27,10 +27,13 @@ TimeSeriesDrawSettings::~TimeSeriesDrawSettings()
 {
 }
 
-CladesDrawSettings::~CladesDrawSettings()
+CladeDrawSettings::~CladeDrawSettings()
 {
 }
 
+CladesDrawSettings::~CladesDrawSettings()
+{
+}
 
 // ----------------------------------------------------------------------
 

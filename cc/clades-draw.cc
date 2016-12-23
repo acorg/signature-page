@@ -4,9 +4,9 @@
 
 // ----------------------------------------------------------------------
 
-void CladeData::extend(const Node& node)
+void CladeData::extend(const Node& node, size_t section_inclusion_tolerance)
 {
-    if (!sections.empty() && node.draw.line_no == (sections.back().last->draw.line_no + 1)) {
+    if (!sections.empty() && node.draw.line_no <= (sections.back().last->draw.line_no + section_inclusion_tolerance + 1)) {
         sections.back().last = &node;
     }
     else {
@@ -14,6 +14,17 @@ void CladeData::extend(const Node& node)
     }
 
 } // CladeData::extend
+
+// ----------------------------------------------------------------------
+
+void CladeData::remove_small_sections(size_t section_exclusion_tolerance)
+{
+    auto exclude = [&](const auto& s) -> bool {
+        return (s.last->draw.line_no - s.first->draw.line_no) < section_exclusion_tolerance;
+    };
+    sections.erase(std::remove_if(sections.begin(), sections.end(), exclude), sections.end());
+
+} // CladeData::remove_small_sections
 
 // ----------------------------------------------------------------------
 
@@ -46,7 +57,7 @@ void CladesDraw::prepare()
                 for (auto& c: *node_clades) {
                     auto p = mClades.emplace(c, aNode);
                     if (!p.second) { // the clade is already present, extend its range
-                        p.first->second.extend(aNode);
+                        p.first->second.extend(aNode, mSettings.for_clade(c).section_inclusion_tolerance);
                     }
                 }
             }
@@ -54,29 +65,17 @@ void CladesDraw::prepare()
     };
     tree::iterate_leaf(mTree, scan);
 
+      // remove small sections
+    for (auto& clade: mClades)
+        clade.second.remove_small_sections(mSettings.for_clade(clade.first).section_exclusion_tolerance);
+
     for (auto& c: mClades) {
         std::cerr << "Clade: " << c.first << c.second << std::endl;
-          //add_clade(c.second.first, c.second.second, c.first, c.first);
     }
 
     assign_slots();
 
 } // CladesDraw::prepare
-
-// ----------------------------------------------------------------------
-
-void CladesDraw::add_clade(const std::pair<std::string, size_t>& aBegin, const std::pair<std::string, size_t>& aEnd, std::string aLabel, std::string aId)
-{
-      // std::cerr << "Clade: " << aLabel << "   " << aBegin.first << ' ' << aBegin.second << " --> " << aEnd.first << ' ' << aEnd.second << std::endl;
-    // Settingsclade clade(aBegin.first, aEnd.first, aBegin.second, aEnd.second, aLabel, aId);
-    // const auto found = std::find_if(aSettings.per_clade.begin(), aSettings.per_clade.end(), [&](const auto& e) -> bool { return aId == e.id; });
-    // if (found != aSettings.per_clade.end())
-    //     clade.update(*found);
-    // else
-    //     hide_old_clades(clade);
-    // mClades.push_back(clade);
-
-} // CladesDraw::add_clade
 
 // ----------------------------------------------------------------------
 
