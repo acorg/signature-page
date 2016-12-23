@@ -1,6 +1,7 @@
 #include <set>
 
 #include "clades-draw.hh"
+#include "tree-draw.hh"
 #include "time-series-draw.hh"
 #include "tree-iterate.hh"
 
@@ -122,7 +123,8 @@ void CladesDraw::draw()
         if (clade.slot != CladeDrawSettings::NoSlot) {
             const auto& for_clade = mSettings.for_clade(name_clade.first);
             for (const auto& section: clade.sections) {
-                const double top = section.first->draw.line_vertical_offset, bottom = section.last->draw.line_vertical_offset;
+                const double top = section.first->draw.line_vertical_offset - mTreeDraw.vertical_step() / 2;
+                const double bottom = section.last->draw.line_vertical_offset + mTreeDraw.vertical_step() / 2;
                 const double label_height = mSurface.text_size("W", for_clade.label_size, for_clade.label_style).height;
                 double label_vpos = top + label_height;
                 if (for_clade.label_position == "middle") {

@@ -122,8 +122,10 @@ class TreeDraw
 
     void prepare();
     void draw();
+
     const Legend* coloring_legend() const;
     const Coloring& coloring() const { return *mColoring; }
+    double vertical_step() const { return mVerticalStep; }
 
  private:
     Surface& mSurface;
