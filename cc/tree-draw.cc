@@ -175,7 +175,6 @@ void TreeDraw::calculate_name_offset()
 {
     const auto tsize = mSurface.text_size("W", mFontSize, mSettings.label_style);
     mNameOffset  = mSettings.name_offset * tsize.width;
-      // mLabelHeight = tsize.height;
 
 } // TreeDraw::calculate_name_offset
 
@@ -211,7 +210,7 @@ double TreeDraw::max_label_offset()
         }
     };
     tree::iterate_leaf(mTree, label_offset);
-    return max_label_right; // std::make_pair(max_label_origin, max_label_right);
+    return max_label_right;
 
 } // TreeDraw::max_label_offset
 
@@ -220,7 +219,6 @@ double TreeDraw::max_label_offset()
 void TreeDraw::draw_node(const Node& aNode, double aOriginX, double& aVerticalGap, double aEdgeLength)
 {
     if (aNode.draw.shown) {
-          // Location origin{aOriginX, aNode.draw.vertical_pos};
         Size size{(aEdgeLength < 0.0 ? aNode.edge_length : aEdgeLength) * mHorizontalStep, 0};
         const double right = aOriginX + size.width;
 

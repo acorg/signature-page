@@ -32,9 +32,6 @@ class AATransitionPerBranchDrawSettings
     double label_connection_line_width;
     Color label_connection_line_color;
 
-      // std::string branch_id;
-      // std::vector<std::string> labels;
-
 }; // class AATransitionPerBranchDrawSettings
 
 // ----------------------------------------------------------------------
@@ -166,7 +163,6 @@ class TreeDraw
     double mVerticalStep;
     double mLineWidth;
     double mFontSize;
-      // double mLabelHeight;
     double mNameOffset;
 
     void hide_leaves();
