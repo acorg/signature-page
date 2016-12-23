@@ -51,14 +51,12 @@ class NodeDrawData
 {
  public:
     inline NodeDrawData()
-        : shown(true), line_no(0), /* vertical_gap_before(0), */ top(-1), bottom(-1)
-        {}
+        : shown(true), line_no(0), hz_section_start(false), vertical_pos(-1) {}
 
     bool shown;
     size_t line_no;
-      // size_t vertical_gap_before;
-    double top, bottom;         // subtree boundaries
-    double line_vertical_offset; // set by TreeDraw::draw_node
+    bool hz_section_start;
+    double vertical_pos;
     std::string vaccine_label;
 
 };
@@ -84,7 +82,6 @@ class Node
     mutable NodeDrawData draw;
 
     inline bool is_leaf() const { return subtree.empty() && !seq_id.empty(); }
-    inline double middle() const { return is_leaf() ? static_cast<double>(draw.line_no) : ((draw.top + draw.bottom) / 2.0); }
     std::string display_name() const;
 
     //   // leaf part

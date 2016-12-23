@@ -8,8 +8,8 @@
 
 // ----------------------------------------------------------------------
 
-TreeDraw::TreeDraw(Surface& aSurface, Tree& aTree, const TreeDrawSettings& aSettings)
-    : mSurface(aSurface), mTree(aTree), mSettings(aSettings)
+TreeDraw::TreeDraw(Surface& aSurface, Tree& aTree, const TreeDrawSettings& aSettings, const HzSections& aHzSections)
+    : mSurface(aSurface), mTree(aTree), mSettings(aSettings), mHzSections(aHzSections)
 {
     make_coloring();
 }
@@ -47,11 +47,12 @@ void TreeDraw::prepare()
 {
     mTree.compute_cumulative_edge_length();
     hide_leaves();
+    const size_t number_of_hz_sections = prepare_hz_sections();
     set_line_no();
-    set_top_bottom();
     const auto canvas_size = mSurface.size();
     mHorizontalStep = canvas_size.width / mTree.width(mSettings.hide_if_cumulative_edge_length_bigger_than);
-    mVerticalStep = canvas_size.height / (mTree.height() + 2); // +2 to add space at the top and bottom
+    mVerticalStep = canvas_size.height / (static_cast<double>(mTree.height() + 2) + (number_of_hz_sections - 1) * mHzSections.vertical_gap); // +2 to add space at the top and bottom
+    set_vertical_pos();
 
 } // TreeDraw::prepare
 
@@ -63,7 +64,8 @@ void TreeDraw::draw()
     std::cout << "Tree line width: " << mLineWidth << "  Settings: " << mSettings.line_width << "  vertical_step/2: " << mVerticalStep * 0.5 << std::endl;
     fit_labels_into_viewport();
 
-    draw_node(mTree, Location{mLineWidth / 2, 0}, mSettings.root_edge);
+    double vertical_gap = 0;
+    draw_node(mTree, mLineWidth / 2, vertical_gap, mSettings.root_edge);
     mColoring->report();
     draw_legend();
 
@@ -99,7 +101,6 @@ void TreeDraw::set_line_no()
 {
     size_t current_line = 1;    // line of the first node is 1, we have 1 line space at the top and bottom of the tree
     auto set_line_no = [&current_line](Node& aNode) {
-          // current_line += aNode.draw.vertical_gap_before;
         if (aNode.draw.shown) {
             aNode.draw.line_no = current_line;
             ++current_line;
@@ -112,23 +113,61 @@ void TreeDraw::set_line_no()
 
 // ----------------------------------------------------------------------
 
-void TreeDraw::set_top_bottom()
+void TreeDraw::set_vertical_pos()
 {
-    auto set_top_bottom = [](Node& aNode) {
+    double vertical_pos = mVerticalStep;
+    auto set_leaf_vertical_pos = [&](Node& aNode) {
         if (aNode.draw.shown) {
-            aNode.draw.top = -1;
-            for (const auto& node: aNode.subtree) {
-                if (node.draw.shown) {
-                    aNode.draw.bottom = node.middle();
-                    if (aNode.draw.top < 0)
-                        aNode.draw.top = aNode.draw.bottom;
-                }
-            }
+            if (aNode.draw.hz_section_start)
+                vertical_pos += mHzSections.vertical_gap;
+            aNode.draw.vertical_pos = vertical_pos;
+            vertical_pos += mVerticalStep;
         }
     };
-    tree::iterate_post(mTree, set_top_bottom);
+    tree::iterate_leaf(mTree, set_leaf_vertical_pos);
 
-} // TreeDraw::set_top_bottom
+    auto set_intermediate_vertical_pos = [&](Node& aNode) {
+        if (aNode.draw.shown) {
+            double top = -1, bottom = -1;
+            for (const auto& subnode: aNode.subtree) {
+                if (subnode.draw.shown) {
+                    bottom = subnode.draw.vertical_pos;
+                    if (top < 0)
+                        top = bottom;
+                }
+            }
+            aNode.draw.vertical_pos = (top + bottom) / 2;
+        }
+    };
+    tree::iterate_post(mTree, set_intermediate_vertical_pos);
+
+} // TreeDraw::set_vertical_pos
+
+// ----------------------------------------------------------------------
+
+size_t TreeDraw::prepare_hz_sections()
+{
+    size_t number_of_hz_sections = 0;
+    const Node& first_leaf = find_first_leaf(mTree);
+    for (const auto& section: mHzSections.sections) {
+        if (section.show) {
+            Node* section_start = mTree.find_leaf_by_seqid(section.name);
+            if (section_start) {
+                if (section_start != &first_leaf) {
+                    section_start->draw.hz_section_start = true;
+                }
+                ++number_of_hz_sections;
+            }
+            else {
+                std::cerr << "WARNING: HzSection seq_id not found: " << section.name << std::endl;
+            }
+        }
+    }
+    if (number_of_hz_sections == 0)
+        number_of_hz_sections = 1;
+    return number_of_hz_sections;
+
+} // TreeDraw::prepare_hz_sections
 
 // ----------------------------------------------------------------------
 
@@ -178,20 +217,17 @@ double TreeDraw::max_label_offset()
 
 // ----------------------------------------------------------------------
 
-void TreeDraw::draw_node(const Node& aNode, const Location& aOrigin, double aEdgeLength)
+void TreeDraw::draw_node(const Node& aNode, double aOriginX, double& aVerticalGap, double aEdgeLength)
 {
     if (aNode.draw.shown) {
-        Location origin{aOrigin.x, aOrigin.y + mVerticalStep * aNode.middle()};
+          // Location origin{aOriginX, aNode.draw.vertical_pos};
         Size size{(aEdgeLength < 0.0 ? aNode.edge_length : aEdgeLength) * mHorizontalStep, 0};
-        const double right = aOrigin.x + size.width;
+        const double right = aOriginX + size.width;
 
-        mSurface.line(origin, {right, origin.y}, mSettings.line_color, mLineWidth);
-        draw_aa_transition(aNode, origin, right);
         if (aNode.is_leaf()) {
-            aNode.draw.line_vertical_offset = origin.y;
             const std::string text = aNode.display_name();
             const auto tsize = mSurface.text_size(text, mFontSize, mSettings.label_style);
-            const Location text_origin{right + mNameOffset, origin.y + tsize.height / 2};
+            const Location text_origin{right + mNameOffset, aNode.draw.vertical_pos + tsize.height / 2};
             mSurface.text(text_origin, text, mColoring->color(aNode), mFontSize, mSettings.label_style);
             if (!aNode.draw.vaccine_label.empty()) {
                 const auto& settings = mSettings.vaccine(aNode.draw.vaccine_label);
@@ -204,17 +240,20 @@ void TreeDraw::draw_node(const Node& aNode, const Location& aOrigin, double aEdg
             }
         }
         else {
-              // if (aShowBranchIds && !aNode.branch_id.empty()) {
-              //     show_branch_id(aSurface, aNode.branch_id, aLeft, y);
-              // }
-              // if (!aNode.name.empty() && aNode.number_strains > aNumberStrainsThreshold) {
-              //     show_branch_annotation(aSurface, aNode.branch_id, aNode.name, aLeft, right, y);
-              // }
-            mSurface.line({right, aOrigin.y + mVerticalStep * aNode.draw.top}, {right, aOrigin.y + mVerticalStep * aNode.draw.bottom}, mSettings.line_color, mLineWidth, Surface::LineCap::Square);
+            double top = -1, bottom = -1;
             for (auto& node: aNode.subtree) {
-                draw_node(node, {right, aOrigin.y});
+                if (node.draw.shown) {
+                    draw_node(node, right, aVerticalGap);
+                    if (top < 0)
+                        top = node.draw.vertical_pos;
+                    if (node.draw.vertical_pos > bottom)
+                        bottom = node.draw.vertical_pos;
+                }
             }
+            mSurface.line({right, top}, {right, bottom}, mSettings.line_color, mLineWidth, Surface::LineCap::Square);
         }
+        mSurface.line({aOriginX, aNode.draw.vertical_pos}, {right, aNode.draw.vertical_pos}, mSettings.line_color, mLineWidth);
+        draw_aa_transition(aNode, {aOriginX, aNode.draw.vertical_pos}, right);
     }
 
 } // TreeDraw::draw_node

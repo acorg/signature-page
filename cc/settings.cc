@@ -1105,7 +1105,7 @@ const std::map<std::string, CladesDrawSettingsHandler::Keys> CladesDrawSettingsH
 class HzSectionHandler : public HandlerBase
 {
  private:
-    enum class Keys {Unknown, name, label};
+    enum class Keys {Unknown, show, name, label};
 
  public:
     inline HzSectionHandler(Settings& aSettings, HzSection& aField) : HandlerBase{aSettings}, mKey(Keys::Unknown), mField(aField) {}
@@ -1140,6 +1140,19 @@ class HzSectionHandler : public HandlerBase
             return result;
         }
 
+    inline virtual HandlerBase* Bool(bool b)
+        {
+            switch (mKey) {
+              case Keys::show:
+                  mField.show = b;
+                  break;
+              default:
+                  HandlerBase::Bool(b);
+                  break;
+            }
+            return nullptr;
+        }
+
  private:
     Keys mKey;
     static const std::map<std::string, Keys> key_mapper;
@@ -1148,6 +1161,7 @@ class HzSectionHandler : public HandlerBase
 }; // class HzSectionHandler
 
 const std::map<std::string, HzSectionHandler::Keys> HzSectionHandler::key_mapper {
+    {"show", Keys::show},
     {"name", Keys::name},
     {"label", Keys::label},
 };
@@ -1491,6 +1505,7 @@ template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writ
 {
     return writer << StartObject
                   << JsonObjectKey("name") << aSettings.name
+                  << JsonObjectKey("show") << aSettings.show
                   << JsonObjectKey("label") << aSettings.label
                   << EndObject;
 }

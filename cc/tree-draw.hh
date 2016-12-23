@@ -117,12 +117,12 @@ class TreeDrawSettings
 class HzSection
 {
  public:
-    inline HzSection()
-        {}
+    inline HzSection() : show(true) {}
     inline HzSection(const HzSection&) = default;
     inline HzSection(HzSection&&) = default;
     ~HzSection();
 
+    bool show;
     std::string name;           // first seq_id
     std::string label;          // antigenic map label, empty - generate automatically
 };
@@ -144,7 +144,7 @@ class HzSections
 class TreeDraw
 {
  public:
-    TreeDraw(Surface& aSurface, Tree& aTree, const TreeDrawSettings& aSettings);
+    TreeDraw(Surface& aSurface, Tree& aTree, const TreeDrawSettings& aSettings, const HzSections& aHzSections);
     ~TreeDraw();
 
     void prepare();
@@ -158,6 +158,7 @@ class TreeDraw
     Surface& mSurface;
     Tree& mTree;
     const TreeDrawSettings& mSettings;
+    const HzSections& mHzSections;
     std::unique_ptr<Coloring> mColoring;
     mutable std::unique_ptr<Legend> mColoringLegend;
 
@@ -170,8 +171,9 @@ class TreeDraw
 
     void hide_leaves();
     void set_line_no();
-    void set_top_bottom();
-    void draw_node(const Node& aNode, const Location& aOrigin, double aEdgeLength = -1);
+    void set_vertical_pos();
+    size_t prepare_hz_sections();
+    void draw_node(const Node& aNode, double aOriginX, double& aVerticalGap, double aEdgeLength = -1);
     void draw_legend();
     void draw_aa_transition(const Node& aNode, const Location& aOrigin, double aRight);
     void fit_labels_into_viewport();

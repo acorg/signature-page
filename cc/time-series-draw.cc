@@ -93,7 +93,7 @@ void TimeSeriesDraw::draw_dashes(double month_width)
         if (aNode.draw.shown) {
             const int month_no = months_between_dates(mBegin, Date(aNode.data.date()));
             if (month_no >= 0) {
-                const Location a{base_x + month_width * month_no, aNode.draw.line_vertical_offset};
+                const Location a{base_x + month_width * month_no, aNode.draw.vertical_pos};
                 mSurface.line(a, {a.x + month_width * mSettings.dash_width, a.y}, coloring.color(aNode), mSettings.dash_line_width, Surface::LineCap::Round);
             }
         }

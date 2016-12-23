@@ -70,7 +70,7 @@ void SignaturePageDraw::prepare()
         const double clades_left = ts_left + ts_width;
 
         Surface& tree_draw_surface = mSurface.subsurface({mSettings->signature_page.left, mSettings->signature_page.top}, {tree_width, section_height}, page_size.width, false);
-        mTreeDraw = std::make_unique<TreeDraw>(tree_draw_surface, *mTree, mSettings->tree_draw);
+        mTreeDraw = std::make_unique<TreeDraw>(tree_draw_surface, *mTree, mSettings->tree_draw, mSettings->hz_sections);
 
 
         Surface& ts_surface = mSurface.subsurface({ts_left, mSettings->signature_page.top}, {ts_width, section_height}, page_size.width * ts_width / tree_width, false);
