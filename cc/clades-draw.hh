@@ -6,38 +6,11 @@
 #include <map>
 
 #include "surface.hh"
+#include "tree.hh"
 
 // ----------------------------------------------------------------------
 
-class Node;
-class Tree;
 class TreeDraw;
-
-// ----------------------------------------------------------------------
-
-class CladeSection
-{
- public:
-    inline CladeSection(const Node* node) : first(node), last(node) {}
-    const Node* first;
-    const Node* last;
-};
-
-class CladeData
-{
- public:
-    inline CladeData() = default;
-    inline CladeData(const Node& node) : sections{{&node}} {}
-    void extend(const Node& node, size_t section_inclusion_tolerance);
-    void remove_small_sections(size_t section_exclusion_tolerance);
-
-    std::vector<CladeSection> sections;
-};
-
-using Clades = std::map<std::string, CladeData>; // clade name to data
-
-std::ostream& operator << (std::ostream& out, const CladeSection& section);
-std::ostream& operator << (std::ostream& out, const CladeData& clade);
 
 // ----------------------------------------------------------------------
 
@@ -86,6 +59,38 @@ class CladesDrawSettings
 
 // ----------------------------------------------------------------------
 
+class CladeSection
+{
+ public:
+    inline CladeSection(const Node* node) : first(node), last(node) {}
+    const Node* first;
+    const Node* last;
+};
+
+class CladeData
+{
+ public:
+    inline CladeData() = default;
+    inline CladeData(const Node& node) : sections{{&node}} {}
+
+    void extend(const Node& node, size_t section_inclusion_tolerance);
+    void remove_small_sections(size_t section_exclusion_tolerance);
+
+    const Node* first() const { return sections.front().first; }
+    size_t first_line() const { return first()->draw.line_no; }
+    const Node* last() const { return sections.back().last; }
+    size_t last_line() const { return last()->draw.line_no; }
+
+    std::vector<CladeSection> sections;
+};
+
+using Clades = std::map<std::string, CladeData>; // clade name to data
+
+std::ostream& operator << (std::ostream& out, const CladeSection& section);
+std::ostream& operator << (std::ostream& out, const CladeData& clade);
+
+// ----------------------------------------------------------------------
+
 class CladesDraw
 {
  public:
@@ -102,7 +107,6 @@ class CladesDraw
     const CladesDrawSettings& mSettings;
     Clades mClades;
 
-    void hide_old_clades();
     void assign_slots();
 
 }; // class CladesDraw

@@ -1,5 +1,4 @@
 #include "clades-draw.hh"
-#include "tree.hh"
 #include "tree-iterate.hh"
 
 // ----------------------------------------------------------------------
@@ -79,19 +78,9 @@ void CladesDraw::prepare()
 
 // ----------------------------------------------------------------------
 
-void CladesDraw::hide_old_clades()
-{
-    //   // Hide currently  unused H3 clades by default
-    // if (aClade.id == "gly" || aClade.id == "no-gly" || aClade.id == "3C3b")
-    //     aClade.show = false;
-
-} // CladesDraw::hide_old_clades
-
-// ----------------------------------------------------------------------
-
 void CladesDraw::assign_slots()
 {
-    // std::sort(mClades.begin(), mClades.end(), [](const auto& a, const auto& b) -> bool { return a.begin_line == b.begin_line ? a.end_line > b.end_line : a.begin_line < b.begin_line; });
+      // std::sort(mClades.begin(), mClades.end(), [](const auto& a, const auto& b) -> bool { return a.first_line() == b.first_line() ? a.last_line() > b.last_line() : a.first_line() < b.first_line(); });
     // decltype(mClades.front().slot) slot = 0;
     // size_t last_end = 0;
     // for (auto& clade: mClades) {
