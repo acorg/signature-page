@@ -43,6 +43,9 @@ class TimeSeriesDraw
     void prepare();
     void draw();
 
+    inline const Size& size() const { return mSurface.size(); }
+    inline const Size& offset() const { return mSurface.offset(); }
+
  private:
     Surface& mSurface;
     Tree& mTree;

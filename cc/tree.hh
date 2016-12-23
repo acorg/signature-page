@@ -51,12 +51,12 @@ class NodeDrawData
 {
  public:
     inline NodeDrawData()
-        : shown(true), line_no(0), vertical_gap_before(0), top(-1), bottom(-1)
+        : shown(true), line_no(0), /* vertical_gap_before(0), */ top(-1), bottom(-1)
         {}
 
     bool shown;
     size_t line_no;
-    size_t vertical_gap_before;
+      // size_t vertical_gap_before;
     double top, bottom;         // subtree boundaries
     double line_vertical_offset; // set by TreeDraw::draw_node
     std::string vaccine_label;

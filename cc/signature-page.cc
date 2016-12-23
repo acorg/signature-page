@@ -70,14 +70,14 @@ void SignaturePageDraw::prepare()
         const double clades_left = ts_left + ts_width;
 
         Surface& tree_draw_surface = mSurface.subsurface({mSettings->signature_page.left, mSettings->signature_page.top}, {tree_width, section_height}, page_size.width, false);
-        mTreeDraw = std::unique_ptr<TreeDraw>{new TreeDraw{tree_draw_surface, *mTree, mSettings->tree_draw}};
+        mTreeDraw = std::make_unique<TreeDraw>(tree_draw_surface, *mTree, mSettings->tree_draw);
 
 
         Surface& ts_surface = mSurface.subsurface({ts_left, mSettings->signature_page.top}, {ts_width, section_height}, page_size.width * ts_width / tree_width, false);
         mTimeSeriesDraw = std::make_unique<TimeSeriesDraw>(ts_surface, *mTree, *mTreeDraw, mSettings->time_series);
 
         Surface& clades_surface = mSurface.subsurface({clades_left, mSettings->signature_page.top}, {clades_width, section_height}, page_size.width * clades_width / tree_width, false);
-        mCladesDraw = std::make_unique<CladesDraw>(clades_surface, *mTree, *mTreeDraw, mSettings->clades);
+        mCladesDraw = std::make_unique<CladesDraw>(clades_surface, *mTree, *mTreeDraw, *mTimeSeriesDraw, mSettings->clades);
     }
     else {
         throw std::runtime_error("layout not implemented");

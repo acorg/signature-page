@@ -1,4 +1,7 @@
+#include <set>
+
 #include "clades-draw.hh"
+#include "time-series-draw.hh"
 #include "tree-iterate.hh"
 
 // ----------------------------------------------------------------------
@@ -80,17 +83,29 @@ void CladesDraw::prepare()
 
 void CladesDraw::assign_slots()
 {
-      // std::sort(mClades.begin(), mClades.end(), [](const auto& a, const auto& b) -> bool { return a.first_line() == b.first_line() ? a.last_line() > b.last_line() : a.first_line() < b.first_line(); });
-    // decltype(mClades.front().slot) slot = 0;
-    // size_t last_end = 0;
-    // for (auto& clade: mClades) {
-    //     if (clade.slot < 0 && clade.show) {
-    //         if (last_end > clade.begin_line)
-    //             ++slot;         // increase slot in case of overlapping
-    //         clade.slot = slot;
-    //         last_end = clade.end_line;
-    //     }
-    // }
+    std::set<size_t> used_slots;
+      // slots forced in settings
+    for (auto& clade: mClades) {
+        const size_t forced = mSettings.for_clade(clade.first).slot;
+        if (forced != CladeDrawSettings::NoSlot) {
+            clade.second.slot = forced;
+            used_slots.insert(forced);
+        }
+    }
+
+    size_t slot = 0;
+    while (used_slots.count(slot))
+        ++slot;
+
+    for (auto& clade: mClades) {
+        if (clade.second.slot == CladeDrawSettings::NoSlot && mSettings.for_clade(clade.first).show) {
+            clade.second.slot = slot;
+            used_slots.insert(slot);
+            ++slot;
+            while (used_slots.count(slot))
+                ++slot;
+        }
+    }
 
 } // CladesDraw::assign_slots
 
@@ -98,9 +113,60 @@ void CladesDraw::assign_slots()
 
 void CladesDraw::draw()
 {
-    mSurface.border("violet", 10);
+      // mSurface.border("violet", 10);
+
+    auto draw_lines = mTimeSeriesDraw.offset().width < mSurface.offset().width ? &CladesDraw::draw_right : &CladesDraw::draw_left;
+
+    for (const auto& name_clade: mClades) {
+        const auto& clade = name_clade.second;
+        if (clade.slot != CladeDrawSettings::NoSlot) {
+            const auto& for_clade = mSettings.for_clade(name_clade.first);
+            for (const auto& section: clade.sections) {
+                const double top = section.first->draw.line_vertical_offset, bottom = section.last->draw.line_vertical_offset;
+                const double label_height = mSurface.text_size("W", for_clade.label_size, for_clade.label_style).height;
+                double label_vpos = top + label_height;
+                if (for_clade.label_position == "middle") {
+                    label_vpos = (top + bottom + label_height) / 2.0;
+                }
+                else if (for_clade.label_position == "bottom") {
+                    label_vpos = bottom;
+                }
+                (this->*draw_lines)(clade.slot, name_clade.first, top, bottom, label_vpos, for_clade);
+            }
+        }
+    }
 
 } // CladesDraw::draw
+
+// ----------------------------------------------------------------------
+
+void CladesDraw::draw_right(size_t aSlot, std::string aCladeName, double top, double bottom, double label_vpos, const CladeDrawSettings& for_clade)
+{
+    const auto x = (aSlot + 1) * mSettings.slot_width;
+    mSurface.double_arrow({x, top}, {x, bottom}, for_clade.arrow_color, for_clade.line_width, for_clade.arrow_width);
+    std::string name = for_clade.display_name.empty() ? aCladeName : for_clade.display_name;
+    mSurface.text(Location{x, label_vpos} + for_clade.label_offset, name, for_clade.label_color, for_clade.label_size, for_clade.label_style, for_clade.label_rotation);
+    const double ts_width = mTimeSeriesDraw.size().width;
+    mSurface.line({x, top}, {-ts_width, top}, for_clade.separator_color, for_clade.separator_width);
+    mSurface.line({x, bottom}, {-ts_width, bottom}, for_clade.separator_color, for_clade.separator_width);
+
+} // CladesDraw::draw_right
+
+// ----------------------------------------------------------------------
+
+void CladesDraw::draw_left(size_t aSlot, std::string aCladeName, double top, double bottom, double label_vpos, const CladeDrawSettings& for_clade)
+{
+    const auto x = mSurface.size().width - (aSlot + 1) * mSettings.slot_width;
+    mSurface.double_arrow({x, top}, {x, bottom}, for_clade.arrow_color, for_clade.line_width, for_clade.arrow_width);
+    std::string name = for_clade.display_name.empty() ? aCladeName : for_clade.display_name;
+    const double label_width = mSurface.text_size(name, for_clade.label_size, for_clade.label_style).width;
+    mSurface.text(Location{x, label_vpos} + Size{- for_clade.label_offset.width - label_width, for_clade.label_offset.height},
+                  name, for_clade.label_color, for_clade.label_size, for_clade.label_style, for_clade.label_rotation);
+    const double ts_width = mTimeSeriesDraw.size().width;
+    mSurface.line({x, top}, {-ts_width, top}, for_clade.separator_color, for_clade.separator_width);
+    mSurface.line({x, bottom}, {-ts_width, bottom}, for_clade.separator_color, for_clade.separator_width);
+
+} // CladesDraw::draw_left
 
 // ----------------------------------------------------------------------
 

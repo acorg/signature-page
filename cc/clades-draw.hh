@@ -11,25 +11,44 @@
 // ----------------------------------------------------------------------
 
 class TreeDraw;
+class TimeSeriesDraw;
 
 // ----------------------------------------------------------------------
 
 class CladeDrawSettings
 {
  public:
-    inline CladeDrawSettings()
-        : section_inclusion_tolerance(2), section_exclusion_tolerance(2), show_section_size_in_label(true),
-          exclude(false)
+    constexpr static const size_t NoSlot = static_cast<size_t>(-1);
+
+    inline CladeDrawSettings(std::string aName = std::string{}, bool aShow = true)
+        : name(aName), show(aShow), section_inclusion_tolerance(10), section_exclusion_tolerance(5), show_section_size_in_label(true),
+          arrow_color("black"), line_width(1), arrow_width(15), separator_color("grey63"), separator_width(1),
+          label_position("middle"), label_offset{10, 0}, label_color("black"), label_size(40), label_rotation(0),
+          slot(NoSlot)
         {}
     inline CladeDrawSettings(const CladeDrawSettings&) = default;
     inline CladeDrawSettings(CladeDrawSettings&&) = default;
     ~CladeDrawSettings();
 
     std::string name;           // empty for default settings
+    std::string display_name;
+    bool show; // show this clade
     size_t section_inclusion_tolerance; // max number of lines (strains) within section from another clade that do not interrupt the secion
     size_t section_exclusion_tolerance; // max number of lines (strains) to exclude small sections
     bool show_section_size_in_label;
-    bool exclude; // exclude this clade
+    Color arrow_color;
+    double line_width;
+    double arrow_width;
+    Color separator_color;
+    double separator_width;
+    std::string label_position; // middle, top, bottom
+    Size label_offset;
+    Color label_color;
+    double label_size;
+    TextStyle label_style;
+    double label_rotation;
+
+    size_t slot;
 
 }; // class CladesDrawSettings
 
@@ -39,7 +58,8 @@ class CladesDrawSettings
 {
  public:
     inline CladesDrawSettings()
-        : clades{{CladeDrawSettings{}}} {}
+        : clades{{CladeDrawSettings{}, CladeDrawSettings{"gly", false}, CladeDrawSettings{"no-gly", false}}},
+          slot_width(30) {}
     ~CladesDrawSettings();
 
     inline const CladeDrawSettings& for_clade(std::string name) const
@@ -54,6 +74,7 @@ class CladesDrawSettings
         }
 
     std::vector<CladeDrawSettings> clades;
+    double slot_width;
 
 }; // class CladesDrawSettings
 
@@ -70,8 +91,8 @@ class CladeSection
 class CladeData
 {
  public:
-    inline CladeData() = default;
-    inline CladeData(const Node& node) : sections{{&node}} {}
+    inline CladeData() : slot{CladeDrawSettings::NoSlot} {}
+    inline CladeData(const Node& node) : sections{{&node}}, slot{CladeDrawSettings::NoSlot} {}
 
     void extend(const Node& node, size_t section_inclusion_tolerance);
     void remove_small_sections(size_t section_exclusion_tolerance);
@@ -82,6 +103,7 @@ class CladeData
     size_t last_line() const { return last()->draw.line_no; }
 
     std::vector<CladeSection> sections;
+    size_t slot;
 };
 
 using Clades = std::map<std::string, CladeData>; // clade name to data
@@ -94,8 +116,8 @@ std::ostream& operator << (std::ostream& out, const CladeData& clade);
 class CladesDraw
 {
  public:
-    inline CladesDraw(Surface& aSurface, Tree& aTree, const TreeDraw& aTreeDraw, const CladesDrawSettings& aSettings)
-        : mSurface(aSurface), mTree(aTree), mTreeDraw(aTreeDraw), mSettings(aSettings) {}
+    inline CladesDraw(Surface& aSurface, Tree& aTree, const TreeDraw& aTreeDraw, const TimeSeriesDraw& aTimeSeriesDraw, const CladesDrawSettings& aSettings)
+        : mSurface(aSurface), mTree(aTree), mTreeDraw(aTreeDraw), mTimeSeriesDraw(aTimeSeriesDraw), mSettings(aSettings) {}
 
     void prepare();
     void draw();
@@ -104,10 +126,13 @@ class CladesDraw
     Surface& mSurface;
     Tree& mTree;
     const TreeDraw& mTreeDraw;
+    const TimeSeriesDraw& mTimeSeriesDraw;
     const CladesDrawSettings& mSettings;
     Clades mClades;
 
     void assign_slots();
+    void draw_right(size_t aSlot, std::string aCladeName, double top, double bottom, double label_vpos, const CladeDrawSettings& for_clade);
+    void draw_left(size_t aSlot, std::string aCladeName, double top, double bottom, double label_vpos, const CladeDrawSettings& for_clade);
 
 }; // class CladesDraw
 

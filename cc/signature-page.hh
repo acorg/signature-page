@@ -26,7 +26,7 @@ class SignaturePageDrawSettings
 
     inline SignaturePageDrawSettings()
         : layout(Layout::TreeTSClades), top(80), bottom(80), left(50), right(0),
-          tree_margin_right(50), time_series_width(400), clades_width(50)
+          tree_margin_right(50), time_series_width(400), clades_width(100)
         {}
 
     Layout layout;

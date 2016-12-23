@@ -99,7 +99,7 @@ void TreeDraw::set_line_no()
 {
     size_t current_line = 1;    // line of the first node is 1, we have 1 line space at the top and bottom of the tree
     auto set_line_no = [&current_line](Node& aNode) {
-        current_line += aNode.draw.vertical_gap_before;
+          // current_line += aNode.draw.vertical_gap_before;
         if (aNode.draw.shown) {
             aNode.draw.line_no = current_line;
             ++current_line;

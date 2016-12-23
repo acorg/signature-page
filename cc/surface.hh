@@ -94,7 +94,8 @@ class Surface
 
     constexpr static const double default_canvas_width = 1000.0;
 
-    virtual Size size() const = 0;
+    virtual const Size& size() const = 0;
+    virtual const Size& offset() const = 0;
     inline double aspect() const { return size().aspect(); }
     virtual void resize(const Size& aNewSize) = 0;
     virtual void move(const Size& aNewOffset) = 0;
