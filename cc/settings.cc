@@ -858,13 +858,16 @@ const std::map<std::string, TimeSeriesDrawSettingsHandler::Keys> TimeSeriesDrawS
 
 // ----------------------------------------------------------------------
 
-class CladesDrawSettingsHandler : public HandlerBase
+class CladeDrawSettingsHandler : public HandlerBase
 {
  private:
-    enum class Keys {Unknown, begin, end, label_size, label_style, month_year_to_timeseries_gap, month_separator_color, month_separator_width, dash_width, dash_line_width};
+    enum class Keys {Unknown, name, display_name, show, section_inclusion_tolerance,
+                section_exclusion_tolerance, show_section_size_in_label, arrow_color,
+                line_width, arrow_width, separator_color, separator_width, label_position,
+                label_offset, label_color, label_size, label_style, label_rotation, slot};
 
  public:
-    inline CladesDrawSettingsHandler(Settings& aSettings) : HandlerBase{aSettings}, mKey(Keys::Unknown) {}
+    inline CladeDrawSettingsHandler(Settings& aSettings, CladeDrawSettings& aField) : HandlerBase{aSettings}, mKey(Keys::Unknown), mField(aField) {}
 
     inline virtual HandlerBase* Key(const char* str, rapidjson::SizeType length)
         {
@@ -883,14 +886,23 @@ class CladesDrawSettingsHandler : public HandlerBase
         {
             HandlerBase* result = nullptr;
             switch (mKey) {
-              case Keys::begin:
-                  mTarget.time_series.begin.assign(str, length);
+              case Keys::name:
+                  mField.name.assign(str, length);
                   break;
-              case Keys::end:
-                  mTarget.time_series.end.assign(str, length);
+              case Keys::display_name:
+                  mField.display_name.assign(str, length);
                   break;
-              case Keys::month_separator_color:
-                  mTarget.time_series.month_separator_color.from_string(str, length);
+              case Keys::arrow_color:
+                  mField.arrow_color.from_string(str, length);
+                  break;
+              case Keys::separator_color:
+                  mField.separator_color.from_string(str, length);
+                  break;
+              case Keys::label_position:
+                  mField.label_position.assign(str, length);
+                  break;
+              case Keys::label_color:
+                  mField.label_color.from_string(str, length);
                   break;
               default:
                   result = HandlerBase::String(str, length);
@@ -902,23 +914,68 @@ class CladesDrawSettingsHandler : public HandlerBase
     inline virtual HandlerBase* Double(double d)
         {
             switch (mKey) {
+              case Keys::line_width:
+                  mField.line_width = d;
+                  break;
+              case Keys::arrow_width:
+                  mField.arrow_width = d;
+                  break;
+              case Keys::separator_width:
+                  mField.separator_width = d;
+                  break;
               case Keys::label_size:
-                  mTarget.time_series.label_size = d;
+                  mField.label_size = d;
                   break;
-              case Keys::month_year_to_timeseries_gap:
-                  mTarget.time_series.month_year_to_timeseries_gap = d;
-                  break;
-              case Keys::month_separator_width:
-                  mTarget.time_series.month_separator_width = d;
-                  break;
-              case Keys::dash_width:
-                  mTarget.time_series.dash_width = d;
-                  break;
-              case Keys::dash_line_width:
-                  mTarget.time_series.dash_line_width = d;
+              case Keys::label_rotation:
+                  mField.label_rotation = d;
                   break;
               default:
                   HandlerBase::Double(d);
+                  break;
+            }
+            return nullptr;
+        }
+
+    inline virtual HandlerBase* Int(int i)
+        {
+            switch (mKey) {
+              case Keys::slot:
+                  mField.slot = static_cast<size_t>(i);
+                  break;
+              default:
+                  HandlerBase::Int(i);
+                  break;
+            }
+            return nullptr;
+        }
+
+    inline virtual HandlerBase* Uint(unsigned u)
+        {
+            switch (mKey) {
+              case Keys::section_inclusion_tolerance:
+                  mField.section_inclusion_tolerance = u;
+                  break;
+              case Keys::section_exclusion_tolerance:
+                  mField.section_exclusion_tolerance = u;
+                  break;
+              default:
+                  HandlerBase::Uint(u);
+                  break;
+            }
+            return nullptr;
+        }
+
+    inline virtual HandlerBase* Bool(bool b)
+        {
+            switch (mKey) {
+              case Keys::show:
+                  mField.show = b;
+                  break;
+              case Keys::show_section_size_in_label:
+                  mField.show_section_size_in_label = b;
+                  break;
+              default:
+                  HandlerBase::Bool(b);
                   break;
             }
             return nullptr;
@@ -929,13 +986,99 @@ class CladesDrawSettingsHandler : public HandlerBase
             HandlerBase* result = nullptr;
             switch (mKey) {
               case Keys::label_style:
-                  result = new SettingsTextStyleHandler(mTarget, mTarget.time_series.label_style);
+                  result = new SettingsTextStyleHandler(mTarget, mField.label_style);
                   break;
               default:
                   result = HandlerBase::StartObject();
                   break;
             }
             return result;
+        }
+
+    inline virtual HandlerBase* StartArray()
+        {
+            HandlerBase* result = nullptr;
+            switch (mKey) {
+              case Keys::label_offset:
+                  result = new SettingsSizeHandler(mTarget, mField.label_offset);
+                  break;
+              default:
+                  result = HandlerBase::StartArray();
+                  break;
+            }
+            return result;
+        }
+
+ private:
+    Keys mKey;
+    static const std::map<std::string, Keys> key_mapper;
+    CladeDrawSettings& mField;
+
+}; // class CladeDrawSettingsHandler
+
+const std::map<std::string, CladeDrawSettingsHandler::Keys> CladeDrawSettingsHandler::key_mapper {
+    {"name", Keys::name},
+    {"display_name", Keys::display_name},
+    {"show", Keys::show},
+    {"section_inclusion_tolerance", Keys::section_inclusion_tolerance},
+    {"section_exclusion_tolerance", Keys::section_exclusion_tolerance},
+    {"show_section_size_in_label", Keys::show_section_size_in_label},
+    {"arrow_color", Keys::arrow_color},
+    {"line_width", Keys::line_width},
+    {"arrow_width", Keys::arrow_width},
+    {"separator_color", Keys::separator_color},
+    {"separator_width", Keys::separator_width},
+    {"label_position", Keys::label_position},
+    {"label_offset", Keys::label_offset},
+    {"label_color", Keys::label_color},
+    {"label_size", Keys::label_size},
+    {"label_style", Keys::label_style},
+    {"label_rotation", Keys::label_rotation},
+    {"slot", Keys::slot}
+};
+
+// ----------------------------------------------------------------------
+
+class CladesDrawSettingsHandler : public HandlerBase
+{
+ private:
+    enum class Keys {Unknown, clades, slot_width};
+
+ public:
+    inline CladesDrawSettingsHandler(Settings& aSettings) : HandlerBase{aSettings}, mKey(Keys::Unknown) {}
+
+    inline virtual HandlerBase* Key(const char* str, rapidjson::SizeType length)
+        {
+            HandlerBase* result = nullptr;
+            try {
+                mKey = key_mapper.at(std::string(str, length));
+                switch (mKey) {
+                  case Keys::clades:
+                      mTarget.clades.clades.clear();
+                      result = new json_reader::ListHandler<Settings, CladeDrawSettings, CladeDrawSettingsHandler>(mTarget, mTarget.clades.clades);
+                      break;
+                  default:
+                      break;
+                }
+            }
+            catch (std::out_of_range&) {
+                mKey = Keys::Unknown;
+                result = HandlerBase::Key(str, length);
+            }
+            return result;
+        }
+
+    inline virtual HandlerBase* Double(double d)
+        {
+            switch (mKey) {
+              case Keys::slot_width:
+                  mTarget.clades.slot_width = d;
+                  break;
+              default:
+                  HandlerBase::Double(d);
+                  break;
+            }
+            return nullptr;
         }
 
  private:
@@ -945,15 +1088,8 @@ class CladesDrawSettingsHandler : public HandlerBase
 }; // class CladesDrawSettingsHandler
 
 const std::map<std::string, CladesDrawSettingsHandler::Keys> CladesDrawSettingsHandler::key_mapper {
-    {"begin", Keys::begin},
-    {"end", Keys::end},
-    {"label_size", Keys::label_size},
-    {"label_style", Keys::label_style},
-    {"month_year_to_timeseries_gap", Keys::month_year_to_timeseries_gap},
-    {"month_separator_color", Keys::month_separator_color},
-    {"month_separator_width", Keys::month_separator_width},
-    {"dash_width", Keys::dash_width},
-    {"dash_line_width", Keys::dash_line_width}
+    {"clades", Keys::clades},
+    {"slot_width", Keys::slot_width}
 };
 
 // ----------------------------------------------------------------------
@@ -1181,9 +1317,37 @@ template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writ
 
 // ----------------------------------------------------------------------
 
+template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const CladeDrawSettings& aSettings)
+{
+    return writer << StartObject
+                  << JsonObjectKey("name") << aSettings.name
+                  << JsonObjectKey("display_name") << aSettings.display_name
+                  << JsonObjectKey("show") << aSettings.show
+                  << JsonObjectKey("slot") << static_cast<int>(aSettings.slot)
+                  << JsonObjectKey("section_inclusion_tolerance") << aSettings.section_inclusion_tolerance
+                  << JsonObjectKey("section_exclusion_tolerance") << aSettings.section_exclusion_tolerance
+                  << JsonObjectKey("show_section_size_in_label") << aSettings.show_section_size_in_label
+                  << JsonObjectKey("arrow_color") << aSettings.arrow_color
+                  << JsonObjectKey("line_width") << aSettings.line_width
+                  << JsonObjectKey("arrow_width") << aSettings.arrow_width
+                  << JsonObjectKey("separator_color") << aSettings.separator_color
+                  << JsonObjectKey("separator_width") << aSettings.separator_width
+                  << JsonObjectKey("label_position") << aSettings.label_position
+                  << JsonObjectKey("label_offset") << aSettings.label_offset
+                  << JsonObjectKey("label_color") << aSettings.label_color
+                  << JsonObjectKey("label_size") << aSettings.label_size
+                  << JsonObjectKey("label_style") << aSettings.label_style
+                  << JsonObjectKey("label_rotation") << aSettings.label_rotation
+                  << EndObject;
+}
+
+// ----------------------------------------------------------------------
+
 template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const CladesDrawSettings& aSettings)
 {
     return writer << StartObject
+                  << JsonObjectKey("slot_width") << aSettings.slot_width
+                  << JsonObjectKey("clades") << aSettings.clades
                   << EndObject;
 }
 

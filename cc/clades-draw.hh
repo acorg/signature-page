@@ -47,7 +47,6 @@ class CladeDrawSettings
     double label_size;
     TextStyle label_style;
     double label_rotation;
-
     size_t slot;
 
 }; // class CladesDrawSettings
