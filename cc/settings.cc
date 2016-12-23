@@ -1102,10 +1102,132 @@ const std::map<std::string, CladesDrawSettingsHandler::Keys> CladesDrawSettingsH
 
 // ----------------------------------------------------------------------
 
+class HzSectionHandler : public HandlerBase
+{
+ private:
+    enum class Keys {Unknown, name, label};
+
+ public:
+    inline HzSectionHandler(Settings& aSettings, HzSection& aField) : HandlerBase{aSettings}, mKey(Keys::Unknown), mField(aField) {}
+
+    inline virtual HandlerBase* Key(const char* str, rapidjson::SizeType length)
+        {
+            HandlerBase* result = nullptr;
+            try {
+                mKey = key_mapper.at(std::string(str, length));
+            }
+            catch (std::out_of_range&) {
+                mKey = Keys::Unknown;
+                result = HandlerBase::Key(str, length);
+            }
+            return result;
+        }
+
+    inline virtual HandlerBase* String(const char* str, rapidjson::SizeType length)
+        {
+            HandlerBase* result = nullptr;
+            switch (mKey) {
+              case Keys::name:
+                  mField.name.assign(str, length);
+                  break;
+              case Keys::label:
+                  mField.label.assign(str, length);
+                  break;
+              default:
+                  result = HandlerBase::String(str, length);
+                  break;
+            }
+            return result;
+        }
+
+ private:
+    Keys mKey;
+    static const std::map<std::string, Keys> key_mapper;
+    HzSection& mField;
+
+}; // class HzSectionHandler
+
+const std::map<std::string, HzSectionHandler::Keys> HzSectionHandler::key_mapper {
+    {"name", Keys::name},
+    {"label", Keys::label},
+};
+
+// ----------------------------------------------------------------------
+
+class HzSectionsHandler : public HandlerBase
+{
+ private:
+    enum class Keys {Unknown, vertical_gap, line_color, sections};
+
+ public:
+    inline HzSectionsHandler(Settings& aSettings) : HandlerBase{aSettings}, mKey(Keys::Unknown) {}
+
+    inline virtual HandlerBase* Key(const char* str, rapidjson::SizeType length)
+        {
+            HandlerBase* result = nullptr;
+            try {
+                mKey = key_mapper.at(std::string(str, length));
+                switch (mKey) {
+                  case Keys::sections:
+                      mTarget.hz_sections.sections.clear();
+                      result = new json_reader::ListHandler<Settings, HzSection, HzSectionHandler>(mTarget, mTarget.hz_sections.sections);
+                      break;
+                  default:
+                      break;
+                }
+            }
+            catch (std::out_of_range&) {
+                mKey = Keys::Unknown;
+                result = HandlerBase::Key(str, length);
+            }
+            return result;
+        }
+
+    inline virtual HandlerBase* String(const char* str, rapidjson::SizeType length)
+        {
+            HandlerBase* result = nullptr;
+            switch (mKey) {
+              case Keys::line_color:
+                  mTarget.hz_sections.line_color.from_string(str, length);
+                  break;
+              default:
+                  result = HandlerBase::String(str, length);
+                  break;
+            }
+            return result;
+        }
+
+    inline virtual HandlerBase* Double(double d)
+        {
+            switch (mKey) {
+              case Keys::vertical_gap:
+                  mTarget.hz_sections.vertical_gap = d;
+                  break;
+              default:
+                  HandlerBase::Double(d);
+                  break;
+            }
+            return nullptr;
+        }
+
+ private:
+    Keys mKey;
+    static const std::map<std::string, Keys> key_mapper;
+
+}; // class HzSectionsHandler
+
+const std::map<std::string, HzSectionsHandler::Keys> HzSectionsHandler::key_mapper {
+    {"vertical_gap", Keys::vertical_gap},
+    {"line_color", Keys::line_color},
+    {"sections", Keys::sections}
+};
+
+// ----------------------------------------------------------------------
+
 class SettingsRootHandler : public HandlerBase
 {
  private:
-    enum class Keys { Unknown, version, signature_page, tree, time_series, clades };
+    enum class Keys { Unknown, version, signature_page, tree, time_series, clades, hz_sections };
 
  public:
     inline SettingsRootHandler(Settings& aSettings) : HandlerBase{aSettings}, mKey(Keys::Unknown) {}
@@ -1156,6 +1278,9 @@ class SettingsRootHandler : public HandlerBase
                   case Keys::clades:
                       result = new CladesDrawSettingsHandler(mTarget);
                       break;
+                  case Keys::hz_sections:
+                      result = new HzSectionsHandler(mTarget);
+                      break;
                   default:
                       result = HandlerBase::StartObject();
                       break;
@@ -1174,6 +1299,7 @@ const std::map<std::string, SettingsRootHandler::Keys> SettingsRootHandler::key_
     {"tree", Keys::tree},
     {"time_series", Keys::time_series},
     {"clades", Keys::clades},
+    {"hz_sections", Keys::hz_sections},
 };
 
 // ----------------------------------------------------------------------

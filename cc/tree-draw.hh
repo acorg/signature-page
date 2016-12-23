@@ -119,6 +119,8 @@ class HzSection
  public:
     inline HzSection()
         {}
+    inline HzSection(const HzSection&) = default;
+    inline HzSection(HzSection&&) = default;
     ~HzSection();
 
     std::string name;           // first seq_id
