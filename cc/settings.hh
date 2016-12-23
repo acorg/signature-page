@@ -16,7 +16,8 @@ class Settings
     TreeDrawSettings tree_draw;
     TimeSeriesDrawSettings time_series;
     CladesDrawSettings clades;
-
+    HzSections hz_sections;
+    
 }; // class Settings
 
 // ----------------------------------------------------------------------

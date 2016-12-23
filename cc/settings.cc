@@ -35,6 +35,14 @@ CladesDrawSettings::~CladesDrawSettings()
 {
 }
 
+HzSection::~HzSection()
+{
+}
+
+HzSections::~HzSections()
+{
+}
+
 // ----------------------------------------------------------------------
 
 class SettingsTextStyleHandler : public HandlerBase
@@ -1353,6 +1361,27 @@ template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writ
 
 // ----------------------------------------------------------------------
 
+template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const HzSection& aSettings)
+{
+    return writer << StartObject
+                  << JsonObjectKey("name") << aSettings.name
+                  << JsonObjectKey("label") << aSettings.label
+                  << EndObject;
+}
+
+// ----------------------------------------------------------------------
+
+template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const HzSections& aSettings)
+{
+    return writer << StartObject
+                  << JsonObjectKey("vertical_gap") << aSettings.vertical_gap
+                  << JsonObjectKey("line_color") << aSettings.line_color
+                  << JsonObjectKey("sections") << aSettings.sections
+                  << EndObject;
+}
+
+// ----------------------------------------------------------------------
+
 template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const Settings& aSettings)
 {
     return writer << StartObject
@@ -1361,6 +1390,7 @@ template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writ
                   << JsonObjectKey("tree") << aSettings.tree_draw
                   << JsonObjectKey("time_series") << aSettings.time_series
                   << JsonObjectKey("clades") << aSettings.clades
+                  << JsonObjectKey("hz_sections") << aSettings.hz_sections
                   << EndObject;
 }
 
