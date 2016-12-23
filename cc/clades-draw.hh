@@ -1,6 +1,8 @@
 #pragma once
 
+#include <iostream>
 #include <string>
+#include <vector>
 #include <map>
 
 #include "surface.hh"
@@ -10,6 +12,31 @@
 class Node;
 class Tree;
 class TreeDraw;
+
+// ----------------------------------------------------------------------
+
+class CladeSection
+{
+ public:
+    inline CladeSection(const Node* node) : first(node), last(node) {}
+    const Node* first;
+    const Node* last;
+};
+
+class CladeData
+{
+ public:
+    inline CladeData() = default;
+    inline CladeData(const Node& node) : sections{{&node}} {}
+    void extend(const Node& node);
+
+    std::vector<CladeSection> sections;
+};
+
+using Clades = std::map<std::string, CladeData>; // clade name to data
+
+std::ostream& operator << (std::ostream& out, const CladeSection& section);
+std::ostream& operator << (std::ostream& out, const CladeData& clade);
 
 // ----------------------------------------------------------------------
 
@@ -34,21 +61,6 @@ class CladesDraw
     void draw();
 
  private:
-    class CladeData
-    {
-     public:
-        inline CladeData() = default;
-        CladeData(const Node& node);
-        void extend(const Node& node);
-
-        std::string first_id;
-        size_t first_line;
-        std::string last_id;
-        size_t last_line;
-    };
-
-    using Clades = std::map<std::string, CladeData>; // clade name to data
-
     Surface& mSurface;
     Tree& mTree;
     const TreeDraw& mTreeDraw;

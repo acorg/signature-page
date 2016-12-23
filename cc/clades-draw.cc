@@ -4,17 +4,35 @@
 
 // ----------------------------------------------------------------------
 
-CladesDraw::CladeData::CladeData(const Node& node)
-    : first_id(node.seq_id), first_line(node.draw.line_no), last_id(node.seq_id), last_line(node.draw.line_no)
+void CladeData::extend(const Node& node)
 {
+    if (!sections.empty() && node.draw.line_no == (sections.back().last->draw.line_no + 1)) {
+        sections.back().last = &node;
+    }
+    else {
+        sections.emplace_back(&node);
+    }
 
-} // CladesDraw::CladeData::CladeData
+} // CladeData::extend
 
-inline void CladesDraw::CladeData::extend(const Node& node)
+// ----------------------------------------------------------------------
+
+std::ostream& operator << (std::ostream& out, const CladeSection& section)
 {
-    last_id = node.seq_id;
-    last_line = node.draw.line_no;
-}
+    return out << section.first->seq_id << ':' << section.first->draw.line_no << ".." << section.last->seq_id << ':' << section.last->draw.line_no;
+
+} // operator << CladeSection
+
+// ----------------------------------------------------------------------
+
+std::ostream& operator << (std::ostream& out, const CladeData& clade)
+{
+    for (const auto& section: clade.sections) {
+        out << ' ' << section;
+    }
+    return out;
+
+} // operator << CladeData
 
 // ----------------------------------------------------------------------
 
@@ -22,12 +40,14 @@ void CladesDraw::prepare()
 {
       // extract clades from aTree
     auto scan = [this](const Node& aNode) {
-        const auto* node_clades = aNode.data.clades();
-        if (node_clades) {
-            for (auto& c: *node_clades) {
-                auto p = mClades.emplace(c, aNode);
-                if (!p.second) { // the clade is already present, extend its range
-                    p.first->second.extend(aNode);
+        if (aNode.draw.shown) {
+            const auto* node_clades = aNode.data.clades();
+            if (node_clades) {
+                for (auto& c: *node_clades) {
+                    auto p = mClades.emplace(c, aNode);
+                    if (!p.second) { // the clade is already present, extend its range
+                        p.first->second.extend(aNode);
+                    }
                 }
             }
         }
@@ -35,7 +55,7 @@ void CladesDraw::prepare()
     tree::iterate_leaf(mTree, scan);
 
     for (auto& c: mClades) {
-        std::cerr << "Clade: " << c.first << "   " << c.second.first_id << ' ' << c.second.first_line << " --> " << c.second.last_id << ' ' << c.second.last_line << std::endl;
+        std::cerr << "Clade: " << c.first << c.second << std::endl;
           //add_clade(c.second.first, c.second.second, c.first, c.first);
     }
 
