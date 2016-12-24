@@ -8,7 +8,7 @@
 
 // ----------------------------------------------------------------------
 
-TreeDraw::TreeDraw(Surface& aSurface, Tree& aTree, TreeDrawSettings& aSettings, const HzSections& aHzSections)
+TreeDraw::TreeDraw(Surface& aSurface, Tree& aTree, TreeDrawSettings& aSettings, HzSections& aHzSections)
     : mSurface(aSurface), mTree(aTree), mSettings(aSettings), mHzSections(aHzSections)
 {
     make_coloring();
@@ -60,6 +60,9 @@ void TreeDraw::prepare()
 
 void TreeDraw::init_settings()
 {
+    if (mHzSections.sections.empty()) {
+        mHzSections.sections.emplace_back(find_first_leaf(mTree).seq_id);
+    }
 
 } // TreeDraw::init_settings
 

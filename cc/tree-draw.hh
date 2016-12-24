@@ -114,7 +114,7 @@ class TreeDrawSettings
 class HzSection
 {
  public:
-    inline HzSection() : show(true), show_line(true), show_ts_label(true) {}
+    inline HzSection(std::string aName = std::string{}) : show(true), show_line(true), show_ts_label(true), name(aName) {}
     inline HzSection(const HzSection&) = default;
     inline HzSection(HzSection&&) = default;
     ~HzSection();
@@ -147,7 +147,7 @@ class HzSections
 class TreeDraw
 {
  public:
-    TreeDraw(Surface& aSurface, Tree& aTree, TreeDrawSettings& aSettings, const HzSections& aHzSections);
+    TreeDraw(Surface& aSurface, Tree& aTree, TreeDrawSettings& aSettings, HzSections& aHzSections);
     ~TreeDraw();
 
     void prepare();
@@ -163,7 +163,7 @@ class TreeDraw
     Surface& mSurface;
     Tree& mTree;
     TreeDrawSettings& mSettings;
-    const HzSections& mHzSections;
+    HzSections& mHzSections;
     std::unique_ptr<Coloring> mColoring;
     mutable std::unique_ptr<Legend> mColoringLegend;
 
