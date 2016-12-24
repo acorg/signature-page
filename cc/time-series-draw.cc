@@ -39,6 +39,7 @@ void TimeSeriesDraw::draw()
     draw_labels(month_width);
     draw_month_separators(month_width);
     draw_dashes(month_width);
+    draw_hz_section_lines();
 
 } // TimeSeriesDraw::draw
 
@@ -101,6 +102,27 @@ void TimeSeriesDraw::draw_dashes(double month_width)
     tree::iterate_leaf(mTree, draw_dash);
 
 } // TimeSeriesDraw::draw_dashes
+
+// ----------------------------------------------------------------------
+
+void TimeSeriesDraw::draw_hz_section_lines()
+{
+    double previous_vertical_pos = -1;
+    auto draw = [&](const Node& aNode) {
+        if (aNode.draw.shown) {
+            if (aNode.draw.hz_section_index != NodeDrawData::HzSectionNoIndex && previous_vertical_pos >= 0 && mHzSections.sections[aNode.draw.hz_section_index].show_line) {
+                const double y = (previous_vertical_pos + aNode.draw.vertical_pos) / 2;
+                mSurface.line({0, y}, {mSurface.size().width, y}, mHzSections.line_color, mHzSections.line_width);
+            }
+            previous_vertical_pos = aNode.draw.vertical_pos;
+        }
+    };
+    tree::iterate_leaf(mTree, draw);
+
+} // TimeSeriesDraw::draw_hz_section_lines
+
+// ----------------------------------------------------------------------
+
 
 // ----------------------------------------------------------------------
 /// Local Variables:

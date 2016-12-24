@@ -50,12 +50,14 @@ class NodeData
 class NodeDrawData
 {
  public:
+    constexpr static const size_t HzSectionNoIndex = static_cast<size_t>(-1);
+
     inline NodeDrawData()
-        : shown(true), line_no(0), hz_section_start(false), vertical_pos(-1) {}
+        : shown(true), line_no(0), hz_section_index(HzSectionNoIndex), vertical_pos(-1) {}
 
     bool shown;
     size_t line_no;
-    bool hz_section_start;
+    size_t hz_section_index;
     double vertical_pos;
     std::string vaccine_label;
 

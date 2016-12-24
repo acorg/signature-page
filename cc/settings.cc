@@ -1105,7 +1105,7 @@ const std::map<std::string, CladesDrawSettingsHandler::Keys> CladesDrawSettingsH
 class HzSectionHandler : public HandlerBase
 {
  private:
-    enum class Keys {Unknown, show, name, label};
+    enum class Keys {Unknown, show, show_line, name, label};
 
  public:
     inline HzSectionHandler(Settings& aSettings, HzSection& aField) : HandlerBase{aSettings}, mKey(Keys::Unknown), mField(aField) {}
@@ -1146,6 +1146,9 @@ class HzSectionHandler : public HandlerBase
               case Keys::show:
                   mField.show = b;
                   break;
+              case Keys::show_line:
+                  mField.show_line = b;
+                  break;
               default:
                   HandlerBase::Bool(b);
                   break;
@@ -1162,6 +1165,7 @@ class HzSectionHandler : public HandlerBase
 
 const std::map<std::string, HzSectionHandler::Keys> HzSectionHandler::key_mapper {
     {"show", Keys::show},
+    {"show_line", Keys::show_line},
     {"name", Keys::name},
     {"label", Keys::label},
 };
@@ -1171,7 +1175,7 @@ const std::map<std::string, HzSectionHandler::Keys> HzSectionHandler::key_mapper
 class HzSectionsHandler : public HandlerBase
 {
  private:
-    enum class Keys {Unknown, vertical_gap, line_color, sections};
+    enum class Keys {Unknown, vertical_gap, line_color, line_width, sections};
 
  public:
     inline HzSectionsHandler(Settings& aSettings) : HandlerBase{aSettings}, mKey(Keys::Unknown) {}
@@ -1217,6 +1221,9 @@ class HzSectionsHandler : public HandlerBase
               case Keys::vertical_gap:
                   mTarget.hz_sections.vertical_gap = d;
                   break;
+              case Keys::line_width:
+                  mTarget.hz_sections.line_width = d;
+                  break;
               default:
                   HandlerBase::Double(d);
                   break;
@@ -1233,6 +1240,7 @@ class HzSectionsHandler : public HandlerBase
 const std::map<std::string, HzSectionsHandler::Keys> HzSectionsHandler::key_mapper {
     {"vertical_gap", Keys::vertical_gap},
     {"line_color", Keys::line_color},
+    {"line_width", Keys::line_width},
     {"sections", Keys::sections}
 };
 
@@ -1506,6 +1514,7 @@ template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writ
     return writer << StartObject
                   << JsonObjectKey("name") << aSettings.name
                   << JsonObjectKey("show") << aSettings.show
+                  << JsonObjectKey("show_line") << aSettings.show
                   << JsonObjectKey("label") << aSettings.label
                   << EndObject;
 }
@@ -1517,6 +1526,7 @@ template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writ
     return writer << StartObject
                   << JsonObjectKey("vertical_gap") << aSettings.vertical_gap
                   << JsonObjectKey("line_color") << aSettings.line_color
+                  << JsonObjectKey("line_width") << aSettings.line_width
                   << JsonObjectKey("sections") << aSettings.sections
                   << EndObject;
 }

@@ -9,6 +9,7 @@
 
 class Tree;
 class TreeDraw;
+class HzSections;
 
 // ----------------------------------------------------------------------
 
@@ -37,8 +38,8 @@ class TimeSeriesDrawSettings
 class TimeSeriesDraw
 {
  public:
-    inline TimeSeriesDraw(Surface& aSurface, Tree& aTree, const TreeDraw& aTreeDraw, const TimeSeriesDrawSettings& aSettings)
-        : mSurface(aSurface), mTree(aTree), mTreeDraw(aTreeDraw), mSettings(aSettings) {}
+    inline TimeSeriesDraw(Surface& aSurface, Tree& aTree, const TreeDraw& aTreeDraw, const HzSections& aHzSections, const TimeSeriesDrawSettings& aSettings)
+        : mSurface(aSurface), mTree(aTree), mTreeDraw(aTreeDraw), mSettings(aSettings), mHzSections(aHzSections) {}
 
     void prepare();
     void draw();
@@ -51,6 +52,7 @@ class TimeSeriesDraw
     Tree& mTree;
     const TreeDraw& mTreeDraw;
     const TimeSeriesDrawSettings& mSettings;
+    const HzSections& mHzSections;
     Date mBegin, mEnd;
     size_t mNumberOfMonths;
 
@@ -58,6 +60,7 @@ class TimeSeriesDraw
     void draw_labels_at_side(const Location& aOrigin, double month_width, double month_max_height);
     void draw_month_separators(double month_width);
     void draw_dashes(double month_width);
+    void draw_hz_section_lines();
 
 }; // class TimeSeriesDraw
 

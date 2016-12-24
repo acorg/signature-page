@@ -74,7 +74,7 @@ void SignaturePageDraw::prepare()
 
 
         Surface& ts_surface = mSurface.subsurface({ts_left, mSettings->signature_page.top}, {ts_width, section_height}, page_size.width * ts_width / tree_width, false);
-        mTimeSeriesDraw = std::make_unique<TimeSeriesDraw>(ts_surface, *mTree, *mTreeDraw, mSettings->time_series);
+        mTimeSeriesDraw = std::make_unique<TimeSeriesDraw>(ts_surface, *mTree, *mTreeDraw, mSettings->hz_sections, mSettings->time_series);
 
         Surface& clades_surface = mSurface.subsurface({clades_left, mSettings->signature_page.top}, {clades_width, section_height}, page_size.width * clades_width / tree_width, false);
         mCladesDraw = std::make_unique<CladesDraw>(clades_surface, *mTree, *mTreeDraw, *mTimeSeriesDraw, mSettings->clades);
