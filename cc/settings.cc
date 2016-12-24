@@ -1179,7 +1179,7 @@ const std::map<std::string, HzSectionHandler::Keys> HzSectionHandler::key_mapper
 class HzSectionsHandler : public HandlerBase
 {
  private:
-    enum class Keys {Unknown, vertical_gap, line_color, line_width, sections};
+    enum class Keys {Unknown, vertical_gap, line_color, line_width, ts_label_size, ts_label_style, ts_label_color, sections};
 
  public:
     inline HzSectionsHandler(Settings& aSettings) : HandlerBase{aSettings}, mKey(Keys::Unknown) {}
@@ -1212,6 +1212,9 @@ class HzSectionsHandler : public HandlerBase
               case Keys::line_color:
                   mTarget.hz_sections.line_color.from_string(str, length);
                   break;
+              case Keys::ts_label_color:
+                  mTarget.hz_sections.ts_label_color.from_string(str, length);
+                  break;
               default:
                   result = HandlerBase::String(str, length);
                   break;
@@ -1228,11 +1231,28 @@ class HzSectionsHandler : public HandlerBase
               case Keys::line_width:
                   mTarget.hz_sections.line_width = d;
                   break;
+              case Keys::ts_label_size:
+                  mTarget.hz_sections.ts_label_size = d;
+                  break;
               default:
                   HandlerBase::Double(d);
                   break;
             }
             return nullptr;
+        }
+
+    inline virtual HandlerBase* StartObject()
+        {
+            HandlerBase* result = nullptr;
+            switch (mKey) {
+              case Keys::ts_label_style:
+                  result = new SettingsTextStyleHandler(mTarget, mTarget.hz_sections.ts_label_style);
+                  break;
+              default:
+                  result = HandlerBase::StartObject();
+                  break;
+            }
+            return result;
         }
 
  private:
@@ -1245,6 +1265,9 @@ const std::map<std::string, HzSectionsHandler::Keys> HzSectionsHandler::key_mapp
     {"vertical_gap", Keys::vertical_gap},
     {"line_color", Keys::line_color},
     {"line_width", Keys::line_width},
+    {"ts_label_size", Keys::ts_label_size},
+    {"ts_label_style", Keys::ts_label_style},
+    {"ts_label_color", Keys::ts_label_color},
     {"sections", Keys::sections}
 };
 
