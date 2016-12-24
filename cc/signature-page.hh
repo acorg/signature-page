@@ -67,6 +67,7 @@ class SignaturePageDraw
     ~SignaturePageDraw();
 
     void settings(std::string aFilename);
+    Settings& init_settings();
     void tree(std::string aTreeFilename, std::string aSeqdbFilename);
 
     void prepare();

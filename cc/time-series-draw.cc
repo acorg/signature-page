@@ -31,6 +31,13 @@ void TimeSeriesDraw::prepare()
 
 // ----------------------------------------------------------------------
 
+void TimeSeriesDraw::init_settings()
+{
+
+} // TimeSeriesDraw::init_settings
+
+// ----------------------------------------------------------------------
+
 void TimeSeriesDraw::draw()
 {
     // mSurface.border("green3", 1);

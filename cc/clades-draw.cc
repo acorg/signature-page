@@ -112,6 +112,23 @@ void CladesDraw::assign_slots()
 
 // ----------------------------------------------------------------------
 
+void CladesDraw::init_settings()
+{
+    for (auto& clade: mClades) {
+        auto p = std::find_if(mSettings.clades.begin(), mSettings.clades.end(), [&](const auto& c) { return c.name == clade.first; });
+        if (p == mSettings.clades.end()) {
+            mSettings.clades.emplace_back(clade.first);
+            mSettings.clades.back().slot = clade.second.slot;
+        }
+        else {
+            p->slot = clade.second.slot;
+        }
+    }
+
+} // CladesDraw::init_settings
+
+// ----------------------------------------------------------------------
+
 void CladesDraw::draw()
 {
       // mSurface.border("violet", 10);

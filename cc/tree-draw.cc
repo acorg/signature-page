@@ -8,7 +8,7 @@
 
 // ----------------------------------------------------------------------
 
-TreeDraw::TreeDraw(Surface& aSurface, Tree& aTree, const TreeDrawSettings& aSettings, const HzSections& aHzSections)
+TreeDraw::TreeDraw(Surface& aSurface, Tree& aTree, TreeDrawSettings& aSettings, const HzSections& aHzSections)
     : mSurface(aSurface), mTree(aTree), mSettings(aSettings), mHzSections(aHzSections)
 {
     make_coloring();
@@ -55,6 +55,13 @@ void TreeDraw::prepare()
     set_vertical_pos();
 
 } // TreeDraw::prepare
+
+// ----------------------------------------------------------------------
+
+void TreeDraw::init_settings()
+{
+
+} // TreeDraw::init_settings
 
 // ----------------------------------------------------------------------
 

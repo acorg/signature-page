@@ -147,7 +147,7 @@ class HzSections
 class TreeDraw
 {
  public:
-    TreeDraw(Surface& aSurface, Tree& aTree, const TreeDrawSettings& aSettings, const HzSections& aHzSections);
+    TreeDraw(Surface& aSurface, Tree& aTree, TreeDrawSettings& aSettings, const HzSections& aHzSections);
     ~TreeDraw();
 
     void prepare();
@@ -157,10 +157,12 @@ class TreeDraw
     const Coloring& coloring() const { return *mColoring; }
     double vertical_step() const { return mVerticalStep; }
 
+    void init_settings();
+
  private:
     Surface& mSurface;
     Tree& mTree;
-    const TreeDrawSettings& mSettings;
+    TreeDrawSettings& mSettings;
     const HzSections& mHzSections;
     std::unique_ptr<Coloring> mColoring;
     mutable std::unique_ptr<Legend> mColoringLegend;

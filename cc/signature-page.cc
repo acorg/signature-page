@@ -94,6 +94,20 @@ void SignaturePageDraw::prepare()
 
 // ----------------------------------------------------------------------
 
+Settings& SignaturePageDraw::init_settings()
+{
+    if (mTreeDraw)
+        mTreeDraw->init_settings();
+    if (mTimeSeriesDraw)
+        mTimeSeriesDraw->init_settings();
+    if (mCladesDraw)
+        mCladesDraw->init_settings();
+    return *mSettings;
+    
+} // SignaturePageDraw::init_settings
+
+// ----------------------------------------------------------------------
+
 void SignaturePageDraw::draw()
 {
     mSurface.background("white");

@@ -9,25 +9,38 @@
 
 #include "surface-cairo.hh"
 #include "signature-page.hh"
-
+#include "settings.hh"
 
 // ----------------------------------------------------------------------
 
-int get_args(int argc, const char *argv[], std::string& aSettingsFilename, std::string& aTreeFilename, std::string& aOutputPdf, std::string& aSeqdbFilename);
+class Options
+{
+ public:
+    std::string settings_filename;
+    std::string init_settings_filename;
+    std::string tree_filename;
+    std::string output_filename;
+    std::string seqdb_filename;
+};
+
+int get_args(int argc, const char *argv[], Options& aOptions);
 
 // ----------------------------------------------------------------------
 
 int main(int argc, const char *argv[])
 {
-    std::string settings_filename, tree_filename, output_filename, seqdb_filename;
-    int exit_code = get_args(argc, argv, settings_filename, tree_filename, output_filename, seqdb_filename);
+    Options options;
+    int exit_code = get_args(argc, argv, options);
     if (exit_code == 0) {
         try {
-            PdfCairo surface(output_filename, 500, 850);
+            PdfCairo surface(options.output_filename, 500, 850);
             SignaturePageDraw signature_page(surface);
-            signature_page.settings(settings_filename);
-            signature_page.tree(tree_filename, seqdb_filename);
+            signature_page.settings(options.settings_filename);
+            signature_page.tree(options.tree_filename, options.seqdb_filename);
             signature_page.prepare();
+            if (!options.init_settings_filename.empty()) {
+                write_settings(signature_page.init_settings(), options.init_settings_filename);
+            }
             signature_page.draw();
 
             // const double offset = 100;
@@ -47,16 +60,17 @@ int main(int argc, const char *argv[])
 
 // ----------------------------------------------------------------------
 
-int get_args(int argc, const char *argv[], std::string& aSettingsFilename, std::string& aTreeFilename, std::string& aOutputPdf, std::string& aSeqdbFilename)
+int get_args(int argc, const char *argv[], Options& aOptions)
 {
     using namespace boost::program_options;
     options_description desc("Options");
     desc.add_options()
             ("help", "Print help messages")
-            ("seqdb", value<std::string>(&aSeqdbFilename)/* ->required() */, "path to seqdb")
-            ("settings,s", value<std::string>(&aSettingsFilename), "signature page drawing settings (json) filename")
-            ("tree", value<std::string>(&aTreeFilename)->required(), "path to tree to draw")
-            ("output,o", value<std::string>(&aOutputPdf)->required(), "output pdf")
+            ("seqdb", value<std::string>(&aOptions.seqdb_filename)/* ->required() */, "path to seqdb")
+            ("settings,s", value<std::string>(&aOptions.settings_filename), "signature page drawing settings (json) filename")
+            ("init-settings", value<std::string>(&aOptions.init_settings_filename), "initialize signature page drawing settings (json) filename")
+            ("tree", value<std::string>(&aOptions.tree_filename)->required(), "path to tree to draw")
+            ("output,o", value<std::string>(&aOptions.output_filename)->required(), "output pdf")
             ;
     positional_options_description pos_opt;
     pos_opt.add("tree", 1);
