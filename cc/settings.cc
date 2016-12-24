@@ -1105,7 +1105,7 @@ const std::map<std::string, CladesDrawSettingsHandler::Keys> CladesDrawSettingsH
 class HzSectionHandler : public HandlerBase
 {
  private:
-    enum class Keys {Unknown, show, show_line, name, label};
+    enum class Keys {Unknown, show, show_line, show_ts_label, name, label};
 
  public:
     inline HzSectionHandler(Settings& aSettings, HzSection& aField) : HandlerBase{aSettings}, mKey(Keys::Unknown), mField(aField) {}
@@ -1149,6 +1149,9 @@ class HzSectionHandler : public HandlerBase
               case Keys::show_line:
                   mField.show_line = b;
                   break;
+              case Keys::show_ts_label:
+                  mField.show_ts_label = b;
+                  break;
               default:
                   HandlerBase::Bool(b);
                   break;
@@ -1166,6 +1169,7 @@ class HzSectionHandler : public HandlerBase
 const std::map<std::string, HzSectionHandler::Keys> HzSectionHandler::key_mapper {
     {"show", Keys::show},
     {"show_line", Keys::show_line},
+    {"show_ts_label", Keys::show_ts_label},
     {"name", Keys::name},
     {"label", Keys::label},
 };
@@ -1515,6 +1519,7 @@ template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writ
                   << JsonObjectKey("name") << aSettings.name
                   << JsonObjectKey("show") << aSettings.show
                   << JsonObjectKey("show_line") << aSettings.show
+                  << JsonObjectKey("show_ts_label") << aSettings.show_ts_label
                   << JsonObjectKey("label") << aSettings.label
                   << EndObject;
 }
@@ -1527,6 +1532,9 @@ template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writ
                   << JsonObjectKey("vertical_gap") << aSettings.vertical_gap
                   << JsonObjectKey("line_color") << aSettings.line_color
                   << JsonObjectKey("line_width") << aSettings.line_width
+                  << JsonObjectKey("ts_label_size") << aSettings.ts_label_size
+                  << JsonObjectKey("ts_label_style") << aSettings.ts_label_style
+                  << JsonObjectKey("ts_label_color") << aSettings.ts_label_color
                   << JsonObjectKey("sections") << aSettings.sections
                   << EndObject;
 }

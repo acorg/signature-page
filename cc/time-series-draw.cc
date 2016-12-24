@@ -110,9 +110,16 @@ void TimeSeriesDraw::draw_hz_section_lines()
     double previous_vertical_pos = -1;
     auto draw = [&](const Node& aNode) {
         if (aNode.draw.shown) {
-            if (aNode.draw.hz_section_index != NodeDrawData::HzSectionNoIndex && previous_vertical_pos >= 0 && mHzSections.sections[aNode.draw.hz_section_index].show_line) {
+            const auto& section_settings = mHzSections.sections[aNode.draw.hz_section_index];
+            if (aNode.draw.hz_section_index != NodeDrawData::HzSectionNoIndex && previous_vertical_pos >= 0 && section_settings.show_line) {
                 const double y = (previous_vertical_pos + aNode.draw.vertical_pos) / 2;
-                mSurface.line({0, y}, {mSurface.size().width, y}, mHzSections.line_color, mHzSections.line_width);
+                const double width = mSurface.size().width;
+                mSurface.line({0, y}, {width, y}, mHzSections.line_color, mHzSections.line_width);
+                if (section_settings.show_ts_label) {
+                    std::string label(1, static_cast<char>('A' + aNode.draw.hz_section_index - 1));
+                    const Size tsize = mSurface.text_size(label, mHzSections.ts_label_size, mHzSections.ts_label_style);
+                    mSurface.text({width - tsize.width * 1.2, y + tsize.height * 1.2}, label, mHzSections.ts_label_color, mHzSections.ts_label_size, mHzSections.ts_label_style);
+                }
             }
             previous_vertical_pos = aNode.draw.vertical_pos;
         }

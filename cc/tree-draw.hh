@@ -114,13 +114,14 @@ class TreeDrawSettings
 class HzSection
 {
  public:
-    inline HzSection() : show(true), show_line(true) {}
+    inline HzSection() : show(true), show_line(true), show_ts_label(true) {}
     inline HzSection(const HzSection&) = default;
     inline HzSection(HzSection&&) = default;
     ~HzSection();
 
     bool show;
     bool show_line;
+    bool show_ts_label;
     std::string name;           // first seq_id
     std::string label;          // antigenic map label, empty - generate automatically
 };
@@ -129,12 +130,15 @@ class HzSections
 {
  public:
     inline HzSections()
-        : vertical_gap(50), line_color("grey63"), line_width(1) {}
+        : vertical_gap(50), line_color("grey63"), line_width(1), ts_label_size(50), ts_label_color("black") {}
     ~HzSections();
 
     double vertical_gap;
     Color line_color;
     double line_width;
+    double ts_label_size;
+    TextStyle ts_label_style;
+    Color ts_label_color;
     std::vector<HzSection> sections;
 };
 
