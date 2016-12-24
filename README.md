@@ -9,15 +9,26 @@ Programs to import phylogenetic tree and draw it on a tree or signature page
 
   - make ~/AD/data/seqdb.json.xz (make sure hidb in ~/AD/data/ are up to date)
 
-        env LD_LIBRARY_PATH=$HOME/AD/lib ~/AD/bin/seqdb-create --db ~/AD/data/seqdb.json.xz --match-hidb --clades ~/ac/tables-store/sequences/$FASTA_NAME ~/ac/tables-store/sequences/niid-*.fas.bz2
+        env LD_LIBRARY_PATH=$HOME/AD/lib ~/AD/bin/seqdb-create --db ~/AD/data/seqdb.json.xz --match-hidb --clades ~/ac/tables-store/sequences/gisaid-b-1997-20160211.fas.bz2 ~/ac/tables-store/sequences/gisaid-h3-1998-20160211.fas.bz2 ~/ac/tables-store/sequences/gisaid-h1pdm-2009-20160211.fas.bz2 ~/ac/tables-store/sequences/$FASTA_NAME ~/ac/tables-store/sequences/niid-*.fas.bz2
 
   - mkdir $WORKING_DIR
 
-        WORKING_DIR="/syn/eu/ac/results/whocc-tree/$VIRUS_TYPE/$(date +%Y-%m%d-%H%M);"
+        WORKING_DIR="/syn/eu/ac/results/whocc-tree/$VIRUS_TYPE/$(date +%Y-%m%d-%H%M)"
         mkdir "$WORKING_DIR"
         cd "$WORKING_DIR"
 
   - export sequences from ~/AD/data/seqdb.json.xz
+
+    - base-seq:
+
+        BVIC: "VICTORIA/830/2013 MDCK2",
+        BYAM: "B/PHUKET/3073/2013 E4/E2", # "CAMBODIA/FSS29374/2014 MDCK1", # David used for 201602 SSM B/HUMAN/PHUKET/3073/2013%20E4/E1/SPF12%20%2A%20CDC-LV11B%20%28%20YAMAGATA-2013
+        H3:   "HAWAII/22/2012 MDCK",
+        H1:   "SWITZERLAND/9772556/2013 SIAT2",
+
+    - start-date
+
+        H3: 20150301 (6686 sequences)
 
         env LD_LIBRARY_PATH=$HOME/AD/lib ~/AD/bin/seqdb-export --db ~/AD/data/seqdb.json.xz --flu $VIRUS_TYPE --start-date YYYYMMDD --tree-maker --base-seq $BASE_SEQ $WORKING_DIR/source.fas
 
