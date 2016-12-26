@@ -30,7 +30,11 @@ Programs to import phylogenetic tree and draw it on a tree or signature page
 
         H3: 20150301 (6686 sequences)
 
-        env LD_LIBRARY_PATH=$HOME/AD/lib ~/AD/bin/seqdb-export --db ~/AD/data/seqdb.json.xz --flu $VIRUS_TYPE --start-date YYYYMMDD --tree-maker --base-seq $BASE_SEQ $WORKING_DIR/source.fas
+    - recent 4000
+
+    - export command
+
+        env LD_LIBRARY_PATH=$HOME/AD/lib ~/AD/bin/seqdb-export --db ~/AD/data/seqdb.json.xz --flu $VIRUS_TYPE --recent 4000 --tree-maker --base-seq $BASE_SEQ $WORKING_DIR/source.fas
 
   - Initilialize tree maker
 
