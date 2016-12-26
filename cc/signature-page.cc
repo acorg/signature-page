@@ -41,11 +41,11 @@ void SignaturePageDraw::settings(std::string aFilename)
 void SignaturePageDraw::tree(std::string aTreeFilename, std::string aSeqdbFilename)
 {
     tree_import(aTreeFilename, *mTree);
-    mTree->set_continents(*mLocdb);
     if (!aSeqdbFilename.empty()) {
         mSeqdb->load(aSeqdbFilename);
         mTree->match_seqdb(*mSeqdb);
     }
+    mTree->set_continents(*mLocdb);
       // tree.report_cumulative_edge_length(std::cout);
     mTree->ladderize(Tree::LadderizeMethod::NumberOfLeaves);           // must be before clade_setup
     mTree->make_aa_transitions();
@@ -103,7 +103,7 @@ Settings& SignaturePageDraw::init_settings()
     if (mCladesDraw)
         mCladesDraw->init_settings();
     return *mSettings;
-    
+
 } // SignaturePageDraw::init_settings
 
 // ----------------------------------------------------------------------

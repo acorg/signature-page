@@ -26,9 +26,10 @@ class NodeData
     inline std::string date() const { return mSeqdbEntrySeq ? mSeqdbEntrySeq.entry().date() : std::string{}; }
     inline std::string amino_acids() const { return mSeqdbEntrySeq ? mSeqdbEntrySeq.seq().amino_acids(true) : std::string{}; }
     inline const std::vector<std::string>* clades() const { return mSeqdbEntrySeq ? &mSeqdbEntrySeq.seq().clades() : nullptr; }
-
+    
     inline void assign(seqdb::SeqdbEntrySeq&& entry_seq) { mSeqdbEntrySeq.assign(std::forward<seqdb::SeqdbEntrySeq>(entry_seq)); }
-
+    void set_continent(const LocDb& locdb, std::string seq_id);
+    
     size_t number_strains;
     double ladderize_max_edge_length;
     std::string ladderize_max_date;
