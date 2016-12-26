@@ -21,6 +21,7 @@ class Options
     std::string tree_filename;
     std::string output_filename;
     std::string seqdb_filename;
+    bool layout_tree;  // for init settings only
 };
 
 int get_args(int argc, const char *argv[], Options& aOptions);
@@ -39,7 +40,7 @@ int main(int argc, const char *argv[])
             signature_page.tree(options.tree_filename, options.seqdb_filename);
             signature_page.prepare();
             if (!options.init_settings_filename.empty()) {
-                write_settings(signature_page.init_settings(), options.init_settings_filename);
+                write_settings(signature_page.init_settings(options.layout_tree), options.init_settings_filename);
             }
             signature_page.draw();
 
@@ -69,6 +70,7 @@ int get_args(int argc, const char *argv[], Options& aOptions)
             ("seqdb", value<std::string>(&aOptions.seqdb_filename)/* ->required() */, "path to seqdb")
             ("settings,s", value<std::string>(&aOptions.settings_filename), "signature page drawing settings (json) filename")
             ("init-settings", value<std::string>(&aOptions.init_settings_filename), "initialize signature page drawing settings (json) filename")
+            ("init-tree", bool_switch(&aOptions.layout_tree)->default_value(false), "initialize with tree layout")
             ("tree", value<std::string>(&aOptions.tree_filename)->required(), "path to tree to draw")
             ("output,o", value<std::string>(&aOptions.output_filename)->required(), "output pdf")
             ;

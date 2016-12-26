@@ -94,8 +94,20 @@ void SignaturePageDraw::prepare()
 
 // ----------------------------------------------------------------------
 
-Settings& SignaturePageDraw::init_settings()
+Settings& SignaturePageDraw::init_settings(bool layout_tree)
 {
+    mSettings->signature_page.set_layot(layout_tree ? "tree-ts-clades" : "tree-clades-ts-maps");
+    if (layout_tree) {
+        mSettings->signature_page.time_series_width = 400;
+        mSettings->signature_page.clades_width = 100;
+        mSettings->signature_page.tree_margin_right = 50;
+    }
+    else {
+        mSettings->signature_page.time_series_width = 200;
+        mSettings->signature_page.clades_width = 50;
+        mSettings->signature_page.tree_margin_right = 20;
+    }
+
     if (mTreeDraw)
         mTreeDraw->init_settings();
     if (mTimeSeriesDraw)
