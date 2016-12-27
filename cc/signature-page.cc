@@ -79,18 +79,18 @@ void SignaturePageDraw::init_settings()
         mTimeSeriesDraw->init_settings();
 
     const double clade_base = mSettings->signature_page.clades_width * 0.1 * ratio;
-    const double ts_base = mSettings->signature_page.time_series_width * 0.01;
+    const double ts_base = mSettings->signature_page.time_series_width * 0.1;
 
     mSettings->tree_draw.vaccines[0].label_size = mSettings->signature_page.time_series_width * 0.1;
 
     mSettings->hz_sections.vertical_gap = 30 * ratio;
-    mSettings->hz_sections.ts_label_size = mSettings->time_series.label_size;
+    mSettings->hz_sections.ts_label_size = ts_base * 1;
     mSettings->hz_sections.line_width = clade_base * 0.2;
 
-    mSettings->time_series.label_size = ts_base * 9;
+    mSettings->time_series.label_size = ts_base * 1;
     mSettings->time_series.month_separator_width = ts_base * 0.1;
-    mSettings->time_series.month_year_to_timeseries_gap = ts_base * 3;
-    mSettings->time_series.dash_line_width = ts_base * 1;
+    mSettings->time_series.month_year_to_timeseries_gap = ts_base * 0.5;
+    mSettings->time_series.dash_line_width = ts_base * 0.15;
 
     mSettings->clades.slot_width = clade_base * 2;
     for (auto& clade: mSettings->clades.clades) {
