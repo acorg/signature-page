@@ -122,7 +122,6 @@ void TimeSeriesDraw::draw_hz_section_lines()
                 const double y = (previous_vertical_pos + aNode.draw.vertical_pos) / 2;
                 const double width = mSurface.size().width;
                 mSurface.line({0, y}, {width, y}, mHzSections.line_color, mHzSections.line_width);
-                std::cerr << "HZ section height: " << (aNode.draw.vertical_pos - previous_vertical_pos) << std::endl;
                 if (section_settings.show_ts_label) {
                     std::string label(1, static_cast<char>('A' + aNode.draw.hz_section_index - 1));
                     const Size tsize = mSurface.text_size(label, mHzSections.ts_label_size, mHzSections.ts_label_style);

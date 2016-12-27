@@ -70,23 +70,28 @@ void SignaturePageDraw::init_settings()
     mSettings->signature_page.bottom = mSettings->signature_page.top;
 
     if (mTreeDraw)
-        mTreeDraw->init_settings();
-    if (mTimeSeriesDraw)
-        mTimeSeriesDraw->init_settings();
+        mTreeDraw->set_line_no(); // hides leaves too
     if (mCladesDraw)
         mCladesDraw->init_settings();
+    if (mTreeDraw)
+        mTreeDraw->init_settings(mCladesDraw ? mCladesDraw->clades() : nullptr);
+    if (mTimeSeriesDraw)
+        mTimeSeriesDraw->init_settings();
+
+    const double clade_base = mSettings->signature_page.clades_width * 0.1 * ratio;
+    const double ts_base = mSettings->signature_page.time_series_width * 0.01;
 
     mSettings->tree_draw.vaccines[0].label_size = mSettings->signature_page.time_series_width * 0.1;
 
+    mSettings->hz_sections.vertical_gap = 30 * ratio;
     mSettings->hz_sections.ts_label_size = mSettings->time_series.label_size;
+    mSettings->hz_sections.line_width = clade_base * 0.2;
 
-    const double ts_base = mSettings->signature_page.time_series_width * 0.01;
     mSettings->time_series.label_size = ts_base * 9;
     mSettings->time_series.month_separator_width = ts_base * 0.1;
     mSettings->time_series.month_year_to_timeseries_gap = ts_base * 3;
     mSettings->time_series.dash_line_width = ts_base * 1;
 
-    const double clade_base = mSettings->signature_page.clades_width * 0.1 * ratio;
     mSettings->clades.slot_width = clade_base * 2;
     for (auto& clade: mSettings->clades.clades) {
         clade.label_size = clade_base * 3;
@@ -194,10 +199,10 @@ void SignaturePageDraw::make_layout_tree_clades_ts_maps()
     const double clades_left = mSettings->signature_page.left + tree_width + mSettings->signature_page.tree_margin_right;
     const double ts_left = clades_left + clades_width;
 
-    std::cerr << "page_size " << page_size << std::endl;
-    std::cerr << "tree " << Size{tree_width, section_height} << std::endl;
-    std::cerr << "time series " << Size{ts_width, section_height} << std::endl;
-    std::cerr << "clades " << Size{clades_width, section_height} << std::endl;
+    // std::cerr << "page_size " << page_size << std::endl;
+    // std::cerr << "tree " << Size{tree_width, section_height} << std::endl;
+    // std::cerr << "time series " << Size{ts_width, section_height} << std::endl;
+    // std::cerr << "clades " << Size{clades_width, section_height} << std::endl;
 
     mTreeDraw->surface().move_resize({mSettings->signature_page.left, mSettings->signature_page.top}, {tree_width, section_height}, page_size.width);
     mTimeSeriesDraw->surface().move_resize({ts_left, mSettings->signature_page.top}, {ts_width, section_height}, page_size.width * ts_width / tree_width);

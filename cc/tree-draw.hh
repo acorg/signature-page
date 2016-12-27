@@ -8,6 +8,7 @@
 
 #include "surface.hh"
 #include "legend.hh"
+#include "clades-draw.hh"
 
 // ----------------------------------------------------------------------
 
@@ -114,7 +115,7 @@ class TreeDrawSettings
 class HzSection
 {
  public:
-    inline HzSection(std::string aName = std::string{}) : show(true), show_line(true), show_ts_label(true), name(aName), line_no(0) {}
+    inline HzSection(std::string aName = std::string{}, bool aShowLine = true) : show(true), show_line(aShowLine), show_ts_label(true), name(aName), line_no(0) {}
     inline HzSection(const HzSection&) = default;
     // inline HzSection(HzSection&&) = default;
     ~HzSection();
@@ -133,10 +134,12 @@ class HzSections
 {
  public:
     inline HzSections()
-        : vertical_gap(50), line_color("red" /*"grey63"*/), line_width(10), ts_label_size(50), ts_label_color("black") {}
+        : vertical_gap(50), line_color("grey63"), line_width(10), ts_label_size(50), ts_label_color("black") {}
     ~HzSections();
 
+    void add(std::string aSeqId, bool aShowLine);
     void sort(const Tree& aTree);
+    void auto_detect(Tree& aTree, const Clades* aClades);
 
     double vertical_gap;
     Color line_color;
@@ -162,7 +165,8 @@ class TreeDraw
     const Coloring& coloring() const { return *mColoring; }
     double vertical_step() const { return mVerticalStep; }
 
-    void init_settings();
+    void init_settings(const Clades* aClades);
+    void set_line_no();
     Surface& surface() { return mSurface; }
 
  private:
@@ -182,7 +186,6 @@ class TreeDraw
     bool setting_line_no_done;
 
     void hide_leaves();
-    void set_line_no();
     void set_vertical_pos();
     size_t prepare_hz_sections();
     void draw_node(const Node& aNode, double aOriginX, double& aVerticalGap, double aEdgeLength = -1);

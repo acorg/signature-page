@@ -52,33 +52,43 @@ std::ostream& operator << (std::ostream& out, const CladeData& clade)
 
 void CladesDraw::prepare()
 {
-      // extract clades from aTree
-    auto scan = [this](const Node& aNode) {
-        if (aNode.draw.shown) {
-            const auto* node_clades = aNode.data.clades();
-            if (node_clades) {
-                for (auto& c: *node_clades) {
-                    auto p = mClades.emplace(c, aNode);
-                    if (!p.second) { // the clade is already present, extend its range
-                        p.first->second.extend(aNode, mSettings.for_clade(c).section_inclusion_tolerance);
+    collect();
+
+} // CladesDraw::prepare
+
+// ----------------------------------------------------------------------
+
+void CladesDraw::collect()
+{
+    if (mClades.empty()) {
+          // extract clades from aTree
+        auto scan = [this](const Node& aNode) {
+            if (aNode.draw.shown) {
+                const auto* node_clades = aNode.data.clades();
+                if (node_clades) {
+                    for (auto& c: *node_clades) {
+                        auto p = mClades.emplace(c, aNode);
+                        if (!p.second) { // the clade is already present, extend its range
+                            p.first->second.extend(aNode, mSettings.for_clade(c).section_inclusion_tolerance);
+                        }
                     }
                 }
             }
+        };
+        tree::iterate_leaf(mTree, scan);
+
+          // remove small sections
+        for (auto& clade: mClades)
+            clade.second.remove_small_sections(mSettings.for_clade(clade.first).section_exclusion_tolerance);
+
+        for (auto& c: mClades) {
+            std::cerr << "Clade: " << c.first << c.second << std::endl;
         }
-    };
-    tree::iterate_leaf(mTree, scan);
 
-      // remove small sections
-    for (auto& clade: mClades)
-        clade.second.remove_small_sections(mSettings.for_clade(clade.first).section_exclusion_tolerance);
-
-    for (auto& c: mClades) {
-        std::cerr << "Clade: " << c.first << c.second << std::endl;
+        assign_slots();
     }
 
-    assign_slots();
-
-} // CladesDraw::prepare
+} // CladesDraw::collect
 
 // ----------------------------------------------------------------------
 
@@ -114,6 +124,7 @@ void CladesDraw::assign_slots()
 
 void CladesDraw::init_settings()
 {
+    collect();
     for (auto& clade: mClades) {
         auto p = std::find_if(mSettings.clades.begin(), mSettings.clades.end(), [&](const auto& c) { return c.name == clade.first; });
         if (p == mSettings.clades.end()) {
@@ -137,7 +148,7 @@ void CladesDraw::draw()
 
     for (const auto& name_clade: mClades) {
         const auto& clade = name_clade.second;
-        if (clade.slot != CladeDrawSettings::NoSlot) {
+        if (clade.shown()) {
             const auto& for_clade = mSettings.for_clade(name_clade.first);
             for (const auto& section: clade.sections) {
                 const double top = section.first->draw.vertical_pos - mTreeDraw.vertical_step() / 2;

@@ -96,11 +96,20 @@ class CladeData
     void extend(const Node& node, size_t section_inclusion_tolerance);
     void remove_small_sections(size_t section_exclusion_tolerance);
 
-    const Node* first() const { return sections.front().first; }
-    size_t first_line() const { return first()->draw.line_no; }
-    const Node* last() const { return sections.back().last; }
-    size_t last_line() const { return last()->draw.line_no; }
+    inline const Node* first() const { return sections.front().first; }
+    inline size_t first_line() const { return first()->draw.line_no; }
+    inline const Node* last() const { return sections.back().last; }
+    inline size_t last_line() const { return last()->draw.line_no; }
 
+    inline bool shown() const { return slot != CladeDrawSettings::NoSlot; }
+
+    inline void first_seq_ids(std::vector<std::string>& aSeqIds) const
+        {
+            for (const auto& sec: sections) {
+                aSeqIds.push_back(sec.first->seq_id);
+            }
+        }
+    
     std::vector<CladeSection> sections;
     size_t slot;
 };
@@ -123,6 +132,7 @@ class CladesDraw
 
     void init_settings();
     Surface& surface() { return mSurface; }
+    const Clades* clades() const { return &mClades; }
 
  private:
     Surface& mSurface;
@@ -132,6 +142,7 @@ class CladesDraw
     CladesDrawSettings& mSettings;
     Clades mClades;
 
+    void collect();
     void assign_slots();
     void draw_right(size_t aSlot, std::string aCladeName, double top, double bottom, double label_vpos, const CladeDrawSettings& for_clade);
     void draw_left(size_t aSlot, std::string aCladeName, double top, double bottom, double label_vpos, const CladeDrawSettings& for_clade);

@@ -45,33 +45,10 @@ void TreeDraw::make_coloring()
 
 // ----------------------------------------------------------------------
 
-void TreeDraw::init_settings()
+void TreeDraw::init_settings(const Clades* aClades)
 {
     hide_leaves(); // set_line_no();
-
-      // hz section auto-detection
-    std::vector<const Node*> nodes;
-    mTree.leaf_nodes_sorted_by_distance_from_previous(nodes);
-
-    // size_t i = 0;
-    // std::cout << "HZ lines detection (distance_from_previous):" << std::endl;
-    // for (const auto node: nodes) {
-    //     std::cout << std::fixed << std::setprecision(8) << std::setw(14) << node->data.distance_from_previous << ' ' << node->seq_id
-    //               << (node->draw.shown ? "" : " *HIDDEN*")
-    //               << std::endl;
-    //     if (++i > 10)
-    //         break;
-    // }
-
-    size_t number_of_sections_to_detect = 5;
-    if (mHzSections.sections.empty()) {
-        mHzSections.sections.emplace_back(find_first_leaf(mTree).seq_id);
-        for (size_t node_no = 0; mHzSections.sections.size() <= number_of_sections_to_detect && node_no < nodes.size(); ++node_no) {
-            if (nodes[node_no]->draw.shown) {
-                mHzSections.sections.emplace_back(nodes[node_no]->seq_id);
-            }
-        }
-    }
+    mHzSections.auto_detect(mTree, aClades);
 
 } // TreeDraw::init_settings
 
@@ -383,6 +360,59 @@ void HzSections::sort(const Tree& aTree)
     std::sort(sections.begin(), sections.end(), [](const auto& a, const auto& b) -> bool { return a.line_no < b.line_no; });
 
 } // HzSections::sort
+
+// ----------------------------------------------------------------------
+
+void HzSections::auto_detect(Tree& aTree, const Clades* aClades)
+{
+    if (sections.empty()) {
+        add(find_first_leaf(aTree).seq_id, false);
+
+        if (aClades) {
+            for (const auto& clade: *aClades) {
+                if (clade.second.shown()) {
+                    std::vector<std::string> seq_ids;
+                    clade.second.first_seq_ids(seq_ids);
+                    for (const auto& s: seq_ids) {
+                        add(s, false);
+                    }
+                }
+            }
+        }
+
+        const size_t number_of_sections_to_detect = 5;
+
+        std::vector<const Node*> nodes;
+        aTree.leaf_nodes_sorted_by_distance_from_previous(nodes);
+
+          // size_t i = 0;
+          // std::cout << "HZ lines detection (distance_from_previous):" << std::endl;
+          // for (const auto node: nodes) {
+          //     std::cout << std::fixed << std::setprecision(8) << std::setw(14) << node->data.distance_from_previous << ' ' << node->seq_id
+          //               << (node->draw.shown ? "" : " *HIDDEN*")
+          //               << std::endl;
+          //     if (++i > 10)
+          //         break;
+          // }
+
+        for (size_t node_no = 0; sections.size() <= number_of_sections_to_detect && node_no < nodes.size(); ++node_no) {
+            if (nodes[node_no]->draw.shown) {
+                add(nodes[node_no]->seq_id, true);
+            }
+        }
+    }
+
+} // HzSections::auto_detect
+
+// ----------------------------------------------------------------------
+
+void HzSections::add(std::string aSeqId, bool aShowLine)
+{
+    auto sec = std::find_if(sections.begin(), sections.end(), [&aSeqId](const auto& s) -> bool { return s.name == aSeqId; });
+    if (sec == sections.end())
+        sections.emplace_back(aSeqId, aShowLine);
+
+} // HzSections::add
 
 // ----------------------------------------------------------------------
 
