@@ -66,7 +66,6 @@ void SignaturePageDraw::init_layout(bool layout_tree)
 
 void SignaturePageDraw::init_settings()
 {
-    const double ratio = 1.0 / mSurface->aspect();
     mSettings->signature_page.bottom = mSettings->signature_page.top;
 
     if (mTreeDraw)
@@ -78,26 +77,45 @@ void SignaturePageDraw::init_settings()
     if (mTimeSeriesDraw)
         mTimeSeriesDraw->init_settings();
 
-    const double clade_base = mSettings->signature_page.clades_width * 0.1 * ratio;
-    const double ts_base = mSettings->signature_page.time_series_width * 0.1;
+    if (mSurface->aspect() > 1) { // with maps
+        mSettings->tree_draw.vaccines[0].label_size = 10;
 
-    mSettings->tree_draw.vaccines[0].label_size = mSettings->signature_page.time_series_width * 0.1;
+        mSettings->time_series.label_size = 10;
+        mSettings->time_series.month_separator_width = 1;
+        mSettings->time_series.month_year_to_timeseries_gap = 1;
+        mSettings->time_series.dash_line_width = 0.8;
 
-    mSettings->hz_sections.vertical_gap = 30 * ratio;
-    mSettings->hz_sections.ts_label_size = ts_base * 1;
-    mSettings->hz_sections.line_width = clade_base * 0.2;
+        mSettings->hz_sections.vertical_gap = 15;
+        mSettings->hz_sections.ts_label_size = 10;
+        mSettings->hz_sections.line_width = 1;
 
-    mSettings->time_series.label_size = ts_base * 1;
-    mSettings->time_series.month_separator_width = ts_base * 0.1;
-    mSettings->time_series.month_year_to_timeseries_gap = ts_base * 0.5;
-    mSettings->time_series.dash_line_width = ts_base * 0.15;
+        mSettings->clades.slot_width = 10;
+        for (auto& clade: mSettings->clades.clades) {
+            clade.label_size = 10;
+            clade.line_width = 0.5;
+            clade.arrow_width = clade.line_width * 5;
+            clade.label_offset.set(1, 0);
+        }
+    }
+    else {                      // just tree
+        mSettings->tree_draw.vaccines[0].label_size = 40;
 
-    mSettings->clades.slot_width = clade_base * 2;
-    for (auto& clade: mSettings->clades.clades) {
-        clade.label_size = clade_base * 3;
-        clade.line_width = clade_base * 0.2;
-        clade.arrow_width = clade.line_width * 5;
-        clade.label_offset.set(clade_base * 1, 0);
+        mSettings->time_series.label_size = 50;
+        mSettings->time_series.month_separator_width = 1;
+        mSettings->time_series.month_year_to_timeseries_gap = 5;
+        mSettings->time_series.dash_line_width = 3;
+
+        mSettings->hz_sections.vertical_gap = 80;
+        mSettings->hz_sections.ts_label_size = 50;
+        mSettings->hz_sections.line_width = 2;
+
+        mSettings->clades.slot_width = 50;
+        for (auto& clade: mSettings->clades.clades) {
+            clade.label_size = 50;
+            clade.line_width = 3;
+            clade.arrow_width = clade.line_width * 5;
+            clade.label_offset.set(10, 0);
+        }
     }
 
 } // SignaturePageDraw::init_settings
