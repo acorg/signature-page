@@ -10,7 +10,8 @@
 // ----------------------------------------------------------------------
 
 TreeDraw::TreeDraw(Surface& aSurface, Tree& aTree, TreeDrawSettings& aSettings, HzSections& aHzSections)
-    : mSurface(aSurface), mTree(aTree), mSettings(aSettings), mHzSections(aHzSections)
+    : mSurface(aSurface), mTree(aTree), mSettings(aSettings), mHzSections(aHzSections),
+      hiding_leaves_done(false), setting_line_no_done(false)
 {
     make_coloring();
 }
@@ -44,42 +45,48 @@ void TreeDraw::make_coloring()
 
 // ----------------------------------------------------------------------
 
-void TreeDraw::prepare()
-{
-    mTree.compute_cumulative_edge_length();
-    hide_leaves();
-    const size_t number_of_hz_sections = prepare_hz_sections();
-    set_line_no();
-    const auto canvas_size = mSurface.size();
-    mHorizontalStep = canvas_size.width / mTree.width(mSettings.hide_if_cumulative_edge_length_bigger_than);
-    mVerticalStep = canvas_size.height / (static_cast<double>(mTree.height() + 2) + (number_of_hz_sections - 1) * mHzSections.vertical_gap); // +2 to add space at the top and bottom
-    set_vertical_pos();
-
-} // TreeDraw::prepare
-
-// ----------------------------------------------------------------------
-
 void TreeDraw::init_settings()
 {
+    hide_leaves(); // set_line_no();
+
       // hz section auto-detection
     std::vector<const Node*> nodes;
     mTree.leaf_nodes_sorted_by_distance_from_previous(nodes);
-    size_t i = 0;
-    for (const auto node: nodes) {
-        std::cerr << std::fixed << std::setprecision(8) << std::setw(10) << node->data.distance_from_previous << ' ' << node->seq_id << std::endl;
-        if (++i > 10)
-            break;
-    }
 
-    size_t number_of_sections_to_detect = 2;
+    // size_t i = 0;
+    // std::cout << "HZ lines detection (distance_from_previous):" << std::endl;
+    // for (const auto node: nodes) {
+    //     std::cout << std::fixed << std::setprecision(8) << std::setw(14) << node->data.distance_from_previous << ' ' << node->seq_id
+    //               << (node->draw.shown ? "" : " *HIDDEN*")
+    //               << std::endl;
+    //     if (++i > 10)
+    //         break;
+    // }
+
+    size_t number_of_sections_to_detect = 5;
     if (mHzSections.sections.empty()) {
         mHzSections.sections.emplace_back(find_first_leaf(mTree).seq_id);
-        for (size_t sno = 0; sno < number_of_sections_to_detect; ++sno) {
-            mHzSections.sections.emplace_back(nodes[sno]->seq_id);
+        for (size_t node_no = 0; mHzSections.sections.size() <= number_of_sections_to_detect && node_no < nodes.size(); ++node_no) {
+            if (nodes[node_no]->draw.shown) {
+                mHzSections.sections.emplace_back(nodes[node_no]->seq_id);
+            }
         }
     }
 
 } // TreeDraw::init_settings
+
+// ----------------------------------------------------------------------
+
+void TreeDraw::prepare()
+{
+    set_line_no();
+    const size_t number_of_hz_sections = prepare_hz_sections();
+    const auto canvas_size = mSurface.size();
+    mHorizontalStep = canvas_size.width / mTree.width(mSettings.hide_if_cumulative_edge_length_bigger_than);
+    mVerticalStep = (canvas_size.height - (number_of_hz_sections - 1) * mHzSections.vertical_gap) / static_cast<double>(mTree.height() + 2); // +2 to add space at the top and bottom
+    set_vertical_pos();
+
+} // TreeDraw::prepare
 
 // ----------------------------------------------------------------------
 
@@ -102,21 +109,25 @@ void TreeDraw::draw()
 
 void TreeDraw::hide_leaves()
 {
-    auto hide_show_leaf = [this](Node& aNode) {
-        aNode.draw.shown = ! (aNode.data.date() < mSettings.hide_isolated_before || aNode.data.cumulative_edge_length > mSettings.hide_if_cumulative_edge_length_bigger_than);
-    };
+    if (!hiding_leaves_done) {
+        auto hide_show_leaf = [this](Node& aNode) {
+            aNode.draw.shown = ! (aNode.data.date() < mSettings.hide_isolated_before || aNode.data.cumulative_edge_length > mSettings.hide_if_cumulative_edge_length_bigger_than);
+        };
 
-    auto hide_show_branch = [](Node& aNode) {
-        aNode.draw.shown = false;
-        for (const auto& node: aNode.subtree) {
-            if (node.draw.shown) {
-                aNode.draw.shown = true;
-                break;
+        auto hide_show_branch = [](Node& aNode) {
+            aNode.draw.shown = false;
+            for (const auto& node: aNode.subtree) {
+                if (node.draw.shown) {
+                    aNode.draw.shown = true;
+                    break;
+                }
             }
-        }
-    };
+        };
 
-    tree::iterate_leaf_post(mTree, hide_show_leaf, hide_show_branch);
+        mTree.compute_cumulative_edge_length();
+        tree::iterate_leaf_post(mTree, hide_show_leaf, hide_show_branch);
+        hiding_leaves_done = true;
+    }
 
 } // TreeDraw::hide_leaves
 
@@ -124,15 +135,19 @@ void TreeDraw::hide_leaves()
 
 void TreeDraw::set_line_no()
 {
-    size_t current_line = 1;    // line of the first node is 1, we have 1 line space at the top and bottom of the tree
-    auto set_line_no = [&current_line](Node& aNode) {
-        if (aNode.draw.shown) {
-            aNode.draw.line_no = current_line;
-            ++current_line;
-        }
-    };
-    tree::iterate_leaf(mTree, set_line_no);
-    std::cout << "Lines in the tree: " << current_line << std::endl;
+    hide_leaves();
+    if (!setting_line_no_done) {
+        size_t current_line = 1;    // line of the first node is 1, we have 1 line space at the top and bottom of the tree
+        auto set_line_no = [&current_line](Node& aNode) {
+            if (aNode.draw.shown) {
+                aNode.draw.line_no = current_line;
+                ++current_line;
+            }
+        };
+        tree::iterate_leaf(mTree, set_line_no);
+        setting_line_no_done = true;
+        std::cout << "Lines in the tree: " << current_line << std::endl;
+    }
 
 } // TreeDraw::set_line_no
 
@@ -172,6 +187,8 @@ void TreeDraw::set_vertical_pos()
 
 size_t TreeDraw::prepare_hz_sections()
 {
+    mHzSections.sort(mTree);
+
     size_t number_of_hz_sections = 0;
     const Node& first_leaf = find_first_leaf(mTree);
     size_t section_index = 0;
@@ -192,6 +209,7 @@ size_t TreeDraw::prepare_hz_sections()
     }
     if (number_of_hz_sections == 0)
         number_of_hz_sections = 1;
+    std::cerr << "HZ sections to show: " << number_of_hz_sections << std::endl;
     return number_of_hz_sections;
 
 } // TreeDraw::prepare_hz_sections
@@ -348,6 +366,23 @@ void TreeDraw::draw_legend()
     }
 
 } // TreeDraw::draw_legend
+
+// ----------------------------------------------------------------------
+
+void HzSections::sort(const Tree& aTree)
+{
+    auto set_line_no = [this](const Node& node) {
+        auto sec = std::find_if(sections.begin(), sections.end(), [&node](const auto& s) -> bool { return s.name == node.seq_id; });
+        if (sec != sections.end()) {
+            sec->line_no = node.draw.line_no;
+        }
+    };
+
+    tree::iterate_leaf(aTree, set_line_no);
+
+    std::sort(sections.begin(), sections.end(), [](const auto& a, const auto& b) -> bool { return a.line_no < b.line_no; });
+
+} // HzSections::sort
 
 // ----------------------------------------------------------------------
 
