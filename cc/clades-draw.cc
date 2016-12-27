@@ -165,9 +165,9 @@ void CladesDraw::draw_right(size_t aSlot, std::string aCladeName, double top, do
     mSurface.double_arrow({x, top}, {x, bottom}, for_clade.arrow_color, for_clade.line_width, for_clade.arrow_width);
     std::string name = for_clade.display_name.empty() ? aCladeName : for_clade.display_name;
     mSurface.text(Location{x, label_vpos} + for_clade.label_offset, name, for_clade.label_color, for_clade.label_size, for_clade.label_style, for_clade.label_rotation);
-    const double ts_width = mTimeSeriesDraw.size().width;
-    mSurface.line({x, top}, {-ts_width, top}, for_clade.separator_color, for_clade.separator_width);
-    mSurface.line({x, bottom}, {-ts_width, bottom}, for_clade.separator_color, for_clade.separator_width);
+    const double left = mTimeSeriesDraw.size().width;
+    mSurface.line({x, top}, {-left, top}, for_clade.separator_color, for_clade.separator_width);
+    mSurface.line({x, bottom}, {-left, bottom}, for_clade.separator_color, for_clade.separator_width);
 
 } // CladesDraw::draw_right
 
@@ -181,9 +181,9 @@ void CladesDraw::draw_left(size_t aSlot, std::string aCladeName, double top, dou
     const double label_width = mSurface.text_size(name, for_clade.label_size, for_clade.label_style).width;
     mSurface.text(Location{x, label_vpos} + Size{- for_clade.label_offset.width - label_width, for_clade.label_offset.height},
                   name, for_clade.label_color, for_clade.label_size, for_clade.label_style, for_clade.label_rotation);
-    const double ts_width = mTimeSeriesDraw.size().width;
-    mSurface.line({x, top}, {-ts_width, top}, for_clade.separator_color, for_clade.separator_width);
-    mSurface.line({x, bottom}, {-ts_width, bottom}, for_clade.separator_color, for_clade.separator_width);
+    const double right = mSurface.size().width + mTimeSeriesDraw.size().width;
+    mSurface.line({x, top}, {right, top}, for_clade.separator_color, for_clade.separator_width);
+    mSurface.line({x, bottom}, {right, bottom}, for_clade.separator_color, for_clade.separator_width);
 
 } // CladesDraw::draw_left
 

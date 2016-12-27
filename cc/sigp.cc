@@ -7,7 +7,6 @@
 #include "boost/program_options.hpp"
 #pragma GCC diagnostic pop
 
-#include "surface-cairo.hh"
 #include "signature-page.hh"
 #include "settings.hh"
 
@@ -34,22 +33,15 @@ int main(int argc, const char *argv[])
     int exit_code = get_args(argc, argv, options);
     if (exit_code == 0) {
         try {
-            PdfCairo surface(options.output_filename, 500, 850);
-            SignaturePageDraw signature_page(surface);
-            signature_page.settings(options.settings_filename);
-            signature_page.tree(options.tree_filename, options.seqdb_filename);
-            signature_page.prepare();
+            SignaturePageDraw signature_page;
+            signature_page.load_settings(options.settings_filename);
             if (!options.init_settings_filename.empty()) {
                 write_settings(signature_page.init_settings(options.layout_tree), options.init_settings_filename);
             }
+            signature_page.make_surface(options.output_filename);
+            signature_page.tree(options.tree_filename, options.seqdb_filename);
+            signature_page.prepare();
             signature_page.draw();
-
-            // const double offset = 100;
-            // // const double scale = (surface.width() - offset * 4) / surface.width();
-            // // std::cout << "Sub scale:" << scale << std::endl;
-            // std::unique_ptr<Surface> sub{surface.subsurface({offset, offset}, surface.size() - Size(offset * 2, offset * 2), surface.size().width, false)};
-            // sub->border(0xA0FFA000, 10);
-            // draw(settings, *sub, tree);
         }
         catch (std::exception& err) {
             std::cerr << err.what() << std::endl;

@@ -63,10 +63,11 @@ class SignaturePageDrawSettings
 class SignaturePageDraw
 {
  public:
-    SignaturePageDraw(Surface& aSurface);
+    SignaturePageDraw();
     ~SignaturePageDraw();
 
-    void settings(std::string aFilename);
+    void load_settings(std::string aFilename);
+    void make_surface(std::string aFilename);
     Settings& init_settings(bool layout_tree);
     void tree(std::string aTreeFilename, std::string aSeqdbFilename);
 
@@ -74,7 +75,7 @@ class SignaturePageDraw
     void draw();
 
  private:
-    Surface& mSurface;
+    std::unique_ptr<Surface> mSurface;
     std::unique_ptr<Settings> mSettings;
     std::unique_ptr<LocDb> mLocdb;
     std::unique_ptr<seqdb::Seqdb> mSeqdb;
@@ -82,6 +83,9 @@ class SignaturePageDraw
     std::unique_ptr<TreeDraw> mTreeDraw;
     std::unique_ptr<TimeSeriesDraw> mTimeSeriesDraw;
     std::unique_ptr<CladesDraw> mCladesDraw;
+
+    void make_layout_tree_ts_clades();
+    void make_layout_tree_clades_ts_maps();
 
 }; // class SignaturePageDraw
 
