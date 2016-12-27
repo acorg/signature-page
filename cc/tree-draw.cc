@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <iomanip>
 
 #include "tree-draw.hh"
 #include "tree.hh"
@@ -60,8 +61,22 @@ void TreeDraw::prepare()
 
 void TreeDraw::init_settings()
 {
+      // hz section auto-detection
+    std::vector<const Node*> nodes;
+    mTree.leaf_nodes_sorted_by_distance_from_previous(nodes);
+    size_t i = 0;
+    for (const auto node: nodes) {
+        std::cerr << std::fixed << std::setprecision(8) << std::setw(10) << node->data.distance_from_previous << ' ' << node->seq_id << std::endl;
+        if (++i > 10)
+            break;
+    }
+
+    size_t number_of_sections_to_detect = 2;
     if (mHzSections.sections.empty()) {
         mHzSections.sections.emplace_back(find_first_leaf(mTree).seq_id);
+        for (size_t sno = 0; sno < number_of_sections_to_detect; ++sno) {
+            mHzSections.sections.emplace_back(nodes[sno]->seq_id);
+        }
     }
 
 } // TreeDraw::init_settings

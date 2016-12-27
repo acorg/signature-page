@@ -122,6 +122,7 @@ class CladesDraw
     void draw();
 
     void init_settings();
+    Surface& surface() { return mSurface; }
 
  private:
     Surface& mSurface;

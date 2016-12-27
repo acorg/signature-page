@@ -97,10 +97,11 @@ class Surface
     virtual const Size& size() const = 0;
     virtual const Size& offset() const = 0;
     inline double aspect() const { return size().aspect(); }
-    virtual void resize(const Size& aNewSize) = 0;
-    virtual void move(const Size& aNewOffset) = 0;
+    virtual void move_resize(const Size& aNewOffset, const Size& aNewSize) = 0;
+    virtual void move_resize(const Size& aNewOffset, const Size& aOuterSize, double aInnerWidth) = 0;
 
     virtual Surface& subsurface(const Size& aOffset, const Size& aOuterSize, double aInnerWidth, bool aClip) = 0;
+    virtual Surface& subsurface(bool aClip) = 0;
 
     virtual void line(const Location& a, const Location& b, Color aColor, double aWidth, LineCap aLineCap = LineCap::Butt) = 0;
     virtual void rectangle(const Location& a, const Size& s, Color aColor, double aWidth, LineCap aLineCap = LineCap::Butt) = 0;

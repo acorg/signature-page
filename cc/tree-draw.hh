@@ -130,7 +130,7 @@ class HzSections
 {
  public:
     inline HzSections()
-        : vertical_gap(50), line_color("grey63"), line_width(1), ts_label_size(50), ts_label_color("black") {}
+        : vertical_gap(50), line_color("red" /*"grey63"*/), line_width(10), ts_label_size(50), ts_label_color("black") {}
     ~HzSections();
 
     double vertical_gap;
@@ -158,6 +158,7 @@ class TreeDraw
     double vertical_step() const { return mVerticalStep; }
 
     void init_settings();
+    Surface& surface() { return mSurface; }
 
  private:
     Surface& mSurface;

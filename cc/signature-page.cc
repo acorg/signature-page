@@ -15,7 +15,7 @@
 
 SignaturePageDraw::SignaturePageDraw()
     : mSettings{new Settings{}}, mLocdb{new LocDb{}}, mSeqdb{new seqdb::Seqdb{}},
-      mTree{new Tree{}} //, mTreeDraw{new TreeDraw{}}, mTimeSeriesDraw{new TimeSeriesDraw{}}
+      mTree{new Tree{}}
 {
     mLocdb->importFrom(std::getenv("ACMACSD_ROOT") + std::string("/data/locationdb.json.xz"));
 
@@ -39,11 +39,9 @@ void SignaturePageDraw::load_settings(std::string aFilename)
 
 // ----------------------------------------------------------------------
 
-Settings& SignaturePageDraw::init_settings(bool layout_tree)
+void SignaturePageDraw::init_layout(bool layout_tree)
 {
-    double ratio;
     if (layout_tree) {
-        ratio = 1.0 / 0.6;
         mSettings->signature_page.top = 80;
         mSettings->signature_page.left = 50;
         mSettings->signature_page.set_layot("tree-ts-clades");
@@ -53,7 +51,6 @@ Settings& SignaturePageDraw::init_settings(bool layout_tree)
         mSettings->tree_draw.aa_transition.per_branch.size = mSettings->signature_page.time_series_width * 0.1;
     }
     else {
-        ratio = 1.0 / 1.6;
         mSettings->signature_page.top = 30;
         mSettings->signature_page.left = 20;
         mSettings->signature_page.set_layot("tree-clades-ts-maps");
@@ -62,6 +59,14 @@ Settings& SignaturePageDraw::init_settings(bool layout_tree)
         mSettings->signature_page.tree_margin_right = 10;
         mSettings->tree_draw.aa_transition.per_branch.size = mSettings->signature_page.time_series_width * 0.075;
     }
+
+} // SignaturePageDraw::init_layout
+
+// ----------------------------------------------------------------------
+
+void SignaturePageDraw::init_settings()
+{
+    const double ratio = 1.0 / mSurface->aspect();
     mSettings->signature_page.bottom = mSettings->signature_page.top;
 
     if (mTreeDraw)
@@ -90,8 +95,6 @@ Settings& SignaturePageDraw::init_settings(bool layout_tree)
         clade.label_offset.set(clade_base * 1, 0);
     }
 
-    return *mSettings;
-
 } // SignaturePageDraw::init_settings
 
 // ----------------------------------------------------------------------
@@ -110,6 +113,10 @@ void SignaturePageDraw::make_surface(std::string aFilename)
           break;
     }
     mSurface = std::make_unique<PdfCairo>(aFilename, width, height);
+
+    mTreeDraw = std::make_unique<TreeDraw>(mSurface->subsurface(false), *mTree, mSettings->tree_draw, mSettings->hz_sections);
+    mTimeSeriesDraw = std::make_unique<TimeSeriesDraw>(mSurface->subsurface(false), *mTree, *mTreeDraw, mSettings->hz_sections, mSettings->time_series);
+    mCladesDraw = std::make_unique<CladesDraw>(mSurface->subsurface(false), *mTree, *mTreeDraw, *mTimeSeriesDraw, mSettings->clades);
 
 } // SignaturePageDraw::make_surface
 
@@ -167,14 +174,9 @@ void SignaturePageDraw::make_layout_tree_ts_clades()
     const double ts_left = mSettings->signature_page.left + tree_width + mSettings->signature_page.tree_margin_right;
     const double clades_left = ts_left + ts_width;
 
-    Surface& tree_draw_surface = mSurface->subsurface({mSettings->signature_page.left, mSettings->signature_page.top}, {tree_width, section_height}, page_size.width, false);
-    mTreeDraw = std::make_unique<TreeDraw>(tree_draw_surface, *mTree, mSettings->tree_draw, mSettings->hz_sections);
-
-    Surface& ts_surface = mSurface->subsurface({ts_left, mSettings->signature_page.top}, {ts_width, section_height}, page_size.width * ts_width / tree_width, false);
-    mTimeSeriesDraw = std::make_unique<TimeSeriesDraw>(ts_surface, *mTree, *mTreeDraw, mSettings->hz_sections, mSettings->time_series);
-
-    Surface& clades_surface = mSurface->subsurface({clades_left, mSettings->signature_page.top}, {clades_width, section_height}, page_size.width * clades_width / tree_width, false);
-    mCladesDraw = std::make_unique<CladesDraw>(clades_surface, *mTree, *mTreeDraw, *mTimeSeriesDraw, mSettings->clades);
+    mTreeDraw->surface().move_resize({mSettings->signature_page.left, mSettings->signature_page.top}, {tree_width, section_height}, page_size.width);
+    mTimeSeriesDraw->surface().move_resize({ts_left, mSettings->signature_page.top}, {ts_width, section_height}, page_size.width * ts_width / tree_width);
+    mCladesDraw->surface().move_resize({clades_left, mSettings->signature_page.top}, {clades_width, section_height}, page_size.width * clades_width / tree_width);
 
 } // SignaturePageDraw::make_layout_tree_ts_clades
 
@@ -192,14 +194,14 @@ void SignaturePageDraw::make_layout_tree_clades_ts_maps()
     const double clades_left = mSettings->signature_page.left + tree_width + mSettings->signature_page.tree_margin_right;
     const double ts_left = clades_left + clades_width;
 
-    Surface& tree_draw_surface = mSurface->subsurface({mSettings->signature_page.left, mSettings->signature_page.top}, {tree_width, section_height}, page_size.width, false);
-    mTreeDraw = std::make_unique<TreeDraw>(tree_draw_surface, *mTree, mSettings->tree_draw, mSettings->hz_sections);
+    std::cerr << "page_size " << page_size << std::endl;
+    std::cerr << "tree " << Size{tree_width, section_height} << std::endl;
+    std::cerr << "time series " << Size{ts_width, section_height} << std::endl;
+    std::cerr << "clades " << Size{clades_width, section_height} << std::endl;
 
-    Surface& ts_surface = mSurface->subsurface({ts_left, mSettings->signature_page.top}, {ts_width, section_height}, page_size.width * ts_width / tree_width, false);
-    mTimeSeriesDraw = std::make_unique<TimeSeriesDraw>(ts_surface, *mTree, *mTreeDraw, mSettings->hz_sections, mSettings->time_series);
-
-    Surface& clades_surface = mSurface->subsurface({clades_left, mSettings->signature_page.top}, {clades_width, section_height}, page_size.width * clades_width / tree_width, false);
-    mCladesDraw = std::make_unique<CladesDraw>(clades_surface, *mTree, *mTreeDraw, *mTimeSeriesDraw, mSettings->clades);
+    mTreeDraw->surface().move_resize({mSettings->signature_page.left, mSettings->signature_page.top}, {tree_width, section_height}, page_size.width);
+    mTimeSeriesDraw->surface().move_resize({ts_left, mSettings->signature_page.top}, {ts_width, section_height}, page_size.width * ts_width / tree_width);
+    mCladesDraw->surface().move_resize({clades_left, mSettings->signature_page.top}, {clades_width, section_height}, page_size.width * clades_width / tree_width);
 
 } // SignaturePageDraw::make_layout_tree_clades_ts_maps
 

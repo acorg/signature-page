@@ -163,6 +163,15 @@ Surface& SurfaceCairo::subsurface(const Size& aOffset, const Size& aOuterSize, d
 
 // ----------------------------------------------------------------------
 
+Surface& SurfaceCairo::subsurface(bool aClip)
+{
+    mChildren.emplace_back(*this, aClip);
+    return mChildren.back();
+
+} // SurfaceCairo::subsurface
+
+// ----------------------------------------------------------------------
+
 void SurfaceCairo::line(const Location& a, const Location& b, Color aColor, double aWidth, LineCap aLineCap)
 {
     context(*this)

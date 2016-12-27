@@ -35,11 +35,14 @@ int main(int argc, const char *argv[])
         try {
             SignaturePageDraw signature_page;
             signature_page.load_settings(options.settings_filename);
-            if (!options.init_settings_filename.empty()) {
-                write_settings(signature_page.init_settings(options.layout_tree), options.init_settings_filename);
-            }
+            if (!options.init_settings_filename.empty())
+                signature_page.init_layout(options.layout_tree);
             signature_page.make_surface(options.output_filename);
             signature_page.tree(options.tree_filename, options.seqdb_filename);
+            if (!options.init_settings_filename.empty()) {
+                signature_page.init_settings();
+                write_settings(signature_page.settings(), options.init_settings_filename);
+            }
             signature_page.prepare();
             signature_page.draw();
         }

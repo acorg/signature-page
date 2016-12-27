@@ -17,6 +17,7 @@ class SurfaceCairo : public Surface
     // virtual inline double height() const { return mSize.height; }
 
     virtual Surface& subsurface(const Size& aOffset, const Size& aOuterSize, double aInnerWidth, bool aClip);
+    virtual Surface& subsurface(bool aClip);
 
     virtual void line(const Location& a, const Location& b, Color aColor, double aWidth, LineCap aLineCap = LineCap::Butt);
     virtual void rectangle(const Location& a, const Size& s, Color aColor, double aWidth, LineCap aLineCap = LineCap::Butt);
@@ -59,6 +60,8 @@ class SurfaceCairo : public Surface
 class SurfaceCairoChild : public SurfaceCairo
 {
  public:
+    inline SurfaceCairoChild(SurfaceCairo& aParent, bool aClip)
+        : mParent(aParent), mScale(1.0), mClip(aClip) {}
     inline SurfaceCairoChild(SurfaceCairo& aParent, const Size& aOffset, const Size& aSize, double aScale, bool aClip)
         : mParent(aParent), mOffset(aOffset), mSize(aSize), mScale(aScale), mClip(aClip) {}
 
@@ -67,8 +70,8 @@ class SurfaceCairoChild : public SurfaceCairo
     virtual inline const Size& size() const { return mSize; }
     virtual inline const Size& offset() const { return mOffset; }
 
-    virtual inline void resize(const Size& aNewSize) { mScale *= mSize.width / aNewSize.width; mSize = aNewSize; }
-    virtual inline void move(const Size& aNewOffset) { mOffset = aNewOffset; }
+    virtual inline void move_resize(const Size& aNewOffset, const Size& aNewSize) { mOffset = aNewOffset; mScale *= mSize.width / aNewSize.width; mSize = aNewSize; }
+    virtual inline void move_resize(const Size& aNewOffset, const Size& aOuterSize, double aInnerWidth) { mOffset = aNewOffset; mScale = aOuterSize.width / aInnerWidth; mSize = aOuterSize / mScale; }
 
  private:
     SurfaceCairo& mParent;
@@ -95,8 +98,8 @@ class PdfCairo : public SurfaceCairo
     virtual inline const Size& size() const { return mSize; }
     virtual inline const Size& offset() const { return mOffset; }
 
-    virtual inline void resize(const Size& aNewSize) { mScale *= mSize.width / aNewSize.width; mSize = aNewSize; }
-    virtual inline void move(const Size& aNewOffset) { mOffset = aNewOffset; }
+    virtual inline void move_resize(const Size& aNewOffset, const Size& aNewSize) { mOffset = aNewOffset; mScale *= mSize.width / aNewSize.width; mSize = aNewSize; }
+    virtual inline void move_resize(const Size& aNewOffset, const Size& aOuterSize, double aInnerWidth) { mOffset = aNewOffset; mScale = aOuterSize.width / aInnerWidth; mSize = aOuterSize / mScale; }
 
  private:
     Size mSize;

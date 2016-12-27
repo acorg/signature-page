@@ -20,21 +20,22 @@ class NodeData
 {
  public:
     inline NodeData()
-        : number_strains(1), ladderize_max_edge_length(0)
+        : number_strains(1), ladderize_max_edge_length(0), distance_from_previous(-1)
         {}
 
     inline std::string date() const { return mSeqdbEntrySeq ? mSeqdbEntrySeq.entry().date() : std::string{}; }
     inline std::string amino_acids() const { return mSeqdbEntrySeq ? mSeqdbEntrySeq.seq().amino_acids(true) : std::string{}; }
     inline const std::vector<std::string>* clades() const { return mSeqdbEntrySeq ? &mSeqdbEntrySeq.seq().clades() : nullptr; }
-    
+
     inline void assign(seqdb::SeqdbEntrySeq&& entry_seq) { mSeqdbEntrySeq.assign(std::forward<seqdb::SeqdbEntrySeq>(entry_seq)); }
     void set_continent(const LocDb& locdb, std::string seq_id);
-    
+
     size_t number_strains;
     double ladderize_max_edge_length;
     std::string ladderize_max_date;
     std::string ladderize_max_name_alphabetically;
     double cumulative_edge_length;
+    double distance_from_previous; // for hz sections auto-detection
     std::string continent;
 
     std::string aa_at;          // see make_aa_at()
@@ -146,6 +147,7 @@ class Tree : public Node
             if (mMaxCumulativeEdgeLength < 0)
                 Node::compute_cumulative_edge_length(0, mMaxCumulativeEdgeLength);
         }
+    void compute_distance_from_previous();
 
     size_t height() const; // number of lines in the tree
     inline double width() { compute_cumulative_edge_length(); return mMaxCumulativeEdgeLength; }
@@ -162,6 +164,12 @@ class Tree : public Node
     inline void leaf_nodes_sorted_by_date(std::vector<const Node*>& nodes) const
         {
             leaf_nodes_sorted_by(nodes, [](const Node* a, const Node* b) -> bool { return a->data.date() < b->data.date(); });
+        }
+
+    inline void leaf_nodes_sorted_by_distance_from_previous(std::vector<const Node*>& nodes)
+        {
+            compute_distance_from_previous();
+            leaf_nodes_sorted_by(nodes, [](const Node* a, const Node* b) -> bool { return a->data.distance_from_previous > b->data.distance_from_previous; });
         }
 
     // inline leaf_nodes_sorted_by_edge_length_to_next(std::vector<const Node*>& nodes) const // longest first!

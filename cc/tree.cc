@@ -167,8 +167,6 @@ void Tree::leaf_nodes_sorted_by(std::vector<const Node*>& nodes, const std::func
 
 void Tree::report_cumulative_edge_length(std::ostream& out)
 {
-    compute_cumulative_edge_length();
-
     std::vector<const Node*> nodes;
     leaf_nodes_sorted_by_cumulative_edge_length(nodes);
     for (const auto& node: nodes)
@@ -378,6 +376,26 @@ void Tree::sequences_per_month(std::map<Date, size_t>& spm) const
     tree::iterate_leaf(*this, worker);
 
 } // Tree::sequences_per_month
+
+// ----------------------------------------------------------------------
+
+void Tree::compute_distance_from_previous()
+{
+    double distance = -1;
+
+    auto pre_post = [&distance](const Node& aNode) -> void {
+        if (distance >= 0)
+            distance += aNode.edge_length;
+    };
+
+    auto leaf = [&distance](Node& aNode) -> void {
+        aNode.data.distance_from_previous = distance >= 0 ? distance + aNode.edge_length : distance;
+        distance = aNode.edge_length;
+    };
+
+    tree::iterate_leaf_pre_post(*this, leaf, pre_post, pre_post);
+
+} // Tree::compute_distance_from_previous
 
 // ----------------------------------------------------------------------
 

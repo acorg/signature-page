@@ -68,7 +68,9 @@ class SignaturePageDraw
 
     void load_settings(std::string aFilename);
     void make_surface(std::string aFilename);
-    Settings& init_settings(bool layout_tree);
+    void init_layout(bool layout_tree);
+    void init_settings();
+    inline Settings& settings() { return *mSettings; }
     void tree(std::string aTreeFilename, std::string aSeqdbFilename);
 
     void prepare();
