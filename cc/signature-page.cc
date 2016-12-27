@@ -43,22 +43,24 @@ Settings& SignaturePageDraw::init_settings(bool layout_tree)
 {
     double ratio;
     if (layout_tree) {
-        ratio = 0.6;
+        ratio = 1.0 / 0.6;
         mSettings->signature_page.top = 80;
         mSettings->signature_page.left = 50;
         mSettings->signature_page.set_layot("tree-ts-clades");
         mSettings->signature_page.time_series_width = 400;
         mSettings->signature_page.clades_width = 100;
         mSettings->signature_page.tree_margin_right = 50;
+        mSettings->tree_draw.aa_transition.per_branch.size = mSettings->signature_page.time_series_width * 0.1;
     }
     else {
-        ratio = 1.6;
+        ratio = 1.0 / 1.6;
         mSettings->signature_page.top = 30;
         mSettings->signature_page.left = 20;
         mSettings->signature_page.set_layot("tree-clades-ts-maps");
         mSettings->signature_page.time_series_width = 100;
         mSettings->signature_page.clades_width = 50;
         mSettings->signature_page.tree_margin_right = 10;
+        mSettings->tree_draw.aa_transition.per_branch.size = mSettings->signature_page.time_series_width * 0.075;
     }
     mSettings->signature_page.bottom = mSettings->signature_page.top;
 
@@ -69,7 +71,6 @@ Settings& SignaturePageDraw::init_settings(bool layout_tree)
     if (mCladesDraw)
         mCladesDraw->init_settings();
 
-    mSettings->tree_draw.aa_transition.per_branch.size = mSettings->signature_page.time_series_width * 0.1;
     mSettings->tree_draw.vaccines[0].label_size = mSettings->signature_page.time_series_width * 0.1;
 
     mSettings->hz_sections.ts_label_size = mSettings->time_series.label_size;
@@ -80,7 +81,7 @@ Settings& SignaturePageDraw::init_settings(bool layout_tree)
     mSettings->time_series.month_year_to_timeseries_gap = ts_base * 3;
     mSettings->time_series.dash_line_width = ts_base * 1;
 
-    const double clade_base = mSettings->signature_page.clades_width * 0.1 / ratio;
+    const double clade_base = mSettings->signature_page.clades_width * 0.1 * ratio;
     mSettings->clades.slot_width = clade_base * 2;
     for (auto& clade: mSettings->clades.clades) {
         clade.label_size = clade_base * 3;
