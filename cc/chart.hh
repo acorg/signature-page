@@ -131,19 +131,28 @@ class Chart
     inline Chart() : mStress(-1) {}
     ~Chart();
 
-    // void preprocess(const SettingsAntigenicMaps& aSettings);
-    // void draw_points_reset(const SettingsAntigenicMaps& aSettings) const;
+      // void preprocess(const SettingsAntigenicMaps& aSettings);
+      // void draw_points_reset(const SettingsAntigenicMaps& aSettings) const;
 
-    //   // returns number of antigens from aNames list found in the chart
-    // size_t tracked_antigens(const std::vector<std::string>& aNames, Color aFillColor, const SettingsAntigenicMaps& aSettings) const;
-    // size_t tracked_antigens_colored_by_clade(const std::vector<std::string>& aNames, const std::map<std::string, const Node*>& aNodeByName, const SettingsAntigenicMaps& aSettings) const;
-    //   // returns line_no for each antigen from aLeaves found in the chart
-    // std::vector<size_t> sequenced_antigens(const std::vector<const Node*>& aLeaves);
-    // size_t marked_antigens(const SettingsMarkAntigens& aData, const std::vector<std::string>& aTrackedNames, size_t aSectionNo, const SettingsAntigenicMaps& aSettings) const;
-    // void tracked_sera(size_t aSectionNo, const SettingsAntigenicMaps& aSettings) const;
+    constexpr static const size_t AntigenNotFound = static_cast<size_t>(-1);
+      // returns AntigenNotFound if not found
+    inline size_t find_antigen(std::string aName) const
+        {
+            make_point_by_name();
+            const auto p = mPointByName.find(aName);
+            return p == mPointByName.end() ? AntigenNotFound : p->second;
+        }
 
-    // // const Viewport& viewport() const { return mViewport; }
-    // void draw(Surface& aSurface, double aObjectScale, const SettingsAntigenicMaps& aSettings) const;
+      //   // returns number of antigens from aNames list found in the chart
+      // size_t tracked_antigens(const std::vector<std::string>& aNames, Color aFillColor, const SettingsAntigenicMaps& aSettings) const;
+      // size_t tracked_antigens_colored_by_clade(const std::vector<std::string>& aNames, const std::map<std::string, const Node*>& aNodeByName, const SettingsAntigenicMaps& aSettings) const;
+      //   // returns line_no for each antigen from aLeaves found in the chart
+      // std::vector<size_t> sequenced_antigens(const std::vector<const Node*>& aLeaves);
+      // size_t marked_antigens(const SettingsMarkAntigens& aData, const std::vector<std::string>& aTrackedNames, size_t aSectionNo, const SettingsAntigenicMaps& aSettings) const;
+      // void tracked_sera(size_t aSectionNo, const SettingsAntigenicMaps& aSettings) const;
+
+      // // const Viewport& viewport() const { return mViewport; }
+      // void draw(Surface& aSurface, double aObjectScale, const SettingsAntigenicMaps& aSettings) const;
 
     inline const std::vector<Point>& points() const { return mPoints; }
     inline std::vector<Point>& points() { return mPoints; }
@@ -166,35 +175,38 @@ class Chart
     double mStress;
     ChartInfo mInfo;
     std::vector<Point> mPoints;
-    std::map<std::string, size_t> mPointByName;
     std::string mMinimumColumnBasis;
     std::vector<double> mColumnBases;
     Transformation mTransformation;
     std::vector<size_t> mDrawingOrder;
     PlotStyle mPlot;
 
-    // std::set<size_t> mSequencedAntigens;
-    // mutable std::vector<const DrawPoint*> mDrawPoints;
-    // DrawSerum mDrawSerum;
-    //   // DrawTrackedSerum mDrawTrackedSerum;
-    // DrawReferenceAntigen mDrawReferenceAntigen;
-    // DrawTestAntigen mDrawTestAntigen;
-    // DrawSequencedAntigen mDrawSequencedAntigen;
-    // mutable DrawTrackedAntigen mDrawTrackedAntigen;
-    // mutable std::vector<DrawTrackedAntigen> mDrawTrackedAntigensColoredByClade;
-    // DrawVaccineAntigen mDrawVaccineAntigen;
-    // mutable std::vector<DrawMarkedAntigen> mDrawMarkedAntigens;
-    // mutable std::vector<DrawTrackedSerum> mDrawTrackedSera;
+    mutable std::map<std::string, size_t> mPointByName;
 
-    // Viewport mViewport;
+      // std::set<size_t> mSequencedAntigens;
+      // mutable std::vector<const DrawPoint*> mDrawPoints;
+      // DrawSerum mDrawSerum;
+      //   // DrawTrackedSerum mDrawTrackedSerum;
+      // DrawReferenceAntigen mDrawReferenceAntigen;
+      // DrawTestAntigen mDrawTestAntigen;
+      // DrawSequencedAntigen mDrawSequencedAntigen;
+      // mutable DrawTrackedAntigen mDrawTrackedAntigen;
+      // mutable std::vector<DrawTrackedAntigen> mDrawTrackedAntigensColoredByClade;
+      // DrawVaccineAntigen mDrawVaccineAntigen;
+      // mutable std::vector<DrawMarkedAntigen> mDrawMarkedAntigens;
+      // mutable std::vector<DrawTrackedSerum> mDrawTrackedSera;
 
-    // std::set<std::string> mPrefixName;
+      // Viewport mViewport;
+
+      // std::set<std::string> mPrefixName;
 
 
-    // void apply_transformation(const SettingsAntigenicMaps& aSettings);
-    // Viewport bounding_rectangle() const;
-    // void init_tracked_sera(size_t aSize, const SettingsAntigenicMaps& aSettings) const;
-    // void add_tracked_serum(size_t aSectionNo, size_t aAntigenNo, const SettingsAntigenicMaps& aSettings) const;
+      // void apply_transformation(const SettingsAntigenicMaps& aSettings);
+      // Viewport bounding_rectangle() const;
+      // void init_tracked_sera(size_t aSize, const SettingsAntigenicMaps& aSettings) const;
+      // void add_tracked_serum(size_t aSectionNo, size_t aAntigenNo, const SettingsAntigenicMaps& aSettings) const;
+
+    void make_point_by_name() const;
 
 }; // class Chart
 
