@@ -18,6 +18,126 @@ using HandlerBase = json_reader::HandlerBase<Chart>;
 
 // ----------------------------------------------------------------------
 
+class PointStyleHandler : public HandlerBase
+{
+ private:
+    enum class Keys {Unknown, fill_color, outline_color, aspect, shape, size, rotation};
+
+ public:
+    inline PointStyleHandler(Chart& aChart, PointStyle& aField) : HandlerBase{aChart}, mKey(Keys::Unknown), mField(aField) {}
+
+    inline virtual HandlerBase* Key(const char* str, rapidjson::SizeType length)
+        {
+            HandlerBase* result = nullptr;
+            try {
+                mKey = key_mapper.at(std::string(str, length));
+            }
+            catch (std::out_of_range&) {
+                mKey = Keys::Unknown;
+                result = HandlerBase::Key(str, length);
+            }
+            return result;
+        }
+
+    inline virtual HandlerBase* String(const char* str, rapidjson::SizeType length)
+        {
+            HandlerBase* result = nullptr;
+            switch (mKey) {
+              case Keys::fill_color:
+                  mField.fill_color.from_string(str, length);
+                  break;
+              case Keys::outline_color:
+                  mField.outline_color.from_string(str, length);
+                  break;
+              case Keys::shape:
+                  mField.shape.assign(str, length);
+                  break;
+              default:
+                  result = HandlerBase::String(str, length);
+                  break;
+            }
+            return result;
+        }
+
+    inline virtual HandlerBase* Double(double d)
+        {
+            switch (mKey) {
+              case Keys::aspect:
+                  mField.aspect = d;
+                  break;
+              case Keys::size:
+                  mField.size = d;
+                  break;
+              case Keys::rotation:
+                  mField.rotation = d;
+                  break;
+              default:
+                  HandlerBase::Double(d);
+                  break;
+            }
+            return nullptr;
+        }
+
+ private:
+    Keys mKey;
+    PointStyle& mField;
+    static const std::map<std::string, Keys> key_mapper;
+};
+
+const std::map<std::string, PointStyleHandler::Keys> PointStyleHandler::key_mapper {
+    {"fill_color", Keys::fill_color},
+    {"outline_color", Keys::outline_color},
+    {"aspect", Keys::aspect},
+    {"shape", Keys::shape},
+    {"size", Keys::size},
+    {"rotation", Keys::rotation}
+};
+
+// ----------------------------------------------------------------------
+
+class PlotStyleHandler : public HandlerBase
+{
+ private:
+    enum class Keys {Unknown, points, styles};
+
+ public:
+    inline PlotStyleHandler(Chart& aChart) : HandlerBase{aChart}, mKey(Keys::Unknown) {}
+
+    inline virtual HandlerBase* Key(const char* str, rapidjson::SizeType length)
+        {
+            HandlerBase* result = nullptr;
+            try {
+                mKey = key_mapper.at(std::string(str, length));
+                switch (mKey) {
+                  case Keys::points:
+                      result = new json_reader::UintListHandler<Chart>(mTarget, mTarget.plot_style().points);
+                      break;
+                  case Keys::styles:
+                      result = new json_reader::ListHandler<Chart, PointStyle, PointStyleHandler>(mTarget, mTarget.plot_style().styles);
+                      break;
+                  default:
+                      break;
+                }
+            }
+            catch (std::out_of_range&) {
+                mKey = Keys::Unknown;
+                result = HandlerBase::Key(str, length);
+            }
+            return result;
+        }
+
+ private:
+    Keys mKey;
+    static const std::map<std::string, Keys> key_mapper;
+};
+
+const std::map<std::string, PlotStyleHandler::Keys> PlotStyleHandler::key_mapper {
+    {"points", Keys::points},
+    {"styles", Keys::styles}
+};
+
+// ----------------------------------------------------------------------
+
 class ChartInfoHandler : public HandlerBase
 {
  private:
@@ -92,7 +212,7 @@ const std::map<std::string, ChartInfoHandler::Keys> ChartInfoHandler::key_mapper
 class ChartRootHandler : public HandlerBase
 {
  private:
-    enum class Keys {Unknown, version, created, intermediate_layouts, info, minimum_column_basis, points, stress, column_bases, transformation, plot, drawing_order};
+    enum class Keys {Unknown, version, created, info, minimum_column_basis, points, stress, column_bases, transformation, plot, drawing_order /*, intermediate_layouts */};
 
  public:
     inline ChartRootHandler(Chart& aChart) : HandlerBase{aChart}, mKey(Keys::Unknown) {}
@@ -130,6 +250,9 @@ class ChartRootHandler : public HandlerBase
                       throw json_reader::Failure();
                   }
                   break;
+              case Keys::minimum_column_basis:
+                  mTarget.minimum_column_basis().assign(str, length);
+                  break;
               default:
                   result = HandlerBase::String(str, length);
                   break;
@@ -143,6 +266,9 @@ class ChartRootHandler : public HandlerBase
             switch (mKey) {
               case Keys::info:
                   result = new ChartInfoHandler(mTarget);
+                  break;
+              case Keys::plot:
+                  result = new PlotStyleHandler(mTarget);
                   break;
               default:
                   result = HandlerBase::StartObject();
@@ -161,13 +287,13 @@ const std::map<std::string, ChartRootHandler::Keys> ChartRootHandler::key_mapper
     {" created", Keys::created},
     {"drawing_order", Keys::drawing_order},
     {"info", Keys::info},
-    {"intermediate_layouts", Keys::intermediate_layouts},
     {"minimum_column_basis", Keys::minimum_column_basis},
+    {"plot", Keys::plot},
+              // {"intermediate_layouts", Keys::intermediate_layouts},
     {"points", Keys::points},
     {"stress", Keys::stress},
     {"column_bases", Keys::column_bases},
     {"transformation", Keys::transformation},
-    {"plot", Keys::plot},
 };
 
 // ----------------------------------------------------------------------

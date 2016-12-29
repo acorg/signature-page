@@ -149,6 +149,10 @@ class Chart
     inline std::vector<size_t>& drawing_order() { return mDrawingOrder; }
     inline const ChartInfo& chart_info() const { return mInfo; }
     inline ChartInfo& chart_info() { return mInfo; }
+    inline const std::string minimum_column_basis() const { return mMinimumColumnBasis; }
+    inline std::string& minimum_column_basis() { return mMinimumColumnBasis; }
+    inline const PlotStyle& plot_style() const { return mPlot; }
+    inline PlotStyle& plot_style() { return mPlot; }
 
  private:
     double mStress;
