@@ -26,6 +26,7 @@ class NodeData
     inline std::string date() const { return mSeqdbEntrySeq ? mSeqdbEntrySeq.entry().date() : std::string{}; }
     inline std::string amino_acids() const { return mSeqdbEntrySeq ? mSeqdbEntrySeq.seq().amino_acids(true) : std::string{}; }
     inline const std::vector<std::string>* clades() const { return mSeqdbEntrySeq ? &mSeqdbEntrySeq.seq().clades() : nullptr; }
+    inline const std::vector<std::string>* hi_names() const { return mSeqdbEntrySeq ? &mSeqdbEntrySeq.seq().hi_names() : nullptr; }
 
     inline void assign(seqdb::SeqdbEntrySeq&& entry_seq) { mSeqdbEntrySeq.assign(std::forward<seqdb::SeqdbEntrySeq>(entry_seq)); }
     void set_continent(const LocDb& locdb, std::string seq_id);
@@ -62,7 +63,7 @@ class NodeDrawData
     size_t hz_section_index;
     double vertical_pos;
     std::string vaccine_label;
-
+    size_t chart_antigen_index;
 };
 
 // ----------------------------------------------------------------------
