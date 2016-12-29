@@ -61,6 +61,8 @@ class PointAttributes
     double serum_circle_radius;
 };
 
+// ----------------------------------------------------------------------
+
 class Point
 {
  public:

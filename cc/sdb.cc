@@ -1,3 +1,5 @@
+#include <limits>
+
 #include "chart.hh"
 #include "acmacs-base/json-reader.hh"
 
@@ -15,6 +17,245 @@ constexpr const char* SDB_VERSION = "acmacs-sdb-v2";
 #endif
 
 using HandlerBase = json_reader::HandlerBase<Chart>;
+
+// ----------------------------------------------------------------------
+
+class CoordinatesHandler : public HandlerBase
+{
+ public:
+    inline CoordinatesHandler(Chart& aTarget, Location& aField) : HandlerBase{aTarget}, mElement(0), mField(aField) {}
+
+    inline virtual HandlerBase* Double(double d)
+        {
+            switch (mElement) {
+              case 0:
+                  mField.x = d;
+                  break;
+              case 1:
+                  mField.y = d;
+                  break;
+              default:
+                  throw json_reader::Failure{};
+            }
+            ++mElement;
+            return nullptr;
+        }
+
+    inline virtual HandlerBase* Null()
+        {
+            switch (mElement) {
+              case 0:
+                  mField.x = std::numeric_limits<double>::quiet_NaN();
+                  break;
+              case 1:
+                  mField.y = std::numeric_limits<double>::quiet_NaN();
+                  break;
+              default:
+                  throw json_reader::Failure{};
+            }
+            ++mElement;
+            return nullptr;
+        }
+
+ private:
+    size_t mElement;
+    Location& mField;
+};
+
+// ----------------------------------------------------------------------
+
+class PointAttributesHandler : public HandlerBase
+{
+ private:
+    enum class Keys {Unknown, antigen_serum, egg, reassortant, reference, vaccine, homologous_antigen, homologous_titer, serum_circle_radius};
+
+ public:
+    inline PointAttributesHandler(Chart& aChart, PointAttributes& aField) : HandlerBase{aChart}, mKey(Keys::Unknown), mField(aField) {}
+
+    inline virtual HandlerBase* Key(const char* str, rapidjson::SizeType length)
+        {
+            HandlerBase* result = nullptr;
+            try {
+                mKey = key_mapper.at(std::string(str, length));
+            }
+            catch (std::out_of_range&) {
+                mKey = Keys::Unknown;
+                result = HandlerBase::Key(str, length);
+            }
+            return result;
+        }
+
+    inline virtual HandlerBase* String(const char* str, rapidjson::SizeType length)
+        {
+            HandlerBase* result = nullptr;
+            switch (mKey) {
+              case Keys::homologous_titer:
+                  mField.homologous_titer.assign(str, length);
+                  break;
+              case Keys::antigen_serum:
+                  if (length == 1 && (*str == 'a' || *str == 's'))
+                      mField.antigen = *str == 'a';
+                  else
+                      throw json_reader::Failure("Unrecognized point type (a or s expected)");
+                  break;
+              default:
+                  result = HandlerBase::String(str, length);
+                  break;
+            }
+            return result;
+        }
+
+    inline virtual HandlerBase* Uint(unsigned u)
+        {
+            HandlerBase* result = nullptr;
+            switch (mKey) {
+              case Keys::homologous_antigen:
+                  mField.homologous_antigen = static_cast<int>(u);
+                  break;
+              case Keys::reference:
+                  mField.reference = u != 0;
+                  break;
+              default:
+                  result = HandlerBase::Uint(u);
+                  break;
+            }
+            return result;
+        }
+
+    inline virtual HandlerBase* Double(double d)
+        {
+            HandlerBase* result = nullptr;
+            switch (mKey) {
+              case Keys::serum_circle_radius:
+                  mField.serum_circle_radius = d;
+                  break;
+              default:
+                  result = HandlerBase::Double(d);
+                  break;
+            }
+            return result;
+        }
+
+    inline virtual HandlerBase* Bool(bool b)
+        {
+            HandlerBase* result = nullptr;
+            switch (mKey) {
+              case Keys::egg:
+                  mField.egg = b;
+                  break;
+              case Keys::reassortant:
+                  mField.reassortant = b;
+                  break;
+              case Keys::reference:
+                  mField.reference = b;
+                  break;
+              case Keys::vaccine:
+                  mField.vaccine = b;
+                  break;
+              default:
+                  result = HandlerBase::Bool(b);
+                  break;
+            }
+            return result;
+        }
+
+ private:
+    Keys mKey;
+    PointAttributes& mField;
+    static const std::map<std::string, Keys> key_mapper;
+};
+
+const std::map<std::string, PointAttributesHandler::Keys> PointAttributesHandler::key_mapper {
+    {"t", Keys::antigen_serum},
+    {"e", Keys::egg},
+    {"r", Keys::reassortant},
+    {"R", Keys::reference},
+    {"v", Keys::vaccine},
+    {"ha", Keys::homologous_antigen},
+    {"ht", Keys::homologous_titer},
+    {"ra", Keys::serum_circle_radius}
+};
+
+// ----------------------------------------------------------------------
+
+class PointHandler : public HandlerBase
+{
+ private:
+    enum class Keys {Unknown, name, coordinates, lab_id, attributes};
+
+ public:
+    inline PointHandler(Chart& aChart, Point& aField) : HandlerBase{aChart}, mKey(Keys::Unknown), mField(aField) {}
+
+    inline virtual HandlerBase* Key(const char* str, rapidjson::SizeType length)
+        {
+            HandlerBase* result = nullptr;
+            try {
+                mKey = key_mapper.at(std::string(str, length));
+            }
+            catch (std::out_of_range&) {
+                mKey = Keys::Unknown;
+                result = HandlerBase::Key(str, length);
+            }
+            return result;
+        }
+
+    inline virtual HandlerBase* String(const char* str, rapidjson::SizeType length)
+        {
+            HandlerBase* result = nullptr;
+            switch (mKey) {
+              case Keys::name:
+                  mField.name.assign(str, length);
+                  break;
+              case Keys::lab_id:
+                  mField.lab_id.assign(str, length);
+                  break;
+              default:
+                  result = HandlerBase::String(str, length);
+                  break;
+            }
+            return result;
+        }
+
+    inline virtual HandlerBase* StartObject()
+        {
+            HandlerBase* result = nullptr;
+            switch (mKey) {
+              case Keys::attributes:
+                  result = new PointAttributesHandler(mTarget, mField.attributes);
+                  break;
+              default:
+                  result = HandlerBase::StartObject();
+                  break;
+            }
+            return result;
+        }
+
+    inline virtual HandlerBase* StartArray()
+        {
+            HandlerBase* result = nullptr;
+            switch (mKey) {
+              case Keys::coordinates:
+                  result = new CoordinatesHandler(mTarget, mField.coordinates);
+                  break;
+              default:
+                  result = HandlerBase::StartArray();
+                  break;
+            }
+            return result;
+        }
+
+ private:
+    Keys mKey;
+    Point& mField;
+    static const std::map<std::string, Keys> key_mapper;
+};
+
+const std::map<std::string, PointHandler::Keys> PointHandler::key_mapper {
+    {"N", Keys::name},
+    {"c", Keys::coordinates},
+    {"l", Keys::lab_id},
+    {"a", Keys::attributes}
+};
 
 // ----------------------------------------------------------------------
 
@@ -229,6 +470,9 @@ class ChartRootHandler : public HandlerBase
                   case Keys::drawing_order:
                       result = new json_reader::UintListHandler<Chart>(mTarget, mTarget.drawing_order());
                       break;
+                  case Keys::points:
+                      result = new json_reader::ListHandler<Chart, Point, PointHandler>(mTarget, mTarget.points());
+                      break;
                   default:
                       break;
                 }
@@ -289,8 +533,8 @@ const std::map<std::string, ChartRootHandler::Keys> ChartRootHandler::key_mapper
     {"info", Keys::info},
     {"minimum_column_basis", Keys::minimum_column_basis},
     {"plot", Keys::plot},
-              // {"intermediate_layouts", Keys::intermediate_layouts},
     {"points", Keys::points},
+              // {"intermediate_layouts", Keys::intermediate_layouts},
     {"stress", Keys::stress},
     {"column_bases", Keys::column_bases},
     {"transformation", Keys::transformation},
