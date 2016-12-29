@@ -48,7 +48,7 @@ class TimeSeriesDraw
     inline const Size& offset() const { return mSurface.offset(); }
 
     void init_settings();
-    Surface& surface() { return mSurface; }
+    inline Surface& surface() { return mSurface; }
 
  private:
     Surface& mSurface;

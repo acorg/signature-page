@@ -167,7 +167,7 @@ class TreeDraw
 
     void init_settings(const Clades* aClades);
     void set_line_no();
-    Surface& surface() { return mSurface; }
+    inline Surface& surface() { return mSurface; }
 
  private:
     Surface& mSurface;

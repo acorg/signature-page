@@ -49,7 +49,7 @@ class CladeDrawSettings
     double label_rotation;
     size_t slot;
 
-}; // class CladesDrawSettings
+}; // class CladeDrawSettings
 
 // ----------------------------------------------------------------------
 
@@ -109,7 +109,7 @@ class CladeData
                 aSeqIds.push_back(sec.first->seq_id);
             }
         }
-    
+
     std::vector<CladeSection> sections;
     size_t slot;
 };
@@ -131,8 +131,8 @@ class CladesDraw
     void draw();
 
     void init_settings();
-    Surface& surface() { return mSurface; }
-    const Clades* clades() const { return &mClades; }
+    inline Surface& surface() { return mSurface; }
+    inline const Clades* clades() const { return &mClades; }
 
  private:
     Surface& mSurface;

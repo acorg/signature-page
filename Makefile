@@ -10,6 +10,7 @@ DRAW_SOURCES = surface-cairo.cc
 SIGNATURE_PAGE_SOURCES = tree.cc tree-export.cc \
 			 chart.cc sdb.cc \
 			 signature-page.cc tree-draw.cc time-series-draw.cc clades-draw.cc \
+			 mapped-antigens-draw.cc \
 			 coloring.cc continent-path.cc settings.cc $(DRAW_SOURCES)
 SIGNATURE_PAGE_CC_PY_SOURCES = py.cc $(SIGNATURE_PAGE_SOURCES)
 TEST_CAIRO_SOURCES = test-cairo.cc $(DRAW_SOURCES)

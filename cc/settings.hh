@@ -4,6 +4,7 @@
 #include "tree-draw.hh"
 #include "time-series-draw.hh"
 #include "clades-draw.hh"
+#include "mapped-antigens-draw.hh"
 
 // ----------------------------------------------------------------------
 
@@ -17,6 +18,7 @@ class Settings
     TimeSeriesDrawSettings time_series;
     CladesDrawSettings clades;
     HzSections hz_sections;
+    MappedAntigensDrawSettings mapped_antigens;
     
 }; // class Settings
 

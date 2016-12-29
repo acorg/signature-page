@@ -43,6 +43,10 @@ HzSections::~HzSections()
 {
 }
 
+MappedAntigensDrawSettings::~MappedAntigensDrawSettings()
+{
+}
+
 // ----------------------------------------------------------------------
 
 class SettingsTextStyleHandler : public HandlerBase
@@ -1273,10 +1277,75 @@ const std::map<std::string, HzSectionsHandler::Keys> HzSectionsHandler::key_mapp
 
 // ----------------------------------------------------------------------
 
+class MappedAntigensDrawHandler : public HandlerBase
+{
+ private:
+    enum class Keys {Unknown, width, line_color, line_width};
+
+ public:
+    inline MappedAntigensDrawHandler(Settings& aSettings) : HandlerBase{aSettings}, mKey(Keys::Unknown) {}
+
+    inline virtual HandlerBase* Key(const char* str, rapidjson::SizeType length)
+        {
+            HandlerBase* result = nullptr;
+            try {
+                mKey = key_mapper.at(std::string(str, length));
+            }
+            catch (std::out_of_range&) {
+                mKey = Keys::Unknown;
+                result = HandlerBase::Key(str, length);
+            }
+            return result;
+        }
+
+    inline virtual HandlerBase* String(const char* str, rapidjson::SizeType length)
+        {
+            HandlerBase* result = nullptr;
+            switch (mKey) {
+              case Keys::line_color:
+                  mTarget.mapped_antigens.line_color.from_string(str, length);
+                  break;
+              default:
+                  result = HandlerBase::String(str, length);
+                  break;
+            }
+            return result;
+        }
+
+    inline virtual HandlerBase* Double(double d)
+        {
+            switch (mKey) {
+              case Keys::line_width:
+                  mTarget.mapped_antigens.line_width = d;
+                  break;
+              case Keys::width:
+                  mTarget.mapped_antigens.width = d;
+                  break;
+              default:
+                  HandlerBase::Double(d);
+                  break;
+            }
+            return nullptr;
+        }
+
+ private:
+    Keys mKey;
+    static const std::map<std::string, Keys> key_mapper;
+
+}; // class MappedAntigensDrawHandler
+
+const std::map<std::string, MappedAntigensDrawHandler::Keys> MappedAntigensDrawHandler::key_mapper {
+    {"width", Keys::width},
+    {"line_color", Keys::line_color},
+    {"line_width", Keys::line_width},
+};
+
+// ----------------------------------------------------------------------
+
 class SettingsRootHandler : public HandlerBase
 {
  private:
-    enum class Keys { Unknown, version, signature_page, tree, time_series, clades, hz_sections };
+    enum class Keys { Unknown, version, signature_page, tree, time_series, clades, hz_sections, mapped_antigens };
 
  public:
     inline SettingsRootHandler(Settings& aSettings) : HandlerBase{aSettings}, mKey(Keys::Unknown) {}
@@ -1330,6 +1399,9 @@ class SettingsRootHandler : public HandlerBase
                   case Keys::hz_sections:
                       result = new HzSectionsHandler(mTarget);
                       break;
+                  case Keys::mapped_antigens:
+                      result = new MappedAntigensDrawHandler(mTarget);
+                      break;
                   default:
                       result = HandlerBase::StartObject();
                       break;
@@ -1349,6 +1421,7 @@ const std::map<std::string, SettingsRootHandler::Keys> SettingsRootHandler::key_
     {"time_series", Keys::time_series},
     {"clades", Keys::clades},
     {"hz_sections", Keys::hz_sections},
+    {"mapped_antigens", Keys::mapped_antigens},
 };
 
 // ----------------------------------------------------------------------
@@ -1564,6 +1637,16 @@ template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writ
 
 // ----------------------------------------------------------------------
 
+template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const MappedAntigensDrawSettings& aSettings)
+{
+    return writer << StartObject
+                  << JsonObjectKey("line_color") << aSettings.line_color
+                  << JsonObjectKey("line_width") << aSettings.line_width
+                  << EndObject;
+}
+
+// ----------------------------------------------------------------------
+
 template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const Settings& aSettings)
 {
     return writer << StartObject
@@ -1573,6 +1656,7 @@ template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writ
                   << JsonObjectKey("time_series") << aSettings.time_series
                   << JsonObjectKey("clades") << aSettings.clades
                   << JsonObjectKey("hz_sections") << aSettings.hz_sections
+                  << JsonObjectKey("mapped_antigens") << aSettings.mapped_antigens
                   << EndObject;
 }
 

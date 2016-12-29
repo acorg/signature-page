@@ -17,6 +17,7 @@ class TreeDraw;
 class TimeSeriesDraw;
 class CladesDraw;
 class Chart;
+class MappedAntigensDraw;
 
 // ----------------------------------------------------------------------
 
@@ -88,6 +89,7 @@ class SignaturePageDraw
     std::unique_ptr<TimeSeriesDraw> mTimeSeriesDraw;
     std::unique_ptr<CladesDraw> mCladesDraw;
     std::unique_ptr<Chart> mChart;
+    std::unique_ptr<MappedAntigensDraw> mMappedAntigensDraw;
 
     void make_layout_tree_ts_clades();
     void make_layout_tree_clades_ts_maps();
