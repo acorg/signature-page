@@ -20,7 +20,8 @@ class Options
     std::string tree_filename;
     std::string output_filename;
     std::string seqdb_filename;
-    bool layout_tree;  // for init settings only
+    std::string chart_filename;
+      //bool layout_tree;  // for init settings only
 };
 
 int get_args(int argc, const char *argv[], Options& aOptions);
@@ -36,9 +37,11 @@ int main(int argc, const char *argv[])
             SignaturePageDraw signature_page;
             signature_page.load_settings(options.settings_filename);
             if (!options.init_settings_filename.empty())
-                signature_page.init_layout(options.layout_tree);
+                signature_page.init_layout(options.chart_filename.empty());
             signature_page.make_surface(options.output_filename);
             signature_page.tree(options.tree_filename, options.seqdb_filename);
+            if (!options.chart_filename.empty())
+                signature_page.chart(options.chart_filename);
             if (!options.init_settings_filename.empty()) {
                 signature_page.init_settings();
                 write_settings(signature_page.settings(), options.init_settings_filename);
@@ -65,8 +68,9 @@ int get_args(int argc, const char *argv[], Options& aOptions)
             ("seqdb", value<std::string>(&aOptions.seqdb_filename)/* ->required() */, "path to seqdb")
             ("settings,s", value<std::string>(&aOptions.settings_filename), "signature page drawing settings (json) filename")
             ("init-settings", value<std::string>(&aOptions.init_settings_filename), "initialize signature page drawing settings (json) filename")
-            ("init-tree", bool_switch(&aOptions.layout_tree)->default_value(false), "initialize with tree layout")
+              // ("init-tree", bool_switch(&aOptions.layout_tree)->default_value(false), "initialize with tree layout")
             ("tree", value<std::string>(&aOptions.tree_filename)->required(), "path to tree to draw")
+            ("chart", value<std::string>(&aOptions.chart_filename)->required(), "path to chart for signature page")
             ("output,o", value<std::string>(&aOptions.output_filename)->required(), "output pdf")
             ;
     positional_options_description pos_opt;

@@ -145,6 +145,10 @@ class Chart
 
     inline const std::vector<Point>& points() const { return mPoints; }
     inline std::vector<Point>& points() { return mPoints; }
+    inline const std::vector<size_t>& drawing_order() const { return mDrawingOrder; }
+    inline std::vector<size_t>& drawing_order() { return mDrawingOrder; }
+    inline const ChartInfo& chart_info() const { return mInfo; }
+    inline ChartInfo& chart_info() { return mInfo; }
 
  private:
     double mStress;

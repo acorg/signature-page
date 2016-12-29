@@ -10,6 +10,7 @@
 #include "time-series-draw.hh"
 #include "settings.hh"
 #include "surface-cairo.hh"
+#include "chart.hh"
 
 // ----------------------------------------------------------------------
 
@@ -160,6 +161,15 @@ void SignaturePageDraw::tree(std::string aTreeFilename, std::string aSeqdbFilena
     mTree->add_vaccine("A/SOUTH%20AUCKLAND/17/2016__MDCK%3F/SIAT1", "A/SOUTH AUCKLAND/17/2016 C");
 
 } // SignaturePageDraw::tree
+
+// ----------------------------------------------------------------------
+
+void SignaturePageDraw::chart(std::string aChartFilename)
+{
+    mChart = std::make_unique<Chart>();
+    read_chart_from_sdb(*mChart, aChartFilename);
+
+} // SignaturePageDraw::chart
 
 // ----------------------------------------------------------------------
 

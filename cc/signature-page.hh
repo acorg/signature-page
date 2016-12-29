@@ -16,6 +16,7 @@ class LocDb;
 class TreeDraw;
 class TimeSeriesDraw;
 class CladesDraw;
+class Chart;
 
 // ----------------------------------------------------------------------
 
@@ -72,6 +73,7 @@ class SignaturePageDraw
     void init_settings();
     inline Settings& settings() { return *mSettings; }
     void tree(std::string aTreeFilename, std::string aSeqdbFilename);
+    void chart(std::string aChartFilename);
 
     void prepare();
     void draw();
@@ -85,6 +87,7 @@ class SignaturePageDraw
     std::unique_ptr<TreeDraw> mTreeDraw;
     std::unique_ptr<TimeSeriesDraw> mTimeSeriesDraw;
     std::unique_ptr<CladesDraw> mCladesDraw;
+    std::unique_ptr<Chart> mChart;
 
     void make_layout_tree_ts_clades();
     void make_layout_tree_clades_ts_maps();
