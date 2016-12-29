@@ -7,12 +7,21 @@ constexpr const char* SDB_VERSION = "acmacs-sdb-v2";
 
 // ----------------------------------------------------------------------
 
+#pragma GCC diagnostic push
+#ifdef __clang__
+#pragma GCC diagnostic ignored "-Wswitch-enum"
+#pragma GCC diagnostic ignored "-Wexit-time-destructors"
+#pragma GCC diagnostic ignored "-Wglobal-constructors"
+#endif
+
 using HandlerBase = json_reader::HandlerBase<Chart>;
+
+// ----------------------------------------------------------------------
 
 class ChartRootHandler : public HandlerBase
 {
  private:
-    enum class Keys { Unknown, version };
+    enum class Keys { Unknown, version, created, intermediate_layouts, info, minimum_column_basis, points, stress, column_bases, transformation, plot, drawing_order};
 
  public:
     inline ChartRootHandler(Chart& aChart) : HandlerBase{aChart}, mKey(Keys::Unknown) {}
@@ -22,6 +31,13 @@ class ChartRootHandler : public HandlerBase
             HandlerBase* result = nullptr;
             try {
                 mKey = key_mapper.at(std::string(str, length));
+                switch (mKey) {
+                  case Keys::created:
+                      mIgnore = true;
+                      break;
+                  default:
+                      break;
+                }
             }
             catch (std::out_of_range&) {
                 mKey = Keys::Unknown;
@@ -80,7 +96,21 @@ class ChartRootHandler : public HandlerBase
 
 const std::map<std::string, ChartRootHandler::Keys> ChartRootHandler::key_mapper {
     {"  version", Keys::version},
+    {" created", Keys::created},
+    {"intermediate_layouts", Keys::intermediate_layouts},
+    {"info", Keys::info},
+    {"minimum_column_basis", Keys::minimum_column_basis},
+    {"points", Keys::points},
+    {"stress", Keys::stress},
+    {"column_bases", Keys::column_bases},
+    {"transformation", Keys::transformation},
+    {"plot", Keys::plot},
+    {"drawing_order", Keys::drawing_order}
 };
+
+// ----------------------------------------------------------------------
+
+#pragma GCC diagnostic pop
 
 // ----------------------------------------------------------------------
 
