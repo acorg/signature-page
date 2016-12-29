@@ -5,6 +5,7 @@
 #include "time-series-draw.hh"
 #include "clades-draw.hh"
 #include "mapped-antigens-draw.hh"
+#include "antigenic-maps-draw.hh"
 
 // ----------------------------------------------------------------------
 
@@ -19,7 +20,8 @@ class Settings
     CladesDrawSettings clades;
     HzSections hz_sections;
     MappedAntigensDrawSettings mapped_antigens;
-    
+    AntigenicMapsDrawSettings antigenic_maps;
+
 }; // class Settings
 
 // ----------------------------------------------------------------------

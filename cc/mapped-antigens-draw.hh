@@ -30,8 +30,8 @@ class MappedAntigensDrawSettings
 class MappedAntigensDraw
 {
  public:
-    inline MappedAntigensDraw(Surface& aSurface, Tree& aTree, const TreeDraw& aTreeDraw, const Chart& aChart, MappedAntigensDrawSettings& aSettings)
-        : mSurface(aSurface), mTree(aTree), mTreeDraw(aTreeDraw), mChart(aChart), mSettings(aSettings) {}
+    inline MappedAntigensDraw(Surface& aSurface, Tree& aTree, /* const TreeDraw& aTreeDraw, */ const Chart& aChart, MappedAntigensDrawSettings& aSettings)
+        : mSurface(aSurface), mTree(aTree), /* mTreeDraw(aTreeDraw), */ mChart(aChart), mSettings(aSettings) {}
 
     void prepare();
     void draw();
@@ -41,7 +41,7 @@ class MappedAntigensDraw
  private:
     Surface& mSurface;
     Tree& mTree;
-    const TreeDraw& mTreeDraw;
+    // const TreeDraw& mTreeDraw;
     const Chart& mChart;
     MappedAntigensDrawSettings& mSettings;
 

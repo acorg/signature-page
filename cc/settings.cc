@@ -47,6 +47,10 @@ MappedAntigensDrawSettings::~MappedAntigensDrawSettings()
 {
 }
 
+AntigenicMapsDrawSettings::~AntigenicMapsDrawSettings()
+{
+}
+
 // ----------------------------------------------------------------------
 
 class SettingsTextStyleHandler : public HandlerBase
@@ -1277,13 +1281,13 @@ const std::map<std::string, HzSectionsHandler::Keys> HzSectionsHandler::key_mapp
 
 // ----------------------------------------------------------------------
 
-class MappedAntigensDrawHandler : public HandlerBase
+class MappedAntigensDrawSettingsHandler : public HandlerBase
 {
  private:
     enum class Keys {Unknown, width, line_color, line_width, line_length};
 
  public:
-    inline MappedAntigensDrawHandler(Settings& aSettings) : HandlerBase{aSettings}, mKey(Keys::Unknown) {}
+    inline MappedAntigensDrawSettingsHandler(Settings& aSettings) : HandlerBase{aSettings}, mKey(Keys::Unknown) {}
 
     inline virtual HandlerBase* Key(const char* str, rapidjson::SizeType length)
         {
@@ -1335,9 +1339,9 @@ class MappedAntigensDrawHandler : public HandlerBase
     Keys mKey;
     static const std::map<std::string, Keys> key_mapper;
 
-}; // class MappedAntigensDrawHandler
+}; // class MappedAntigensDrawSettingsHandler
 
-const std::map<std::string, MappedAntigensDrawHandler::Keys> MappedAntigensDrawHandler::key_mapper {
+const std::map<std::string, MappedAntigensDrawSettingsHandler::Keys> MappedAntigensDrawSettingsHandler::key_mapper {
     {"width", Keys::width},
     {"line_color", Keys::line_color},
     {"line_width", Keys::line_width},
@@ -1346,10 +1350,89 @@ const std::map<std::string, MappedAntigensDrawHandler::Keys> MappedAntigensDrawH
 
 // ----------------------------------------------------------------------
 
+class AntigenicMapsDrawSettingsHandler : public HandlerBase
+{
+ private:
+    enum class Keys {Unknown, width, columns, border_width, border_color};
+
+ public:
+    inline AntigenicMapsDrawSettingsHandler(Settings& aSettings) : HandlerBase{aSettings}, mKey(Keys::Unknown) {}
+
+    inline virtual HandlerBase* Key(const char* str, rapidjson::SizeType length)
+        {
+            HandlerBase* result = nullptr;
+            try {
+                mKey = key_mapper.at(std::string(str, length));
+            }
+            catch (std::out_of_range&) {
+                mKey = Keys::Unknown;
+                result = HandlerBase::Key(str, length);
+            }
+            return result;
+        }
+
+    inline virtual HandlerBase* String(const char* str, rapidjson::SizeType length)
+        {
+            HandlerBase* result = nullptr;
+            switch (mKey) {
+              case Keys::border_color:
+                  mTarget.antigenic_maps.border_color.from_string(str, length);
+                  break;
+              default:
+                  result = HandlerBase::String(str, length);
+                  break;
+            }
+            return result;
+        }
+
+    inline virtual HandlerBase* Double(double d)
+        {
+            switch (mKey) {
+              case Keys::border_width:
+                  mTarget.antigenic_maps.border_width = d;
+                  break;
+              case Keys::width:
+                  mTarget.antigenic_maps.width = d;
+                  break;
+              default:
+                  HandlerBase::Double(d);
+                  break;
+            }
+            return nullptr;
+        }
+
+    inline virtual HandlerBase* Uint(unsigned u)
+        {
+            switch (mKey) {
+              case Keys::columns:
+                  mTarget.antigenic_maps.columns = u;
+                  break;
+              default:
+                  HandlerBase::Uint(u);
+                  break;
+            }
+            return nullptr;
+        }
+
+ private:
+    Keys mKey;
+    static const std::map<std::string, Keys> key_mapper;
+
+}; // class AntigenicMapsDrawSettingsHandler
+
+const std::map<std::string, AntigenicMapsDrawSettingsHandler::Keys> AntigenicMapsDrawSettingsHandler::key_mapper {
+    {"width", Keys::width},
+    {"columns", Keys::columns},
+    {"border_width", Keys::border_width},
+    {"border_color", Keys::border_color}
+};
+
+// ----------------------------------------------------------------------
+
 class SettingsRootHandler : public HandlerBase
 {
  private:
-    enum class Keys { Unknown, version, signature_page, tree, time_series, clades, hz_sections, mapped_antigens };
+    enum class Keys { Unknown, version, signature_page, tree, time_series, clades, hz_sections, mapped_antigens, antigenic_maps };
 
  public:
     inline SettingsRootHandler(Settings& aSettings) : HandlerBase{aSettings}, mKey(Keys::Unknown) {}
@@ -1404,7 +1487,10 @@ class SettingsRootHandler : public HandlerBase
                       result = new HzSectionsHandler(mTarget);
                       break;
                   case Keys::mapped_antigens:
-                      result = new MappedAntigensDrawHandler(mTarget);
+                      result = new MappedAntigensDrawSettingsHandler(mTarget);
+                      break;
+                  case Keys::antigenic_maps:
+                      result = new AntigenicMapsDrawSettingsHandler(mTarget);
                       break;
                   default:
                       result = HandlerBase::StartObject();
@@ -1426,6 +1512,7 @@ const std::map<std::string, SettingsRootHandler::Keys> SettingsRootHandler::key_
     {"clades", Keys::clades},
     {"hz_sections", Keys::hz_sections},
     {"mapped_antigens", Keys::mapped_antigens},
+    {"antigenic_maps", Keys::antigenic_maps},
 };
 
 // ----------------------------------------------------------------------
@@ -1644,8 +1731,22 @@ template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writ
 template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const MappedAntigensDrawSettings& aSettings)
 {
     return writer << StartObject
+                  << JsonObjectKey("width") << aSettings.width
                   << JsonObjectKey("line_color") << aSettings.line_color
                   << JsonObjectKey("line_width") << aSettings.line_width
+                  << JsonObjectKey("line_length") << aSettings.line_length
+                  << EndObject;
+}
+
+// ----------------------------------------------------------------------
+
+template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const AntigenicMapsDrawSettings& aSettings)
+{
+    return writer << StartObject
+                  << JsonObjectKey("width") << aSettings.width
+                  << JsonObjectKey("columns") << aSettings.columns
+                  << JsonObjectKey("border_color") << aSettings.border_color
+                  << JsonObjectKey("border_width") << aSettings.border_width
                   << EndObject;
 }
 
@@ -1661,6 +1762,7 @@ template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writ
                   << JsonObjectKey("clades") << aSettings.clades
                   << JsonObjectKey("hz_sections") << aSettings.hz_sections
                   << JsonObjectKey("mapped_antigens") << aSettings.mapped_antigens
+                  << JsonObjectKey("antigenic_maps") << aSettings.antigenic_maps
                   << EndObject;
 }
 
