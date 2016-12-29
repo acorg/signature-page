@@ -1280,7 +1280,7 @@ const std::map<std::string, HzSectionsHandler::Keys> HzSectionsHandler::key_mapp
 class MappedAntigensDrawHandler : public HandlerBase
 {
  private:
-    enum class Keys {Unknown, width, line_color, line_width};
+    enum class Keys {Unknown, width, line_color, line_width, line_length};
 
  public:
     inline MappedAntigensDrawHandler(Settings& aSettings) : HandlerBase{aSettings}, mKey(Keys::Unknown) {}
@@ -1321,6 +1321,9 @@ class MappedAntigensDrawHandler : public HandlerBase
               case Keys::width:
                   mTarget.mapped_antigens.width = d;
                   break;
+              case Keys::line_length:
+                  mTarget.mapped_antigens.line_length = d;
+                  break;
               default:
                   HandlerBase::Double(d);
                   break;
@@ -1338,6 +1341,7 @@ const std::map<std::string, MappedAntigensDrawHandler::Keys> MappedAntigensDrawH
     {"width", Keys::width},
     {"line_color", Keys::line_color},
     {"line_width", Keys::line_width},
+    {"line_length", Keys::line_length},
 };
 
 // ----------------------------------------------------------------------

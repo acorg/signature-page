@@ -15,12 +15,13 @@ class Chart;
 class MappedAntigensDrawSettings
 {
  public:
-    inline MappedAntigensDrawSettings() : width(15), line_width(1), line_color("red") {}
+    inline MappedAntigensDrawSettings() : width(15), line_width(1), line_color("red"), line_length(0.5) {}
     ~MappedAntigensDrawSettings();
 
     double width;
     double line_width;
     Color line_color;
+    double line_length;         // fraction of the surface width
 
 }; // class MappedAntigensDrawSettings
 
