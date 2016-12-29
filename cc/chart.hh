@@ -155,6 +155,12 @@ class Chart
     inline std::string& minimum_column_basis() { return mMinimumColumnBasis; }
     inline const PlotStyle& plot_style() const { return mPlot; }
     inline PlotStyle& plot_style() { return mPlot; }
+    inline double stress() const { return mStress; }
+    inline void stress(double aStress) { mStress = aStress; }
+    inline const Transformation& transformation() const { return mTransformation; }
+    inline Transformation& transformation() { return mTransformation; }
+    inline const std::vector<double>& column_bases() const { return mColumnBases; }
+    inline std::vector<double>& column_bases() { return mColumnBases; }
 
  private:
     double mStress;

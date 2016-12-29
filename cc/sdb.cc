@@ -450,6 +450,54 @@ const std::map<std::string, ChartInfoHandler::Keys> ChartInfoHandler::key_mapper
 
 // ----------------------------------------------------------------------
 
+class TransformationHandler : public HandlerBase
+{
+ public:
+    inline TransformationHandler(Chart& aChart, Transformation& aField) : HandlerBase{aChart}, mField(aField), mNesting(0) { mField.clear(); }
+
+    inline virtual HandlerBase* StartArray()
+        {
+            switch (mNesting) {
+              case 0:
+              case 1:
+                  ++mNesting;
+                  break;
+              default:
+                  throw json_reader::Failure{};
+            }
+            return nullptr;
+        }
+
+    inline virtual HandlerBase* EndArray()
+        {
+            if (mNesting == 0)
+                throw json_reader::Failure{"Unexpected ] while reading transformation"};
+            if (--mNesting == 0) {
+                if (mField.size() == 4)
+                    throw json_reader::Pop();
+                else
+                    throw json_reader::Failure{"Not enough elements of transformation read"};
+            }
+            return nullptr;
+        }
+
+    inline virtual HandlerBase* Double(double d)
+        {
+            if (mNesting != 2 || mField.size() >= 4)
+                throw json_reader::Failure{};
+            mField.push_back(d);
+            return nullptr;
+        }
+
+    inline virtual HandlerBase* EndObject() { throw json_reader::Failure(); }
+
+ private:
+    Transformation& mField;
+    size_t mNesting;
+};
+
+// ----------------------------------------------------------------------
+
 class ChartRootHandler : public HandlerBase
 {
  private:
@@ -470,8 +518,14 @@ class ChartRootHandler : public HandlerBase
                   case Keys::drawing_order:
                       result = new json_reader::UintListHandler<Chart>(mTarget, mTarget.drawing_order());
                       break;
+                  case Keys::column_bases:
+                      result = new json_reader::DoubleListHandler<Chart>(mTarget, mTarget.column_bases());
+                      break;
                   case Keys::points:
                       result = new json_reader::ListHandler<Chart, Point, PointHandler>(mTarget, mTarget.points());
+                      break;
+                  case Keys::transformation:
+                      result = new TransformationHandler(mTarget, mTarget.transformation());
                       break;
                   default:
                       break;
@@ -521,6 +575,19 @@ class ChartRootHandler : public HandlerBase
             return result;
         }
 
+    inline virtual HandlerBase* Double(double d)
+        {
+            switch (mKey) {
+              case Keys::stress:
+                  mTarget.stress(d);
+                  break;
+              default:
+                  HandlerBase::Double(d);
+                  break;
+            }
+            return nullptr;
+        }
+
  private:
     Keys mKey;
     static const std::map<std::string, Keys> key_mapper;
@@ -534,10 +601,10 @@ const std::map<std::string, ChartRootHandler::Keys> ChartRootHandler::key_mapper
     {"minimum_column_basis", Keys::minimum_column_basis},
     {"plot", Keys::plot},
     {"points", Keys::points},
-              // {"intermediate_layouts", Keys::intermediate_layouts},
     {"stress", Keys::stress},
-    {"column_bases", Keys::column_bases},
     {"transformation", Keys::transformation},
+              // {"intermediate_layouts", Keys::intermediate_layouts},
+    {"column_bases", Keys::column_bases},
 };
 
 // ----------------------------------------------------------------------
