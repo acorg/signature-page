@@ -36,12 +36,12 @@ int main(int argc, const char *argv[])
         try {
             SignaturePageDraw signature_page;
             signature_page.load_settings(options.settings_filename);
-            if (!options.init_settings_filename.empty())
-                signature_page.init_layout(options.chart_filename.empty());
             signature_page.tree(options.tree_filename, options.seqdb_filename);
             if (!options.chart_filename.empty())
-                signature_page.chart(options.chart_filename);
-            signature_page.make_surface(options.output_filename);
+                signature_page.chart(options.chart_filename); // before make_surface!
+            signature_page.make_surface(options.output_filename); // before init_layout!
+            if (!options.init_settings_filename.empty())
+                signature_page.init_layout();
             if (!options.init_settings_filename.empty()) {
                 signature_page.init_settings();
                 write_settings(signature_page.settings(), options.init_settings_filename);

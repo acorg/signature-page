@@ -665,7 +665,7 @@ const std::map<std::string, TreeDrawSettingsHandler::Keys> TreeDrawSettingsHandl
 class SignaturePageDrawSettingsHandler : public HandlerBase
 {
  private:
-    enum class Keys {Unknown, layout, top, bottom, left, right, tree_margin_right, time_series_width, clades_width};
+    enum class Keys {Unknown, layout, top, bottom, left, right, tree_margin_right, mapped_antigens_margin_right, time_series_width, clades_width};
 
  public:
     inline SignaturePageDrawSettingsHandler(Settings& aSettings) : HandlerBase{aSettings}, mKey(Keys::Unknown) {}
@@ -714,6 +714,9 @@ class SignaturePageDrawSettingsHandler : public HandlerBase
                   break;
               case Keys::tree_margin_right:
                   mTarget.signature_page.tree_margin_right = d;
+                  break;
+              case Keys::mapped_antigens_margin_right:
+                  mTarget.signature_page.mapped_antigens_margin_right = d;
                   break;
               case Keys::time_series_width:
                   mTarget.signature_page.time_series_width = d;
@@ -768,6 +771,7 @@ const std::map<std::string, SignaturePageDrawSettingsHandler::Keys> SignaturePag
     {"left", Keys::left},
     {"right", Keys::right},
     {"tree_margin_right", Keys::tree_margin_right},
+    {"mapped_antigens_margin_right", Keys::mapped_antigens_margin_right},
     {"time_series_width", Keys::time_series_width},
     {"clades_width", Keys::clades_width},
 };
@@ -1353,7 +1357,7 @@ const std::map<std::string, MappedAntigensDrawSettingsHandler::Keys> MappedAntig
 class AntigenicMapsDrawSettingsHandler : public HandlerBase
 {
  private:
-    enum class Keys {Unknown, width, columns, border_width, border_color};
+    enum class Keys {Unknown, width, columns, border_width, border_color, gap};
 
  public:
     inline AntigenicMapsDrawSettingsHandler(Settings& aSettings) : HandlerBase{aSettings}, mKey(Keys::Unknown) {}
@@ -1394,6 +1398,9 @@ class AntigenicMapsDrawSettingsHandler : public HandlerBase
               case Keys::width:
                   mTarget.antigenic_maps.width = d;
                   break;
+              case Keys::gap:
+                  mTarget.antigenic_maps.gap = d;
+                  break;
               default:
                   HandlerBase::Double(d);
                   break;
@@ -1424,7 +1431,8 @@ const std::map<std::string, AntigenicMapsDrawSettingsHandler::Keys> AntigenicMap
     {"width", Keys::width},
     {"columns", Keys::columns},
     {"border_width", Keys::border_width},
-    {"border_color", Keys::border_color}
+    {"border_color", Keys::border_color},
+    {"gap", Keys::gap},
 };
 
 // ----------------------------------------------------------------------
@@ -1640,6 +1648,7 @@ template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writ
                   << JsonObjectKey("left") << aSettings.left
                   << JsonObjectKey("right") << aSettings.right
                   << JsonObjectKey("tree_margin_right") << aSettings.tree_margin_right
+                  << JsonObjectKey("mapped_antigens_margin_right") << aSettings.mapped_antigens_margin_right
                   << JsonObjectKey("time_series_width") << aSettings.time_series_width
                   << JsonObjectKey("clades_width") << aSettings.clades_width
                   << EndObject;
@@ -1747,6 +1756,7 @@ template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writ
                   << JsonObjectKey("columns") << aSettings.columns
                   << JsonObjectKey("border_color") << aSettings.border_color
                   << JsonObjectKey("border_width") << aSettings.border_width
+                  << JsonObjectKey("gap") << aSettings.gap
                   << EndObject;
 }
 

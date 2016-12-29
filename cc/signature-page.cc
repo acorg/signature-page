@@ -42,9 +42,46 @@ void SignaturePageDraw::load_settings(std::string aFilename)
 
 // ----------------------------------------------------------------------
 
-void SignaturePageDraw::init_layout(bool layout_tree)
+SignaturePageDrawSettings::Layout SignaturePageDraw::detect_layout() const
 {
-    if (layout_tree) {
+    return mSettings->signature_page.layout == SignaturePageDrawSettings::Layout::Auto ? (mChart ? SignaturePageDrawSettings::Layout::TreeCladesTSMaps : SignaturePageDrawSettings::Layout::TreeTSClades) : mSettings->signature_page.layout;
+
+} // SignaturePageDraw::detect_layout
+
+// ----------------------------------------------------------------------
+
+void SignaturePageDraw::make_surface(std::string aFilename)
+{
+    double width = 300, height = 300;
+    switch (detect_layout()) {
+      case SignaturePageDrawSettings::Layout::TreeCladesTSMaps:
+          width = 1360;         // ratio 1.6
+          height = 850;
+          break;
+      case SignaturePageDrawSettings::Layout::TreeTSClades:
+      case SignaturePageDrawSettings::Layout::Auto:
+          width = 500;
+          height = 850;
+          break;
+    }
+    mSurface = std::make_unique<PdfCairo>(aFilename, width, height);
+
+    mTreeDraw = std::make_unique<TreeDraw>(mSurface->subsurface(false), *mTree, mSettings->tree_draw, mSettings->hz_sections);
+    mTimeSeriesDraw = std::make_unique<TimeSeriesDraw>(mSurface->subsurface(false), *mTree, *mTreeDraw, mSettings->hz_sections, mSettings->time_series);
+    mCladesDraw = std::make_unique<CladesDraw>(mSurface->subsurface(false), *mTree, *mTreeDraw, *mTimeSeriesDraw, mSettings->clades);
+
+    if (mChart) {
+        mMappedAntigensDraw = std::make_unique<MappedAntigensDraw>(mSurface->subsurface(false), *mTree, *mChart, mSettings->mapped_antigens);
+        mAntigenicMapsDraw = std::make_unique<AntigenicMapsDraw>(mSurface->subsurface(false), *mTree, *mChart, mSettings->antigenic_maps);
+    }
+
+} // SignaturePageDraw::make_surface
+
+// ----------------------------------------------------------------------
+
+void SignaturePageDraw::init_layout()
+{
+    if (!mChart) {
         mSettings->signature_page.top = 80;
         mSettings->signature_page.left = 50;
         mSettings->signature_page.set_layot("tree-ts-clades");
@@ -60,6 +97,7 @@ void SignaturePageDraw::init_layout(bool layout_tree)
         mSettings->signature_page.time_series_width = 100;
         mSettings->signature_page.clades_width = 50;
         mSettings->signature_page.tree_margin_right = 10;
+        mSettings->signature_page.mapped_antigens_margin_right = 10;
         mSettings->tree_draw.aa_transition.per_branch.size = mSettings->signature_page.time_series_width * 0.075;
     }
 
@@ -99,6 +137,9 @@ void SignaturePageDraw::init_settings()
             clade.arrow_width = clade.line_width * 5;
             clade.label_offset.set(1, 0);
         }
+
+        if (mAntigenicMapsDraw)
+            mAntigenicMapsDraw->init_settings(mSettings->hz_sections);
     }
     else {                      // just tree
         mSettings->tree_draw.vaccines[0].label_size = 40;
@@ -122,34 +163,6 @@ void SignaturePageDraw::init_settings()
     }
 
 } // SignaturePageDraw::init_settings
-
-// ----------------------------------------------------------------------
-
-void SignaturePageDraw::make_surface(std::string aFilename)
-{
-    double width = 300, height = 300;
-    switch (mSettings->signature_page.layout) {
-      case SignaturePageDrawSettings::Layout::TreeTSClades:
-          width = 500;
-          height = 850;
-          break;
-      case SignaturePageDrawSettings::Layout::TreeCladesTSMaps:
-          width = 1360;         // ratio 1.6
-          height = 850;
-          break;
-    }
-    mSurface = std::make_unique<PdfCairo>(aFilename, width, height);
-
-    mTreeDraw = std::make_unique<TreeDraw>(mSurface->subsurface(false), *mTree, mSettings->tree_draw, mSettings->hz_sections);
-    mTimeSeriesDraw = std::make_unique<TimeSeriesDraw>(mSurface->subsurface(false), *mTree, *mTreeDraw, mSettings->hz_sections, mSettings->time_series);
-    mCladesDraw = std::make_unique<CladesDraw>(mSurface->subsurface(false), *mTree, *mTreeDraw, *mTimeSeriesDraw, mSettings->clades);
-
-    if (mChart) {
-        mMappedAntigensDraw = std::make_unique<MappedAntigensDraw>(mSurface->subsurface(false), *mTree, *mChart, mSettings->mapped_antigens);
-        mAntigenicMapsDraw = std::make_unique<AntigenicMapsDraw>(mSurface->subsurface(false), *mTree, *mChart, mSettings->antigenic_maps);
-    }
-
-} // SignaturePageDraw::make_surface
 
 // ----------------------------------------------------------------------
 
@@ -182,8 +195,9 @@ void SignaturePageDraw::chart(std::string aChartFilename)
 
 void SignaturePageDraw::prepare()
 {
-    switch (mSettings->signature_page.layout) {
+    switch (detect_layout()) {
       case SignaturePageDrawSettings::Layout::TreeTSClades:
+      case SignaturePageDrawSettings::Layout::Auto:
           make_layout_tree_ts_clades();
           break;
       case SignaturePageDrawSettings::Layout::TreeCladesTSMaps:
@@ -231,13 +245,18 @@ void SignaturePageDraw::make_layout_tree_clades_ts_maps()
     const Size page_size = mSurface->size();
     const double section_height = page_size.height - (mSettings->signature_page.top + mSettings->signature_page.bottom);
 
+    const double antigic_maps_width = mSettings->antigenic_maps.width;
     const double mapped_antigens_width = mSettings->mapped_antigens.width;
     const double clades_width = mSettings->signature_page.clades_width;
     const double ts_width = mSettings->signature_page.time_series_width;
-    const double tree_width = page_size.width - (mSettings->signature_page.left + mSettings->signature_page.tree_margin_right + ts_width + clades_width + mapped_antigens_width + mSettings->signature_page.right);
+    const double tree_width = page_size.width - (mSettings->signature_page.left + mSettings->signature_page.tree_margin_right + ts_width +
+                                                 clades_width + mapped_antigens_width + mSettings->signature_page.mapped_antigens_margin_right +
+                                                 antigic_maps_width + mSettings->signature_page.right);
 
     const double clades_left = mSettings->signature_page.left + tree_width + mSettings->signature_page.tree_margin_right;
     const double ts_left = clades_left + clades_width;
+    const double mapped_antigens_left = ts_left + ts_width;
+    const double antigic_maps_left = mapped_antigens_left + mapped_antigens_width + mSettings->signature_page.mapped_antigens_margin_right;
 
     // std::cerr << "page_size " << page_size << std::endl;
     // std::cerr << "tree " << Size{tree_width, section_height} << std::endl;
@@ -247,8 +266,8 @@ void SignaturePageDraw::make_layout_tree_clades_ts_maps()
     mTreeDraw->surface().move_resize({mSettings->signature_page.left, mSettings->signature_page.top}, {tree_width, section_height}, page_size.width);
     mTimeSeriesDraw->surface().move_resize({ts_left, mSettings->signature_page.top}, {ts_width, section_height}, page_size.width * ts_width / tree_width);
     mCladesDraw->surface().move_resize({clades_left, mSettings->signature_page.top}, {clades_width, section_height}, page_size.width * clades_width / tree_width);
-    mMappedAntigensDraw->surface().move_resize({ts_left + ts_width, mSettings->signature_page.top}, {mapped_antigens_width, section_height}, page_size.width * mapped_antigens_width / tree_width);
-    mAntigenicMapsDraw->surface().move_resize({ts_left + ts_width, mSettings->signature_page.top}, {mapped_antigens_width, section_height}, page_size.width * mapped_antigens_width / tree_width);
+    mMappedAntigensDraw->surface().move_resize({mapped_antigens_left, mSettings->signature_page.top}, {mapped_antigens_width, section_height}, page_size.width * mapped_antigens_width / tree_width);
+    mAntigenicMapsDraw->surface().move_resize({antigic_maps_left, mSettings->signature_page.top}, {antigic_maps_width, section_height}, page_size.width * mapped_antigens_width / tree_width);
 
 } // SignaturePageDraw::make_layout_tree_clades_ts_maps
 
