@@ -1357,7 +1357,7 @@ const std::map<std::string, MappedAntigensDrawSettingsHandler::Keys> MappedAntig
 class AntigenicMapsDrawSettingsHandler : public HandlerBase
 {
  private:
-    enum class Keys {Unknown, width, columns, border_width, border_color, gap};
+    enum class Keys {Unknown, width, columns, border_width, border_color, gap, transformation};
 
  public:
     inline AntigenicMapsDrawSettingsHandler(Settings& aSettings) : HandlerBase{aSettings}, mKey(Keys::Unknown) {}
@@ -1367,6 +1367,13 @@ class AntigenicMapsDrawSettingsHandler : public HandlerBase
             HandlerBase* result = nullptr;
             try {
                 mKey = key_mapper.at(std::string(str, length));
+                switch (mKey) {
+                  case Keys::transformation:
+                      result = new json_reader::DoubleListHandler<Settings>(mTarget, mTarget.antigenic_maps.transformation, 4);
+                      break;
+                  default:
+                      break;
+                }
             }
             catch (std::out_of_range&) {
                 mKey = Keys::Unknown;
@@ -1433,6 +1440,7 @@ const std::map<std::string, AntigenicMapsDrawSettingsHandler::Keys> AntigenicMap
     {"border_width", Keys::border_width},
     {"border_color", Keys::border_color},
     {"gap", Keys::gap},
+    {"transformation", Keys::transformation},
 };
 
 // ----------------------------------------------------------------------
@@ -1757,6 +1765,7 @@ template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writ
                   << JsonObjectKey("border_color") << aSettings.border_color
                   << JsonObjectKey("border_width") << aSettings.border_width
                   << JsonObjectKey("gap") << aSettings.gap
+                  << JsonObjectKey("transformation") << aSettings.transformation
                   << EndObject;
 }
 

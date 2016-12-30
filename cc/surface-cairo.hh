@@ -70,7 +70,7 @@ class SurfaceCairoChild : public SurfaceCairo
     virtual inline const Size& size() const { return mSize; }
     virtual inline const Size& offset() const { return mOffset; }
 
-    virtual inline void move_resize(const Size& aNewOffset, const Size& aNewSize) { mOffset = aNewOffset; mScale *= mSize.width / aNewSize.width; mSize = aNewSize; }
+      // virtual inline void move_resize(const Size& aNewOffset, const Size& aNewSize) { mOffset = aNewOffset; mScale *= mSize.width / aNewSize.width; mSize = aNewSize; }
     virtual inline void move_resize(const Size& aNewOffset, const Size& aOuterSize, double aInnerWidth) { mOffset = aNewOffset; mScale = aOuterSize.width / aInnerWidth; mSize = aOuterSize / mScale; }
 
  private:
@@ -98,7 +98,7 @@ class PdfCairo : public SurfaceCairo
     virtual inline const Size& size() const { return mSize; }
     virtual inline const Size& offset() const { return mOffset; }
 
-    virtual inline void move_resize(const Size& aNewOffset, const Size& aNewSize) { mOffset = aNewOffset; mScale *= mSize.width / aNewSize.width; mSize = aNewSize; }
+      // virtual inline void move_resize(const Size& aNewOffset, const Size& aNewSize) { mOffset = aNewOffset; mScale *= mSize.width / aNewSize.width; mSize = aNewSize; }
     virtual inline void move_resize(const Size& aNewOffset, const Size& aOuterSize, double aInnerWidth) { mOffset = aNewOffset; mScale = aOuterSize.width / aInnerWidth; mSize = aOuterSize / mScale; }
 
  private:

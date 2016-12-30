@@ -10,6 +10,10 @@
 
 // ----------------------------------------------------------------------
 
+class AntigenicMapsDrawSettings;
+
+// ----------------------------------------------------------------------
+
 // class VaccineData
 // {
 //  public:
@@ -131,6 +135,8 @@ class Chart
     inline Chart() : mStress(-1) {}
     ~Chart();
 
+    void prepare(const AntigenicMapsDrawSettings& aSettings);
+
       // void preprocess(const SettingsAntigenicMaps& aSettings);
       // void draw_points_reset(const SettingsAntigenicMaps& aSettings) const;
 
@@ -183,6 +189,9 @@ class Chart
 
     mutable std::map<std::string, size_t> mPointByName;
 
+    void make_point_by_name() const;
+    void apply_transformation(const Transformation& aSettingsTransformation);
+    
       // std::set<size_t> mSequencedAntigens;
       // mutable std::vector<const DrawPoint*> mDrawPoints;
       // DrawSerum mDrawSerum;
@@ -201,12 +210,9 @@ class Chart
       // std::set<std::string> mPrefixName;
 
 
-      // void apply_transformation(const SettingsAntigenicMaps& aSettings);
       // Viewport bounding_rectangle() const;
       // void init_tracked_sera(size_t aSize, const SettingsAntigenicMaps& aSettings) const;
       // void add_tracked_serum(size_t aSectionNo, size_t aAntigenNo, const SettingsAntigenicMaps& aSettings) const;
-
-    void make_point_by_name() const;
 
 }; // class Chart
 

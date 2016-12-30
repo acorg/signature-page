@@ -3,12 +3,12 @@
 #include <iostream>
 
 #include "surface.hh"
+#include "chart.hh"
 
 // ----------------------------------------------------------------------
 
 class Tree;
 class TreeDraw;
-class Chart;
 class HzSections;
 
 // ----------------------------------------------------------------------
@@ -24,6 +24,7 @@ class AntigenicMapsDrawSettings
     double border_width;
     Color border_color;
     double gap;
+    Transformation transformation;
 
 }; // class AntigenicMapsDrawSettings
 
