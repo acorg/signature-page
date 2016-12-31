@@ -33,6 +33,8 @@ void AntigenicMapsDraw::init_settings(const HzSections& aHzSections)
 
     std::cerr << "columns:" << mSettings.columns << " maps_per_column:" << maps_per_column << " map_width:" << map_width << " width:" << mSettings.width << std::endl;
 
+    mChart.init_settings();
+
 } // AntigenicMapsDraw::init_settings
 
 // ----------------------------------------------------------------------

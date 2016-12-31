@@ -10,15 +10,54 @@ Chart::~Chart()
 
 // ----------------------------------------------------------------------
 
+void Chart::init_settings()
+{
+    calculate_viewport();
+
+} // Chart::init_settings
+
+// ----------------------------------------------------------------------
+
+void Chart::calculate_viewport()
+{
+    if (mViewport.empty()) {
+        bounding_rectangle(mViewport);
+        mViewport.square();
+        mViewport.whole_width();
+        std::cout << "Calculated viewport: " << mViewport << std::endl;
+    }
+
+} // Chart::calculate_viewport
+
+// ----------------------------------------------------------------------
+
+void Chart::bounding_rectangle(Viewport& aViewport) const
+{
+    Location tl(1e10, 1e10), br(-1e10, -1e10);
+    for (const auto& p: mPoints) {
+        if (!p.coordinates.isnan()) {
+            tl.min(p.coordinates);
+            br.max(p.coordinates);
+        }
+    }
+    aViewport.set(tl, br);
+
+} // Chart::bounding_rectangle
+
+// ----------------------------------------------------------------------
+
 void Chart::prepare(const AntigenicMapsDrawSettings& aSettings)
 {
     apply_transformation(aSettings.transformation);
-    // mViewport = bounding_rectangle();
-    // mViewport.square();
+    calculate_viewport();
+    if (!aSettings.viewport.empty()) {
+        mViewport = aSettings.viewport;
+        std::cout << "Using viewport: " << mViewport << std::endl;
+    }
+
     // const Location offset(aSettings.map_x_offset, aSettings.map_y_offset);
     // mViewport.center(mViewport.center() + offset);
     // mViewport.zoom(aSettings.map_zoom);
-    // mViewport.whole_width();
 
     //   // build point by name index
     // mPointByName.clear();

@@ -4,6 +4,7 @@
 #include <vector>
 #include <map>
 #include <set>
+#include <iomanip>
 
 #include "acmacs-base/color.hh"
 #include "size.hh"
@@ -11,6 +12,61 @@
 // ----------------------------------------------------------------------
 
 class AntigenicMapsDrawSettings;
+
+// ----------------------------------------------------------------------
+
+class Viewport
+{
+ public:
+    inline Viewport() : origin(0, 0), size(0, 0) {}
+    inline Viewport(const Location& a, const Size& s) : origin(a), size(s) {}
+    inline Viewport(const Location& a, const Location& b) : origin(a), size(b - a) {}
+
+    inline void set(const Location& a, const Size& s) { origin = a; size = s; }
+    inline void set(const Location& a, const Location& b) { origin = a; size = b - a; }
+    inline void zoom(double scale) { const Size new_size = size * scale; origin = center() - new_size * 0.5; size = new_size; }
+    inline void center(const Location& aCenter) { origin = aCenter - size * 0.5; }
+
+      // make viewport a square by extending the smaller side from center
+    inline void square()
+        {
+            if (size.width < size.height) {
+                origin.x -= (size.height - size.width) / 2;
+                size.width = size.height;
+            }
+            else {
+                origin.y -= (size.width - size.height) / 2;
+                size.height = size.width;
+            }
+        }
+
+      // zoom out viewport to make width a whole number)
+    inline void whole_width() { zoom(std::ceil(size.width) / size.width); }
+
+    inline double right() const { return origin.x + size.width; }
+    inline double bottom() const { return origin.y + size.height; }
+    inline Location top_right() const { return origin + Size(size.width, 0); }
+    inline Location bottom_right() const { return origin + size; }
+    inline Location bottom_left() const { return origin + Size(0, size.height); }
+    inline Location center() const { return origin + size * 0.5; }
+    inline Location top_center() const { return origin + Size(size.width / 2, 0); }
+
+    inline bool empty() const { return size.empty(); }
+
+    Location origin;
+    Size size;
+
+    inline std::string to_string() const { return "Viewport(" + origin.to_string() + ", " + size.to_string() + ")"; }
+
+}; // class Viewport
+
+inline std::ostream& operator << (std::ostream& out, const Viewport& aViewport)
+{
+    out << '[' << std::fixed << std::setw(5) << std::setprecision(2) << aViewport.origin.x << ", " << aViewport.origin.y << ", " << aViewport.size.width;
+    if (!float_equal(aViewport.size.width, aViewport.size.height))
+        out << ", " << aViewport.size.height;
+    return out << ']';
+}
 
 // ----------------------------------------------------------------------
 
@@ -135,6 +191,7 @@ class Chart
     inline Chart() : mStress(-1) {}
     ~Chart();
 
+    void init_settings();
     void prepare(const AntigenicMapsDrawSettings& aSettings);
 
       // void preprocess(const SettingsAntigenicMaps& aSettings);
@@ -188,10 +245,13 @@ class Chart
     PlotStyle mPlot;
 
     mutable std::map<std::string, size_t> mPointByName;
+    Viewport mViewport;
 
     void make_point_by_name() const;
     void apply_transformation(const Transformation& aSettingsTransformation);
-    
+    void calculate_viewport();
+    void bounding_rectangle(Viewport& aViewport) const;
+
       // std::set<size_t> mSequencedAntigens;
       // mutable std::vector<const DrawPoint*> mDrawPoints;
       // DrawSerum mDrawSerum;
@@ -205,12 +265,10 @@ class Chart
       // mutable std::vector<DrawMarkedAntigen> mDrawMarkedAntigens;
       // mutable std::vector<DrawTrackedSerum> mDrawTrackedSera;
 
-      // Viewport mViewport;
 
       // std::set<std::string> mPrefixName;
 
 
-      // Viewport bounding_rectangle() const;
       // void init_tracked_sera(size_t aSize, const SettingsAntigenicMaps& aSettings) const;
       // void add_tracked_serum(size_t aSectionNo, size_t aAntigenNo, const SettingsAntigenicMaps& aSettings) const;
 

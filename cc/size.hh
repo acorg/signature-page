@@ -5,6 +5,8 @@
 #include <vector>
 #include <cmath>
 
+#include "acmacs-base/float.hh"
+
 // ----------------------------------------------------------------------
 
 class Size;
@@ -50,6 +52,7 @@ class Size
     inline Size(const Location& a, const Location& b) : width(std::abs(a.x - b.x)), height(std::abs(a.y - b.y)) {}
     inline void set(double aWidth, double aHeight) { width = aWidth; height = aHeight; }
     inline double aspect() const { return width / height; }
+    inline bool empty() const { return float_zero(width) && float_zero(height); }
 
     inline std::string to_string() const { return "Size(" + std::to_string(width) + ", " + std::to_string(height) + ")"; }
 

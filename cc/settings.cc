@@ -1,6 +1,7 @@
 #include "settings.hh"
 #include "acmacs-base/json-reader.hh"
 #include "acmacs-base/json-writer.hh"
+#include "acmacs-base/float.hh"
 
 // ----------------------------------------------------------------------
 
@@ -1354,10 +1355,61 @@ const std::map<std::string, MappedAntigensDrawSettingsHandler::Keys> MappedAntig
 
 // ----------------------------------------------------------------------
 
+class ViewportHandler : public HandlerBase
+{
+ public:
+    inline ViewportHandler(Settings& aSettings, Viewport& aField) : HandlerBase{aSettings}, mField(aField), mPos(0) {}
+
+    inline virtual HandlerBase* StartArray()
+        {
+            if (mPos)
+                throw json_reader::Failure{};
+            return nullptr;
+        }
+
+    inline virtual HandlerBase* EndArray()
+        {
+            if (mPos != 4  && mPos != 5)
+                throw json_reader::Failure{"Unexpected list size"};
+            throw json_reader::Pop();
+        }
+
+    inline virtual HandlerBase* EndObject() { throw json_reader::Failure(); }
+
+    inline virtual HandlerBase* Double(double d)
+        {
+            switch (mPos) {
+              case 0:
+                  mField.origin.x = d;
+                  break;
+              case 1:
+                  mField.origin.y = d;
+                  break;
+              case 2:
+                  mField.size.width = mField.size.height = d;
+                  break;
+              case 3:
+                  mField.size.height = d;
+                  break;
+              default:
+                  throw json_reader::Failure{};
+            }
+            ++mPos;
+            return nullptr;
+        }
+
+ private:
+    Viewport& mField;
+    size_t mPos;
+
+}; // class ViewportHandler
+
+// ----------------------------------------------------------------------
+
 class AntigenicMapsDrawSettingsHandler : public HandlerBase
 {
  private:
-    enum class Keys {Unknown, width, columns, border_width, border_color, gap, transformation};
+    enum class Keys {Unknown, width, columns, border_width, border_color, gap, transformation, viewport};
 
  public:
     inline AntigenicMapsDrawSettingsHandler(Settings& aSettings) : HandlerBase{aSettings}, mKey(Keys::Unknown) {}
@@ -1370,6 +1422,9 @@ class AntigenicMapsDrawSettingsHandler : public HandlerBase
                 switch (mKey) {
                   case Keys::transformation:
                       result = new json_reader::DoubleListHandler<Settings>(mTarget, mTarget.antigenic_maps.transformation, 4);
+                      break;
+                  case Keys::viewport:
+                      result = new ViewportHandler(mTarget, mTarget.antigenic_maps.viewport);
                       break;
                   default:
                       break;
@@ -1441,6 +1496,7 @@ const std::map<std::string, AntigenicMapsDrawSettingsHandler::Keys> AntigenicMap
     {"border_color", Keys::border_color},
     {"gap", Keys::gap},
     {"transformation", Keys::transformation},
+    {"viewport", Keys::viewport},
 };
 
 // ----------------------------------------------------------------------
@@ -1757,6 +1813,17 @@ template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writ
 
 // ----------------------------------------------------------------------
 
+template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const Viewport& aViewport)
+{
+    writer << StartArray << aViewport.origin.x << aViewport.origin.y << aViewport.size.width;
+    if (!float_equal(aViewport.size.width, aViewport.size.height))
+        writer << aViewport.size.height;
+    writer << EndArray;
+    return writer;
+}
+
+// ----------------------------------------------------------------------
+
 template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const AntigenicMapsDrawSettings& aSettings)
 {
     return writer << StartObject
@@ -1766,6 +1833,7 @@ template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writ
                   << JsonObjectKey("border_width") << aSettings.border_width
                   << JsonObjectKey("gap") << aSettings.gap
                   << JsonObjectKey("transformation") << aSettings.transformation
+                  << JsonObjectKey("viewport") << aSettings.viewport
                   << EndObject;
 }
 

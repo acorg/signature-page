@@ -25,6 +25,7 @@ class AntigenicMapsDrawSettings
     Color border_color;
     double gap;
     Transformation transformation;
+    Viewport viewport;
 
 }; // class AntigenicMapsDrawSettings
 
@@ -33,7 +34,7 @@ class AntigenicMapsDrawSettings
 class AntigenicMapsDraw
 {
  public:
-    inline AntigenicMapsDraw(Surface& aSurface, Tree& aTree, const Chart& aChart, AntigenicMapsDrawSettings& aSettings)
+    inline AntigenicMapsDraw(Surface& aSurface, Tree& aTree, Chart& aChart, AntigenicMapsDrawSettings& aSettings)
         : mSurface(aSurface), mTree(aTree), mChart(aChart), mSettings(aSettings) {}
 
     void init_settings(const HzSections& aHzSections);
@@ -45,7 +46,7 @@ class AntigenicMapsDraw
  private:
     Surface& mSurface;
     Tree& mTree;
-    const Chart& mChart;
+    Chart& mChart;
     AntigenicMapsDrawSettings& mSettings;
 
 }; // class AntigenicMapsDraw
