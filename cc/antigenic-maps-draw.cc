@@ -95,7 +95,7 @@ void AntigenicMapsDraw::draw()
     const double map_width = (mSurface.size().width - (mSettings.columns - 1) * mSettings.gap) / mSettings.columns;
 
     Surface& map_surface1 = mSurface.subsurface({0, 0}, {map_width, map_width}, mMapViewport.size.width, false);
-    map_surface1.border("blue", 0.1);
+    map_surface1.border(mSettings.border_color, mSettings.border_width);
 
     Surface& map_surface2 = mSurface.subsurface({map_width + mSettings.gap, 0}, {map_width, map_width}, mMapViewport.size.width, false);
     map_surface2.border("green2", 0.1);

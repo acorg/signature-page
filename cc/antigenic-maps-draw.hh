@@ -17,7 +17,7 @@ class AntigenicMapsDrawSettings
 {
  public:
     inline AntigenicMapsDrawSettings()
-        : width(500), columns(3), border_width(1), border_color("black"), gap(20),
+        : width(500), columns(3), border_width(0.05), border_color("black"), gap(20),
           serum_scale(5), reference_antigen_scale(5), test_antigen_scale(3), vaccine_antigen_scale(8), tracked_antigen_scale(5),
           serum_outline_width(0.5), reference_antigen_outline_width(0.5), test_antigen_outline_width(0.5), vaccine_antigen_outline_width(0.5),
           sequenced_antigen_outline_width(0.5), tracked_antigen_outline_width(0.5),
