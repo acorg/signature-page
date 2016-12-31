@@ -195,6 +195,7 @@ void SignaturePageDraw::chart(std::string aChartFilename)
 
 void SignaturePageDraw::prepare()
 {
+    std::cout << std::endl << "PREPARE:" << std::endl;
     switch (detect_layout()) {
       case SignaturePageDrawSettings::Layout::TreeTSClades:
       case SignaturePageDrawSettings::Layout::Auto:
@@ -277,6 +278,7 @@ void SignaturePageDraw::make_layout_tree_clades_ts_maps()
 
 void SignaturePageDraw::draw()
 {
+    std::cout << std::endl << "DRAW:" << std::endl;
     mSurface->background("white");
 
     if (mTreeDraw)

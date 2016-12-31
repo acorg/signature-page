@@ -12,15 +12,16 @@ Chart::~Chart()
 
 void Chart::init_settings()
 {
-    calculate_viewport();
+    calculate_viewport(nullptr);
 
 } // Chart::init_settings
 
 // ----------------------------------------------------------------------
 
-void Chart::calculate_viewport()
+void Chart::calculate_viewport(const Transformation* aSettingsTransformation)
 {
     if (mViewport.empty()) {
+        apply_transformation(aSettingsTransformation);
         bounding_rectangle(mViewport);
         mViewport.square();
         mViewport.whole_width();
@@ -48,40 +49,18 @@ void Chart::bounding_rectangle(Viewport& aViewport) const
 
 void Chart::prepare(const AntigenicMapsDrawSettings& aSettings)
 {
-    apply_transformation(aSettings.transformation);
-    calculate_viewport();
-    if (!aSettings.viewport.empty()) {
-        mViewport = aSettings.viewport;
-        std::cout << "Using viewport: " << mViewport << std::endl;
-    }
-
-    // const Location offset(aSettings.map_x_offset, aSettings.map_y_offset);
-    // mViewport.center(mViewport.center() + offset);
-    // mViewport.zoom(aSettings.map_zoom);
-
-    //   // build point by name index
-    // mPointByName.clear();
-    // for (size_t point_no = 0; point_no < mPoints.size(); ++point_no) {
-    //     mPointByName.emplace(mPoints[point_no].name, point_no);
-    //       // mPointByName[mPoints[point_no].name] = point_no;
-    // }
-
-    // draw_points_reset(aSettings);
-
-    // mPrefixName.clear();
-    // for (const auto& p: mPoints) {
-    //     mPrefixName.insert(p.name.substr(0, p.name.find(1, ' ')));
-    // }
+    calculate_viewport(&aSettings.transformation);
 
 } // Chart::prepare
 
 // ----------------------------------------------------------------------
 
-void Chart::apply_transformation(const Transformation& aSettingsTransformation)
+void Chart::apply_transformation(const Transformation* aSettingsTransformation)
 {
     Transformation t;
     t.multiplyBy(mTransformation);
-    t.multiplyBy(aSettingsTransformation);
+    if (aSettingsTransformation)
+        t.multiplyBy(*aSettingsTransformation);
     std::cout << "transformation: " << t << std::endl;
     for (auto& p: mPoints) {
         if (!p.coordinates.isnan()) {

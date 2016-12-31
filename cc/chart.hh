@@ -234,6 +234,8 @@ class Chart
     inline const std::vector<double>& column_bases() const { return mColumnBases; }
     inline std::vector<double>& column_bases() { return mColumnBases; }
 
+    inline const Viewport& viewport(const Transformation* aSettingsTransformation) { calculate_viewport(aSettingsTransformation); return mViewport; }
+
  private:
     double mStress;
     ChartInfo mInfo;
@@ -248,8 +250,8 @@ class Chart
     Viewport mViewport;
 
     void make_point_by_name() const;
-    void apply_transformation(const Transformation& aSettingsTransformation);
-    void calculate_viewport();
+    void apply_transformation(const Transformation* aSettingsTransformation);
+    void calculate_viewport(const Transformation* aSettingsTransformation);
     void bounding_rectangle(Viewport& aViewport) const;
 
       // std::set<size_t> mSequencedAntigens;
