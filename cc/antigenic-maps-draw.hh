@@ -165,7 +165,7 @@ class AntigenicMapsDraw
     Tree& mTree;
     Chart& mChart;
     AntigenicMapsDrawSettings& mSettings;
-    Viewport mViewport;
+    Viewport mMapViewport;
 
     std::vector<const DrawPoint*> mDrawPoints;
 

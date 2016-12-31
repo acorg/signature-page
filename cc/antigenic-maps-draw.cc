@@ -42,12 +42,12 @@ void AntigenicMapsDraw::init_settings(const HzSections& aHzSections)
 void AntigenicMapsDraw::prepare()
 {
     if (!mSettings.viewport.empty()) {
-        mViewport = mSettings.viewport;
+        mMapViewport = mSettings.viewport;
     }
     else {
-        mViewport = mChart.viewport(&mSettings.transformation);
+        mMapViewport = mChart.viewport(&mSettings.transformation);
     }
-    std::cout << "Using viewport: " << mViewport << std::endl;
+    std::cout << "Using viewport: " << mMapViewport << std::endl;
 
     draw_points_reset();
 
@@ -90,7 +90,15 @@ void AntigenicMapsDraw::draw_points_reset()
 
 void AntigenicMapsDraw::draw()
 {
-    mSurface.border("blue", 2);
+      // mSurface.border("blue", 2);
+
+    const double map_width = (mSurface.size().width - (mSettings.columns - 1) * mSettings.gap) / mSettings.columns;
+
+    Surface& map_surface1 = mSurface.subsurface({0, 0}, {map_width, map_width}, mMapViewport.size.width, false);
+    map_surface1.border("blue", 0.1);
+
+    Surface& map_surface2 = mSurface.subsurface({map_width + mSettings.gap, 0}, {map_width, map_width}, mMapViewport.size.width, false);
+    map_surface2.border("green2", 0.1);
 
 } // AntigenicMapsDraw::draw
 
