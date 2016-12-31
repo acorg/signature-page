@@ -3,9 +3,9 @@
 
 // ----------------------------------------------------------------------
 
-void AntigenicMapsDraw::init_settings(const HzSections& aHzSections)
+void AntigenicMapsDraw::init_settings()
 {
-    const size_t number_sections = aHzSections.sections.size();
+    const size_t number_sections = mHzSections.sections.size();
     switch (number_sections) {
       case 0:
       case 1:
@@ -90,15 +90,19 @@ void AntigenicMapsDraw::draw_points_reset()
 
 void AntigenicMapsDraw::draw()
 {
-      // mSurface.border("blue", 2);
-
     const double map_width = (mSurface.size().width - (mSettings.columns - 1) * mSettings.gap) / mSettings.columns;
 
-    Surface& map_surface1 = mSurface.subsurface({0, 0}, {map_width, map_width}, mMapViewport.size.width, true);
-    draw_chart(map_surface1);
-
-    Surface& map_surface2 = mSurface.subsurface({map_width + mSettings.gap, 0}, {map_width, map_width}, mMapViewport.size.width, true);
-    draw_chart(map_surface2);
+    size_t row = 0, column = 0;
+    for (const auto& section: mHzSections.sections) {
+        Surface& map_surface = mSurface.subsurface({column * (map_width + mSettings.gap), row * (map_width + mSettings.gap)},
+                                                   {map_width, map_width}, mMapViewport.size.width, true);
+        draw_chart(map_surface);
+        ++column;
+        if (column >= mSettings.columns) {
+            ++row;
+            column = 0;
+        }
+    }
 
 } // AntigenicMapsDraw::draw
 

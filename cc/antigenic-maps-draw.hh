@@ -154,10 +154,10 @@ class DrawVaccineAntigen : public DrawAntigen
 class AntigenicMapsDraw
 {
  public:
-    inline AntigenicMapsDraw(Surface& aSurface, Tree& aTree, Chart& aChart, AntigenicMapsDrawSettings& aSettings)
-        : mSurface(aSurface), mTree(aTree), mChart(aChart), mSettings(aSettings) {}
+    inline AntigenicMapsDraw(Surface& aSurface, Tree& aTree, Chart& aChart, HzSections& aHzSections, AntigenicMapsDrawSettings& aSettings)
+        : mSurface(aSurface), mTree(aTree), mChart(aChart), mHzSections(aHzSections), mSettings(aSettings) {}
 
-    void init_settings(const HzSections& aHzSections);
+    void init_settings();
     void prepare();
     void draw();
 
@@ -167,6 +167,7 @@ class AntigenicMapsDraw
     Surface& mSurface;
     Tree& mTree;
     Chart& mChart;
+    HzSections& mHzSections;
     AntigenicMapsDrawSettings& mSettings;
     Viewport mMapViewport;
 

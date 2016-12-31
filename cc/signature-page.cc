@@ -72,7 +72,7 @@ void SignaturePageDraw::make_surface(std::string aFilename)
 
     if (mChart) {
         mMappedAntigensDraw = std::make_unique<MappedAntigensDraw>(mSurface->subsurface(false), *mTree, *mChart, mSettings->mapped_antigens);
-        mAntigenicMapsDraw = std::make_unique<AntigenicMapsDraw>(mSurface->subsurface(false), *mTree, *mChart, mSettings->antigenic_maps);
+        mAntigenicMapsDraw = std::make_unique<AntigenicMapsDraw>(mSurface->subsurface(false), *mTree, *mChart, mSettings->hz_sections, mSettings->antigenic_maps);
     }
 
 } // SignaturePageDraw::make_surface
@@ -139,7 +139,7 @@ void SignaturePageDraw::init_settings()
         }
 
         if (mAntigenicMapsDraw)
-            mAntigenicMapsDraw->init_settings(mSettings->hz_sections);
+            mAntigenicMapsDraw->init_settings();
     }
     else {                      // just tree
         mSettings->tree_draw.vaccines[0].label_size = 40;
