@@ -94,10 +94,10 @@ void AntigenicMapsDraw::draw()
 
     const double map_width = (mSurface.size().width - (mSettings.columns - 1) * mSettings.gap) / mSettings.columns;
 
-    Surface& map_surface1 = mSurface.subsurface({0, 0}, {map_width, map_width}, mMapViewport.size.width, false);
+    Surface& map_surface1 = mSurface.subsurface({0, 0}, {map_width, map_width}, mMapViewport.size.width, true);
     draw_chart(map_surface1);
 
-    Surface& map_surface2 = mSurface.subsurface({map_width + mSettings.gap, 0}, {map_width, map_width}, mMapViewport.size.width, false);
+    Surface& map_surface2 = mSurface.subsurface({map_width + mSettings.gap, 0}, {map_width, map_width}, mMapViewport.size.width, true);
     draw_chart(map_surface2);
 
 } // AntigenicMapsDraw::draw
@@ -107,8 +107,21 @@ void AntigenicMapsDraw::draw()
 void AntigenicMapsDraw::draw_chart(Surface& aSurface)
 {
     aSurface.background(mSettings.background_color);
-    aSurface.border(mSettings.border_color, mSettings.border_width);
     aSurface.grid(1, mSettings.grid_line_color, mSettings.grid_line_width);
+    aSurface.border(mSettings.border_color, mSettings.border_width * 2);
+    aSurface.viewport_offset(mMapViewport.offset());
+
+    size_t drawn = 0;
+    for (size_t level = 0; level < 10 && drawn < mDrawPoints.size(); ++level) {
+        for (size_t point_no = 0; point_no < mDrawPoints.size(); ++point_no) {
+           if (mDrawPoints[point_no]->level() == level) {
+               mDrawPoints[point_no]->draw(aSurface, mChart.points()[point_no], mChart.plot_style().style(point_no), 0.1, mSettings);
+                ++drawn;
+            }
+        }
+    }
+    if (drawn != mDrawPoints.size())
+        std::cerr << "Warning: " << drawn << " points of " << mDrawPoints.size() << " were drawn" << std::endl;
 
 } // AntigenicMapsDraw::draw_chart
 

@@ -96,9 +96,11 @@ class Surface
 
     virtual const Size& size() const = 0;
     virtual const Size& offset() const = 0;
+    virtual inline const Size& viewport_offset() const = 0;
     inline double aspect() const { return size().aspect(); }
       // virtual void move_resize(const Size& aNewOffset, const Size& aNewSize) = 0;
     virtual void move_resize(const Size& aNewOffset, const Size& aOuterSize, double aInnerWidth) = 0;
+    virtual void viewport_offset(const Size& aViewportOffset) = 0;
 
     virtual Surface& subsurface(const Size& aOffset, const Size& aOuterSize, double aInnerWidth, bool aClip) = 0;
     virtual Surface& subsurface(bool aClip) = 0;

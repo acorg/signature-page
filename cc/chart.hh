@@ -26,6 +26,7 @@ class Viewport
     inline void set(const Location& a, const Location& b) { origin = a; size = b - a; }
     inline void zoom(double scale) { const Size new_size = size * scale; origin = center() - new_size * 0.5; size = new_size; }
     inline void center(const Location& aCenter) { origin = aCenter - size * 0.5; }
+    inline Size offset() const { return {-origin.x, -origin.y}; }
 
       // make viewport a square by extending the smaller side from center
     inline void square()

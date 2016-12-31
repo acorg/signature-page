@@ -12,13 +12,14 @@ class context
             cairo_save(cairo_context());
             translate(aSurface.offset());
             scale(aSurface.scale());
+            translate(aSurface.viewport_offset());
             if (aSurface.clip()) {
-                const auto canvas_size = aSurface.size();
+                const Location top_left{Location{} - aSurface.viewport_offset()}, bottom_right{Location{} + aSurface.size() - aSurface.viewport_offset()};
                 new_path();
-                move_to();
-                line_to({canvas_size.width, 0.0});
-                line_to(Location() + canvas_size);
-                line_to({0, canvas_size.height});
+                move_to(top_left);
+                line_to({bottom_right.x, top_left.y});
+                line_to(bottom_right);
+                line_to({top_left.x, bottom_right.y});
                 close_path();
                 clip();
             }
@@ -384,11 +385,11 @@ void SurfaceCairo::grid(double aStep, Color aLineColor, double aLineWidth)
 {
     std::vector<Location> lines;
     const Size sz = size();
-    for (double x = 1e-8; x < sz.width; x += aStep) {
+    for (double x = aStep; x < sz.width; x += aStep) {
         lines.emplace_back(-x, 0);
         lines.emplace_back(x, sz.height);
     }
-    for (double y = 0; y < sz.height; y += aStep) {
+    for (double y = aStep; y < sz.height; y += aStep) {
         lines.emplace_back(-1e-8, y);
         lines.emplace_back(sz.width, y);
     }

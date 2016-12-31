@@ -69,14 +69,17 @@ class SurfaceCairoChild : public SurfaceCairo
     virtual inline cairo_t* cairo_context() { return mParent.cairo_context(); }
     virtual inline const Size& size() const { return mSize; }
     virtual inline const Size& offset() const { return mOffset; }
+    virtual inline const Size& viewport_offset() const { return mViewportOffset; }
 
       // virtual inline void move_resize(const Size& aNewOffset, const Size& aNewSize) { mOffset = aNewOffset; mScale *= mSize.width / aNewSize.width; mSize = aNewSize; }
     virtual inline void move_resize(const Size& aNewOffset, const Size& aOuterSize, double aInnerWidth) { mOffset = aNewOffset; mScale = aOuterSize.width / aInnerWidth; mSize = aOuterSize / mScale; }
+    virtual inline void viewport_offset(const Size& aViewportOffset) { mViewportOffset = aViewportOffset; }
 
  private:
     SurfaceCairo& mParent;
     Size mOffset;
     Size mSize;
+    Size mViewportOffset;
     double mScale;
     bool mClip;                 // force surface area clipping
 
@@ -97,13 +100,16 @@ class PdfCairo : public SurfaceCairo
     virtual inline cairo_t* cairo_context() { return mCairoContext; }
     virtual inline const Size& size() const { return mSize; }
     virtual inline const Size& offset() const { return mOffset; }
+    virtual inline const Size& viewport_offset() const { return mViewportOffset; }
 
       // virtual inline void move_resize(const Size& aNewOffset, const Size& aNewSize) { mOffset = aNewOffset; mScale *= mSize.width / aNewSize.width; mSize = aNewSize; }
     virtual inline void move_resize(const Size& aNewOffset, const Size& aOuterSize, double aInnerWidth) { mOffset = aNewOffset; mScale = aOuterSize.width / aInnerWidth; mSize = aOuterSize / mScale; }
+    virtual inline void viewport_offset(const Size& aViewportOffset) { mViewportOffset = aViewportOffset; }
 
  private:
     Size mSize;
     Size mOffset;
+    Size mViewportOffset;
     double mScale;
     cairo_t* mCairoContext;
 
