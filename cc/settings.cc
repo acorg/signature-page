@@ -1409,7 +1409,15 @@ class ViewportHandler : public HandlerBase
 class AntigenicMapsDrawSettingsHandler : public HandlerBase
 {
  private:
-    enum class Keys {Unknown, width, columns, border_width, border_color, gap, transformation, viewport};
+    enum class Keys {Unknown, width, columns, border_width, border_color, gap, transformation, viewport,
+                serum_scale, reference_antigen_scale, test_antigen_scale, vaccine_antigen_scale, tracked_antigen_scale,
+                serum_outline_width, reference_antigen_outline_width, test_antigen_outline_width, vaccine_antigen_outline_width,
+                sequenced_antigen_outline_width, tracked_antigen_outline_width, serum_outline_color,
+                reference_antigen_outline_color, test_antigen_outline_color, test_antigen_fill_color,
+                vaccine_antigen_outline_color, sequenced_antigen_outline_color, sequenced_antigen_fill_color,
+                tracked_antigen_outline_color, tracked_antigen_colored_by_clade, reassortant_rotation, egg_antigen_aspect,
+                serum_circle_color, serum_circle_thickness,
+                };
 
  public:
     inline AntigenicMapsDrawSettingsHandler(Settings& aSettings) : HandlerBase{aSettings}, mKey(Keys::Unknown) {}
@@ -1444,6 +1452,33 @@ class AntigenicMapsDrawSettingsHandler : public HandlerBase
               case Keys::border_color:
                   mTarget.antigenic_maps.border_color.from_string(str, length);
                   break;
+              case Keys::serum_outline_color:
+                  mTarget.antigenic_maps.serum_outline_color.from_string(str, length);
+                  break;
+              case Keys::reference_antigen_outline_color:
+                  mTarget.antigenic_maps.reference_antigen_outline_color.from_string(str, length);
+                  break;
+              case Keys::test_antigen_outline_color:
+                  mTarget.antigenic_maps.test_antigen_outline_color.from_string(str, length);
+                  break;
+              case Keys::test_antigen_fill_color:
+                  mTarget.antigenic_maps.test_antigen_fill_color.from_string(str, length);
+                  break;
+              case Keys::tracked_antigen_outline_color:
+                  mTarget.antigenic_maps.tracked_antigen_outline_color.from_string(str, length);
+                  break;
+              case Keys::vaccine_antigen_outline_color:
+                  mTarget.antigenic_maps.vaccine_antigen_outline_color.from_string(str, length);
+                  break;
+              case Keys::sequenced_antigen_outline_color:
+                  mTarget.antigenic_maps.sequenced_antigen_outline_color.from_string(str, length);
+                  break;
+              case Keys::sequenced_antigen_fill_color:
+                  mTarget.antigenic_maps.sequenced_antigen_fill_color.from_string(str, length);
+                  break;
+              case Keys::serum_circle_color:
+                  mTarget.antigenic_maps.serum_circle_color.from_string(str, length);
+                  break;
               default:
                   result = HandlerBase::String(str, length);
                   break;
@@ -1462,6 +1497,48 @@ class AntigenicMapsDrawSettingsHandler : public HandlerBase
                   break;
               case Keys::gap:
                   mTarget.antigenic_maps.gap = d;
+                  break;
+              case Keys::serum_scale:
+                  mTarget.antigenic_maps.serum_scale = d;
+                  break;
+              case Keys::reference_antigen_scale:
+                  mTarget.antigenic_maps.reference_antigen_scale = d;
+                  break;
+              case Keys::test_antigen_scale:
+                  mTarget.antigenic_maps.test_antigen_scale = d;
+                  break;
+              case Keys::vaccine_antigen_scale:
+                  mTarget.antigenic_maps.vaccine_antigen_scale = d;
+                  break;
+              case Keys::tracked_antigen_scale:
+                  mTarget.antigenic_maps.tracked_antigen_scale = d;
+                  break;
+              case Keys::serum_outline_width:
+                  mTarget.antigenic_maps.serum_outline_width = d;
+                  break;
+              case Keys::reference_antigen_outline_width:
+                  mTarget.antigenic_maps.reference_antigen_outline_width = d;
+                  break;
+              case Keys::test_antigen_outline_width:
+                  mTarget.antigenic_maps.test_antigen_outline_width = d;
+                  break;
+              case Keys::vaccine_antigen_outline_width:
+                  mTarget.antigenic_maps.vaccine_antigen_outline_width = d;
+                  break;
+              case Keys::sequenced_antigen_outline_width:
+                  mTarget.antigenic_maps.sequenced_antigen_outline_width = d;
+                  break;
+              case Keys::tracked_antigen_outline_width:
+                  mTarget.antigenic_maps.tracked_antigen_outline_width = d;
+                  break;
+              case Keys::reassortant_rotation:
+                  mTarget.antigenic_maps.reassortant_rotation = d;
+                  break;
+              case Keys::egg_antigen_aspect:
+                  mTarget.antigenic_maps.egg_antigen_aspect = d;
+                  break;
+              case Keys::serum_circle_thickness:
+                  mTarget.antigenic_maps.serum_circle_thickness = d;
                   break;
               default:
                   HandlerBase::Double(d);
@@ -1483,6 +1560,19 @@ class AntigenicMapsDrawSettingsHandler : public HandlerBase
             return nullptr;
         }
 
+    inline virtual HandlerBase* Bool(bool b)
+        {
+            switch (mKey) {
+              case Keys::tracked_antigen_colored_by_clade:
+                  mTarget.antigenic_maps.tracked_antigen_colored_by_clade = b;
+                  break;
+              default:
+                  HandlerBase::Bool(b);
+                  break;
+            }
+            return nullptr;
+        }
+
  private:
     Keys mKey;
     static const std::map<std::string, Keys> key_mapper;
@@ -1497,6 +1587,30 @@ const std::map<std::string, AntigenicMapsDrawSettingsHandler::Keys> AntigenicMap
     {"gap", Keys::gap},
     {"transformation", Keys::transformation},
     {"viewport", Keys::viewport},
+    {"serum_scale", Keys::serum_scale},
+    {"reference_antigen_scale", Keys::reference_antigen_scale},
+    {"test_antigen_scale", Keys::test_antigen_scale},
+    {"vaccine_antigen_scale", Keys::vaccine_antigen_scale},
+    {"tracked_antigen_scale", Keys::tracked_antigen_scale},
+    {"serum_outline_width", Keys::serum_outline_width},
+    {"reference_antigen_outline_width", Keys::reference_antigen_outline_width},
+    {"test_antigen_outline_width", Keys::test_antigen_outline_width},
+    {"vaccine_antigen_outline_width", Keys::vaccine_antigen_outline_width},
+    {"sequenced_antigen_outline_width", Keys::sequenced_antigen_outline_width},
+    {"tracked_antigen_outline_width", Keys::tracked_antigen_outline_width},
+    {"serum_outline_color", Keys::serum_outline_color},
+    {"reference_antigen_outline_color", Keys::reference_antigen_outline_color},
+    {"test_antigen_outline_color", Keys::test_antigen_outline_color},
+    {"test_antigen_fill_color", Keys::test_antigen_fill_color},
+    {"vaccine_antigen_outline_color", Keys::vaccine_antigen_outline_color},
+    {"sequenced_antigen_outline_color", Keys::sequenced_antigen_outline_color},
+    {"sequenced_antigen_fill_color", Keys::sequenced_antigen_fill_color},
+    {"tracked_antigen_outline_color", Keys::tracked_antigen_outline_color},
+    {"tracked_antigen_colored_by_clade", Keys::tracked_antigen_colored_by_clade},
+    {"reassortant_rotation", Keys::reassortant_rotation},
+    {"egg_antigen_aspect", Keys::egg_antigen_aspect},
+    {"serum_circle_color", Keys::serum_circle_color},
+    {"serum_circle_thickness", Keys::serum_circle_thickness},
 };
 
 // ----------------------------------------------------------------------
@@ -1834,6 +1948,31 @@ template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writ
                   << JsonObjectKey("gap") << aSettings.gap
                   << JsonObjectKey("transformation") << aSettings.transformation
                   << JsonObjectKey("viewport") << aSettings.viewport
+
+                  << JsonObjectKey("serum_scale") << aSettings.serum_scale
+                  << JsonObjectKey("reference_antigen_scale") << aSettings.reference_antigen_scale
+                  << JsonObjectKey("test_antigen_scale") << aSettings.test_antigen_scale
+                  << JsonObjectKey("vaccine_antigen_scale") << aSettings.vaccine_antigen_scale
+                  << JsonObjectKey("tracked_antigen_scale") << aSettings.tracked_antigen_scale
+                  << JsonObjectKey("serum_outline_width") << aSettings.serum_outline_width
+                  << JsonObjectKey("reference_antigen_outline_width") << aSettings.reference_antigen_outline_width
+                  << JsonObjectKey("test_antigen_outline_width") << aSettings.test_antigen_outline_width
+                  << JsonObjectKey("vaccine_antigen_outline_width") << aSettings.vaccine_antigen_outline_width
+                  << JsonObjectKey("sequenced_antigen_outline_width") << aSettings.sequenced_antigen_outline_width
+                  << JsonObjectKey("tracked_antigen_outline_width") << aSettings.tracked_antigen_outline_width
+                  << JsonObjectKey("serum_outline_color") << aSettings.serum_outline_color
+                  << JsonObjectKey("reference_antigen_outline_color") << aSettings.reference_antigen_outline_color
+                  << JsonObjectKey("test_antigen_outline_color") << aSettings.test_antigen_outline_color
+                  << JsonObjectKey("test_antigen_fill_color") << aSettings.test_antigen_fill_color
+                  << JsonObjectKey("vaccine_antigen_outline_color") << aSettings.vaccine_antigen_outline_color
+                  << JsonObjectKey("sequenced_antigen_outline_color") << aSettings.sequenced_antigen_outline_color
+                  << JsonObjectKey("sequenced_antigen_fill_color") << aSettings.sequenced_antigen_fill_color
+                  << JsonObjectKey("tracked_antigen_outline_color") << aSettings.tracked_antigen_outline_color
+                  << JsonObjectKey("tracked_antigen_colored_by_clade") << aSettings.tracked_antigen_colored_by_clade
+                  << JsonObjectKey("reassortant_rotation") << aSettings.reassortant_rotation
+                  << JsonObjectKey("egg_antigen_aspect") << aSettings.egg_antigen_aspect
+                  << JsonObjectKey("serum_circle_color") << aSettings.serum_circle_color
+                  << JsonObjectKey("serum_circle_thickness") << aSettings.serum_circle_thickness
                   << EndObject;
 }
 
