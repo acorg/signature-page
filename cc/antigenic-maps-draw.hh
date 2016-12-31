@@ -17,7 +17,9 @@ class AntigenicMapsDrawSettings
 {
  public:
     inline AntigenicMapsDrawSettings()
-        : width(500), columns(3), border_width(0.05), border_color("black"), gap(20),
+        : width(500), columns(3), gap(20),
+          border_width(0.05), grid_line_width(0.025),
+          border_color("black"), grid_line_color("grey63"), background_color("white"), // 0xFFFFF8
           serum_scale(5), reference_antigen_scale(5), test_antigen_scale(3), vaccine_antigen_scale(8), tracked_antigen_scale(5),
           serum_outline_width(0.5), reference_antigen_outline_width(0.5), test_antigen_outline_width(0.5), vaccine_antigen_outline_width(0.5),
           sequenced_antigen_outline_width(0.5), tracked_antigen_outline_width(0.5),
@@ -29,11 +31,12 @@ class AntigenicMapsDrawSettings
 
     double width;
     size_t columns;
-    double border_width;
-    Color border_color;
     double gap;
     Transformation transformation;
     Viewport viewport;
+
+    double border_width, grid_line_width;
+    Color border_color, grid_line_color, background_color;
 
     double serum_scale, reference_antigen_scale, test_antigen_scale, vaccine_antigen_scale, tracked_antigen_scale;
     double serum_outline_width, reference_antigen_outline_width, test_antigen_outline_width, vaccine_antigen_outline_width, sequenced_antigen_outline_width, tracked_antigen_outline_width;
@@ -181,6 +184,7 @@ class AntigenicMapsDraw
     std::vector<DrawTrackedSerum> mDrawTrackedSera;
 
     void draw_points_reset();
+    void draw_chart(Surface& aSurface);
 
 }; // class AntigenicMapsDraw
 

@@ -95,12 +95,22 @@ void AntigenicMapsDraw::draw()
     const double map_width = (mSurface.size().width - (mSettings.columns - 1) * mSettings.gap) / mSettings.columns;
 
     Surface& map_surface1 = mSurface.subsurface({0, 0}, {map_width, map_width}, mMapViewport.size.width, false);
-    map_surface1.border(mSettings.border_color, mSettings.border_width);
+    draw_chart(map_surface1);
 
     Surface& map_surface2 = mSurface.subsurface({map_width + mSettings.gap, 0}, {map_width, map_width}, mMapViewport.size.width, false);
-    map_surface2.border("green2", 0.1);
+    draw_chart(map_surface2);
 
 } // AntigenicMapsDraw::draw
+
+// ----------------------------------------------------------------------
+
+void AntigenicMapsDraw::draw_chart(Surface& aSurface)
+{
+    aSurface.background(mSettings.background_color);
+    aSurface.border(mSettings.border_color, mSettings.border_width);
+    aSurface.grid(1, mSettings.grid_line_color, mSettings.grid_line_width);
+
+} // AntigenicMapsDraw::draw_chart
 
 // ----------------------------------------------------------------------
 

@@ -1412,7 +1412,8 @@ class ViewportHandler : public HandlerBase
 class AntigenicMapsDrawSettingsHandler : public HandlerBase
 {
  private:
-    enum class Keys {Unknown, width, columns, border_width, border_color, gap, transformation, viewport,
+    enum class Keys {Unknown, width, columns, gap, transformation, viewport,
+                background_color, border_width, border_color, grid_line_width, grid_line_color,
                 serum_scale, reference_antigen_scale, test_antigen_scale, vaccine_antigen_scale, tracked_antigen_scale,
                 serum_outline_width, reference_antigen_outline_width, test_antigen_outline_width, vaccine_antigen_outline_width,
                 sequenced_antigen_outline_width, tracked_antigen_outline_width, serum_outline_color,
@@ -1456,6 +1457,12 @@ class AntigenicMapsDrawSettingsHandler : public HandlerBase
               case Keys::border_color:
                   mTarget.antigenic_maps.border_color.from_string(str, length);
                   break;
+              case Keys::grid_line_color:
+                  mTarget.antigenic_maps.grid_line_color.from_string(str, length);
+                  break;
+              case Keys::background_color:
+                  mTarget.antigenic_maps.background_color.from_string(str, length);
+                  break;
               case Keys::serum_outline_color:
                   mTarget.antigenic_maps.serum_outline_color.from_string(str, length);
                   break;
@@ -1495,6 +1502,9 @@ class AntigenicMapsDrawSettingsHandler : public HandlerBase
             switch (mKey) {
               case Keys::border_width:
                   mTarget.antigenic_maps.border_width = d;
+                  break;
+              case Keys::grid_line_width:
+                  mTarget.antigenic_maps.grid_line_width = d;
                   break;
               case Keys::width:
                   mTarget.antigenic_maps.width = d;
@@ -1586,11 +1596,14 @@ class AntigenicMapsDrawSettingsHandler : public HandlerBase
 const std::map<std::string, AntigenicMapsDrawSettingsHandler::Keys> AntigenicMapsDrawSettingsHandler::key_mapper {
     {"width", Keys::width},
     {"columns", Keys::columns},
-    {"border_width", Keys::border_width},
-    {"border_color", Keys::border_color},
     {"gap", Keys::gap},
     {"transformation", Keys::transformation},
     {"viewport", Keys::viewport},
+    {"background_color", Keys::background_color},
+    {"border_width", Keys::border_width},
+    {"border_color", Keys::border_color},
+    {"grid_line_width", Keys::grid_line_width},
+    {"grid_line_color", Keys::grid_line_color},
     {"serum_scale", Keys::serum_scale},
     {"reference_antigen_scale", Keys::reference_antigen_scale},
     {"test_antigen_scale", Keys::test_antigen_scale},
@@ -1947,12 +1960,15 @@ template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writ
     return writer << StartObject
                   << JsonObjectKey("width") << aSettings.width
                   << JsonObjectKey("columns") << aSettings.columns
-                  << JsonObjectKey("border_color") << aSettings.border_color
-                  << JsonObjectKey("border_width") << aSettings.border_width
                   << JsonObjectKey("gap") << aSettings.gap
                   << JsonObjectKey("transformation") << aSettings.transformation
                   << JsonObjectKey("viewport") << aSettings.viewport
 
+                  << JsonObjectKey("background_color") << aSettings.background_color
+                  << JsonObjectKey("border_color") << aSettings.border_color
+                  << JsonObjectKey("border_width") << aSettings.border_width
+                  << JsonObjectKey("grid_line_width") << aSettings.grid_line_width
+                  << JsonObjectKey("grid_line_color") << aSettings.grid_line_color
                   << JsonObjectKey("serum_scale") << aSettings.serum_scale
                   << JsonObjectKey("reference_antigen_scale") << aSettings.reference_antigen_scale
                   << JsonObjectKey("test_antigen_scale") << aSettings.test_antigen_scale

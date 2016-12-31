@@ -388,8 +388,8 @@ void SurfaceCairo::grid(double aStep, Color aLineColor, double aLineWidth)
         lines.emplace_back(-x, 0);
         lines.emplace_back(x, sz.height);
     }
-    for (double y = 1e-8; y < sz.height; y += aStep) {
-        lines.emplace_back(-y, y);
+    for (double y = 0; y < sz.height; y += aStep) {
+        lines.emplace_back(-1e-8, y);
         lines.emplace_back(sz.width, y);
     }
 
