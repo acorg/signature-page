@@ -979,6 +979,9 @@ class CladeDrawSettingsHandler : public HandlerBase
               case Keys::section_exclusion_tolerance:
                   mField.section_exclusion_tolerance = u;
                   break;
+              case Keys::slot:
+                  mField.slot = u;
+                  break;
               default:
                   HandlerBase::Uint(u);
                   break;
@@ -1369,8 +1372,8 @@ class ViewportHandler : public HandlerBase
 
     inline virtual HandlerBase* EndArray()
         {
-            if (mPos != 4  && mPos != 5)
-                throw json_reader::Failure{"Unexpected list size"};
+            if (mPos != 3 && mPos != 4)
+                throw json_reader::Failure{"Unexpected viewport list size: " + std::to_string(mPos)};
             throw json_reader::Pop();
         }
 
@@ -1429,6 +1432,7 @@ class AntigenicMapsDrawSettingsHandler : public HandlerBase
                 mKey = key_mapper.at(std::string(str, length));
                 switch (mKey) {
                   case Keys::transformation:
+                      mTarget.antigenic_maps.transformation.clear();
                       result = new json_reader::DoubleListHandler<Settings>(mTarget, mTarget.antigenic_maps.transformation, 4);
                       break;
                   case Keys::viewport:
