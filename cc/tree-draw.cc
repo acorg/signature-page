@@ -133,12 +133,14 @@ void TreeDraw::set_line_no()
 void TreeDraw::set_vertical_pos()
 {
     double vertical_pos = mVerticalStep;
+    bool topmost_node = true;
     auto set_leaf_vertical_pos = [&](Node& aNode) {
         if (aNode.draw.shown) {
-            if (aNode.draw.hz_section_index != NodeDrawData::HzSectionNoIndex)
+            if (!topmost_node && aNode.draw.hz_section_index != NodeDrawData::HzSectionNoIndex && mHzSections.sections[aNode.draw.hz_section_index].show)
                 vertical_pos += mHzSections.vertical_gap;
             aNode.draw.vertical_pos = vertical_pos;
             vertical_pos += mVerticalStep;
+            topmost_node = false;
         }
     };
     tree::iterate_leaf(mTree, set_leaf_vertical_pos);
@@ -167,26 +169,22 @@ size_t TreeDraw::prepare_hz_sections()
     mHzSections.sort(mTree);
 
     size_t number_of_hz_sections = 0;
-    const Node& first_leaf = find_first_leaf(mTree);
+      // const Node& first_leaf = find_first_leaf(mTree);
     size_t section_index = 0;
     for (const auto& section: mHzSections.sections) {
-        if (section.show) {
-            Node* section_start = mTree.find_leaf_by_seqid(section.name);
-            if (section_start) {
-                if (section_start != &first_leaf) {
-                    section_start->draw.hz_section_index = section_index;
-                }
-                ++number_of_hz_sections;
-            }
-            else {
-                std::cerr << "WARNING: HzSection seq_id not found: " << section.name << std::endl;
-            }
+        Node* section_start = mTree.find_leaf_by_seqid(section.name);
+        if (section_start) {
+            section_start->draw.hz_section_index = section_index;
+            ++number_of_hz_sections;
+        }
+        else {
+            std::cerr << "WARNING: HzSection seq_id not found: " << section.name << std::endl;
         }
         ++section_index;
     }
     if (number_of_hz_sections == 0)
         number_of_hz_sections = 1;
-    std::cerr << "HZ sections to show: " << number_of_hz_sections << std::endl;
+    std::cerr << "HZ sections: " << number_of_hz_sections << std::endl;
     return number_of_hz_sections;
 
 } // TreeDraw::prepare_hz_sections

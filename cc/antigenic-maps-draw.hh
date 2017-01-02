@@ -26,7 +26,9 @@ class AntigenicMapsDrawSettings
           serum_outline_color("grey88"), reference_antigen_outline_color("grey88"), test_antigen_outline_color("grey88"),
           test_antigen_fill_color("grey88"), vaccine_antigen_outline_color("white"), sequenced_antigen_outline_color("white"), sequenced_antigen_fill_color("grey63"),
           tracked_antigen_outline_color("white"), tracked_antigen_colored_by_clade(false),
-          reassortant_rotation(0.5 /* M_PI / 6.0 */), egg_antigen_aspect(0.75), serum_circle_color("black"), serum_circle_thickness(1) {}
+          reassortant_rotation(0.5 /* M_PI / 6.0 */), egg_antigen_aspect(0.75), serum_circle_color("black"), serum_circle_thickness(1),
+          map_title_color("black"), map_title_offset{0.1, 0.1}, map_title_size(1)
+        {}
     ~AntigenicMapsDrawSettings();
 
     std::string layout;
@@ -46,6 +48,9 @@ class AntigenicMapsDrawSettings
     double reassortant_rotation, egg_antigen_aspect;
     Color serum_circle_color;
     double serum_circle_thickness;
+    Color map_title_color;
+    Size map_title_offset;
+    double map_title_size;
 
 }; // class AntigenicMapsDrawSettings
 
@@ -153,6 +158,7 @@ class DrawVaccineAntigen : public DrawAntigen
 // ----------------------------------------------------------------------
 
 class AntigenicMapsDraw;
+class HzSection;
 
 class AntigenicMapsLayout
 {
@@ -181,7 +187,7 @@ class AntigenicMapsLayout
     std::vector<DrawTrackedSerum> mDrawTrackedSera;
 
     virtual void draw_points_reset();
-    virtual void draw_chart(Surface& aSurface);
+    virtual void draw_chart(Surface& aSurface, size_t aSectionNo, const HzSection& aSection);
 
 }; // class AntigenicMapsLayout
 
@@ -241,8 +247,8 @@ class LabelledGrid : public AntigenicMapsLayout
     virtual void draw();
 
  protected:
-    virtual void draw_chart(Surface& aSurface);
-    
+    virtual void draw_chart(Surface& aSurface, size_t aSectionNo, const HzSection& aSection);
+
 }; // class LabelledGrid
 
 // ----------------------------------------------------------------------

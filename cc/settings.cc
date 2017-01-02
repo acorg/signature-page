@@ -1121,7 +1121,7 @@ const std::map<std::string, CladesDrawSettingsHandler::Keys> CladesDrawSettingsH
 class HzSectionHandler : public HandlerBase
 {
  private:
-    enum class Keys {Unknown, show, show_line, show_ts_label, name, label};
+    enum class Keys {Unknown, show, show_line, show_map, name, label};
 
  public:
     inline HzSectionHandler(Settings& aSettings, HzSection& aField) : HandlerBase{aSettings}, mKey(Keys::Unknown), mField(aField) {}
@@ -1165,8 +1165,8 @@ class HzSectionHandler : public HandlerBase
               case Keys::show_line:
                   mField.show_line = b;
                   break;
-              case Keys::show_ts_label:
-                  mField.show_ts_label = b;
+              case Keys::show_map:
+                  mField.show_map = b;
                   break;
               default:
                   HandlerBase::Bool(b);
@@ -1185,7 +1185,7 @@ class HzSectionHandler : public HandlerBase
 const std::map<std::string, HzSectionHandler::Keys> HzSectionHandler::key_mapper {
     {"show", Keys::show},
     {"show_line", Keys::show_line},
-    {"show_ts_label", Keys::show_ts_label},
+    {"show_map", Keys::show_map},
     {"name", Keys::name},
     {"label", Keys::label},
 };
@@ -1420,7 +1420,7 @@ class AntigenicMapsDrawSettingsHandler : public HandlerBase
                 reference_antigen_outline_color, test_antigen_outline_color, test_antigen_fill_color,
                 vaccine_antigen_outline_color, sequenced_antigen_outline_color, sequenced_antigen_fill_color,
                 tracked_antigen_outline_color, tracked_antigen_colored_by_clade, reassortant_rotation, egg_antigen_aspect,
-                serum_circle_color, serum_circle_thickness,
+                serum_circle_color, serum_circle_thickness, map_title_color, map_title_offset, map_title_size,
                 };
 
  public:
@@ -1493,6 +1493,9 @@ class AntigenicMapsDrawSettingsHandler : public HandlerBase
               case Keys::serum_circle_color:
                   mTarget.antigenic_maps.serum_circle_color.from_string(str, length);
                   break;
+              case Keys::map_title_color:
+                  mTarget.antigenic_maps.map_title_color.from_string(str, length);
+                  break;
               default:
                   result = HandlerBase::String(str, length);
                   break;
@@ -1557,6 +1560,9 @@ class AntigenicMapsDrawSettingsHandler : public HandlerBase
               case Keys::serum_circle_thickness:
                   mTarget.antigenic_maps.serum_circle_thickness = d;
                   break;
+              case Keys::map_title_size:
+                  mTarget.antigenic_maps.map_title_size = d;
+                  break;
               default:
                   HandlerBase::Double(d);
                   break;
@@ -1588,6 +1594,20 @@ class AntigenicMapsDrawSettingsHandler : public HandlerBase
                   break;
             }
             return nullptr;
+        }
+
+    inline virtual HandlerBase* StartArray()
+        {
+            HandlerBase* result = nullptr;
+            switch (mKey) {
+              case Keys::map_title_offset:
+                  result = new SettingsSizeHandler(mTarget, mTarget.antigenic_maps.map_title_offset);
+                  break;
+              default:
+                  result = HandlerBase::StartArray();
+                  break;
+            }
+            return result;
         }
 
  private:
@@ -1632,6 +1652,9 @@ const std::map<std::string, AntigenicMapsDrawSettingsHandler::Keys> AntigenicMap
     {"egg_antigen_aspect", Keys::egg_antigen_aspect},
     {"serum_circle_color", Keys::serum_circle_color},
     {"serum_circle_thickness", Keys::serum_circle_thickness},
+    {"map_title_color", Keys::map_title_color},
+    {"map_title_offset", Keys::map_title_offset},
+    {"map_title_size", Keys::map_title_size},
 };
 
 // ----------------------------------------------------------------------
@@ -1914,7 +1937,7 @@ template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writ
                   << JsonObjectKey("name") << aSettings.name
                   << JsonObjectKey("show") << aSettings.show
                   << JsonObjectKey("show_line") << aSettings.show
-                  << JsonObjectKey("show_ts_label") << aSettings.show_ts_label
+                  << JsonObjectKey("show_map") << aSettings.show_map
                   << JsonObjectKey("label") << aSettings.label
                   << EndObject;
 }
@@ -1968,7 +1991,6 @@ template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writ
                   << JsonObjectKey("gap") << aSettings.gap
                   << JsonObjectKey("transformation") << aSettings.transformation
                   << JsonObjectKey("viewport") << aSettings.viewport
-
                   << JsonObjectKey("background_color") << aSettings.background_color
                   << JsonObjectKey("border_color") << aSettings.border_color
                   << JsonObjectKey("border_width") << aSettings.border_width
@@ -1998,6 +2020,9 @@ template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writ
                   << JsonObjectKey("egg_antigen_aspect") << aSettings.egg_antigen_aspect
                   << JsonObjectKey("serum_circle_color") << aSettings.serum_circle_color
                   << JsonObjectKey("serum_circle_thickness") << aSettings.serum_circle_thickness
+                  << JsonObjectKey("map_title_color") << aSettings.map_title_color
+                  << JsonObjectKey("map_title_offset") << aSettings.map_title_offset
+                  << JsonObjectKey("map_title_size") << aSettings.map_title_size
                   << EndObject;
 }
 

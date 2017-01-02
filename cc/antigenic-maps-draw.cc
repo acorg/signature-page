@@ -5,7 +5,7 @@
 
 void AntigenicMapsDraw::init_settings()
 {
-    const size_t number_sections = mHzSections.sections.size();
+    const size_t number_sections = mHzSections.shown_maps();
     switch (number_sections) {
       case 0:
       case 1:
@@ -205,7 +205,7 @@ void AntigenicMapsLayout::draw_points_reset()
 
 // ----------------------------------------------------------------------
 
-void AntigenicMapsLayout::draw_chart(Surface& aSurface)
+void AntigenicMapsLayout::draw_chart(Surface& aSurface, size_t aSectionNo, const HzSection& aSection)
 {
     const AntigenicMapsDrawSettings& settings = mAntigenicMapsDraw.settings();
     const Chart& chart = mAntigenicMapsDraw.chart();
@@ -226,6 +226,11 @@ void AntigenicMapsLayout::draw_chart(Surface& aSurface)
     }
     if (drawn != mDrawPoints.size())
         std::cerr << "Warning: " << drawn << " points of " << mDrawPoints.size() << " were drawn" << std::endl;
+
+    std::string title = std::string(1, 'A' + static_cast<char>(aSectionNo)) + ". " + aSection.label;
+    const Size tsize = aSurface.text_size(title, settings.map_title_size);
+    aSurface.text({settings.map_title_offset.width - aSurface.viewport_offset().width, settings.map_title_offset.height + tsize.height - aSurface.viewport_offset().height},
+                  title, settings.map_title_color, settings.map_title_size);
 
 } // AntigenicMapsLayout::draw_chart
 
@@ -248,13 +253,15 @@ void LabelledGrid::draw()
 
     size_t row = 0, column = 0;
     for (const auto& section: mAntigenicMapsDraw.hz_sections().sections) {
-        Surface& map_surface = surface.subsurface({column * (map_width + settings.gap), row * (map_width + settings.gap)},
-                                                   {map_width, map_width}, mMapViewport.size.width, true);
-        draw_chart(map_surface);
-        ++column;
-        if (column >= settings.columns) {
-            ++row;
-            column = 0;
+        if (section.show_map) {
+            Surface& map_surface = surface.subsurface({column * (map_width + settings.gap), row * (map_width + settings.gap)},
+                                                      {map_width, map_width}, mMapViewport.size.width, true);
+            draw_chart(map_surface, row * settings.columns + column, section);
+            ++column;
+            if (column >= settings.columns) {
+                ++row;
+                column = 0;
+            }
         }
     }
 
@@ -262,9 +269,9 @@ void LabelledGrid::draw()
 
 // ----------------------------------------------------------------------
 
-void LabelledGrid::draw_chart(Surface& aSurface)
+void LabelledGrid::draw_chart(Surface& aSurface, size_t aSectionNo, const HzSection& aSection)
 {
-    AntigenicMapsLayout::draw_chart(aSurface);
+    AntigenicMapsLayout::draw_chart(aSurface, aSectionNo, aSection);
 
 } // LabelledGrid::draw_chart
 

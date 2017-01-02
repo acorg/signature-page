@@ -115,7 +115,7 @@ class TreeDrawSettings
 class HzSection
 {
  public:
-    inline HzSection(std::string aName = std::string{}, bool aShowLine = true) : show(true), show_line(aShowLine), show_ts_label(true), name(aName), line_no(0) {}
+    inline HzSection(std::string aName = std::string{}, bool aShowLine = true) : show(true), show_line(aShowLine), show_map(true), name(aName), line_no(0) {}
     inline HzSection(const HzSection&) = default;
     // inline HzSection(HzSection&&) = default;
     ~HzSection();
@@ -123,7 +123,7 @@ class HzSection
 
     bool show;
     bool show_line;
-    bool show_ts_label;
+    bool show_map;
     std::string name;           // first seq_id
     std::string label;          // antigenic map label, empty - generate automatically
 
@@ -140,6 +140,11 @@ class HzSections
     void add(std::string aSeqId, bool aShowLine);
     void sort(const Tree& aTree);
     void auto_detect(Tree& aTree, const Clades* aClades);
+
+    inline size_t shown_maps() const
+        {
+            return std::accumulate(sections.begin(), sections.end(), 0U, [](size_t a, const HzSection& section) -> size_t { return a + (section.show_map ? 1 : 0); });
+        }
 
     double vertical_gap;
     Color line_color;
