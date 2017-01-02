@@ -1412,7 +1412,7 @@ class ViewportHandler : public HandlerBase
 class MarkAntigenSettingsHandler : public HandlerBase
 {
  private:
-    enum class Keys {Unknown, show, name, scale, aspect, fill_color, outline_color, label_line_color, label, label_offset, label_size};
+    enum class Keys {Unknown, show, name, scale, aspect, rotation, fill_color, outline_color, outline_width, label_line_color, label_line_width, label, label_color, label_offset, label_size};
 
  public:
     inline MarkAntigenSettingsHandler(Settings& aSettings, MarkAntigenSettings& aField) : HandlerBase{aSettings}, mKey(Keys::Unknown), mField(aField) {}
@@ -1446,6 +1446,9 @@ class MarkAntigenSettingsHandler : public HandlerBase
               case Keys::outline_color:
                   mField.outline_color.from_string(str, length);
                   break;
+              case Keys::label_color:
+                  mField.label_color.from_string(str, length);
+                  break;
               case Keys::label_line_color:
                   mField.label_line_color.from_string(str, length);
                   break;
@@ -1465,8 +1468,17 @@ class MarkAntigenSettingsHandler : public HandlerBase
               case Keys::aspect:
                   mField.aspect = d;
                   break;
+              case Keys::rotation:
+                  mField.rotation = d;
+                  break;
               case Keys::label_size:
                   mField.label_size = d;
+                  break;
+              case Keys::outline_width:
+                  mField.outline_width = d;
+                  break;
+              case Keys::label_line_width:
+                  mField.label_line_width = d;
                   break;
               default:
                   HandlerBase::Double(d);
@@ -1514,12 +1526,16 @@ const std::map<std::string, MarkAntigenSettingsHandler::Keys> MarkAntigenSetting
     {"name", Keys::name},
     {"scale", Keys::scale},
     {"aspect", Keys::aspect},
+    {"rotation", Keys::rotation},
     {"fill_color", Keys::fill_color},
     {"outline_color", Keys::outline_color},
     {"label_line_color", Keys::label_line_color},
     {"label", Keys::label},
     {"label_offset", Keys::label_offset},
     {"label_size", Keys::label_size},
+    {"outline_width", Keys::outline_width},
+    {"label_line_width", Keys::label_line_width},
+    {"label_color", Keys::label_color},
 };
 
 // ----------------------------------------------------------------------
@@ -2123,12 +2139,16 @@ template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writ
                   << JsonObjectKey("name") << aSettings.name
                   << JsonObjectKey("scale") << aSettings.scale
                   << JsonObjectKey("aspect") << aSettings.aspect
+                  << JsonObjectKey("rotation") << aSettings.rotation
                   << JsonObjectKey("fill_color") << aSettings.fill_color
                   << JsonObjectKey("outline_color") << aSettings.outline_color
-                  << JsonObjectKey("label_line_color") << aSettings.label_line_color
+                  << JsonObjectKey("outline_width") << aSettings.outline_width
                   << JsonObjectKey("label") << aSettings.label
+                  << JsonObjectKey("label_color") << aSettings.label_color
                   << JsonObjectKey("label_offset") << aSettings.label_offset
                   << JsonObjectKey("label_size") << aSettings.label_size
+                  << JsonObjectKey("label_line_color") << aSettings.label_line_color
+                  << JsonObjectKey("label_line_width") << aSettings.label_line_width
                   << EndObject;
 }
 

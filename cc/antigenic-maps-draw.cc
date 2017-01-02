@@ -149,6 +149,25 @@ void DrawVaccineAntigen::draw(Surface& aSurface, const Point& aPoint, const Poin
 
 // ----------------------------------------------------------------------
 
+void DrawMarkedAntigen::draw(Surface& aSurface, const Point& aPoint, const PointStyle& /*aStyle*/, double aObjectScale, const AntigenicMapsDrawSettings& /*aSettings*/) const
+{
+    if (!aPoint.coordinates.isnan()) {
+        aSurface.circle_filled(aPoint.coordinates, mData.scale * aObjectScale, mData.aspect, mData.rotation, mData.outline_color, mData.outline_width * aObjectScale, mData.fill_color);
+        if (!mData.label.empty()) {
+            const TextStyle style; //(mData.label_font);
+            const auto text_size = aSurface.text_size(mData.label, mData.label_size, style);
+            const Location text_origin = aPoint.coordinates + mData.label_offset;
+            aSurface.text(text_origin, mData.label, mData.label_color, mData.label_size, style);
+            const Location text_middle = text_origin + Size(text_size.width / 2, text_origin.y > aPoint.coordinates.y ? - text_size.height * 1.2 : text_size.height * 0.2);
+            std::cerr << "MARK-ANTIGEN: " << aPoint.coordinates << " " << text_middle << std::endl;
+            aSurface.line(aPoint.coordinates, text_middle, mData.label_line_color, mData.label_line_width);
+        }
+    }
+
+} // DrawMarkedAntigen::draw
+
+// ----------------------------------------------------------------------
+
 AntigenicMapsLayout::~AntigenicMapsLayout()
 {
 
@@ -221,7 +240,29 @@ void AntigenicMapsLayout::draw_points_reset()
         }
     }
 
+    mark_marked_antigens();
+
 } // AntigenicMapsLayout::draw_points_reset
+
+// ----------------------------------------------------------------------
+
+void AntigenicMapsLayout::mark_marked_antigens()
+{
+    const auto& mark_antigens = mAntigenicMapsDraw.settings().mark_antigens;
+    mDrawMarkedAntigens.clear();
+    mDrawMarkedAntigens.reserve(mark_antigens.size()); // to avoid copying entries during emplace_back and loosing pointer for mDrawPoints
+
+    for (const auto& to_mark: mark_antigens) {
+        if (to_mark.show) {
+            const size_t point_no = mAntigenicMapsDraw.chart().find_antigen(to_mark.name);
+            if (point_no != Chart::AntigenNotFound) {
+                mDrawMarkedAntigens.emplace_back(to_mark);
+                mDrawPoints[point_no] = &mDrawMarkedAntigens.back();
+            }
+        }
+    }
+
+} // AntigenicMapsLayout::mark_marked_antigens
 
 // ----------------------------------------------------------------------
 
@@ -264,12 +305,14 @@ void AntigenicMapsLayout::draw_chart(Surface& aSurface, size_t aSectionNo, size_
 void AntigenicMapsLayout::mark_tracked_antigens(size_t aSectionIndex)
 {
     for (size_t point_no = 0; point_no < mAntigenicMapsDraw.chart().points().size(); ++point_no) {
-        const auto sequenced = mSequencedAntigens.find(point_no);
-        if (sequenced != mSequencedAntigens.end()) {
-            if (sequenced->second == aSectionIndex)
-                mDrawPoints[point_no] = &mDrawTrackedAntigen;
-            else
-                mDrawPoints[point_no] = &mDrawSequencedAntigen;
+        if (mDrawPoints[point_no] == &mDrawTrackedAntigen || mDrawPoints[point_no] == &mDrawSequencedAntigen) {
+            const auto sequenced = mSequencedAntigens.find(point_no);
+            if (sequenced != mSequencedAntigens.end()) {
+                if (sequenced->second == aSectionIndex)
+                    mDrawPoints[point_no] = &mDrawTrackedAntigen;
+                else
+                    mDrawPoints[point_no] = &mDrawSequencedAntigen;
+            }
         }
     }
 

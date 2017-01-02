@@ -16,17 +16,15 @@ class HzSections;
 class MarkAntigenSettings
 {
  public:
-    enum class Sample { Sample };
-
-    inline MarkAntigenSettings() : show(true), scale(1), aspect(1), fill_color("pink"), outline_color("black"),
-                                   label_line_color("black"), label_size(1) {}
-    inline MarkAntigenSettings(Sample) : MarkAntigenSettings() { show = false; }
+    inline MarkAntigenSettings(bool aShow = true, std::string aName = std::string())
+        : show(aShow), name(aName), label(aName), scale(5), aspect(1), rotation(0), outline_width(1), label_line_width(0.1),
+          fill_color("pink"), outline_color("magenta"),
+          label_color("magenta"), label_line_color("pink"), label_offset{-5, 2}, label_size(0.5) {}
 
     bool show;
-    std::string name;
-    double scale, aspect;
-    Color fill_color, outline_color, label_line_color;
-    std::string label;
+    std::string name, label;
+    double scale, aspect, rotation, outline_width, label_line_width;
+    Color fill_color, outline_color, label_color, label_line_color;
     Size label_offset;
     double label_size;
 
@@ -50,7 +48,7 @@ class AntigenicMapsDrawSettings
           reassortant_rotation(0.5 /* M_PI / 6.0 */), egg_antigen_aspect(0.75), serum_circle_color("black"), serum_circle_thickness(1),
           map_title_color("black"), map_title_offset{0.1, 0.1}, map_title_size(1),
           mapped_antigens_section_line_color("black"), mapped_antigens_section_line_width(2),
-          mark_antigens{{MarkAntigenSettings::Sample::Sample}}
+          mark_antigens{{true, "VT 14-002966-VIR SIAT1 (2014-06-29)"}}
         {}
     ~AntigenicMapsDrawSettings();
 
@@ -171,17 +169,17 @@ class DrawVaccineAntigen : public DrawAntigen
     virtual inline size_t level() const { return 9; }
 };
 
-// class DrawMarkedAntigen : public DrawAntigen
-// {
-//  public:
-//     inline DrawMarkedAntigen(const SettingsMarkAntigen& aData) : mData(aData) {}
+class DrawMarkedAntigen : public DrawAntigen
+{
+ public:
+    inline DrawMarkedAntigen(const MarkAntigenSettings& aData) : mData(aData) {}
 
-//     virtual void draw(Surface& aSurface, const Point& aPoint, const PointStyle& aStyle, double aObjectScale, const AntigenicMapsDrawSettings& aSettings) const;
-//     virtual inline size_t level() const { return 7; }
+    virtual void draw(Surface& aSurface, const Point& aPoint, const PointStyle& aStyle, double aObjectScale, const AntigenicMapsDrawSettings& aSettings) const;
+    virtual inline size_t level() const { return 7; }
 
-//  private:
-//     SettingsMarkAntigen mData;
-// };
+ private:
+    MarkAntigenSettings mData;
+};
 
 // ----------------------------------------------------------------------
 
@@ -213,17 +211,17 @@ class AntigenicMapsLayout
     DrawTrackedAntigen mDrawTrackedAntigen;
     std::vector<DrawTrackedAntigen> mDrawTrackedAntigensColoredByClade;
     DrawVaccineAntigen mDrawVaccineAntigen;
-      // std::vector<DrawMarkedAntigen> mDrawMarkedAntigens;
+    std::vector<DrawMarkedAntigen> mDrawMarkedAntigens;
     std::vector<DrawTrackedSerum> mDrawTrackedSera;
 
     virtual void find_sequenced_antigens();
     virtual void draw_points_reset();
     virtual void draw_chart(Surface& aSurface, size_t aSectionNo, size_t aSectionIndex);
     virtual void mark_tracked_antigens(size_t aSectionIndex);
+    virtual void mark_marked_antigens();
 
       // tracked_antigens_colored_by_clade
       // tracked_sera
-      // marked_antigens
 
 }; // class AntigenicMapsLayout
 
