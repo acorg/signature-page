@@ -1,5 +1,6 @@
 #include "antigenic-maps-draw.hh"
 #include "tree-draw.hh"
+#include "mapped-antigens-draw.hh"
 
 // ----------------------------------------------------------------------
 
@@ -56,7 +57,6 @@ void AntigenicMapsDraw::prepare()
 void AntigenicMapsDraw::draw()
 {
     mLayout->draw();
-
 
 } // AntigenicMapsDraw::draw
 
@@ -227,7 +227,9 @@ void AntigenicMapsLayout::draw_chart(Surface& aSurface, size_t aSectionNo, const
     if (drawn != mDrawPoints.size())
         std::cerr << "Warning: " << drawn << " points of " << mDrawPoints.size() << " were drawn" << std::endl;
 
-    std::string title = std::string(1, 'A' + static_cast<char>(aSectionNo)) + ". " + aSection.label;
+    std::string title = std::string(1, 'A' + static_cast<char>(aSectionNo)) + ".";
+    if (!aSection.label.empty())
+        title += " " + aSection.label;
     const Size tsize = aSurface.text_size(title, settings.map_title_size);
     aSurface.text({settings.map_title_offset.width - aSurface.viewport_offset().width, settings.map_title_offset.height + tsize.height - aSurface.viewport_offset().height},
                   title, settings.map_title_color, settings.map_title_size);
@@ -251,18 +253,20 @@ void LabelledGrid::draw()
 
     const double map_width = (surface.size().width - (settings.columns - 1) * settings.gap) / settings.columns;
 
-    size_t row = 0, column = 0;
+    size_t row = 0, column = 0, section_index = 0;
     for (const auto& section: mAntigenicMapsDraw.hz_sections().sections) {
         if (section.show_map) {
             Surface& map_surface = surface.subsurface({column * (map_width + settings.gap), row * (map_width + settings.gap)},
                                                       {map_width, map_width}, mMapViewport.size.width, true);
             draw_chart(map_surface, row * settings.columns + column, section);
+            draw_mapped_antigens_section(section_index);
             ++column;
             if (column >= settings.columns) {
                 ++row;
                 column = 0;
             }
         }
+        ++section_index;
     }
 
 } // LabelledGrid::draw
@@ -274,6 +278,22 @@ void LabelledGrid::draw_chart(Surface& aSurface, size_t aSectionNo, const HzSect
     AntigenicMapsLayout::draw_chart(aSurface, aSectionNo, aSection);
 
 } // LabelledGrid::draw_chart
+
+// ----------------------------------------------------------------------
+
+void LabelledGrid::draw_mapped_antigens_section(size_t aSectionIndex)
+{
+    const AntigenicMapsDrawSettings& settings = mAntigenicMapsDraw.settings();
+    Surface& surface = mAntigenicMapsDraw.mapped_antigens_draw().surface();
+    const auto& section = mAntigenicMapsDraw.hz_sections().sections[aSectionIndex];
+
+    const double left = 0, right = surface.size().width;
+    const double top = section.first->draw.vertical_pos, bottom = section.last->draw.vertical_pos;
+    surface.line({left, top}, {right, top}, settings.mapped_antigens_section_line_color, settings.mapped_antigens_section_line_width, Surface::LineCap::Square);
+    surface.line({left, bottom}, {right, bottom}, settings.mapped_antigens_section_line_color, settings.mapped_antigens_section_line_width, Surface::LineCap::Square);
+    surface.line({right, top}, {right, bottom}, settings.mapped_antigens_section_line_color, settings.mapped_antigens_section_line_width, Surface::LineCap::Square);
+
+} // LabelledGrid::draw_mapped_antigens_section
 
 // ----------------------------------------------------------------------
 

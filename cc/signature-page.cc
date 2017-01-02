@@ -72,7 +72,7 @@ void SignaturePageDraw::make_surface(std::string aFilename)
 
     if (mChart) {
         mMappedAntigensDraw = std::make_unique<MappedAntigensDraw>(mSurface->subsurface(false), *mTree, *mChart, mSettings->mapped_antigens);
-        mAntigenicMapsDraw = std::make_unique<AntigenicMapsDraw>(mSurface->subsurface(false), *mTree, *mChart, mSettings->hz_sections, mSettings->antigenic_maps);
+        mAntigenicMapsDraw = std::make_unique<AntigenicMapsDraw>(mSurface->subsurface(false), *mTree, *mChart, mSettings->hz_sections, *mMappedAntigensDraw, mSettings->antigenic_maps);
     }
 
 } // SignaturePageDraw::make_surface

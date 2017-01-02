@@ -1421,6 +1421,7 @@ class AntigenicMapsDrawSettingsHandler : public HandlerBase
                 vaccine_antigen_outline_color, sequenced_antigen_outline_color, sequenced_antigen_fill_color,
                 tracked_antigen_outline_color, tracked_antigen_colored_by_clade, reassortant_rotation, egg_antigen_aspect,
                 serum_circle_color, serum_circle_thickness, map_title_color, map_title_offset, map_title_size,
+                mapped_antigens_section_line_color, mapped_antigens_section_line_width,
                 };
 
  public:
@@ -1496,6 +1497,9 @@ class AntigenicMapsDrawSettingsHandler : public HandlerBase
               case Keys::map_title_color:
                   mTarget.antigenic_maps.map_title_color.from_string(str, length);
                   break;
+              case Keys::mapped_antigens_section_line_color:
+                  mTarget.antigenic_maps.mapped_antigens_section_line_color.from_string(str, length);
+                  break;
               default:
                   result = HandlerBase::String(str, length);
                   break;
@@ -1562,6 +1566,9 @@ class AntigenicMapsDrawSettingsHandler : public HandlerBase
                   break;
               case Keys::map_title_size:
                   mTarget.antigenic_maps.map_title_size = d;
+                  break;
+              case Keys::mapped_antigens_section_line_width:
+                  mTarget.antigenic_maps.mapped_antigens_section_line_width = d;
                   break;
               default:
                   HandlerBase::Double(d);
@@ -1655,6 +1662,8 @@ const std::map<std::string, AntigenicMapsDrawSettingsHandler::Keys> AntigenicMap
     {"map_title_color", Keys::map_title_color},
     {"map_title_offset", Keys::map_title_offset},
     {"map_title_size", Keys::map_title_size},
+    {"mapped_antigens_section_line_color", Keys::mapped_antigens_section_line_color},
+    {"mapped_antigens_section_line_width", Keys::mapped_antigens_section_line_width},
 };
 
 // ----------------------------------------------------------------------
@@ -2023,6 +2032,8 @@ template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writ
                   << JsonObjectKey("map_title_color") << aSettings.map_title_color
                   << JsonObjectKey("map_title_offset") << aSettings.map_title_offset
                   << JsonObjectKey("map_title_size") << aSettings.map_title_size
+                  << JsonObjectKey("mapped_antigens_section_line_color") << aSettings.mapped_antigens_section_line_color
+                  << JsonObjectKey("mapped_antigens_section_line_width") << aSettings.mapped_antigens_section_line_width
                   << EndObject;
 }
 

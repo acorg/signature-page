@@ -365,6 +365,21 @@ Node* Tree::find_leaf_by_seqid(std::string aSeqId)
 
 // ----------------------------------------------------------------------
 
+const Node* Tree::find_leaf_by_line_no(size_t line_no) const
+{
+    const Node* result = nullptr;
+    auto find_node = [&line_no,&result](const Node& aNode) -> bool {
+        if (aNode.draw.line_no == line_no)
+            result = &aNode;
+        return result != nullptr;
+    };
+    tree::iterate_leaf_stop(*this, find_node);
+    return result;
+
+} // Tree::find_leaf_by_line_no
+
+// ----------------------------------------------------------------------
+
 void Tree::sequences_per_month(std::map<Date, size_t>& spm) const
 {
     auto worker = [&spm](const Node& aNode) -> void {

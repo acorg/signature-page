@@ -27,7 +27,8 @@ class AntigenicMapsDrawSettings
           test_antigen_fill_color("grey88"), vaccine_antigen_outline_color("white"), sequenced_antigen_outline_color("white"), sequenced_antigen_fill_color("grey63"),
           tracked_antigen_outline_color("white"), tracked_antigen_colored_by_clade(false),
           reassortant_rotation(0.5 /* M_PI / 6.0 */), egg_antigen_aspect(0.75), serum_circle_color("black"), serum_circle_thickness(1),
-          map_title_color("black"), map_title_offset{0.1, 0.1}, map_title_size(1)
+          map_title_color("black"), map_title_offset{0.1, 0.1}, map_title_size(1),
+          mapped_antigens_section_line_color("black"), mapped_antigens_section_line_width(2)
         {}
     ~AntigenicMapsDrawSettings();
 
@@ -51,6 +52,8 @@ class AntigenicMapsDrawSettings
     Color map_title_color;
     Size map_title_offset;
     double map_title_size;
+    Color mapped_antigens_section_line_color;
+    double mapped_antigens_section_line_width;
 
 }; // class AntigenicMapsDrawSettings
 
@@ -159,6 +162,7 @@ class DrawVaccineAntigen : public DrawAntigen
 
 class AntigenicMapsDraw;
 class HzSection;
+class MappedAntigensDraw;
 
 class AntigenicMapsLayout
 {
@@ -196,8 +200,8 @@ class AntigenicMapsLayout
 class AntigenicMapsDraw
 {
  public:
-    inline AntigenicMapsDraw(Surface& aSurface, Tree& aTree, Chart& aChart, HzSections& aHzSections, AntigenicMapsDrawSettings& aSettings)
-        : mSurface(aSurface), mTree(aTree), mChart(aChart), mHzSections(aHzSections), mSettings(aSettings) {}
+    inline AntigenicMapsDraw(Surface& aSurface, Tree& aTree, Chart& aChart, HzSections& aHzSections, MappedAntigensDraw& aMappedAntigensDraw, AntigenicMapsDrawSettings& aSettings)
+        : mSurface(aSurface), mTree(aTree), mChart(aChart), mHzSections(aHzSections), mMappedAntigensDraw(aMappedAntigensDraw), mSettings(aSettings) {}
 
     void init_settings();
     void prepare();
@@ -207,6 +211,7 @@ class AntigenicMapsDraw
     inline const Tree& tree() const { return mTree; }
     inline const Chart& chart() const { return mChart; }
     inline const HzSections& hz_sections() const { return mHzSections; }
+    inline MappedAntigensDraw& mapped_antigens_draw() { return mMappedAntigensDraw; }
     inline const AntigenicMapsDrawSettings& settings() const { return mSettings; }
 
  private:
@@ -214,25 +219,9 @@ class AntigenicMapsDraw
     Tree& mTree;
     Chart& mChart;
     HzSections& mHzSections;
+    MappedAntigensDraw& mMappedAntigensDraw;
     AntigenicMapsDrawSettings& mSettings;
     std::unique_ptr<AntigenicMapsLayout> mLayout;
-    // Viewport mMapViewport;
-
-    // std::vector<const DrawPoint*> mDrawPoints;
-
-    // DrawSerum mDrawSerum;
-    //   // DrawTrackedSerum mDrawTrackedSerum;
-    // DrawReferenceAntigen mDrawReferenceAntigen;
-    // DrawTestAntigen mDrawTestAntigen;
-    // DrawSequencedAntigen mDrawSequencedAntigen;
-    // DrawTrackedAntigen mDrawTrackedAntigen;
-    // std::vector<DrawTrackedAntigen> mDrawTrackedAntigensColoredByClade;
-    // DrawVaccineAntigen mDrawVaccineAntigen;
-    //   // std::vector<DrawMarkedAntigen> mDrawMarkedAntigens;
-    // std::vector<DrawTrackedSerum> mDrawTrackedSera;
-
-    // void draw_points_reset();
-    // void draw_chart(Surface& aSurface);
 
 }; // class AntigenicMapsDraw
 
@@ -248,6 +237,7 @@ class LabelledGrid : public AntigenicMapsLayout
 
  protected:
     virtual void draw_chart(Surface& aSurface, size_t aSectionNo, const HzSection& aSection);
+    virtual void draw_mapped_antigens_section(size_t aSectionIndex);
 
 }; // class LabelledGrid
 

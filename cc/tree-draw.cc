@@ -346,16 +346,21 @@ void TreeDraw::draw_legend()
 
 void HzSections::sort(const Tree& aTree)
 {
-    auto set_line_no = [this](const Node& node) {
+    auto set_first_node = [this](const Node& node) {
         auto sec = std::find_if(sections.begin(), sections.end(), [&node](const auto& s) -> bool { return s.name == node.seq_id; });
         if (sec != sections.end()) {
-            sec->line_no = node.draw.line_no;
+            sec->first = &node;
         }
     };
 
-    tree::iterate_leaf(aTree, set_line_no);
+    tree::iterate_leaf(aTree, set_first_node);
 
-    std::sort(sections.begin(), sections.end(), [](const auto& a, const auto& b) -> bool { return a.line_no < b.line_no; });
+    std::sort(sections.begin(), sections.end(), [](const auto& a, const auto& b) -> bool { return a.first->draw.line_no < b.first->draw.line_no; });
+
+    for (size_t sec_index = 1; sec_index < sections.size(); ++sec_index) {
+        sections[sec_index - 1].last = aTree.find_leaf_by_line_no(sections[sec_index].first->draw.line_no - 1);
+    }
+    sections.back().last = &find_last_leaf(aTree);
 
 } // HzSections::sort
 
