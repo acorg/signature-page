@@ -256,8 +256,7 @@ class Chart
     void calculate_viewport(const Transformation* aSettingsTransformation);
     void bounding_rectangle(Viewport& aViewport) const;
 
-      // std::set<size_t> mSequencedAntigens;
-      // mutable std::vector<const DrawPoint*> mDrawPoints;
+      //std::set<size_t> mSequencedAntigens;
       // DrawSerum mDrawSerum;
       //   // DrawTrackedSerum mDrawTrackedSerum;
       // DrawReferenceAntigen mDrawReferenceAntigen;

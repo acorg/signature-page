@@ -178,6 +178,7 @@ class AntigenicMapsLayout
     Viewport mMapViewport;
 
     std::vector<const DrawPoint*> mDrawPoints;
+    std::map<size_t, size_t> mSequencedAntigens; // antigen_no to section_no
 
     DrawSerum mDrawSerum;
       // DrawTrackedSerum mDrawTrackedSerum;
@@ -190,6 +191,7 @@ class AntigenicMapsLayout
       // std::vector<DrawMarkedAntigen> mDrawMarkedAntigens;
     std::vector<DrawTrackedSerum> mDrawTrackedSera;
 
+    virtual void find_sequenced_antigens();
     virtual void draw_points_reset();
     virtual void draw_chart(Surface& aSurface, size_t aSectionNo, const HzSection& aSection);
 

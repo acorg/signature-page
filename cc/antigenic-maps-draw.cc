@@ -1,6 +1,7 @@
 #include "antigenic-maps-draw.hh"
 #include "tree-draw.hh"
 #include "mapped-antigens-draw.hh"
+#include "tree-iterate.hh"
 
 // ----------------------------------------------------------------------
 
@@ -165,6 +166,7 @@ void AntigenicMapsLayout::prepare()
     }
     std::cout << "Using viewport: " << mMapViewport << std::endl;
 
+    find_sequenced_antigens();
     draw_points_reset();
 
     // mPrefixName.clear();
@@ -177,6 +179,22 @@ void AntigenicMapsLayout::prepare()
 
 // ----------------------------------------------------------------------
 
+void AntigenicMapsLayout::find_sequenced_antigens()
+{
+    size_t hz_section_index = NodeDrawData::HzSectionNoIndex;
+    auto find_antigens = [this,&hz_section_index](const Node& aNode) {
+        if (aNode.draw.hz_section_index != NodeDrawData::HzSectionNoIndex)
+            hz_section_index = aNode.draw.hz_section_index;
+        if (aNode.draw.chart_antigen_index != Chart::AntigenNotFound)
+            mSequencedAntigens[aNode.draw.chart_antigen_index] = hz_section_index;
+    };
+
+    tree::iterate_leaf(mAntigenicMapsDraw.tree(), find_antigens);
+
+} // AntigenicMapsLayout::find_sequenced_antigens
+
+// ----------------------------------------------------------------------
+
 void AntigenicMapsLayout::draw_points_reset()
 {
     mDrawPoints.resize(mAntigenicMapsDraw.chart().points().size(), nullptr);
@@ -186,9 +204,9 @@ void AntigenicMapsLayout::draw_points_reset()
             if (p.attributes.vaccine) {
                 mDrawPoints[point_no] = &mDrawVaccineAntigen;
             }
-            // else if (mSequencedAntigens.find(point_no) != mSequencedAntigens.end()) {
-            //     mDrawPoints[point_no] = &mDrawSequencedAntigen;
-            // }
+            else if (mSequencedAntigens.find(point_no) != mSequencedAntigens.end()) {
+                mDrawPoints[point_no] = &mDrawSequencedAntigen;
+            }
             else if (p.attributes.reference) {
                 mDrawPoints[point_no] = &mDrawReferenceAntigen;
             }
