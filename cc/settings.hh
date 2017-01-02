@@ -6,6 +6,7 @@
 #include "clades-draw.hh"
 #include "mapped-antigens-draw.hh"
 #include "antigenic-maps-draw.hh"
+#include "title-draw.hh"
 
 // ----------------------------------------------------------------------
 
@@ -21,6 +22,7 @@ class Settings
     HzSections hz_sections;
     MappedAntigensDrawSettings mapped_antigens;
     AntigenicMapsDrawSettings antigenic_maps;
+    TitleDrawSettings title;
 
 }; // class Settings
 

@@ -52,6 +52,10 @@ AntigenicMapsDrawSettings::~AntigenicMapsDrawSettings()
 {
 }
 
+TitleDrawSettings::~TitleDrawSettings()
+{
+}
+
 // ----------------------------------------------------------------------
 
 class SettingsTextStyleHandler : public HandlerBase

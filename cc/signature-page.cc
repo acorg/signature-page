@@ -13,6 +13,7 @@
 #include "chart.hh"
 #include "mapped-antigens-draw.hh"
 #include "antigenic-maps-draw.hh"
+#include "title-draw.hh"
 
 // ----------------------------------------------------------------------
 
@@ -66,6 +67,7 @@ void SignaturePageDraw::make_surface(std::string aFilename)
     }
     mSurface = std::make_unique<PdfCairo>(aFilename, width, height);
 
+    mTitleDraw = std::make_unique<TitleDraw>(mSurface->subsurface(false), mSettings->title);
     mTreeDraw = std::make_unique<TreeDraw>(mSurface->subsurface(false), *mTree, mSettings->tree_draw, mSettings->hz_sections);
     mTimeSeriesDraw = std::make_unique<TimeSeriesDraw>(mSurface->subsurface(false), *mTree, *mTreeDraw, mSettings->hz_sections, mSettings->time_series);
     mCladesDraw = std::make_unique<CladesDraw>(mSurface->subsurface(false), *mTree, *mTreeDraw, *mTimeSeriesDraw, mSettings->clades);
@@ -109,6 +111,8 @@ void SignaturePageDraw::init_settings()
 {
     mSettings->signature_page.bottom = mSettings->signature_page.top;
 
+    if (mTitleDraw)
+        mTitleDraw->init_settings();
     if (mTreeDraw)
         mTreeDraw->set_line_no(); // hides leaves too
     if (mCladesDraw)
@@ -206,6 +210,8 @@ void SignaturePageDraw::prepare()
           break;
     }
 
+    if (mTitleDraw)
+        mTitleDraw->prepare();
     if (mTreeDraw)
         mTreeDraw->prepare();
     if (mTimeSeriesDraw)
@@ -271,6 +277,7 @@ void SignaturePageDraw::make_layout_tree_clades_ts_maps()
     mCladesDraw->surface().move_resize({clades_left, mSettings->signature_page.top}, {clades_width, section_height}, page_size.width * clades_width / tree_width);
     mMappedAntigensDraw->surface().move_resize({mapped_antigens_left, mSettings->signature_page.top}, {mapped_antigens_width, section_height}, page_size.width * mapped_antigens_width / tree_width);
     mAntigenicMapsDraw->surface().move_resize({antigic_maps_left, mSettings->signature_page.top}, {antigic_maps_width, section_height}, page_size.width * antigic_maps_width / tree_width);
+    mTitleDraw->surface().move_resize({0, 0}, page_size, page_size.width);
 
 } // SignaturePageDraw::make_layout_tree_clades_ts_maps
 
@@ -291,6 +298,8 @@ void SignaturePageDraw::draw()
         mMappedAntigensDraw->draw();
     if (mAntigenicMapsDraw)
         mAntigenicMapsDraw->draw();
+    if (mTitleDraw)
+        mTitleDraw->draw();
 
 } // SignaturePageDraw::draw
 

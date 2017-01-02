@@ -19,6 +19,7 @@ class CladesDraw;
 class Chart;
 class MappedAntigensDraw;
 class AntigenicMapsDraw;
+class TitleDraw;
 
 // ----------------------------------------------------------------------
 
@@ -96,6 +97,7 @@ class SignaturePageDraw
     std::unique_ptr<Chart> mChart;
     std::unique_ptr<MappedAntigensDraw> mMappedAntigensDraw;
     std::unique_ptr<AntigenicMapsDraw> mAntigenicMapsDraw;
+    std::unique_ptr<TitleDraw> mTitleDraw;
 
     SignaturePageDrawSettings::Layout detect_layout() const;
     void make_layout_tree_ts_clades();
