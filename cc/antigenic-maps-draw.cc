@@ -223,15 +223,18 @@ void AntigenicMapsLayout::draw_points_reset()
 
 // ----------------------------------------------------------------------
 
-void AntigenicMapsLayout::draw_chart(Surface& aSurface, size_t aSectionNo, const HzSection& aSection)
+void AntigenicMapsLayout::draw_chart(Surface& aSurface, size_t aSectionNo, size_t aSectionIndex)
 {
     const AntigenicMapsDrawSettings& settings = mAntigenicMapsDraw.settings();
     const Chart& chart = mAntigenicMapsDraw.chart();
+    const HzSection& section = mAntigenicMapsDraw.hz_sections().sections[aSectionIndex];
 
     aSurface.background(settings.background_color);
     aSurface.grid(1, settings.grid_line_color, settings.grid_line_width);
     aSurface.border(settings.border_color, settings.border_width * 2);
     aSurface.viewport_offset(mMapViewport.offset());
+
+    mark_tracked_antigens(aSectionIndex);
 
     size_t drawn = 0;
     for (size_t level = 0; level < 10 && drawn < mDrawPoints.size(); ++level) {
@@ -246,13 +249,29 @@ void AntigenicMapsLayout::draw_chart(Surface& aSurface, size_t aSectionNo, const
         std::cerr << "Warning: " << drawn << " points of " << mDrawPoints.size() << " were drawn" << std::endl;
 
     std::string title = std::string(1, 'A' + static_cast<char>(aSectionNo)) + ".";
-    if (!aSection.label.empty())
-        title += " " + aSection.label;
+    if (!section.label.empty())
+        title += " " + section.label;
     const Size tsize = aSurface.text_size(title, settings.map_title_size);
     aSurface.text({settings.map_title_offset.width - aSurface.viewport_offset().width, settings.map_title_offset.height + tsize.height - aSurface.viewport_offset().height},
                   title, settings.map_title_color, settings.map_title_size);
 
 } // AntigenicMapsLayout::draw_chart
+
+// ----------------------------------------------------------------------
+
+void AntigenicMapsLayout::mark_tracked_antigens(size_t aSectionIndex)
+{
+    for (size_t point_no = 0; point_no < mAntigenicMapsDraw.chart().points().size(); ++point_no) {
+        const auto sequenced = mSequencedAntigens.find(point_no);
+        if (sequenced != mSequencedAntigens.end()) {
+            if (sequenced->second == aSectionIndex)
+                mDrawPoints[point_no] = &mDrawTrackedAntigen;
+            else
+                mDrawPoints[point_no] = &mDrawSequencedAntigen;
+        }
+    }
+
+} // AntigenicMapsLayout::mark_tracked_antigens
 
 // ----------------------------------------------------------------------
 
@@ -276,7 +295,7 @@ void LabelledGrid::draw()
         if (section.show_map) {
             Surface& map_surface = surface.subsurface({column * (map_width + settings.gap), row * (map_width + settings.gap)},
                                                       {map_width, map_width}, mMapViewport.size.width, true);
-            draw_chart(map_surface, row * settings.columns + column, section);
+            draw_chart(map_surface, row * settings.columns + column, section_index);
             draw_mapped_antigens_section(section_index);
             ++column;
             if (column >= settings.columns) {
@@ -291,9 +310,9 @@ void LabelledGrid::draw()
 
 // ----------------------------------------------------------------------
 
-void LabelledGrid::draw_chart(Surface& aSurface, size_t aSectionNo, const HzSection& aSection)
+void LabelledGrid::draw_chart(Surface& aSurface, size_t aSectionNo, size_t aSectionIndex)
 {
-    AntigenicMapsLayout::draw_chart(aSurface, aSectionNo, aSection);
+    AntigenicMapsLayout::draw_chart(aSurface, aSectionNo, aSectionIndex);
 
 } // LabelledGrid::draw_chart
 
