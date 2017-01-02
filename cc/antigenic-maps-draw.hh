@@ -13,6 +13,27 @@ class HzSections;
 
 // ----------------------------------------------------------------------
 
+class MarkAntigenSettings
+{
+ public:
+    enum class Sample { Sample };
+
+    inline MarkAntigenSettings() : show(true), scale(1), aspect(1), fill_color("pink"), outline_color("black"),
+                                   label_line_color("black"), label_size(1) {}
+    inline MarkAntigenSettings(Sample) : MarkAntigenSettings() { show = false; }
+
+    bool show;
+    std::string name;
+    double scale, aspect;
+    Color fill_color, outline_color, label_line_color;
+    std::string label;
+    Size label_offset;
+    double label_size;
+
+}; // class MarkAntigenSettings
+
+// ----------------------------------------------------------------------
+
 class AntigenicMapsDrawSettings
 {
  public:
@@ -25,10 +46,11 @@ class AntigenicMapsDrawSettings
           sequenced_antigen_outline_width(0.5), tracked_antigen_outline_width(0.5),
           serum_outline_color("grey88"), reference_antigen_outline_color("grey88"), test_antigen_outline_color("grey88"),
           test_antigen_fill_color("grey88"), vaccine_antigen_outline_color("white"), sequenced_antigen_outline_color("white"), sequenced_antigen_fill_color("grey63"),
-          tracked_antigen_outline_color("white"), tracked_antigen_colored_by_clade(false),
+          tracked_antigen_outline_color("white"), tracked_antigen_colored_by_clade(false), tracked_antigen_color("green2"),
           reassortant_rotation(0.5 /* M_PI / 6.0 */), egg_antigen_aspect(0.75), serum_circle_color("black"), serum_circle_thickness(1),
           map_title_color("black"), map_title_offset{0.1, 0.1}, map_title_size(1),
-          mapped_antigens_section_line_color("black"), mapped_antigens_section_line_width(2)
+          mapped_antigens_section_line_color("black"), mapped_antigens_section_line_width(2),
+          mark_antigens{{MarkAntigenSettings::Sample::Sample}}
         {}
     ~AntigenicMapsDrawSettings();
 
@@ -46,6 +68,7 @@ class AntigenicMapsDrawSettings
     double serum_outline_width, reference_antigen_outline_width, test_antigen_outline_width, vaccine_antigen_outline_width, sequenced_antigen_outline_width, tracked_antigen_outline_width;
     Color serum_outline_color, reference_antigen_outline_color, test_antigen_outline_color, test_antigen_fill_color, vaccine_antigen_outline_color, sequenced_antigen_outline_color, sequenced_antigen_fill_color, tracked_antigen_outline_color;
     bool tracked_antigen_colored_by_clade;
+    Color tracked_antigen_color;
     double reassortant_rotation, egg_antigen_aspect;
     Color serum_circle_color;
     double serum_circle_thickness;
@@ -54,6 +77,8 @@ class AntigenicMapsDrawSettings
     double map_title_size;
     Color mapped_antigens_section_line_color;
     double mapped_antigens_section_line_width;
+
+    std::vector<MarkAntigenSettings> mark_antigens;
 
 }; // class AntigenicMapsDrawSettings
 

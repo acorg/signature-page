@@ -197,6 +197,8 @@ void AntigenicMapsLayout::find_sequenced_antigens()
 
 void AntigenicMapsLayout::draw_points_reset()
 {
+    mDrawTrackedAntigen.color(mAntigenicMapsDraw.settings().tracked_antigen_color);
+
     mDrawPoints.resize(mAntigenicMapsDraw.chart().points().size(), nullptr);
     for (size_t point_no = 0; point_no < mAntigenicMapsDraw.chart().points().size(); ++point_no) {
         const auto& p = mAntigenicMapsDraw.chart().points()[point_no];
