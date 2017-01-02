@@ -17,7 +17,7 @@ class AntigenicMapsDrawSettings
 {
  public:
     inline AntigenicMapsDrawSettings()
-        : width(500), columns(3), gap(20),
+        : layout("labelled_grid"), width(500), columns(3), gap(20),
           border_width(0.05), grid_line_width(0.025),
           border_color("black"), grid_line_color("grey63"), background_color("white"), // 0xFFFFF8
           serum_scale(5), reference_antigen_scale(5), test_antigen_scale(3), vaccine_antigen_scale(8), tracked_antigen_scale(5),
@@ -29,6 +29,7 @@ class AntigenicMapsDrawSettings
           reassortant_rotation(0.5 /* M_PI / 6.0 */), egg_antigen_aspect(0.75), serum_circle_color("black"), serum_circle_thickness(1) {}
     ~AntigenicMapsDrawSettings();
 
+    std::string layout;
     double width;
     size_t columns;
     double gap;
@@ -151,24 +152,19 @@ class DrawVaccineAntigen : public DrawAntigen
 
 // ----------------------------------------------------------------------
 
-class AntigenicMapsDraw
+class AntigenicMapsDraw;
+
+class AntigenicMapsLayout
 {
  public:
-    inline AntigenicMapsDraw(Surface& aSurface, Tree& aTree, Chart& aChart, HzSections& aHzSections, AntigenicMapsDrawSettings& aSettings)
-        : mSurface(aSurface), mTree(aTree), mChart(aChart), mHzSections(aHzSections), mSettings(aSettings) {}
+    inline AntigenicMapsLayout(AntigenicMapsDraw& aAntigenicMapsDraw) : mAntigenicMapsDraw(aAntigenicMapsDraw) {}
+    virtual ~AntigenicMapsLayout();
 
-    void init_settings();
-    void prepare();
-    void draw();
+    virtual void prepare();
+    virtual void draw() = 0;
 
-    inline Surface& surface() { return mSurface; }
-
- private:
-    Surface& mSurface;
-    Tree& mTree;
-    Chart& mChart;
-    HzSections& mHzSections;
-    AntigenicMapsDrawSettings& mSettings;
+ protected:
+    AntigenicMapsDraw& mAntigenicMapsDraw;
     Viewport mMapViewport;
 
     std::vector<const DrawPoint*> mDrawPoints;
@@ -184,10 +180,70 @@ class AntigenicMapsDraw
       // std::vector<DrawMarkedAntigen> mDrawMarkedAntigens;
     std::vector<DrawTrackedSerum> mDrawTrackedSera;
 
-    void draw_points_reset();
-    void draw_chart(Surface& aSurface);
+    virtual void draw_points_reset();
+    virtual void draw_chart(Surface& aSurface);
+
+}; // class AntigenicMapsLayout
+
+// ----------------------------------------------------------------------
+
+class AntigenicMapsDraw
+{
+ public:
+    inline AntigenicMapsDraw(Surface& aSurface, Tree& aTree, Chart& aChart, HzSections& aHzSections, AntigenicMapsDrawSettings& aSettings)
+        : mSurface(aSurface), mTree(aTree), mChart(aChart), mHzSections(aHzSections), mSettings(aSettings) {}
+
+    void init_settings();
+    void prepare();
+    void draw();
+
+    inline Surface& surface() { return mSurface; }
+    inline const Tree& tree() const { return mTree; }
+    inline const Chart& chart() const { return mChart; }
+    inline const HzSections& hz_sections() const { return mHzSections; }
+    inline const AntigenicMapsDrawSettings& settings() const { return mSettings; }
+
+ private:
+    Surface& mSurface;
+    Tree& mTree;
+    Chart& mChart;
+    HzSections& mHzSections;
+    AntigenicMapsDrawSettings& mSettings;
+    std::unique_ptr<AntigenicMapsLayout> mLayout;
+    // Viewport mMapViewport;
+
+    // std::vector<const DrawPoint*> mDrawPoints;
+
+    // DrawSerum mDrawSerum;
+    //   // DrawTrackedSerum mDrawTrackedSerum;
+    // DrawReferenceAntigen mDrawReferenceAntigen;
+    // DrawTestAntigen mDrawTestAntigen;
+    // DrawSequencedAntigen mDrawSequencedAntigen;
+    // DrawTrackedAntigen mDrawTrackedAntigen;
+    // std::vector<DrawTrackedAntigen> mDrawTrackedAntigensColoredByClade;
+    // DrawVaccineAntigen mDrawVaccineAntigen;
+    //   // std::vector<DrawMarkedAntigen> mDrawMarkedAntigens;
+    // std::vector<DrawTrackedSerum> mDrawTrackedSera;
+
+    // void draw_points_reset();
+    // void draw_chart(Surface& aSurface);
 
 }; // class AntigenicMapsDraw
+
+// ----------------------------------------------------------------------
+
+class LabelledGrid : public AntigenicMapsLayout
+{
+ public:
+    inline LabelledGrid(AntigenicMapsDraw& aAntigenicMapsDraw) : AntigenicMapsLayout(aAntigenicMapsDraw) {}
+
+    virtual void prepare();
+    virtual void draw();
+
+ protected:
+    virtual void draw_chart(Surface& aSurface);
+    
+}; // class LabelledGrid
 
 // ----------------------------------------------------------------------
 /// Local Variables:

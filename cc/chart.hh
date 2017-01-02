@@ -236,6 +236,7 @@ class Chart
     inline std::vector<double>& column_bases() { return mColumnBases; }
 
     inline const Viewport& viewport(const Transformation* aSettingsTransformation) { calculate_viewport(aSettingsTransformation); return mViewport; }
+    inline const Viewport& viewport(const Transformation* aSettingsTransformation) const { return const_cast<Chart*>(this)->viewport(aSettingsTransformation); }
 
  private:
     double mStress;

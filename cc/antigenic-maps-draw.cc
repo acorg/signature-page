@@ -41,93 +41,24 @@ void AntigenicMapsDraw::init_settings()
 
 void AntigenicMapsDraw::prepare()
 {
-    if (!mSettings.viewport.empty()) {
-        mMapViewport = mSettings.viewport;
+    if (mSettings.layout == "labelled_grid") {
+        mLayout = std::make_unique<LabelledGrid>(*this);
     }
     else {
-        mMapViewport = mChart.viewport(&mSettings.transformation);
+        throw std::runtime_error("Unrecognized antigenic maps layout: " + mSettings.layout);
     }
-    std::cout << "Using viewport: " << mMapViewport << std::endl;
-
-    draw_points_reset();
-
-    // mPrefixName.clear();
-    // for (const auto& p: mPoints) {
-    //     mPrefixName.insert(p.name.substr(0, p.name.find(1, ' ')));
-    // }
+    mLayout->prepare();
 
 } // AntigenicMapsDraw::prepare
 
 // ----------------------------------------------------------------------
 
-void AntigenicMapsDraw::draw_points_reset()
-{
-    mDrawPoints.resize(mChart.points().size(), nullptr);
-    for (size_t point_no = 0; point_no < mChart.points().size(); ++point_no) {
-        const auto& p = mChart.points()[point_no];
-        if (p.attributes.antigen) {
-            if (p.attributes.vaccine) {
-                mDrawPoints[point_no] = &mDrawVaccineAntigen;
-            }
-            // else if (mSequencedAntigens.find(point_no) != mSequencedAntigens.end()) {
-            //     mDrawPoints[point_no] = &mDrawSequencedAntigen;
-            // }
-            else if (p.attributes.reference) {
-                mDrawPoints[point_no] = &mDrawReferenceAntigen;
-            }
-            else {
-                mDrawPoints[point_no] = &mDrawTestAntigen;
-            }
-        }
-        else {
-            mDrawPoints[point_no] = &mDrawSerum;
-        }
-    }
-
-} // AntigenicMapsDraw::draw_points_reset
-
-// ----------------------------------------------------------------------
-
 void AntigenicMapsDraw::draw()
 {
-    const double map_width = (mSurface.size().width - (mSettings.columns - 1) * mSettings.gap) / mSettings.columns;
+    mLayout->draw();
 
-    size_t row = 0, column = 0;
-    for (const auto& section: mHzSections.sections) {
-        Surface& map_surface = mSurface.subsurface({column * (map_width + mSettings.gap), row * (map_width + mSettings.gap)},
-                                                   {map_width, map_width}, mMapViewport.size.width, true);
-        draw_chart(map_surface);
-        ++column;
-        if (column >= mSettings.columns) {
-            ++row;
-            column = 0;
-        }
-    }
 
 } // AntigenicMapsDraw::draw
-
-// ----------------------------------------------------------------------
-
-void AntigenicMapsDraw::draw_chart(Surface& aSurface)
-{
-    aSurface.background(mSettings.background_color);
-    aSurface.grid(1, mSettings.grid_line_color, mSettings.grid_line_width);
-    aSurface.border(mSettings.border_color, mSettings.border_width * 2);
-    aSurface.viewport_offset(mMapViewport.offset());
-
-    size_t drawn = 0;
-    for (size_t level = 0; level < 10 && drawn < mDrawPoints.size(); ++level) {
-        for (size_t point_no = 0; point_no < mDrawPoints.size(); ++point_no) {
-           if (mDrawPoints[point_no]->level() == level) {
-               mDrawPoints[point_no]->draw(aSurface, mChart.points()[point_no], mChart.plot_style().style(point_no), 0.1, mSettings);
-                ++drawn;
-            }
-        }
-    }
-    if (drawn != mDrawPoints.size())
-        std::cerr << "Warning: " << drawn << " points of " << mDrawPoints.size() << " were drawn" << std::endl;
-
-} // AntigenicMapsDraw::draw_chart
 
 // ----------------------------------------------------------------------
 
@@ -214,6 +145,128 @@ void DrawVaccineAntigen::draw(Surface& aSurface, const Point& aPoint, const Poin
     }
 
 } // DrawVaccineAntigen::draw
+
+// ----------------------------------------------------------------------
+
+AntigenicMapsLayout::~AntigenicMapsLayout()
+{
+
+} // AntigenicMapsLayout::~AntigenicMapsLayout
+
+// ----------------------------------------------------------------------
+
+void AntigenicMapsLayout::prepare()
+{
+    if (!mAntigenicMapsDraw.settings().viewport.empty()) {
+        mMapViewport = mAntigenicMapsDraw.settings().viewport;
+    }
+    else {
+        mMapViewport = mAntigenicMapsDraw.chart().viewport(&mAntigenicMapsDraw.settings().transformation);
+    }
+    std::cout << "Using viewport: " << mMapViewport << std::endl;
+
+    draw_points_reset();
+
+    // mPrefixName.clear();
+    // for (const auto& p: mPoints) {
+    //     mPrefixName.insert(p.name.substr(0, p.name.find(1, ' ')));
+    // }
+
+
+} // AntigenicMapsLayout::prepare
+
+// ----------------------------------------------------------------------
+
+void AntigenicMapsLayout::draw_points_reset()
+{
+    mDrawPoints.resize(mAntigenicMapsDraw.chart().points().size(), nullptr);
+    for (size_t point_no = 0; point_no < mAntigenicMapsDraw.chart().points().size(); ++point_no) {
+        const auto& p = mAntigenicMapsDraw.chart().points()[point_no];
+        if (p.attributes.antigen) {
+            if (p.attributes.vaccine) {
+                mDrawPoints[point_no] = &mDrawVaccineAntigen;
+            }
+            // else if (mSequencedAntigens.find(point_no) != mSequencedAntigens.end()) {
+            //     mDrawPoints[point_no] = &mDrawSequencedAntigen;
+            // }
+            else if (p.attributes.reference) {
+                mDrawPoints[point_no] = &mDrawReferenceAntigen;
+            }
+            else {
+                mDrawPoints[point_no] = &mDrawTestAntigen;
+            }
+        }
+        else {
+            mDrawPoints[point_no] = &mDrawSerum;
+        }
+    }
+
+} // AntigenicMapsLayout::draw_points_reset
+
+// ----------------------------------------------------------------------
+
+void AntigenicMapsLayout::draw_chart(Surface& aSurface)
+{
+    const AntigenicMapsDrawSettings& settings = mAntigenicMapsDraw.settings();
+    const Chart& chart = mAntigenicMapsDraw.chart();
+
+    aSurface.background(settings.background_color);
+    aSurface.grid(1, settings.grid_line_color, settings.grid_line_width);
+    aSurface.border(settings.border_color, settings.border_width * 2);
+    aSurface.viewport_offset(mMapViewport.offset());
+
+    size_t drawn = 0;
+    for (size_t level = 0; level < 10 && drawn < mDrawPoints.size(); ++level) {
+        for (size_t point_no = 0; point_no < mDrawPoints.size(); ++point_no) {
+           if (mDrawPoints[point_no]->level() == level) {
+               mDrawPoints[point_no]->draw(aSurface, chart.points()[point_no], chart.plot_style().style(point_no), 0.1, settings);
+                ++drawn;
+            }
+        }
+    }
+    if (drawn != mDrawPoints.size())
+        std::cerr << "Warning: " << drawn << " points of " << mDrawPoints.size() << " were drawn" << std::endl;
+
+} // AntigenicMapsLayout::draw_chart
+
+// ----------------------------------------------------------------------
+
+void LabelledGrid::prepare()
+{
+    AntigenicMapsLayout::prepare();
+
+} // LabelledGrid::prepare
+
+// ----------------------------------------------------------------------
+
+void LabelledGrid::draw()
+{
+    const AntigenicMapsDrawSettings& settings = mAntigenicMapsDraw.settings();
+    Surface& surface = mAntigenicMapsDraw.surface();
+
+    const double map_width = (surface.size().width - (settings.columns - 1) * settings.gap) / settings.columns;
+
+    size_t row = 0, column = 0;
+    for (const auto& section: mAntigenicMapsDraw.hz_sections().sections) {
+        Surface& map_surface = surface.subsurface({column * (map_width + settings.gap), row * (map_width + settings.gap)},
+                                                   {map_width, map_width}, mMapViewport.size.width, true);
+        draw_chart(map_surface);
+        ++column;
+        if (column >= settings.columns) {
+            ++row;
+            column = 0;
+        }
+    }
+
+} // LabelledGrid::draw
+
+// ----------------------------------------------------------------------
+
+void LabelledGrid::draw_chart(Surface& aSurface)
+{
+    AntigenicMapsLayout::draw_chart(aSurface);
+
+} // LabelledGrid::draw_chart
 
 // ----------------------------------------------------------------------
 

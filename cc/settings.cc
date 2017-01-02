@@ -1412,7 +1412,7 @@ class ViewportHandler : public HandlerBase
 class AntigenicMapsDrawSettingsHandler : public HandlerBase
 {
  private:
-    enum class Keys {Unknown, width, columns, gap, transformation, viewport,
+    enum class Keys {Unknown, layout, width, columns, gap, transformation, viewport,
                 background_color, border_width, border_color, grid_line_width, grid_line_color,
                 serum_scale, reference_antigen_scale, test_antigen_scale, vaccine_antigen_scale, tracked_antigen_scale,
                 serum_outline_width, reference_antigen_outline_width, test_antigen_outline_width, vaccine_antigen_outline_width,
@@ -1454,6 +1454,9 @@ class AntigenicMapsDrawSettingsHandler : public HandlerBase
         {
             HandlerBase* result = nullptr;
             switch (mKey) {
+              case Keys::layout:
+                  mTarget.antigenic_maps.layout.assign(str, length);
+                  break;
               case Keys::border_color:
                   mTarget.antigenic_maps.border_color.from_string(str, length);
                   break;
@@ -1594,6 +1597,7 @@ class AntigenicMapsDrawSettingsHandler : public HandlerBase
 }; // class AntigenicMapsDrawSettingsHandler
 
 const std::map<std::string, AntigenicMapsDrawSettingsHandler::Keys> AntigenicMapsDrawSettingsHandler::key_mapper {
+    {"layout", Keys::layout},
     {"width", Keys::width},
     {"columns", Keys::columns},
     {"gap", Keys::gap},
@@ -1958,6 +1962,7 @@ template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writ
 template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const AntigenicMapsDrawSettings& aSettings)
 {
     return writer << StartObject
+                  << JsonObjectKey("layout") << aSettings.layout
                   << JsonObjectKey("width") << aSettings.width
                   << JsonObjectKey("columns") << aSettings.columns
                   << JsonObjectKey("gap") << aSettings.gap
