@@ -29,7 +29,7 @@ class SignaturePageDrawSettings
     enum class Layout { Auto, TreeTSClades, TreeCladesTSMaps };
 
     inline SignaturePageDrawSettings()
-        : layout(Layout::Auto), top(80), bottom(80), left(50), right(0),
+        : layout(Layout::Auto), top(80), bottom(80), left(50), right(50),
           tree_margin_right(30), mapped_antigens_margin_right(30), time_series_width(400), clades_width(100)
         {}
 
@@ -80,6 +80,7 @@ class SignaturePageDraw
     void init_settings();
     inline Settings& settings() { return *mSettings; }
     void tree(std::string aTreeFilename, std::string aSeqdbFilename);
+    inline Tree& tree() { return *mTree; }
     void chart(std::string aChartFilename);
 
     void prepare();

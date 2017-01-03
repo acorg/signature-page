@@ -67,7 +67,7 @@ void SignaturePageDraw::make_surface(std::string aFilename)
     }
     mSurface = std::make_unique<PdfCairo>(aFilename, width, height);
 
-    mTitleDraw = std::make_unique<TitleDraw>(mSurface->subsurface(false), mSettings->title);
+    mTitleDraw = std::make_unique<TitleDraw>(mSurface->subsurface(false), *mTree, mChart.get(), mSettings->title);
     mTreeDraw = std::make_unique<TreeDraw>(mSurface->subsurface(false), *mTree, mSettings->tree_draw, mSettings->hz_sections);
     mTimeSeriesDraw = std::make_unique<TimeSeriesDraw>(mSurface->subsurface(false), *mTree, *mTreeDraw, mSettings->hz_sections, mSettings->time_series);
     mCladesDraw = std::make_unique<CladesDraw>(mSurface->subsurface(false), *mTree, *mTreeDraw, *mTimeSeriesDraw, mSettings->clades);

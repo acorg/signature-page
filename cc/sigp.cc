@@ -22,6 +22,7 @@ class Options
     std::string seqdb_filename;
     std::string chart_filename;
       //bool layout_tree;  // for init settings only
+    bool report_cumulative;
 };
 
 int get_args(int argc, const char *argv[], Options& aOptions);
@@ -37,6 +38,8 @@ int main(int argc, const char *argv[])
             SignaturePageDraw signature_page;
             signature_page.load_settings(options.settings_filename);
             signature_page.tree(options.tree_filename, options.seqdb_filename);
+            if (options.report_cumulative)
+                signature_page.tree().report_cumulative_edge_length(std::cout);
             if (!options.chart_filename.empty())
                 signature_page.chart(options.chart_filename); // before make_surface!
             signature_page.make_surface(options.output_filename); // before init_layout!
@@ -70,7 +73,8 @@ int get_args(int argc, const char *argv[], Options& aOptions)
             ("init-settings", value<std::string>(&aOptions.init_settings_filename), "initialize signature page drawing settings (json) filename")
               // ("init-tree", bool_switch(&aOptions.layout_tree)->default_value(false), "initialize with tree layout")
             ("tree", value<std::string>(&aOptions.tree_filename)->required(), "path to tree to draw")
-            ("chart", value<std::string>(&aOptions.chart_filename)->required(), "path to chart for signature page")
+            ("report-cumulative", bool_switch(&aOptions.report_cumulative)->default_value(false), "report cumulative edge lengths for leaf nodes of the tree")
+            ("chart", value<std::string>(&aOptions.chart_filename), "path to chart for signature page")
             ("output,o", value<std::string>(&aOptions.output_filename)->required(), "output pdf")
             ;
     positional_options_description pos_opt;

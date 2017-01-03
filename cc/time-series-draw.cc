@@ -24,6 +24,11 @@ void TimeSeriesDraw::prepare()
         }
     }
 
+    std::cout << "Sequences per month:" << std::endl;
+    for (const auto& e: sequences_per_month) {
+        std::cout << "  " << e.first << " " << e.second << std::endl;
+    }
+
     mNumberOfMonths = static_cast<size_t>(months_between_dates(mBegin, mEnd)) + 1;
     std::cout << "dates to show: " << mBegin << " .. " << mEnd << "  months: " << mNumberOfMonths << std::endl;
 

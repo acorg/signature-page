@@ -80,7 +80,7 @@ class TreeDrawSettings
     inline TreeDrawSettings()
         : hide_if_cumulative_edge_length_bigger_than(0.05), //(std::numeric_limits<double>::max()),
           force_line_width(false),
-          line_width(1), root_edge(0), line_color(0), name_offset(0.3), color_nodes("159"),
+          line_width(1), root_edge(0), line_color(0), name_offset(0.3), color_nodes("continent"),
           vaccines{{TreeDrawVaccineSettings{}}}
         {}
     ~TreeDrawSettings();

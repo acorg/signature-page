@@ -4,6 +4,7 @@
 
 void TitleDraw::init_settings()
 {
+      // infer virus type from mTree and lab name from mChart
 
 } // TitleDraw::init_settings
 

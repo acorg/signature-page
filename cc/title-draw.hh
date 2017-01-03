@@ -7,7 +7,6 @@
 // ----------------------------------------------------------------------
 
 class Tree;
-class TreeDraw;
 class Chart;
 
 // ----------------------------------------------------------------------
@@ -25,8 +24,8 @@ class TitleDrawSettings
 class TitleDraw
 {
  public:
-    inline TitleDraw(Surface& aSurface, TitleDrawSettings& aSettings)
-        : mSurface(aSurface), mSettings(aSettings) {}
+    inline TitleDraw(Surface& aSurface, const Tree& aTree, const Chart* aChart, TitleDrawSettings& aSettings)
+        : mSurface(aSurface), mTree(aTree), mChart(aChart), mSettings(aSettings) {}
 
     void init_settings();
     void prepare();
@@ -36,6 +35,8 @@ class TitleDraw
 
  private:
     Surface& mSurface;
+    const Tree& mTree;
+    const Chart* mChart;
     TitleDrawSettings& mSettings;
 
 }; // class TitleDraw
