@@ -126,7 +126,7 @@ void DrawTrackedAntigen::draw(Surface& aSurface, const Point& aPoint, const Poin
 void DrawTrackedSerum::draw(Surface& aSurface, const Point& aPoint, const PointStyle& aStyle, double aObjectScale, const AntigenicMapsDrawSettings& aSettings) const
 {
     DrawSerum::draw(aSurface, aPoint, aStyle, aObjectScale, aSettings);
-    std::cout << "    Tracked serum " << aPoint.name << " radius:" << aPoint.attributes.serum_circle_radius << std::endl;
+    // std::cout << "    Tracked serum " << aPoint.name << " radius:" << aPoint.attributes.serum_circle_radius << std::endl;
     aSurface.circle(aPoint.coordinates, aPoint.attributes.serum_circle_radius * 2, 1, 0,
                     outline_color(aPoint, aStyle, aSettings), // aSettings.serum_circle_color,
                     aSettings.serum_circle_thickness * aObjectScale);
@@ -138,7 +138,7 @@ void DrawTrackedSerum::draw(Surface& aSurface, const Point& aPoint, const PointS
 void DrawVaccineAntigen::draw(Surface& aSurface, const Point& aPoint, const PointStyle& aStyle, double aObjectScale, const AntigenicMapsDrawSettings& aSettings) const
 {
     if (!aPoint.coordinates.isnan()) {
-        std::cout << "Vaccine " << aPoint.name << " " << fill_color(aPoint, aStyle, aSettings) << std::endl;
+        std::cout << "    Vaccine " << aPoint.name << " " << fill_color(aPoint, aStyle, aSettings) << std::endl;
         aSurface.circle_filled(aPoint.coordinates, aSettings.vaccine_antigen_scale * aObjectScale, aspect(aPoint, aStyle, aSettings), rotation(aPoint, aStyle, aSettings),
                                aSettings.vaccine_antigen_outline_color, // aPoint.attributes.vaccine.outline_color,
                                aSettings.vaccine_antigen_outline_width * aObjectScale,
@@ -159,7 +159,7 @@ void DrawMarkedAntigen::draw(Surface& aSurface, const Point& aPoint, const Point
             const Location text_origin = aPoint.coordinates + mData.label_offset;
             aSurface.text(text_origin, mData.label, mData.label_color, mData.label_size, style);
             const Location text_middle = text_origin + Size(text_size.width / 2, text_origin.y > aPoint.coordinates.y ? - text_size.height * 1.2 : text_size.height * 0.2);
-            std::cerr << "MARK-ANTIGEN: " << aPoint.coordinates << " " << text_middle << std::endl;
+            std::cerr << "    Mark antigen " << aPoint.name << " " << aPoint.coordinates << " " << text_middle << std::endl;
             aSurface.line(aPoint.coordinates, text_middle, mData.label_line_color, mData.label_line_width);
         }
     }
@@ -268,9 +268,10 @@ void AntigenicMapsLayout::mark_marked_antigens()
 
 void AntigenicMapsLayout::draw_chart(Surface& aSurface, size_t aSectionNo, size_t aSectionIndex)
 {
+    std::cout << "\nMAP: " << aSectionIndex << std::endl;
+
     const AntigenicMapsDrawSettings& settings = mAntigenicMapsDraw.settings();
     const Chart& chart = mAntigenicMapsDraw.chart();
-    const HzSection& section = mAntigenicMapsDraw.hz_sections().sections[aSectionIndex];
 
     aSurface.background(settings.background_color);
     aSurface.grid(1, settings.grid_line_color, settings.grid_line_width);
@@ -278,6 +279,7 @@ void AntigenicMapsLayout::draw_chart(Surface& aSurface, size_t aSectionNo, size_
     aSurface.viewport_offset(mMapViewport.offset());
 
     mark_tracked_antigens(aSectionIndex);
+    mark_tracked_sera(aSectionIndex);
 
     size_t drawn = 0;
     for (size_t level = 0; level < 10 && drawn < mDrawPoints.size(); ++level) {
@@ -291,6 +293,53 @@ void AntigenicMapsLayout::draw_chart(Surface& aSurface, size_t aSectionNo, size_
     if (drawn != mDrawPoints.size())
         std::cerr << "Warning: " << drawn << " points of " << mDrawPoints.size() << " were drawn" << std::endl;
 
+    draw_map_title(aSurface, aSectionNo, aSectionIndex);
+
+} // AntigenicMapsLayout::draw_chart
+
+// ----------------------------------------------------------------------
+
+void AntigenicMapsLayout::mark_tracked_sera(size_t aSectionIndex)
+{
+    const AntigenicMapsDrawSettings& settings = mAntigenicMapsDraw.settings();
+    if (settings.show_tracked_sera) {
+        const std::vector<Point>& points = mAntigenicMapsDraw.chart().points();
+        mDrawTrackedSera.clear();
+        mDrawTrackedSera.reserve(mDrawPoints.size()); // to avoid copying entries during emplace_back and loosing pointer for mDrawPoints
+        for (size_t point_no = 0; point_no < mDrawPoints.size(); ++point_no) {
+            const auto& point = points[point_no];
+            if (!point.attributes.antigen && point.attributes.homologous_antigen >= 0) {
+                const auto sequenced = mSequencedAntigens.find(static_cast<size_t>(point.attributes.homologous_antigen));
+                if (sequenced != mSequencedAntigens.end() && sequenced->second == aSectionIndex) {
+
+                      // std::cout << "tracked serum " << point.name << std::endl;
+                    Color color = settings.tracked_serum_outline_color;
+                    double outline_width = settings.tracked_serum_outline_width;
+                      // for (const auto& entry: infix_colors) {
+                      //     if (mDrawPoints[point_no].name.find(entry.first) != std::string::npos) {
+                      //         color = entry.second;
+                      //         break;
+                      //     }
+                      // }
+                    mDrawTrackedSera.emplace_back(color, outline_width);
+                    mDrawPoints[point_no] = &mDrawTrackedSera.back();
+                    std::cout << "    Tracked serum " << point.name << " radius:" << point.attributes.serum_circle_radius << std::endl;
+                }
+                else {
+                    mDrawPoints[point_no] = &mDrawSerum;
+                }
+            }
+        }
+    }
+
+} // AntigenicMapsLayout::mark_tracked_sera
+
+// ----------------------------------------------------------------------
+
+void AntigenicMapsLayout::draw_map_title(Surface& aSurface, size_t aSectionNo, size_t aSectionIndex)
+{
+    const AntigenicMapsDrawSettings& settings = mAntigenicMapsDraw.settings();
+    const HzSection& section = mAntigenicMapsDraw.hz_sections().sections[aSectionIndex];
     std::string title = std::string(1, 'A' + static_cast<char>(aSectionNo)) + ".";
     if (!section.label.empty())
         title += " " + section.label;
@@ -298,7 +347,7 @@ void AntigenicMapsLayout::draw_chart(Surface& aSurface, size_t aSectionNo, size_
     aSurface.text({settings.map_title_offset.width - aSurface.viewport_offset().width, settings.map_title_offset.height + tsize.height - aSurface.viewport_offset().height},
                   title, settings.map_title_color, settings.map_title_size);
 
-} // AntigenicMapsLayout::draw_chart
+} // AntigenicMapsLayout::draw_map_title
 
 // ----------------------------------------------------------------------
 

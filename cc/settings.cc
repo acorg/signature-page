@@ -1556,7 +1556,8 @@ class AntigenicMapsDrawSettingsHandler : public HandlerBase
                 vaccine_antigen_outline_color, sequenced_antigen_outline_color, sequenced_antigen_fill_color,
                 tracked_antigen_outline_width, tracked_antigen_outline_color, tracked_antigen_colored_by_clade, tracked_antigen_color,
                 reassortant_rotation, egg_antigen_aspect,
-                serum_circle_color, serum_circle_thickness, map_title_color, map_title_offset, map_title_size,
+                show_tracked_sera, serum_circle_color, tracked_serum_outline_color, serum_circle_thickness, tracked_serum_outline_width,
+                map_title_color, map_title_offset, map_title_size,
                 mapped_antigens_section_line_color, mapped_antigens_section_line_width, mark_antigens,
                 };
 
@@ -1634,6 +1635,9 @@ class AntigenicMapsDrawSettingsHandler : public HandlerBase
               case Keys::serum_circle_color:
                   mTarget.antigenic_maps.serum_circle_color.from_string(str, length);
                   break;
+              case Keys::tracked_serum_outline_color:
+                  mTarget.antigenic_maps.tracked_serum_outline_color.from_string(str, length);
+                  break;
               case Keys::map_title_color:
                   mTarget.antigenic_maps.map_title_color.from_string(str, length);
                   break;
@@ -1707,6 +1711,9 @@ class AntigenicMapsDrawSettingsHandler : public HandlerBase
               case Keys::serum_circle_thickness:
                   mTarget.antigenic_maps.serum_circle_thickness = d;
                   break;
+              case Keys::tracked_serum_outline_width:
+                  mTarget.antigenic_maps.tracked_serum_outline_width = d;
+                  break;
               case Keys::map_title_size:
                   mTarget.antigenic_maps.map_title_size = d;
                   break;
@@ -1738,6 +1745,9 @@ class AntigenicMapsDrawSettingsHandler : public HandlerBase
             switch (mKey) {
               case Keys::tracked_antigen_colored_by_clade:
                   mTarget.antigenic_maps.tracked_antigen_colored_by_clade = b;
+                  break;
+              case Keys::show_tracked_sera:
+                  mTarget.antigenic_maps.show_tracked_sera = b;
                   break;
               default:
                   HandlerBase::Bool(b);
@@ -1801,8 +1811,11 @@ const std::map<std::string, AntigenicMapsDrawSettingsHandler::Keys> AntigenicMap
     {"tracked_antigen_color", Keys::tracked_antigen_color},
     {"reassortant_rotation", Keys::reassortant_rotation},
     {"egg_antigen_aspect", Keys::egg_antigen_aspect},
+    {"show_tracked_sera", Keys::show_tracked_sera},
     {"serum_circle_color", Keys::serum_circle_color},
+    {"tracked_serum_outline_color", Keys::tracked_serum_outline_color},
     {"serum_circle_thickness", Keys::serum_circle_thickness},
+    {"tracked_serum_outline_width", Keys::tracked_serum_outline_width},
     {"map_title_color", Keys::map_title_color},
     {"map_title_offset", Keys::map_title_offset},
     {"map_title_size", Keys::map_title_size},
@@ -2296,7 +2309,9 @@ template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writ
                   << JsonObjectKey("reassortant_rotation") << aSettings.reassortant_rotation
                   << JsonObjectKey("egg_antigen_aspect") << aSettings.egg_antigen_aspect
                   << JsonObjectKey("serum_circle_color") << aSettings.serum_circle_color
+                  << JsonObjectKey("tracked_serum_outline_color") << aSettings.tracked_serum_outline_color
                   << JsonObjectKey("serum_circle_thickness") << aSettings.serum_circle_thickness
+                  << JsonObjectKey("tracked_serum_outline_width") << aSettings.tracked_serum_outline_width
                   << JsonObjectKey("map_title_color") << aSettings.map_title_color
                   << JsonObjectKey("map_title_offset") << aSettings.map_title_offset
                   << JsonObjectKey("map_title_size") << aSettings.map_title_size

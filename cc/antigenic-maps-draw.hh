@@ -39,13 +39,14 @@ class AntigenicMapsDrawSettings
         : layout("labelled_grid"), width(500), columns(3), gap(20),
           border_width(0.05), grid_line_width(0.025),
           border_color("black"), grid_line_color("grey63"), background_color("white"), // 0xFFFFF8
-          serum_scale(5), reference_antigen_scale(5), test_antigen_scale(3), vaccine_antigen_scale(8), tracked_antigen_scale(5),
+          serum_scale(3), reference_antigen_scale(5), test_antigen_scale(3), vaccine_antigen_scale(8), tracked_antigen_scale(5),
           serum_outline_width(0.5), reference_antigen_outline_width(0.5), test_antigen_outline_width(0.5), vaccine_antigen_outline_width(0.5),
           sequenced_antigen_outline_width(0.5), tracked_antigen_outline_width(0.5),
           serum_outline_color("grey88"), reference_antigen_outline_color("grey88"), test_antigen_outline_color("grey88"),
           test_antigen_fill_color("grey88"), vaccine_antigen_outline_color("white"), sequenced_antigen_outline_color("white"), sequenced_antigen_fill_color("grey63"),
           tracked_antigen_outline_color("white"), tracked_antigen_colored_by_clade(false), tracked_antigen_color("green2"),
-          reassortant_rotation(0.5 /* M_PI / 6.0 */), egg_antigen_aspect(0.75), serum_circle_color("black"), serum_circle_thickness(1),
+          reassortant_rotation(0.5 /* M_PI / 6.0 */), egg_antigen_aspect(0.75),
+          show_tracked_sera(true), serum_circle_color("grey50"), tracked_serum_outline_color("black"), serum_circle_thickness(0.1), tracked_serum_outline_width(0.1),
           map_title_color("black"), map_title_offset{0.1, 0.1}, map_title_size(1),
           mapped_antigens_section_line_color("black"), mapped_antigens_section_line_width(2),
           mark_antigens{{true, "VT 14-002966-VIR SIAT1 (2014-06-29)"}}
@@ -68,8 +69,9 @@ class AntigenicMapsDrawSettings
     bool tracked_antigen_colored_by_clade;
     Color tracked_antigen_color;
     double reassortant_rotation, egg_antigen_aspect;
-    Color serum_circle_color;
-    double serum_circle_thickness;
+    bool show_tracked_sera;
+    Color serum_circle_color, tracked_serum_outline_color;
+    double serum_circle_thickness, tracked_serum_outline_width;
     Color map_title_color;
     Size map_title_offset;
     double map_title_size;
@@ -204,7 +206,6 @@ class AntigenicMapsLayout
     std::map<size_t, size_t> mSequencedAntigens; // antigen_no to section_no
 
     DrawSerum mDrawSerum;
-      // DrawTrackedSerum mDrawTrackedSerum;
     DrawReferenceAntigen mDrawReferenceAntigen;
     DrawTestAntigen mDrawTestAntigen;
     DrawSequencedAntigen mDrawSequencedAntigen;
@@ -217,6 +218,8 @@ class AntigenicMapsLayout
     virtual void find_sequenced_antigens();
     virtual void draw_points_reset();
     virtual void draw_chart(Surface& aSurface, size_t aSectionNo, size_t aSectionIndex);
+    virtual void mark_tracked_sera(size_t aSectionIndex);
+    virtual void draw_map_title(Surface& aSurface, size_t aSectionNo, size_t aSectionIndex);
     virtual void mark_tracked_antigens(size_t aSectionIndex);
     virtual void mark_marked_antigens();
 
