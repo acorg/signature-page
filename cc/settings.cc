@@ -1813,10 +1813,106 @@ const std::map<std::string, AntigenicMapsDrawSettingsHandler::Keys> AntigenicMap
 
 // ----------------------------------------------------------------------
 
+class TitleDrawSettingsHandler : public HandlerBase
+{
+ private:
+    enum class Keys {Unknown, title, color, size, style, offset};
+
+ public:
+    inline TitleDrawSettingsHandler(Settings& aSettings, TitleDrawSettings& aField) : HandlerBase{aSettings}, mKey(Keys::Unknown), mField(aField) {}
+
+    inline virtual HandlerBase* Key(const char* str, rapidjson::SizeType length)
+        {
+            HandlerBase* result = nullptr;
+            try {
+                mKey = key_mapper.at(std::string(str, length));
+            }
+            catch (std::out_of_range&) {
+                mKey = Keys::Unknown;
+                result = HandlerBase::Key(str, length);
+            }
+            return result;
+        }
+
+    inline virtual HandlerBase* String(const char* str, rapidjson::SizeType length)
+        {
+            HandlerBase* result = nullptr;
+            switch (mKey) {
+              case Keys::title:
+                  mField.title.assign(str, length);
+                  break;
+              case Keys::color:
+                  mField.color.from_string(str, length);
+                  break;
+              default:
+                  result = HandlerBase::String(str, length);
+                  break;
+            }
+            return result;
+        }
+
+    inline virtual HandlerBase* Double(double d)
+        {
+            switch (mKey) {
+              case Keys::size:
+                  mField.size = d;
+                  break;
+              default:
+                  HandlerBase::Double(d);
+                  break;
+            }
+            return nullptr;
+        }
+
+    inline virtual HandlerBase* StartArray()
+        {
+            HandlerBase* result = nullptr;
+            switch (mKey) {
+              case Keys::offset:
+                  result = new SettingsSizeHandler(mTarget, mField.offset);
+                  break;
+              default:
+                  result = HandlerBase::StartArray();
+                  break;
+            }
+            return result;
+        }
+
+    inline virtual HandlerBase* StartObject()
+        {
+            HandlerBase* result = nullptr;
+            switch (mKey) {
+              case Keys::style:
+                  result = new SettingsTextStyleHandler(mTarget, mField.style);
+                  break;
+              default:
+                  result = HandlerBase::StartObject();
+                  break;
+            }
+            return result;
+        }
+
+ private:
+    Keys mKey;
+    TitleDrawSettings& mField;
+    static const std::map<std::string, Keys> key_mapper;
+
+}; // class TitleDrawSettingsHandler
+
+const std::map<std::string, TitleDrawSettingsHandler::Keys> TitleDrawSettingsHandler::key_mapper {
+    {"title", Keys::title},
+    {"color", Keys::color},
+    {"size", Keys::size},
+    {"style", Keys::style},
+    {"offset", Keys::offset}
+};
+
+// ----------------------------------------------------------------------
+
 class SettingsRootHandler : public HandlerBase
 {
  private:
-    enum class Keys { Unknown, version, signature_page, tree, time_series, clades, hz_sections, mapped_antigens, antigenic_maps };
+    enum class Keys { Unknown, version, signature_page, tree, time_series, clades, hz_sections, mapped_antigens, antigenic_maps, title };
 
  public:
     inline SettingsRootHandler(Settings& aSettings) : HandlerBase{aSettings}, mKey(Keys::Unknown) {}
@@ -1876,6 +1972,9 @@ class SettingsRootHandler : public HandlerBase
                   case Keys::antigenic_maps:
                       result = new AntigenicMapsDrawSettingsHandler(mTarget);
                       break;
+                  case Keys::title:
+                      result = new TitleDrawSettingsHandler(mTarget, mTarget.title);
+                      break;
                   default:
                       result = HandlerBase::StartObject();
                       break;
@@ -1897,6 +1996,7 @@ const std::map<std::string, SettingsRootHandler::Keys> SettingsRootHandler::key_
     {"hz_sections", Keys::hz_sections},
     {"mapped_antigens", Keys::mapped_antigens},
     {"antigenic_maps", Keys::antigenic_maps},
+    {"title", Keys::title},
 };
 
 // ----------------------------------------------------------------------
@@ -2208,11 +2308,25 @@ template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writ
 
 // ----------------------------------------------------------------------
 
+template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const TitleDrawSettings& aSettings)
+{
+    return writer << StartObject
+                  << JsonObjectKey("title") << aSettings.title
+                  << JsonObjectKey("color") << aSettings.color
+                  << JsonObjectKey("size") << aSettings.size
+                  << JsonObjectKey("style") << aSettings.style
+                  << JsonObjectKey("offset") << aSettings.offset
+                  << EndObject;
+}
+
+// ----------------------------------------------------------------------
+
 template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const Settings& aSettings)
 {
     return writer << StartObject
                   << JsonObjectKey("  version") << SETTINGS_VERSION
                   << JsonObjectKey("signature_page") << aSettings.signature_page
+                  << JsonObjectKey("title") << aSettings.title
                   << JsonObjectKey("tree") << aSettings.tree_draw
                   << JsonObjectKey("time_series") << aSettings.time_series
                   << JsonObjectKey("clades") << aSettings.clades

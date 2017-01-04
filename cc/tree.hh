@@ -184,6 +184,7 @@ class Tree : public Node
     const Node* find_leaf_by_line_no(size_t line_no) const;
 
     void sequences_per_month(std::map<Date, size_t>& spm) const;
+    std::string virus_type() const;
 
  private:
     double mMaxCumulativeEdgeLength;

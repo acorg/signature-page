@@ -1,10 +1,14 @@
 #include "title-draw.hh"
+#include "tree.hh"
 
 // ----------------------------------------------------------------------
 
 void TitleDraw::init_settings()
 {
       // infer virus type from mTree and lab name from mChart
+    std::string virus_type = mTree.virus_type();
+    if (!virus_type.empty())
+        mSettings.title = virus_type;
 
 } // TitleDraw::init_settings
 
@@ -19,7 +23,7 @@ void TitleDraw::prepare()
 
 void TitleDraw::draw()
 {
-    mSurface.text({0, 30}, "TITLE", "brown", 30);
+    mSurface.text(mSettings.offset, mSettings.title, mSettings.color, mSettings.size, mSettings.style);
 
 } // TitleDraw::draw
 

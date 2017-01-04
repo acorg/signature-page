@@ -414,6 +414,26 @@ void Tree::compute_distance_from_previous()
 
 // ----------------------------------------------------------------------
 
+std::string Tree::virus_type() const
+{
+    std::string virus_type;
+    auto find_virus_type = [&virus_type](const Node& aNode) -> bool {
+        bool r = false;
+        const std::string seq_id = name_decode(aNode.seq_id);
+        const auto pos = seq_id.find('/');
+        if ((pos == 1 && seq_id[0] == 'B') || (pos == 7 && seq_id[0] == 'A' && seq_id[1] == '(')) {
+            virus_type.assign(seq_id, 0, pos);
+            r = true;
+        }
+        return r;
+    };
+    tree::iterate_leaf_stop(*this, find_virus_type);
+    return virus_type;
+
+} // Tree::virus_type
+
+// ----------------------------------------------------------------------
+
 
 // ----------------------------------------------------------------------
 /// Local Variables:
