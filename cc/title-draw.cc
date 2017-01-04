@@ -1,14 +1,26 @@
 #include "title-draw.hh"
 #include "tree.hh"
+#include "chart.hh"
 
 // ----------------------------------------------------------------------
 
 void TitleDraw::init_settings()
 {
-      // infer virus type from mTree and lab name from mChart
     std::string virus_type = mTree.virus_type();
     if (!virus_type.empty())
         mSettings.title = virus_type;
+
+    if (mChart) {
+        if (!mSettings.title.empty())
+            mSettings.title += " ";
+        mSettings.title += mChart->chart_info().lab;
+        mSettings.size = 10;
+        mSettings.offset.set(5, 5 + mSettings.size);
+    }
+    else {
+        mSettings.size = 20;
+        mSettings.offset.set(10, 10 + mSettings.size);
+    }
 
 } // TitleDraw::init_settings
 
