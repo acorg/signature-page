@@ -5,11 +5,11 @@ Programs to import phylogenetic tree and draw it on a tree or signature page
 
   - download sequences from gisaid (see section Gisaid below) in put it into ~/ac/tables-store/sequences/$FASTA_NAME
 
-        FASTA_NAME=gisaid-all-$(date +%Y%m%d).fas.bz2
+        FASTA_NAME=gisaid-all-20160101-$(date +%Y%m%d).fas.bz2
 
   - make ~/AD/data/seqdb.json.xz (make sure hidb in ~/AD/data/ are up to date)
 
-        env LD_LIBRARY_PATH=$HOME/AD/lib ~/AD/bin/seqdb-create --db ~/AD/data/seqdb.json.xz --match-hidb --clades ~/ac/tables-store/sequences/gisaid-b-1997-20160211.fas.bz2 ~/ac/tables-store/sequences/gisaid-h3-1998-20160211.fas.bz2 ~/ac/tables-store/sequences/gisaid-h1pdm-2009-20160211.fas.bz2 ~/ac/tables-store/sequences/$FASTA_NAME ~/ac/tables-store/sequences/niid-*.fas.bz2
+        env LD_LIBRARY_PATH=$HOME/AD/lib ~/AD/bin/seqdb-create --db ~/AD/data/seqdb.json.xz --match-hidb --clades ~/ac/tables-store/sequences/*.fas.bz2
 
   - mkdir $WORKING_DIR
 
@@ -76,8 +76,8 @@ Programs to import phylogenetic tree and draw it on a tree or signature page
 
   - visit [http://gisaid.org](http://gisaid.org) and login (at right)
   - Click EpiFlu (top middle)
-  - Hold Shift and click A and B in the Type.
-  - Set collection date From to 2014-02-01 (or later depending on the number of isolates upon search, see below)
+  - Hold Cmd and click A and B in the Type.
+  - Set collection date From to 2016-01-01 (or later depending on the number of isolates upon search, see below)
   - _Leave originating lab empty!_
 
   - Select **Submitting lab** them all using Cmd
@@ -103,7 +103,7 @@ Programs to import phylogenetic tree and draw it on a tree or signature page
   - Rename file:
 
         dos2unix ~/Downloads/gisaid_epiflu_sequence.fasta
-        mv ~/Downloads/gisaid_epiflu_sequence.fasta ~/Downloads/gisaid-all-$(date +%Y%m%d).fas
-        bzip2 -9v ~/Downloads/gisaid-all-$(date +%Y%m%d).fas
-        mv ~/Downloads/gisaid-all-$(date +%Y%m%d).fas.bz2 ~/ac/tables-store/sequences
+        mv ~/Downloads/gisaid_epiflu_sequence.fasta ~/Downloads/gisaid-all-<start-date>-$(date +%Y%m%d).fas
+        bzip2 -9v ~/Downloads/gisaid-all-<start-date>-$(date +%Y%m%d).fas
+        mv ~/Downloads/gisaid-all-<start-date>-$(date +%Y%m%d).fas.bz2 ~/ac/tables-store/sequences
         ssax
