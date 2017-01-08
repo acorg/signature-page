@@ -11,7 +11,7 @@ Programs to import phylogenetic tree and draw it on a tree or signature page
 
         env LD_LIBRARY_PATH=$HOME/AD/lib ~/AD/bin/seqdb-create --db ~/AD/data/seqdb.json.xz --match-hidb --clades ~/ac/tables-store/sequences/*.fas.bz2
 
-  - mkdir $WORKING_DIR
+  - mkdir $WORKING_DIR $(date +%Y-%m%d-%H%M)
 
         WORKING_DIR="/syn/eu/ac/results/whocc-tree/$VIRUS_TYPE/$(date +%Y-%m%d-%H%M)"
         mkdir "$WORKING_DIR"
