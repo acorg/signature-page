@@ -355,6 +355,9 @@ void HzSections::sort(const Tree& aTree)
 
     tree::iterate_leaf(aTree, set_first_node);
 
+      // remove not found sections before sorting (e.g. having no name or not found name)
+    sections.erase(std::remove_if(sections.begin(), sections.end(), [](const auto& a) -> bool { return a.first == nullptr; }), sections.end());
+
     std::sort(sections.begin(), sections.end(), [](const auto& a, const auto& b) -> bool { return a.first->draw.line_no < b.first->draw.line_no; });
 
     for (size_t sec_index = 1; sec_index < sections.size(); ++sec_index) {

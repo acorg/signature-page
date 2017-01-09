@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstdlib>
+#include <cmath>
 
 #include "signature-page.hh"
 #include "locationdb/locdb.hh"
@@ -61,8 +62,8 @@ void SignaturePageDraw::make_surface(std::string aFilename)
           break;
       case SignaturePageDrawSettings::Layout::TreeTSClades:
       case SignaturePageDrawSettings::Layout::Auto:
-          width = 500;
-          height = 850;
+          height = 800;
+          width = std::floor(height * (210.0 / 297.0));
           break;
     }
     mSurface = std::make_unique<PdfCairo>(aFilename, width, height);
@@ -148,7 +149,7 @@ void SignaturePageDraw::init_settings()
     else {                      // just tree
         mSettings->tree_draw.vaccines[0].label_size = 40;
 
-        mSettings->time_series.label_size = 50;
+        mSettings->time_series.label_size = 30;
         mSettings->time_series.month_separator_width = 1;
         mSettings->time_series.month_year_to_timeseries_gap = 5;
         mSettings->time_series.dash_line_width = 3;
@@ -159,8 +160,8 @@ void SignaturePageDraw::init_settings()
 
         mSettings->clades.slot_width = 50;
         for (auto& clade: mSettings->clades.clades) {
-            clade.label_size = 50;
-            clade.line_width = 3;
+            clade.label_size = 33;
+            clade.line_width = 2;
             clade.arrow_width = clade.line_width * 5;
             clade.label_offset.set(10, 0);
         }
