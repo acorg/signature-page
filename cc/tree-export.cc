@@ -1,7 +1,9 @@
 #include "tree-export.hh"
 #include "tree.hh"
+
 #include "acmacs-base/json-reader.hh"
 #include "acmacs-base/json-writer.hh"
+namespace jsw = json_writer;
 
 // ----------------------------------------------------------------------
 
@@ -19,30 +21,30 @@ enum class TreeJsonKey : char
 
 // ----------------------------------------------------------------------
 
-template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const Node& aNode)
+template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const Node& aNode)
 {
-    return writer << StartObject
-                  << if_not_empty(TreeJsonKey::SeqId, aNode.seq_id)
-                  << if_non_negative(TreeJsonKey::EdgeLength, aNode.edge_length)
-                  << if_not_empty(TreeJsonKey::Subtree, aNode.subtree)
-                  << EndObject;
+    return writer << jsw::start_object
+                  << jsw::if_not_empty(TreeJsonKey::SeqId, aNode.seq_id)
+                  << jsw::if_non_negative(TreeJsonKey::EdgeLength, aNode.edge_length)
+                  << jsw::if_not_empty(TreeJsonKey::Subtree, aNode.subtree)
+                  << jsw::end_object;
 }
 
 // ----------------------------------------------------------------------
 
-template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const Tree& aTree)
+template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const Tree& aTree)
 {
-    return writer << StartObject
-                  << JsonObjectKey("  version") << TREE_PHYLOGENETIC_VERSION
-                  << JsonObjectKey("tree") << static_cast<const Node&>(aTree)
-                  << EndObject;
+    return writer << jsw::start_object
+                  << jsw::key("  version") << TREE_PHYLOGENETIC_VERSION
+                  << jsw::key("tree") << static_cast<const Node&>(aTree)
+                  << jsw::end_object;
 }
 
 // ----------------------------------------------------------------------
 
 void tree_export(std::string aFilename, const Tree& aTree, size_t aIndent)
 {
-    export_to_json(aTree, TREE_PHYLOGENETIC_VERSION, aFilename, aIndent);
+    jsw::export_to_json(aTree, TREE_PHYLOGENETIC_VERSION, aFilename, aIndent);
 
 } // tree_export
 

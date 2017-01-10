@@ -1,7 +1,9 @@
 #include "settings.hh"
+#include "acmacs-base/float.hh"
+
 #include "acmacs-base/json-reader.hh"
 #include "acmacs-base/json-writer.hh"
-#include "acmacs-base/float.hh"
+namespace jsw = json_writer;
 
 // ----------------------------------------------------------------------
 
@@ -2027,335 +2029,335 @@ void read_settings(Settings& aSettings, std::string aFilename)
 // ----------------------------------------------------------------------
 // ----------------------------------------------------------------------
 
-template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const TextStyle& aStyle)
+template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const TextStyle& aStyle)
 {
-    return writer << StartObject
-                  << JsonObjectKey("family") << aStyle.font_family()
-                  << JsonObjectKey("slant") << aStyle.slant_as_stirng()
-                  << JsonObjectKey("weight") << aStyle.weight_as_stirng()
-                  << EndObject;
+    return writer << jsw::start_object
+                  << jsw::key("family") << aStyle.font_family()
+                  << jsw::key("slant") << aStyle.slant_as_stirng()
+                  << jsw::key("weight") << aStyle.weight_as_stirng()
+                  << jsw::end_object;
 }
 
 // ----------------------------------------------------------------------
 
-template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const Size& aSize)
+template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const Size& aSize)
 {
-    return writer << StartArray << aSize.width << aSize.height << EndArray;
+    return writer << jsw::start_array << aSize.width << aSize.height << jsw::end_array;
 }
 
 // ----------------------------------------------------------------------
 // ----------------------------------------------------------------------
 
-template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const AATransitionPerBranchDrawSettings& aSettings)
+template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const AATransitionPerBranchDrawSettings& aSettings)
 {
-    return writer << StartObject
-                  << JsonObjectKey("size") << aSettings.size
-                  << JsonObjectKey("color") << aSettings.color
-                  << JsonObjectKey("style") << aSettings.style
-                  << JsonObjectKey("interline") << aSettings.interline
-                  << JsonObjectKey("label_offset") << aSettings.label_offset
-                  << JsonObjectKey("label_connection_line_width") << aSettings.label_connection_line_width
-                  << JsonObjectKey("label_connection_line_color") << aSettings.label_connection_line_color
-                  << EndObject;
+    return writer << jsw::start_object
+                  << jsw::key("size") << aSettings.size
+                  << jsw::key("color") << aSettings.color
+                  << jsw::key("style") << aSettings.style
+                  << jsw::key("interline") << aSettings.interline
+                  << jsw::key("label_offset") << aSettings.label_offset
+                  << jsw::key("label_connection_line_width") << aSettings.label_connection_line_width
+                  << jsw::key("label_connection_line_color") << aSettings.label_connection_line_color
+                  << jsw::end_object;
 }
 
 // ----------------------------------------------------------------------
 
-template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const AATransitionDrawSettings& aSettings)
+template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const AATransitionDrawSettings& aSettings)
 {
-    return writer << StartObject
-                  << JsonObjectKey("show") << aSettings.show
-                  << JsonObjectKey("number_strains_threshold") << aSettings.number_strains_threshold
-                  << JsonObjectKey("number_strains_threshold?") << "do not show aa transition label if number_strains (leaf nodes) for the branch is less than this value"
-                  << JsonObjectKey("show_empty_left") << aSettings.show_empty_left
-                  << JsonObjectKey("show_node_for_left_line") << aSettings.show_node_for_left_line
-                  << JsonObjectKey("node_for_left_line_color") << aSettings.node_for_left_line_color
-                  << JsonObjectKey("node_for_left_line_width") << aSettings.node_for_left_line_width
-                  << JsonObjectKey("per_branch") << aSettings.per_branch
-                  << EndObject;
+    return writer << jsw::start_object
+                  << jsw::key("show") << aSettings.show
+                  << jsw::key("number_strains_threshold") << aSettings.number_strains_threshold
+                  << jsw::key("number_strains_threshold?") << "do not show aa transition label if number_strains (leaf nodes) for the branch is less than this value"
+                  << jsw::key("show_empty_left") << aSettings.show_empty_left
+                  << jsw::key("show_node_for_left_line") << aSettings.show_node_for_left_line
+                  << jsw::key("node_for_left_line_color") << aSettings.node_for_left_line_color
+                  << jsw::key("node_for_left_line_width") << aSettings.node_for_left_line_width
+                  << jsw::key("per_branch") << aSettings.per_branch
+                  << jsw::end_object;
 }
 
 // ----------------------------------------------------------------------
 
-template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const TreeDrawVaccineSettings& aSettings)
+template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const TreeDrawVaccineSettings& aSettings)
 {
-    return writer << StartObject
-                  << JsonObjectKey("name") << aSettings.name
-                  << JsonObjectKey("name?") << "empty for default settings"
-                  << JsonObjectKey("label_color") << aSettings.label_color
-                  << JsonObjectKey("label_size") << aSettings.label_size
-                  << JsonObjectKey("label_style") << aSettings.label_style
-                  << JsonObjectKey("line_color") << aSettings.line_color
-                  << JsonObjectKey("line_width") << aSettings.line_width
-                  << EndObject;
+    return writer << jsw::start_object
+                  << jsw::key("name") << aSettings.name
+                  << jsw::key("name?") << "empty for default settings"
+                  << jsw::key("label_color") << aSettings.label_color
+                  << jsw::key("label_size") << aSettings.label_size
+                  << jsw::key("label_style") << aSettings.label_style
+                  << jsw::key("line_color") << aSettings.line_color
+                  << jsw::key("line_width") << aSettings.line_width
+                  << jsw::end_object;
 }
 
 // ----------------------------------------------------------------------
 
-template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const LegendSettings& aSettings)
+template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const LegendSettings& aSettings)
 {
-    return writer << StartObject
-                  << JsonObjectKey("offset") << aSettings.offset
-                  << JsonObjectKey("width") << aSettings.width
-                  << JsonObjectKey("title_style") << aSettings.title_style
-                  << JsonObjectKey("title_size") << aSettings.title_size
-                  << JsonObjectKey("text_style") << aSettings.text_style
-                  << JsonObjectKey("text_size") << aSettings.text_size
-                  << JsonObjectKey("interline") << aSettings.interline
-                  << EndObject;
+    return writer << jsw::start_object
+                  << jsw::key("offset") << aSettings.offset
+                  << jsw::key("width") << aSettings.width
+                  << jsw::key("title_style") << aSettings.title_style
+                  << jsw::key("title_size") << aSettings.title_size
+                  << jsw::key("text_style") << aSettings.text_style
+                  << jsw::key("text_size") << aSettings.text_size
+                  << jsw::key("interline") << aSettings.interline
+                  << jsw::end_object;
 }
 
 // ----------------------------------------------------------------------
 
-template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const TreeDrawSettings& aSettings)
+template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const TreeDrawSettings& aSettings)
 {
-    return writer << StartObject
-                  << JsonObjectKey("hide_isolated_before") << aSettings.hide_isolated_before
-                  << JsonObjectKey("hide_if_cumulative_edge_length_bigger_than") << aSettings.hide_if_cumulative_edge_length_bigger_than
-                  << JsonObjectKey("force_line_width") << aSettings.force_line_width
-                  << JsonObjectKey("line_width") << aSettings.line_width
-                  << JsonObjectKey("root_edge") << aSettings.root_edge
-                  << JsonObjectKey("line_color") << aSettings.line_color
-                  << JsonObjectKey("label_style") << aSettings.label_style
-                  << JsonObjectKey("name_offset") << aSettings.name_offset
-                  << JsonObjectKey("color_nodes") << aSettings.color_nodes
-                  << JsonObjectKey("color_nodes?") << "black, continent, position number (e.g. 162)"
-                  << JsonObjectKey("aa_transition") << aSettings.aa_transition
-                  << JsonObjectKey("vaccines") << aSettings.vaccines
-                  << JsonObjectKey("legend") << aSettings.legend
-                  << EndObject;
+    return writer << jsw::start_object
+                  << jsw::key("hide_isolated_before") << aSettings.hide_isolated_before
+                  << jsw::key("hide_if_cumulative_edge_length_bigger_than") << aSettings.hide_if_cumulative_edge_length_bigger_than
+                  << jsw::key("force_line_width") << aSettings.force_line_width
+                  << jsw::key("line_width") << aSettings.line_width
+                  << jsw::key("root_edge") << aSettings.root_edge
+                  << jsw::key("line_color") << aSettings.line_color
+                  << jsw::key("label_style") << aSettings.label_style
+                  << jsw::key("name_offset") << aSettings.name_offset
+                  << jsw::key("color_nodes") << aSettings.color_nodes
+                  << jsw::key("color_nodes?") << "black, continent, position number (e.g. 162)"
+                  << jsw::key("aa_transition") << aSettings.aa_transition
+                  << jsw::key("vaccines") << aSettings.vaccines
+                  << jsw::key("legend") << aSettings.legend
+                  << jsw::end_object;
 }
 
 // ----------------------------------------------------------------------
 
-template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const SignaturePageDrawSettings& aSettings)
+template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const SignaturePageDrawSettings& aSettings)
 {
-    return writer << StartObject
-                  << JsonObjectKey("layout") << aSettings.layout_to_string()
-                  << JsonObjectKey("top") << aSettings.top
-                  << JsonObjectKey("bottom") << aSettings.bottom
-                  << JsonObjectKey("left") << aSettings.left
-                  << JsonObjectKey("right") << aSettings.right
-                  << JsonObjectKey("tree_margin_right") << aSettings.tree_margin_right
-                  << JsonObjectKey("mapped_antigens_margin_right") << aSettings.mapped_antigens_margin_right
-                  << JsonObjectKey("time_series_width") << aSettings.time_series_width
-                  << JsonObjectKey("clades_width") << aSettings.clades_width
-                  << EndObject;
+    return writer << jsw::start_object
+                  << jsw::key("layout") << aSettings.layout_to_string()
+                  << jsw::key("top") << aSettings.top
+                  << jsw::key("bottom") << aSettings.bottom
+                  << jsw::key("left") << aSettings.left
+                  << jsw::key("right") << aSettings.right
+                  << jsw::key("tree_margin_right") << aSettings.tree_margin_right
+                  << jsw::key("mapped_antigens_margin_right") << aSettings.mapped_antigens_margin_right
+                  << jsw::key("time_series_width") << aSettings.time_series_width
+                  << jsw::key("clades_width") << aSettings.clades_width
+                  << jsw::end_object;
 }
 
 // ----------------------------------------------------------------------
 
-template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const TimeSeriesDrawSettings& aSettings)
+template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const TimeSeriesDrawSettings& aSettings)
 {
-    return writer << StartObject
-                  << JsonObjectKey("begin") << aSettings.begin
-                  << JsonObjectKey("end") << aSettings.end
-                  << JsonObjectKey("label_size") << aSettings.label_size
-                  << JsonObjectKey("label_style") << aSettings.label_style
-                  << JsonObjectKey("month_year_to_timeseries_gap") << aSettings.month_year_to_timeseries_gap
-                  << JsonObjectKey("month_separator_color") << aSettings.month_separator_color
-                  << JsonObjectKey("month_separator_width") << aSettings.month_separator_width
-                  << JsonObjectKey("dash_width") << aSettings.dash_width
-                  << JsonObjectKey("dash_line_width") << aSettings.dash_line_width
-                  << EndObject;
+    return writer << jsw::start_object
+                  << jsw::key("begin") << aSettings.begin
+                  << jsw::key("end") << aSettings.end
+                  << jsw::key("label_size") << aSettings.label_size
+                  << jsw::key("label_style") << aSettings.label_style
+                  << jsw::key("month_year_to_timeseries_gap") << aSettings.month_year_to_timeseries_gap
+                  << jsw::key("month_separator_color") << aSettings.month_separator_color
+                  << jsw::key("month_separator_width") << aSettings.month_separator_width
+                  << jsw::key("dash_width") << aSettings.dash_width
+                  << jsw::key("dash_line_width") << aSettings.dash_line_width
+                  << jsw::end_object;
 }
 
 // ----------------------------------------------------------------------
 
-template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const CladeDrawSettings& aSettings)
+template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const CladeDrawSettings& aSettings)
 {
-    return writer << StartObject
-                  << JsonObjectKey("name") << aSettings.name
-                  << JsonObjectKey("display_name") << aSettings.display_name
-                  << JsonObjectKey("show") << aSettings.show
-                  << JsonObjectKey("slot") << static_cast<int>(aSettings.slot)
-                  << JsonObjectKey("section_inclusion_tolerance") << aSettings.section_inclusion_tolerance
-                  << JsonObjectKey("section_exclusion_tolerance") << aSettings.section_exclusion_tolerance
-                  << JsonObjectKey("show_section_size_in_label") << aSettings.show_section_size_in_label
-                  << JsonObjectKey("arrow_color") << aSettings.arrow_color
-                  << JsonObjectKey("line_width") << aSettings.line_width
-                  << JsonObjectKey("arrow_width") << aSettings.arrow_width
-                  << JsonObjectKey("separator_color") << aSettings.separator_color
-                  << JsonObjectKey("separator_width") << aSettings.separator_width
-                  << JsonObjectKey("label_position") << aSettings.label_position
-                  << JsonObjectKey("label_offset") << aSettings.label_offset
-                  << JsonObjectKey("label_color") << aSettings.label_color
-                  << JsonObjectKey("label_size") << aSettings.label_size
-                  << JsonObjectKey("label_style") << aSettings.label_style
-                  << JsonObjectKey("label_rotation") << aSettings.label_rotation
-                  << EndObject;
+    return writer << jsw::start_object
+                  << jsw::key("name") << aSettings.name
+                  << jsw::key("display_name") << aSettings.display_name
+                  << jsw::key("show") << aSettings.show
+                  << jsw::key("slot") << static_cast<int>(aSettings.slot)
+                  << jsw::key("section_inclusion_tolerance") << aSettings.section_inclusion_tolerance
+                  << jsw::key("section_exclusion_tolerance") << aSettings.section_exclusion_tolerance
+                  << jsw::key("show_section_size_in_label") << aSettings.show_section_size_in_label
+                  << jsw::key("arrow_color") << aSettings.arrow_color
+                  << jsw::key("line_width") << aSettings.line_width
+                  << jsw::key("arrow_width") << aSettings.arrow_width
+                  << jsw::key("separator_color") << aSettings.separator_color
+                  << jsw::key("separator_width") << aSettings.separator_width
+                  << jsw::key("label_position") << aSettings.label_position
+                  << jsw::key("label_offset") << aSettings.label_offset
+                  << jsw::key("label_color") << aSettings.label_color
+                  << jsw::key("label_size") << aSettings.label_size
+                  << jsw::key("label_style") << aSettings.label_style
+                  << jsw::key("label_rotation") << aSettings.label_rotation
+                  << jsw::end_object;
 }
 
 // ----------------------------------------------------------------------
 
-template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const CladesDrawSettings& aSettings)
+template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const CladesDrawSettings& aSettings)
 {
-    return writer << StartObject
-                  << JsonObjectKey("slot_width") << aSettings.slot_width
-                  << JsonObjectKey("clades") << aSettings.clades
-                  << EndObject;
+    return writer << jsw::start_object
+                  << jsw::key("slot_width") << aSettings.slot_width
+                  << jsw::key("clades") << aSettings.clades
+                  << jsw::end_object;
 }
 
 // ----------------------------------------------------------------------
 
-template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const HzSection& aSettings)
+template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const HzSection& aSettings)
 {
-    return writer << StartObject
-                  << JsonObjectKey("name") << aSettings.name
-                  << JsonObjectKey("show") << aSettings.show
-                  << JsonObjectKey("show_line") << aSettings.show
-                  << JsonObjectKey("show_map") << aSettings.show_map
-                  << JsonObjectKey("label") << aSettings.label
-                  << EndObject;
+    return writer << jsw::start_object
+                  << jsw::key("name") << aSettings.name
+                  << jsw::key("show") << aSettings.show
+                  << jsw::key("show_line") << aSettings.show
+                  << jsw::key("show_map") << aSettings.show_map
+                  << jsw::key("label") << aSettings.label
+                  << jsw::end_object;
 }
 
 // ----------------------------------------------------------------------
 
-template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const HzSections& aSettings)
+template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const HzSections& aSettings)
 {
-    return writer << StartObject
-                  << JsonObjectKey("vertical_gap") << aSettings.vertical_gap
-                  << JsonObjectKey("line_color") << aSettings.line_color
-                  << JsonObjectKey("line_width") << aSettings.line_width
-                  << JsonObjectKey("ts_label_size") << aSettings.ts_label_size
-                  << JsonObjectKey("ts_label_style") << aSettings.ts_label_style
-                  << JsonObjectKey("ts_label_color") << aSettings.ts_label_color
-                  << JsonObjectKey("sections") << aSettings.sections
-                  << EndObject;
+    return writer << jsw::start_object
+                  << jsw::key("vertical_gap") << aSettings.vertical_gap
+                  << jsw::key("line_color") << aSettings.line_color
+                  << jsw::key("line_width") << aSettings.line_width
+                  << jsw::key("ts_label_size") << aSettings.ts_label_size
+                  << jsw::key("ts_label_style") << aSettings.ts_label_style
+                  << jsw::key("ts_label_color") << aSettings.ts_label_color
+                  << jsw::key("sections") << aSettings.sections
+                  << jsw::end_object;
 }
 
 // ----------------------------------------------------------------------
 
-template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const MappedAntigensDrawSettings& aSettings)
+template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const MappedAntigensDrawSettings& aSettings)
 {
-    return writer << StartObject
-                  << JsonObjectKey("width") << aSettings.width
-                  << JsonObjectKey("line_color") << aSettings.line_color
-                  << JsonObjectKey("line_width") << aSettings.line_width
-                  << JsonObjectKey("line_length") << aSettings.line_length
-                  << EndObject;
+    return writer << jsw::start_object
+                  << jsw::key("width") << aSettings.width
+                  << jsw::key("line_color") << aSettings.line_color
+                  << jsw::key("line_width") << aSettings.line_width
+                  << jsw::key("line_length") << aSettings.line_length
+                  << jsw::end_object;
 }
 
 // ----------------------------------------------------------------------
 
-template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const Viewport& aViewport)
+template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const Viewport& aViewport)
 {
-    writer << StartArray << aViewport.origin.x << aViewport.origin.y << aViewport.size.width;
+    writer << jsw::start_array << aViewport.origin.x << aViewport.origin.y << aViewport.size.width;
     if (!float_equal(aViewport.size.width, aViewport.size.height))
         writer << aViewport.size.height;
-    writer << EndArray;
+    writer << jsw::end_array;
     return writer;
 }
 
 // ----------------------------------------------------------------------
 
-template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const MarkAntigenSettings& aSettings)
+template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const MarkAntigenSettings& aSettings)
 {
-    return writer << StartObject
-                  << JsonObjectKey("show") << aSettings.show
-                  << JsonObjectKey("name") << aSettings.name
-                  << JsonObjectKey("scale") << aSettings.scale
-                  << JsonObjectKey("aspect") << aSettings.aspect
-                  << JsonObjectKey("rotation") << aSettings.rotation
-                  << JsonObjectKey("fill_color") << aSettings.fill_color
-                  << JsonObjectKey("outline_color") << aSettings.outline_color
-                  << JsonObjectKey("outline_width") << aSettings.outline_width
-                  << JsonObjectKey("label") << aSettings.label
-                  << JsonObjectKey("label_color") << aSettings.label_color
-                  << JsonObjectKey("label_offset") << aSettings.label_offset
-                  << JsonObjectKey("label_size") << aSettings.label_size
-                  << JsonObjectKey("label_line_color") << aSettings.label_line_color
-                  << JsonObjectKey("label_line_width") << aSettings.label_line_width
-                  << EndObject;
+    return writer << jsw::start_object
+                  << jsw::key("show") << aSettings.show
+                  << jsw::key("name") << aSettings.name
+                  << jsw::key("scale") << aSettings.scale
+                  << jsw::key("aspect") << aSettings.aspect
+                  << jsw::key("rotation") << aSettings.rotation
+                  << jsw::key("fill_color") << aSettings.fill_color
+                  << jsw::key("outline_color") << aSettings.outline_color
+                  << jsw::key("outline_width") << aSettings.outline_width
+                  << jsw::key("label") << aSettings.label
+                  << jsw::key("label_color") << aSettings.label_color
+                  << jsw::key("label_offset") << aSettings.label_offset
+                  << jsw::key("label_size") << aSettings.label_size
+                  << jsw::key("label_line_color") << aSettings.label_line_color
+                  << jsw::key("label_line_width") << aSettings.label_line_width
+                  << jsw::end_object;
 }
 
 // ----------------------------------------------------------------------
 
-template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const AntigenicMapsDrawSettings& aSettings)
+template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const AntigenicMapsDrawSettings& aSettings)
 {
-    return writer << StartObject
-                  << JsonObjectKey("layout") << aSettings.layout
-                  << JsonObjectKey("width") << aSettings.width
-                  << JsonObjectKey("columns") << aSettings.columns
-                  << JsonObjectKey("gap") << aSettings.gap
-                  << JsonObjectKey("transformation") << aSettings.transformation
-                  << JsonObjectKey("viewport") << aSettings.viewport
-                  << JsonObjectKey("background_color") << aSettings.background_color
-                  << JsonObjectKey("border_color") << aSettings.border_color
-                  << JsonObjectKey("border_width") << aSettings.border_width
-                  << JsonObjectKey("grid_line_width") << aSettings.grid_line_width
-                  << JsonObjectKey("grid_line_color") << aSettings.grid_line_color
-                  << JsonObjectKey("serum_scale") << aSettings.serum_scale
-                  << JsonObjectKey("reference_antigen_scale") << aSettings.reference_antigen_scale
-                  << JsonObjectKey("test_antigen_scale") << aSettings.test_antigen_scale
-                  << JsonObjectKey("vaccine_antigen_scale") << aSettings.vaccine_antigen_scale
-                  << JsonObjectKey("tracked_antigen_scale") << aSettings.tracked_antigen_scale
-                  << JsonObjectKey("serum_outline_width") << aSettings.serum_outline_width
-                  << JsonObjectKey("reference_antigen_outline_width") << aSettings.reference_antigen_outline_width
-                  << JsonObjectKey("test_antigen_outline_width") << aSettings.test_antigen_outline_width
-                  << JsonObjectKey("vaccine_antigen_outline_width") << aSettings.vaccine_antigen_outline_width
-                  << JsonObjectKey("sequenced_antigen_outline_width") << aSettings.sequenced_antigen_outline_width
-                  << JsonObjectKey("serum_outline_color") << aSettings.serum_outline_color
-                  << JsonObjectKey("reference_antigen_outline_color") << aSettings.reference_antigen_outline_color
-                  << JsonObjectKey("test_antigen_outline_color") << aSettings.test_antigen_outline_color
-                  << JsonObjectKey("test_antigen_fill_color") << aSettings.test_antigen_fill_color
-                  << JsonObjectKey("vaccine_antigen_outline_color") << aSettings.vaccine_antigen_outline_color
-                  << JsonObjectKey("sequenced_antigen_outline_color") << aSettings.sequenced_antigen_outline_color
-                  << JsonObjectKey("sequenced_antigen_fill_color") << aSettings.sequenced_antigen_fill_color
-                  << JsonObjectKey("tracked_antigen_outline_width") << aSettings.tracked_antigen_outline_width
-                  << JsonObjectKey("tracked_antigen_outline_color") << aSettings.tracked_antigen_outline_color
-                  << JsonObjectKey("tracked_antigen_colored_by_clade") << aSettings.tracked_antigen_colored_by_clade
-                  << JsonObjectKey("tracked_antigen_color") << aSettings.tracked_antigen_color
-                  << JsonObjectKey("reassortant_rotation") << aSettings.reassortant_rotation
-                  << JsonObjectKey("egg_antigen_aspect") << aSettings.egg_antigen_aspect
-                  << JsonObjectKey("serum_circle_color") << aSettings.serum_circle_color
-                  << JsonObjectKey("tracked_serum_outline_color") << aSettings.tracked_serum_outline_color
-                  << JsonObjectKey("serum_circle_thickness") << aSettings.serum_circle_thickness
-                  << JsonObjectKey("tracked_serum_outline_width") << aSettings.tracked_serum_outline_width
-                  << JsonObjectKey("map_title_color") << aSettings.map_title_color
-                  << JsonObjectKey("map_title_offset") << aSettings.map_title_offset
-                  << JsonObjectKey("map_title_size") << aSettings.map_title_size
-                  << JsonObjectKey("mapped_antigens_section_line_color") << aSettings.mapped_antigens_section_line_color
-                  << JsonObjectKey("mapped_antigens_section_line_width") << aSettings.mapped_antigens_section_line_width
-                  << JsonObjectKey("mark_antigens") << aSettings.mark_antigens
-                  << EndObject;
+    return writer << jsw::start_object
+                  << jsw::key("layout") << aSettings.layout
+                  << jsw::key("width") << aSettings.width
+                  << jsw::key("columns") << aSettings.columns
+                  << jsw::key("gap") << aSettings.gap
+                  << jsw::key("transformation") << aSettings.transformation
+                  << jsw::key("viewport") << aSettings.viewport
+                  << jsw::key("background_color") << aSettings.background_color
+                  << jsw::key("border_color") << aSettings.border_color
+                  << jsw::key("border_width") << aSettings.border_width
+                  << jsw::key("grid_line_width") << aSettings.grid_line_width
+                  << jsw::key("grid_line_color") << aSettings.grid_line_color
+                  << jsw::key("serum_scale") << aSettings.serum_scale
+                  << jsw::key("reference_antigen_scale") << aSettings.reference_antigen_scale
+                  << jsw::key("test_antigen_scale") << aSettings.test_antigen_scale
+                  << jsw::key("vaccine_antigen_scale") << aSettings.vaccine_antigen_scale
+                  << jsw::key("tracked_antigen_scale") << aSettings.tracked_antigen_scale
+                  << jsw::key("serum_outline_width") << aSettings.serum_outline_width
+                  << jsw::key("reference_antigen_outline_width") << aSettings.reference_antigen_outline_width
+                  << jsw::key("test_antigen_outline_width") << aSettings.test_antigen_outline_width
+                  << jsw::key("vaccine_antigen_outline_width") << aSettings.vaccine_antigen_outline_width
+                  << jsw::key("sequenced_antigen_outline_width") << aSettings.sequenced_antigen_outline_width
+                  << jsw::key("serum_outline_color") << aSettings.serum_outline_color
+                  << jsw::key("reference_antigen_outline_color") << aSettings.reference_antigen_outline_color
+                  << jsw::key("test_antigen_outline_color") << aSettings.test_antigen_outline_color
+                  << jsw::key("test_antigen_fill_color") << aSettings.test_antigen_fill_color
+                  << jsw::key("vaccine_antigen_outline_color") << aSettings.vaccine_antigen_outline_color
+                  << jsw::key("sequenced_antigen_outline_color") << aSettings.sequenced_antigen_outline_color
+                  << jsw::key("sequenced_antigen_fill_color") << aSettings.sequenced_antigen_fill_color
+                  << jsw::key("tracked_antigen_outline_width") << aSettings.tracked_antigen_outline_width
+                  << jsw::key("tracked_antigen_outline_color") << aSettings.tracked_antigen_outline_color
+                  << jsw::key("tracked_antigen_colored_by_clade") << aSettings.tracked_antigen_colored_by_clade
+                  << jsw::key("tracked_antigen_color") << aSettings.tracked_antigen_color
+                  << jsw::key("reassortant_rotation") << aSettings.reassortant_rotation
+                  << jsw::key("egg_antigen_aspect") << aSettings.egg_antigen_aspect
+                  << jsw::key("serum_circle_color") << aSettings.serum_circle_color
+                  << jsw::key("tracked_serum_outline_color") << aSettings.tracked_serum_outline_color
+                  << jsw::key("serum_circle_thickness") << aSettings.serum_circle_thickness
+                  << jsw::key("tracked_serum_outline_width") << aSettings.tracked_serum_outline_width
+                  << jsw::key("map_title_color") << aSettings.map_title_color
+                  << jsw::key("map_title_offset") << aSettings.map_title_offset
+                  << jsw::key("map_title_size") << aSettings.map_title_size
+                  << jsw::key("mapped_antigens_section_line_color") << aSettings.mapped_antigens_section_line_color
+                  << jsw::key("mapped_antigens_section_line_width") << aSettings.mapped_antigens_section_line_width
+                  << jsw::key("mark_antigens") << aSettings.mark_antigens
+                  << jsw::end_object;
 }
 
 // ----------------------------------------------------------------------
 
-template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const TitleDrawSettings& aSettings)
+template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const TitleDrawSettings& aSettings)
 {
-    return writer << StartObject
-                  << JsonObjectKey("title") << aSettings.title
-                  << JsonObjectKey("color") << aSettings.color
-                  << JsonObjectKey("size") << aSettings.size
-                  << JsonObjectKey("style") << aSettings.style
-                  << JsonObjectKey("offset") << aSettings.offset
-                  << EndObject;
+    return writer << jsw::start_object
+                  << jsw::key("title") << aSettings.title
+                  << jsw::key("color") << aSettings.color
+                  << jsw::key("size") << aSettings.size
+                  << jsw::key("style") << aSettings.style
+                  << jsw::key("offset") << aSettings.offset
+                  << jsw::end_object;
 }
 
 // ----------------------------------------------------------------------
 
-template <typename RW> inline JsonWriterT<RW>& operator <<(JsonWriterT<RW>& writer, const Settings& aSettings)
+template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const Settings& aSettings)
 {
-    return writer << StartObject
-                  << JsonObjectKey("  version") << SETTINGS_VERSION
-                  << JsonObjectKey("signature_page") << aSettings.signature_page
-                  << JsonObjectKey("title") << aSettings.title
-                  << JsonObjectKey("tree") << aSettings.tree_draw
-                  << JsonObjectKey("time_series") << aSettings.time_series
-                  << JsonObjectKey("clades") << aSettings.clades
-                  << JsonObjectKey("hz_sections") << aSettings.hz_sections
-                  << JsonObjectKey("mapped_antigens") << aSettings.mapped_antigens
-                  << JsonObjectKey("antigenic_maps") << aSettings.antigenic_maps
-                  << EndObject;
+    return writer << jsw::start_object
+                  << jsw::key("  version") << SETTINGS_VERSION
+                  << jsw::key("signature_page") << aSettings.signature_page
+                  << jsw::key("title") << aSettings.title
+                  << jsw::key("tree") << aSettings.tree_draw
+                  << jsw::key("time_series") << aSettings.time_series
+                  << jsw::key("clades") << aSettings.clades
+                  << jsw::key("hz_sections") << aSettings.hz_sections
+                  << jsw::key("mapped_antigens") << aSettings.mapped_antigens
+                  << jsw::key("antigenic_maps") << aSettings.antigenic_maps
+                  << jsw::end_object;
 }
 
 // ----------------------------------------------------------------------
 
 void write_settings(const Settings& aSettings, std::string aFilename, size_t aIndent)
 {
-    export_to_json(aSettings, SETTINGS_VERSION, aFilename, aIndent);
+    jsw::export_to_json(aSettings, SETTINGS_VERSION, aFilename, aIndent);
 
 } // write_settings
 
