@@ -147,18 +147,21 @@ void SignaturePageDraw::init_settings()
             mAntigenicMapsDraw->init_settings();
     }
     else {                      // just tree
-        mSettings->tree_draw.vaccines[0].label_size = 40;
+        mSettings->signature_page.tree_margin_right = 10;
 
-        mSettings->time_series.label_size = 30;
+        mSettings->tree_draw.vaccines[0].label_size = 40;
+        mSettings->tree_draw.aa_transition.per_branch.size = 20;
+
+        mSettings->time_series.label_size = 20;
         mSettings->time_series.month_separator_width = 1;
         mSettings->time_series.month_year_to_timeseries_gap = 5;
         mSettings->time_series.dash_line_width = 3;
 
-        mSettings->hz_sections.vertical_gap = 80;
+        mSettings->hz_sections.vertical_gap = 40;
         mSettings->hz_sections.ts_label_size = 50;
         mSettings->hz_sections.line_width = 2;
 
-        mSettings->clades.slot_width = 50;
+        mSettings->clades.slot_width = 20;
         for (auto& clade: mSettings->clades.clades) {
             clade.label_size = 33;
             clade.line_width = 2;

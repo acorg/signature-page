@@ -29,7 +29,7 @@ class SignaturePageDrawSettings
     enum class Layout { Auto, TreeTSClades, TreeCladesTSMaps };
 
     inline SignaturePageDrawSettings()
-        : layout(Layout::Auto), top(80), bottom(80), left(50), right(50),
+        : layout(Layout::Auto), top(60), bottom(60), left(50), right(20),
           tree_margin_right(30), mapped_antigens_margin_right(30), time_series_width(400), clades_width(100)
         {}
 
