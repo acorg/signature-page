@@ -1127,7 +1127,7 @@ const std::map<std::string, CladesDrawSettingsHandler::Keys> CladesDrawSettingsH
 class HzSectionHandler : public HandlerBase
 {
  private:
-    enum class Keys {Unknown, show, show_line, show_map, name, label};
+    enum class Keys {Unknown, show, show_line, show_label_in_time_series, show_map, name, label};
 
  public:
     inline HzSectionHandler(Settings& aSettings, HzSection& aField) : HandlerBase{aSettings}, mKey(Keys::Unknown), mField(aField) {}
@@ -1171,6 +1171,9 @@ class HzSectionHandler : public HandlerBase
               case Keys::show_line:
                   mField.show_line = b;
                   break;
+              case Keys::show_label_in_time_series:
+                  mField.show_label_in_time_series = b;
+                  break;
               case Keys::show_map:
                   mField.show_map = b;
                   break;
@@ -1191,6 +1194,7 @@ class HzSectionHandler : public HandlerBase
 const std::map<std::string, HzSectionHandler::Keys> HzSectionHandler::key_mapper {
     {"show", Keys::show},
     {"show_line", Keys::show_line},
+    {"show_label_in_time_series", Keys::show_label_in_time_series},
     {"show_map", Keys::show_map},
     {"name", Keys::name},
     {"label", Keys::label},
@@ -2205,7 +2209,8 @@ template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writ
     return writer << jsw::start_object
                   << jsw::key("name") << aSettings.name
                   << jsw::key("show") << aSettings.show
-                  << jsw::key("show_line") << aSettings.show
+                  << jsw::key("show_line") << aSettings.show_line
+                  << jsw::key("show_label_in_time_series") << aSettings.show_label_in_time_series
                   << jsw::key("show_map") << aSettings.show_map
                   << jsw::key("label") << aSettings.label
                   << jsw::end_object;

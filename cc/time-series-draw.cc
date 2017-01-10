@@ -129,7 +129,9 @@ void TimeSeriesDraw::draw_hz_section_lines()
                     y = (previous_vertical_pos + aNode.draw.vertical_pos) / 2;
                     mSurface.line({0, y}, {mSurface.size().width, y}, mHzSections.line_color, mHzSections.line_width);
                 }
-                draw_hz_section_label(aNode.draw.hz_section_index, section_settings, y);
+                if (section_settings.show_label_in_time_series) {
+                    draw_hz_section_label(aNode.draw.hz_section_index, section_settings, y);
+                }
             }
             previous_vertical_pos = aNode.draw.vertical_pos;
         }
@@ -149,9 +151,6 @@ void TimeSeriesDraw::draw_hz_section_label(size_t aSectionNo, const HzSection& a
     }
 
 } // TimeSeriesDraw::draw_hz_section_label
-
-// ----------------------------------------------------------------------
-
 
 // ----------------------------------------------------------------------
 /// Local Variables:
