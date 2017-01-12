@@ -386,7 +386,7 @@ void LabelledGrid::draw()
 
     size_t row = 0, column = 0, section_index = 0;
     for (const auto& section: mAntigenicMapsDraw.hz_sections().sections) {
-        if (section.show_map) {
+        if (section.show && section.show_map) {
             Surface& map_surface = surface.subsurface({column * (map_width + settings.gap), row * (map_width + settings.gap)},
                                                       {map_width, map_width}, mMapViewport.size.width, true);
             draw_chart(map_surface, row * settings.columns + column, section_index);

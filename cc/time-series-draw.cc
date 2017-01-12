@@ -144,7 +144,7 @@ void TimeSeriesDraw::draw_hz_section_lines()
 
 void TimeSeriesDraw::draw_hz_section_label(size_t aSectionNo, const HzSection& aSection, double aY)
 {
-    if (aSection.show_map) {
+    if (aSection.show && aSection.show_map) {
         std::string label(1, 'A' + static_cast<char>(aSectionNo));
         const Size tsize = mSurface.text_size(label, mHzSections.ts_label_size, mHzSections.ts_label_style);
         mSurface.text({mSurface.size().width - tsize.width * 1.2, aY + tsize.height * 1.2}, label, mHzSections.ts_label_color, mHzSections.ts_label_size, mHzSections.ts_label_style);
