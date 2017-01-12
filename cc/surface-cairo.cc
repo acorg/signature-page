@@ -50,6 +50,7 @@ class context
     inline context& rotate(double aAngle) { cairo_rotate(cairo_context(), aAngle); return *this; }
     inline context& scale(double x, double y) { cairo_scale(cairo_context(), x, y); return *this; }
     inline context& scale(double x) { cairo_scale(cairo_context(), x, x); return *this; }
+    inline context& aspect(double x) { cairo_scale(cairo_context(), x, 1.0); return *this; }
     inline context& clip() { cairo_clip(cairo_context()); return *this; }
     inline context& new_path() { cairo_new_path(cairo_context()); return *this; }
     inline context& close_path() { cairo_close_path(cairo_context()); return *this; }
@@ -221,7 +222,7 @@ void SurfaceCairo::circle(const Location& aCenter, double aDiameter, double aAsp
             .set_line_width(aOutlineWidth)
             .translate(aCenter)
             .rotate(aAngle)
-            .scale(aAspect)
+            .aspect(aAspect)
             .circle(aDiameter / 2)
             .set_source_rgba(aOutlineColor)
             .stroke();
@@ -236,7 +237,7 @@ void SurfaceCairo::circle_filled(const Location& aCenter, double aDiameter, doub
             .set_line_width(aOutlineWidth)
             .translate(aCenter)
             .rotate(aAngle)
-            .scale(aAspect)
+            .aspect(aAspect)
             .circle(aDiameter / 2)
             .set_source_rgba(aFillColor)
             .fill_preserve()
