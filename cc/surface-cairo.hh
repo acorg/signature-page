@@ -44,7 +44,7 @@ class SurfaceCairo : public Surface
  protected:
     std::vector<SurfaceCairoChild> mChildren;
 
-    inline SurfaceCairo() { mChildren.reserve(10); } // reserve to avoid re-allocating and copying (copying is forbidden)
+    inline SurfaceCairo() { mChildren.reserve(50); } // reserve to avoid re-allocating and copying (copying is forbidden)
 
     virtual Location arrow_head(const Location& a, double angle, double sign, Color aColor, double aArrowWidth);
 
