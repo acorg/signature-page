@@ -136,6 +136,20 @@ class PointAttributesHandler : public HandlerBase
             return result;
         }
 
+    inline virtual HandlerBase* Null()
+        {
+            HandlerBase* result = nullptr;
+            switch (mKey) {
+              case Keys::serum_circle_radius:
+                  mField.serum_circle_radius = -1;
+                  break;
+              default:
+                  result = HandlerBase::Null();
+                  break;
+            }
+            return result;
+        }
+
     inline virtual HandlerBase* Bool(bool b)
         {
             HandlerBase* result = nullptr;
@@ -486,6 +500,22 @@ class TransformationHandler : public HandlerBase
             if (mNesting != 2 || mField.size() >= 4)
                 throw json_reader::Failure{};
             mField.push_back(d);
+            return nullptr;
+        }
+
+    inline virtual HandlerBase* Uint(unsigned u)
+        {
+            if (mNesting != 2 || mField.size() >= 4)
+                throw json_reader::Failure{};
+            mField.push_back(static_cast<double>(u));
+            return nullptr;
+        }
+
+    inline virtual HandlerBase* Int(int i)
+        {
+            if (mNesting != 2 || mField.size() >= 4)
+                throw json_reader::Failure{};
+            mField.push_back(static_cast<double>(i));
             return nullptr;
         }
 
