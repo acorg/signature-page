@@ -88,9 +88,10 @@ void SignaturePageDraw::init_layout()
         mSettings->signature_page.top = 60;
         mSettings->signature_page.bottom = 60;
         mSettings->signature_page.left = 50;
+        mSettings->signature_page.right = 0;
         mSettings->signature_page.set_layot("tree-ts-clades");
         mSettings->signature_page.time_series_width = 300;
-        mSettings->signature_page.clades_width = 100;
+        mSettings->signature_page.clades_width = 60;
         mSettings->signature_page.tree_margin_right = 10;
         mSettings->tree_draw.aa_transition.per_branch.size = mSettings->signature_page.time_series_width * 0.1;
     }
@@ -112,12 +113,13 @@ void SignaturePageDraw::init_layout()
 
 void SignaturePageDraw::init_settings()
 {
+    std::cout << std::endl << "INIT:" << std::endl;
     mSettings->signature_page.bottom = mSettings->signature_page.top;
 
     if (mTitleDraw)
         mTitleDraw->init_settings();
     if (mTreeDraw)
-        mTreeDraw->set_line_no(); // hides leaves too
+        mTreeDraw->set_line_no(true, true); // hides leaves too
     if (mCladesDraw)
         mCladesDraw->init_settings();
     if (mTreeDraw)
@@ -163,7 +165,7 @@ void SignaturePageDraw::init_settings()
         mSettings->time_series.dash_line_width = 3;
 
         mSettings->hz_sections.vertical_gap = 40;
-        mSettings->hz_sections.ts_label_size = 50;
+        mSettings->hz_sections.ts_label_size = 35;
         mSettings->hz_sections.line_width = 2;
         for (auto& section: mSettings->hz_sections.sections) {
             section.show_label_in_time_series = false;

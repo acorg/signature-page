@@ -103,10 +103,10 @@ class CladeData
 
     inline bool shown() const { return slot != CladeDrawSettings::NoSlot; }
 
-    inline void first_seq_ids(std::vector<std::string>& aSeqIds) const
+    inline void seq_ids(std::vector<std::pair<std::string, std::string>>& aSeqIds) const
         {
             for (const auto& sec: sections) {
-                aSeqIds.push_back(sec.first->seq_id);
+                aSeqIds.emplace_back(sec.first->seq_id, sec.last->seq_id);
             }
         }
 

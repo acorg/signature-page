@@ -47,7 +47,7 @@ void TreeDraw::make_coloring()
 
 void TreeDraw::init_settings(const Clades* aClades)
 {
-    hide_leaves(); // set_line_no();
+    set_line_no(false, true);    // line_no is necessary to sort detected hz sections, but set_line_no is called by SignaturePageDraw::init_settings(), so this call is perhaps redundant
     mHzSections.auto_detect(mTree, aClades);
 
 } // TreeDraw::init_settings
@@ -56,7 +56,7 @@ void TreeDraw::init_settings(const Clades* aClades)
 
 void TreeDraw::prepare()
 {
-    set_line_no();
+    set_line_no(true, true);
     const size_t number_of_hz_sections = prepare_hz_sections();
     const auto canvas_size = mSurface.size();
     mHorizontalStep = canvas_size.width / mTree.width(mSettings.hide_if_cumulative_edge_length_bigger_than);
@@ -84,9 +84,9 @@ void TreeDraw::draw()
 
 // ----------------------------------------------------------------------
 
-void TreeDraw::hide_leaves()
+void TreeDraw::hide_leaves(bool aForce)
 {
-    if (!hiding_leaves_done) {
+    if (aForce || !hiding_leaves_done) {
         auto hide_show_leaf = [this](Node& aNode) {
             aNode.draw.shown = ! (aNode.data.date() < mSettings.hide_isolated_before || aNode.data.cumulative_edge_length > mSettings.hide_if_cumulative_edge_length_bigger_than);
         };
@@ -110,10 +110,11 @@ void TreeDraw::hide_leaves()
 
 // ----------------------------------------------------------------------
 
-void TreeDraw::set_line_no()
+void TreeDraw::set_line_no(bool aForce, bool aHideLeaves)
 {
-    hide_leaves();
-    if (!setting_line_no_done) {
+    if (aHideLeaves)
+        hide_leaves(aForce);
+    if (aForce || !setting_line_no_done) {
         size_t current_line = 1;    // line of the first node is 1, we have 1 line space at the top and bottom of the tree
         auto set_line_no = [&current_line](Node& aNode) {
             if (aNode.draw.shown) {
@@ -372,21 +373,25 @@ void HzSections::sort(const Tree& aTree)
 void HzSections::auto_detect(Tree& aTree, const Clades* aClades)
 {
     if (sections.empty()) {
-        add(find_first_leaf(aTree).seq_id, false);
+        sections.emplace_back(find_first_leaf(aTree).seq_id, false); // false -> do not show line
 
         if (aClades) {
             for (const auto& clade: *aClades) {
                 if (clade.second.shown()) {
-                    std::vector<std::string> seq_ids;
-                    clade.second.first_seq_ids(seq_ids);
+                    std::vector<std::pair<std::string, std::string>> seq_ids;
+                    clade.second.seq_ids(seq_ids);
                     for (const auto& s: seq_ids) {
-                        add(s, false);
+                        sections.emplace_back(s.first, false); // false -> do not show line
+                        const Node* last_node_of_clade = aTree.find_leaf_by_seqid(s.second);
+                        const Node* next_node = aTree.find_leaf_by_line_no(last_node_of_clade->draw.line_no + 1);
+                        if (next_node)
+                            sections.emplace_back(next_node->seq_id, false); // false -> do not show line
                     }
                 }
             }
         }
 
-        const size_t number_of_sections_to_detect = 5;
+        const size_t number_of_sections_to_detect = sections.size() + 5;
 
         std::vector<const Node*> nodes;
         aTree.leaf_nodes_sorted_by_distance_from_previous(nodes);
@@ -403,25 +408,24 @@ void HzSections::auto_detect(Tree& aTree, const Clades* aClades)
 
         for (size_t node_no = 0; sections.size() <= number_of_sections_to_detect && node_no < nodes.size(); ++node_no) {
             if (nodes[node_no]->draw.shown) {
-                add(nodes[node_no]->seq_id, true);
+                sections.emplace_back(nodes[node_no]->seq_id, true); // true -> show line
             }
         }
+
+          // remove sections having the same seq_id
+        std::sort(sections.begin(), sections.end(), [](const auto& a, const auto& b) -> bool { return a.name < b.name; });
+        sections.erase(std::unique(sections.begin(), sections.end(), [](const auto& a, const auto& b) -> bool { return a.name == b.name; }), sections.end());
+
+          // detect first node for each section
+        for (auto& section: sections)
+            section.first = aTree.find_leaf_by_seqid(section.name);
+          // sort sections by line_no of the beginning
+        std::sort(sections.begin(), sections.end(), [](const auto& a, const auto& b) -> bool { return a.first->draw.line_no < b.first->draw.line_no; });
     }
 
 } // HzSections::auto_detect
 
 // ----------------------------------------------------------------------
-
-void HzSections::add(std::string aSeqId, bool aShowLine)
-{
-    auto sec = std::find_if(sections.begin(), sections.end(), [&aSeqId](const auto& s) -> bool { return s.name == aSeqId; });
-    if (sec == sections.end())
-        sections.emplace_back(aSeqId, aShowLine);
-
-} // HzSections::add
-
-// ----------------------------------------------------------------------
-
 
 // ----------------------------------------------------------------------
 /// Local Variables:

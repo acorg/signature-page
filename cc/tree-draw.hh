@@ -130,7 +130,6 @@ class HzSection
     std::string label;          // antigenic map label, empty - generate automatically
 
     // not stored in settings
-    // size_t line_no;
     const Node* first;
     const Node* last;
 };
@@ -142,7 +141,6 @@ class HzSections
         : vertical_gap(50), line_color("grey63"), line_width(10), ts_label_size(50), ts_label_color("black") {}
     ~HzSections();
 
-    void add(std::string aSeqId, bool aShowLine);
     void sort(const Tree& aTree);
     void auto_detect(Tree& aTree, const Clades* aClades);
 
@@ -176,7 +174,7 @@ class TreeDraw
     double vertical_step() const { return mVerticalStep; }
 
     void init_settings(const Clades* aClades);
-    void set_line_no();
+    void set_line_no(bool aForce, bool aHideLeaves);
     inline Surface& surface() { return mSurface; }
 
  private:
@@ -195,7 +193,7 @@ class TreeDraw
     bool hiding_leaves_done;
     bool setting_line_no_done;
 
-    void hide_leaves();
+    void hide_leaves(bool aForce);
     void set_vertical_pos();
     size_t prepare_hz_sections();
     void draw_node(const Node& aNode, double aOriginX, double& aVerticalGap, double aEdgeLength = -1);

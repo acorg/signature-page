@@ -105,16 +105,16 @@ void CladesDraw::assign_slots()
     }
 
     size_t slot = 0;
-    while (used_slots.count(slot))
-        ++slot;
+    // while (used_slots.count(slot))
+    //     ++slot;
 
     for (auto& clade: mClades) {
         if (clade.second.slot == CladeDrawSettings::NoSlot && mSettings.for_clade(clade.first).show) {
             clade.second.slot = slot;
             used_slots.insert(slot);
-            ++slot;
-            while (used_slots.count(slot))
-                ++slot;
+            // ++slot;
+            // while (used_slots.count(slot))
+            //     ++slot;
         }
     }
 
