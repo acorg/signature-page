@@ -275,7 +275,6 @@ void AntigenicMapsLayout::draw_chart(Surface& aSurface, size_t aSectionIndex)
 
     aSurface.background(settings.background_color);
     aSurface.grid(1, settings.grid_line_color, settings.grid_line_width);
-    aSurface.border(settings.border_color, settings.border_width * 2);
     aSurface.viewport_offset(mMapViewport.offset());
 
     mark_tracked_antigens(aSectionIndex);
@@ -294,6 +293,7 @@ void AntigenicMapsLayout::draw_chart(Surface& aSurface, size_t aSectionIndex)
         std::cerr << "Warning: " << drawn << " points of " << mDrawPoints.size() << " were drawn" << std::endl;
 
     draw_map_title(aSurface, aSectionIndex);
+    aSurface.border(settings.border_color, settings.border_width * 2);
 
 } // AntigenicMapsLayout::draw_chart
 
@@ -399,6 +399,15 @@ void LabelledGrid::draw()
         }
         ++section_index;
     }
+
+    const size_t rows = row + (column ? 1 : 0);
+    const double maps_height = map_width * rows + (rows - 1) * settings.gap;
+    const double suggested_surface_width = settings.width * surface.size().height / maps_height;
+    std::cout << "Map area height: " << maps_height << std::endl;
+    if (std::abs((settings.width - suggested_surface_width) / settings.width) > 0.01)
+        std::cout << "Change antigenic_maps.width from " << settings.width << " to " << suggested_surface_width << std::endl;
+    else
+        std::cout << "antigenic_maps.width is OK: " << settings.width << " vs. suggested " << suggested_surface_width << std::endl;
 
 } // LabelledGrid::draw
 

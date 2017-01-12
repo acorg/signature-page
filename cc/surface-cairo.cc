@@ -407,7 +407,7 @@ void SurfaceCairo::grid(double aStep, Color aLineColor, double aLineWidth)
 
 void SurfaceCairo::border(Color aLineColor, double aLineWidth)
 {
-    rectangle({0, 0}, size(), aLineColor, aLineWidth);
+    rectangle(viewport_offset() * -1.0, size(), aLineColor, aLineWidth);
 
 } // SurfaceCairo::border
 
@@ -415,7 +415,7 @@ void SurfaceCairo::border(Color aLineColor, double aLineWidth)
 
 void SurfaceCairo::background(Color aColor)
 {
-    rectangle_filled({0, 0}, size(), aColor, 0, aColor);
+    rectangle_filled(viewport_offset() * -1.0, size(), aColor, 0, aColor);
 
 } // SurfaceCairo::background
 
