@@ -130,7 +130,7 @@ void TimeSeriesDraw::draw_hz_section_lines()
                     mSurface.line({0, y}, {mSurface.size().width, y}, mHzSections.line_color, mHzSections.line_width);
                 }
                 if (section_settings.show_label_in_time_series) {
-                    draw_hz_section_label(aNode.draw.hz_section_index, section_settings, y);
+                    draw_hz_section_label(section_settings, y);
                 }
             }
             previous_vertical_pos = aNode.draw.vertical_pos;
@@ -142,10 +142,10 @@ void TimeSeriesDraw::draw_hz_section_lines()
 
 // ----------------------------------------------------------------------
 
-void TimeSeriesDraw::draw_hz_section_label(size_t aSectionNo, const HzSection& aSection, double aY)
+void TimeSeriesDraw::draw_hz_section_label(const HzSection& aSection, double aY)
 {
     if (aSection.show && aSection.show_map) {
-        std::string label(1, 'A' + static_cast<char>(aSectionNo));
+        std::string label = aSection.index; // (1, 'A' + static_cast<char>(aSectionNo));
         const Size tsize = mSurface.text_size(label, mHzSections.ts_label_size, mHzSections.ts_label_style);
         mSurface.text({mSurface.size().width - tsize.width * 1.2, aY + tsize.height * 1.2}, label, mHzSections.ts_label_color, mHzSections.ts_label_size, mHzSections.ts_label_style);
     }

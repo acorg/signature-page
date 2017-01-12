@@ -116,7 +116,7 @@ class HzSection
 {
  public:
     inline HzSection(std::string aName = std::string{}, bool aShowLine = true)
-        : show(true), show_line(aShowLine), show_label_in_time_series(true), show_map(true), name(aName), first(nullptr), last(nullptr) {}
+        : show(true), show_line(aShowLine), show_label_in_time_series(true), show_map(true), name(aName), first(nullptr), last(nullptr), index(1, '?') {}
     inline HzSection(const HzSection&) = default;
     // inline HzSection(HzSection&&) = default;
     ~HzSection();
@@ -132,6 +132,7 @@ class HzSection
     // not stored in settings
     const Node* first;
     const Node* last;
+    std::string index;
 };
 
 class HzSections

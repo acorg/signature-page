@@ -266,7 +266,7 @@ void AntigenicMapsLayout::mark_marked_antigens()
 
 // ----------------------------------------------------------------------
 
-void AntigenicMapsLayout::draw_chart(Surface& aSurface, size_t aSectionNo, size_t aSectionIndex)
+void AntigenicMapsLayout::draw_chart(Surface& aSurface, size_t aSectionIndex)
 {
     std::cout << "\nMAP: " << aSectionIndex << std::endl;
 
@@ -293,7 +293,7 @@ void AntigenicMapsLayout::draw_chart(Surface& aSurface, size_t aSectionNo, size_
     if (drawn != mDrawPoints.size())
         std::cerr << "Warning: " << drawn << " points of " << mDrawPoints.size() << " were drawn" << std::endl;
 
-    draw_map_title(aSurface, aSectionNo, aSectionIndex);
+    draw_map_title(aSurface, aSectionIndex);
 
 } // AntigenicMapsLayout::draw_chart
 
@@ -336,11 +336,11 @@ void AntigenicMapsLayout::mark_tracked_sera(size_t aSectionIndex)
 
 // ----------------------------------------------------------------------
 
-void AntigenicMapsLayout::draw_map_title(Surface& aSurface, size_t aSectionNo, size_t aSectionIndex)
+void AntigenicMapsLayout::draw_map_title(Surface& aSurface, size_t aSectionIndex)
 {
     const AntigenicMapsDrawSettings& settings = mAntigenicMapsDraw.settings();
     const HzSection& section = mAntigenicMapsDraw.hz_sections().sections[aSectionIndex];
-    std::string title = std::string(1, 'A' + static_cast<char>(aSectionNo)) + ".";
+    std::string title = section.index + "."; // std::string(1, 'A' + static_cast<char>(aSectionNo)) + ".";
     if (!section.label.empty())
         title += " " + section.label;
     const Size tsize = aSurface.text_size(title, settings.map_title_size);
@@ -389,7 +389,7 @@ void LabelledGrid::draw()
         if (section.show && section.show_map) {
             Surface& map_surface = surface.subsurface({column * (map_width + settings.gap), row * (map_width + settings.gap)},
                                                       {map_width, map_width}, mMapViewport.size.width, true);
-            draw_chart(map_surface, row * settings.columns + column, section_index);
+            draw_chart(map_surface, section_index);
             draw_mapped_antigens_section(section_index);
             ++column;
             if (column >= settings.columns) {
@@ -404,9 +404,9 @@ void LabelledGrid::draw()
 
 // ----------------------------------------------------------------------
 
-void LabelledGrid::draw_chart(Surface& aSurface, size_t aSectionNo, size_t aSectionIndex)
+void LabelledGrid::draw_chart(Surface& aSurface, size_t aSectionIndex)
 {
-    AntigenicMapsLayout::draw_chart(aSurface, aSectionNo, aSectionIndex);
+    AntigenicMapsLayout::draw_chart(aSurface, aSectionIndex);
 
 } // LabelledGrid::draw_chart
 

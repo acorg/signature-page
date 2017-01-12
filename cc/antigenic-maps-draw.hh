@@ -217,9 +217,9 @@ class AntigenicMapsLayout
 
     virtual void find_sequenced_antigens();
     virtual void draw_points_reset();
-    virtual void draw_chart(Surface& aSurface, size_t aSectionNo, size_t aSectionIndex);
+    virtual void draw_chart(Surface& aSurface, size_t aSectionIndex);
     virtual void mark_tracked_sera(size_t aSectionIndex);
-    virtual void draw_map_title(Surface& aSurface, size_t aSectionNo, size_t aSectionIndex);
+    virtual void draw_map_title(Surface& aSurface, size_t aSectionIndex);
     virtual void mark_tracked_antigens(size_t aSectionIndex);
     virtual void mark_marked_antigens();
 
@@ -269,7 +269,7 @@ class LabelledGrid : public AntigenicMapsLayout
     virtual void draw();
 
  protected:
-    virtual void draw_chart(Surface& aSurface, size_t aSectionNo, size_t aSectionIndex);
+    virtual void draw_chart(Surface& aSurface, size_t aSectionIndex);
     virtual void draw_mapped_antigens_section(size_t aSectionIndex);
 
 }; // class LabelledGrid

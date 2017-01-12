@@ -366,6 +366,14 @@ void HzSections::sort(const Tree& aTree)
     }
     sections.back().last = &find_last_leaf(aTree);
 
+    size_t section_index = 0;
+    for (auto& section: sections) {
+        if (section.show and section.show_map) {
+            section.index.assign(1, 'A' + static_cast<char>(section_index));
+            ++section_index;
+        }
+    }
+
 } // HzSections::sort
 
 // ----------------------------------------------------------------------

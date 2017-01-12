@@ -65,7 +65,7 @@ class TimeSeriesDraw
     void draw_month_separators(double month_width);
     void draw_dashes(double month_width);
     void draw_hz_section_lines();
-    void draw_hz_section_label(size_t aSectionNo, const HzSection& aSection, double aY);
+    void draw_hz_section_label(const HzSection& aSection, double aY);
 
 }; // class TimeSeriesDraw
 
