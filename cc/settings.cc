@@ -1555,7 +1555,7 @@ class AntigenicMapsDrawSettingsHandler : public HandlerBase
  private:
     enum class Keys {Unknown, layout, width, columns, gap, transformation, viewport,
                 background_color, border_width, border_color, grid_line_width, grid_line_color,
-                serum_scale, reference_antigen_scale, test_antigen_scale, vaccine_antigen_scale, tracked_antigen_scale,
+                point_scale, serum_scale, reference_antigen_scale, test_antigen_scale, vaccine_antigen_scale, tracked_antigen_scale,
                 serum_outline_width, reference_antigen_outline_width, test_antigen_outline_width, vaccine_antigen_outline_width,
                 sequenced_antigen_outline_width, serum_outline_color,
                 reference_antigen_outline_color, test_antigen_outline_color, test_antigen_fill_color,
@@ -1674,6 +1674,9 @@ class AntigenicMapsDrawSettingsHandler : public HandlerBase
                   break;
               case Keys::gap:
                   mTarget.antigenic_maps.gap = d;
+                  break;
+              case Keys::point_scale:
+                  mTarget.antigenic_maps.point_scale = d;
                   break;
               case Keys::serum_scale:
                   mTarget.antigenic_maps.serum_scale = d;
@@ -1794,6 +1797,7 @@ const std::map<std::string, AntigenicMapsDrawSettingsHandler::Keys> AntigenicMap
     {"border_color", Keys::border_color},
     {"grid_line_width", Keys::grid_line_width},
     {"grid_line_color", Keys::grid_line_color},
+    {"point_scale", Keys::point_scale},
     {"serum_scale", Keys::serum_scale},
     {"reference_antigen_scale", Keys::reference_antigen_scale},
     {"test_antigen_scale", Keys::test_antigen_scale},

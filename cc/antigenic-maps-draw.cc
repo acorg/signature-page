@@ -284,7 +284,7 @@ void AntigenicMapsLayout::draw_chart(Surface& aSurface, size_t aSectionIndex)
     for (size_t level = 0; level < 10 && drawn < mDrawPoints.size(); ++level) {
         for (size_t point_no = 0; point_no < mDrawPoints.size(); ++point_no) {
            if (mDrawPoints[point_no]->level() == level) {
-               mDrawPoints[point_no]->draw(aSurface, chart.points()[point_no], chart.plot_style().style(point_no), 0.1, settings);
+               mDrawPoints[point_no]->draw(aSurface, chart.points()[point_no], chart.plot_style().style(point_no), settings.point_scale, settings);
                 ++drawn;
             }
         }

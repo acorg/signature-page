@@ -39,7 +39,7 @@ class AntigenicMapsDrawSettings
         : layout("labelled_grid"), width(500), columns(3), gap(20),
           border_width(0.05), grid_line_width(0.025),
           border_color("black"), grid_line_color("grey63"), background_color("white"), // 0xFFFFF8
-          serum_scale(3), reference_antigen_scale(5), test_antigen_scale(3), vaccine_antigen_scale(8), tracked_antigen_scale(5),
+          point_scale(0.05), serum_scale(3), reference_antigen_scale(5), test_antigen_scale(3), vaccine_antigen_scale(8), tracked_antigen_scale(5),
           serum_outline_width(0.5), reference_antigen_outline_width(0.5), test_antigen_outline_width(0.5), vaccine_antigen_outline_width(0.5),
           sequenced_antigen_outline_width(0.5), tracked_antigen_outline_width(0.5),
           serum_outline_color("grey88"), reference_antigen_outline_color("grey88"), test_antigen_outline_color("grey88"),
@@ -63,6 +63,7 @@ class AntigenicMapsDrawSettings
     double border_width, grid_line_width;
     Color border_color, grid_line_color, background_color;
 
+    double point_scale;
     double serum_scale, reference_antigen_scale, test_antigen_scale, vaccine_antigen_scale, tracked_antigen_scale;
     double serum_outline_width, reference_antigen_outline_width, test_antigen_outline_width, vaccine_antigen_outline_width, sequenced_antigen_outline_width, tracked_antigen_outline_width;
     Color serum_outline_color, reference_antigen_outline_color, test_antigen_outline_color, test_antigen_fill_color, vaccine_antigen_outline_color, sequenced_antigen_outline_color, sequenced_antigen_fill_color, tracked_antigen_outline_color;
