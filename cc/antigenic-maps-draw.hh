@@ -93,7 +93,7 @@ class DrawPoint
     inline DrawPoint(DrawPoint&&) = default;
     inline virtual ~DrawPoint() = default;
     inline DrawPoint& operator=(const DrawPoint&) = default;
-    virtual void draw(Surface& aSurface, const Point& aPoint, const PointStyle& aStyle, double aObjectScale, const AntigenicMapsDrawSettings& aSettings) const = 0;
+    virtual void draw(Surface& aSurface, const Point& aPoint, const PointStyle& aStyle, const AntigenicMapsDrawSettings& aSettings) const = 0;
     virtual size_t level() const = 0;
     virtual inline double aspect(const Point&, const PointStyle& aStyle, const AntigenicMapsDrawSettings&) const { return aStyle.aspect; }
     virtual inline double rotation(const Point& aPoint, const PointStyle& aStyle, const AntigenicMapsDrawSettings& aSettings) const { return aPoint.attributes.reassortant ? aSettings.reassortant_rotation : aStyle.rotation; }
@@ -104,7 +104,7 @@ class DrawPoint
 class DrawSerum : public DrawPoint
 {
  public:
-    virtual void draw(Surface& aSurface, const Point& aPoint, const PointStyle& aStyle, double aObjectScale, const AntigenicMapsDrawSettings& aSettings) const;
+    virtual void draw(Surface& aSurface, const Point& aPoint, const PointStyle& aStyle, const AntigenicMapsDrawSettings& aSettings) const;
     virtual inline size_t level() const { return 1; }
     virtual inline Color outline_color(const Point&, const PointStyle&, const AntigenicMapsDrawSettings& aSettings) const { return aSettings.serum_outline_color; }
     virtual inline double outline_width(const Point&, const PointStyle&, const AntigenicMapsDrawSettings& aSettings) const { return aSettings.serum_outline_width; }
@@ -119,21 +119,21 @@ class DrawAntigen : public DrawPoint
 class DrawReferenceAntigen : public DrawAntigen
 {
  public:
-    virtual void draw(Surface& aSurface, const Point& aPoint, const PointStyle& aStyle, double aObjectScale, const AntigenicMapsDrawSettings& aSettings) const;
+    virtual void draw(Surface& aSurface, const Point& aPoint, const PointStyle& aStyle, const AntigenicMapsDrawSettings& aSettings) const;
     virtual inline size_t level() const { return 2; }
 };
 
 class DrawTestAntigen : public DrawAntigen
 {
  public:
-    virtual void draw(Surface& aSurface, const Point& aPoint, const PointStyle& aStyle, double aObjectScale, const AntigenicMapsDrawSettings& aSettings) const;
+    virtual void draw(Surface& aSurface, const Point& aPoint, const PointStyle& aStyle, const AntigenicMapsDrawSettings& aSettings) const;
     virtual inline size_t level() const { return 3; }
 };
 
 class DrawSequencedAntigen : public DrawAntigen
 {
  public:
-    virtual void draw(Surface& aSurface, const Point& aPoint, const PointStyle& aStyle, double aObjectScale, const AntigenicMapsDrawSettings& aSettings) const;
+    virtual void draw(Surface& aSurface, const Point& aPoint, const PointStyle& aStyle, const AntigenicMapsDrawSettings& aSettings) const;
     virtual inline size_t level() const { return 4; }
 };
 
@@ -142,7 +142,7 @@ class DrawTrackedAntigen : public DrawAntigen
  public:
     inline DrawTrackedAntigen(Color aFillColor = "pink") : mColor(aFillColor) {}
 
-    virtual void draw(Surface& aSurface, const Point& aPoint, const PointStyle& aStyle, double aObjectScale, const AntigenicMapsDrawSettings& aSettings) const;
+    virtual void draw(Surface& aSurface, const Point& aPoint, const PointStyle& aStyle, const AntigenicMapsDrawSettings& aSettings) const;
     virtual inline size_t level() const { return 5; }
     inline void color(Color aColor) { mColor = aColor; }
 
@@ -155,7 +155,7 @@ class DrawTrackedSerum : public DrawSerum
  public:
     inline DrawTrackedSerum(Color aOutlineColor = 0, double aOutlineWidth = 1) : mOutlineColor(aOutlineColor), mOutlineWidth(aOutlineWidth) {}
 
-    virtual void draw(Surface& aSurface, const Point& aPoint, const PointStyle& aStyle, double aObjectScale, const AntigenicMapsDrawSettings& aSettings) const;
+    virtual void draw(Surface& aSurface, const Point& aPoint, const PointStyle& aStyle, const AntigenicMapsDrawSettings& aSettings) const;
     virtual inline size_t level() const { return 6; }
     virtual inline Color outline_color(const Point& /*aPoint*/, const PointStyle& /*aStyle*/, const AntigenicMapsDrawSettings& /*aSettings*/) const { return mOutlineColor; }
     virtual double outline_width(const Point& /*aPoint*/, const PointStyle& /*aStyle*/, const AntigenicMapsDrawSettings& /*aSettings*/) const { return mOutlineWidth; }
@@ -168,7 +168,7 @@ class DrawTrackedSerum : public DrawSerum
 class DrawVaccineAntigen : public DrawAntigen
 {
  public:
-    virtual void draw(Surface& aSurface, const Point& aPoint, const PointStyle& aStyle, double aObjectScale, const AntigenicMapsDrawSettings& aSettings) const;
+    virtual void draw(Surface& aSurface, const Point& aPoint, const PointStyle& aStyle, const AntigenicMapsDrawSettings& aSettings) const;
     virtual inline size_t level() const { return 9; }
 };
 
@@ -177,7 +177,7 @@ class DrawMarkedAntigen : public DrawAntigen
  public:
     inline DrawMarkedAntigen(const MarkAntigenSettings& aData) : mData(aData) {}
 
-    virtual void draw(Surface& aSurface, const Point& aPoint, const PointStyle& aStyle, double aObjectScale, const AntigenicMapsDrawSettings& aSettings) const;
+    virtual void draw(Surface& aSurface, const Point& aPoint, const PointStyle& aStyle, const AntigenicMapsDrawSettings& aSettings) const;
     virtual inline size_t level() const { return 7; }
 
  private:
