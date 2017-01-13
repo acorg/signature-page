@@ -224,6 +224,8 @@ void SignaturePageDraw::prepare()
           break;
     }
 
+    if (mMappedAntigensDraw)
+        mMappedAntigensDraw->prepare();
     if (mTitleDraw)
         mTitleDraw->prepare();
     if (mTreeDraw)
@@ -232,8 +234,6 @@ void SignaturePageDraw::prepare()
         mTimeSeriesDraw->prepare();
     if (mCladesDraw)
         mCladesDraw->prepare();
-    if (mMappedAntigensDraw)
-        mMappedAntigensDraw->prepare();
     if (mChart)
         mChart->prepare(mSettings->antigenic_maps);
     if (mAntigenicMapsDraw)

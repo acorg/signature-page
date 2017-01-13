@@ -23,6 +23,7 @@ class Options
     std::string chart_filename;
       //bool layout_tree;  // for init settings only
     bool report_cumulative;
+    bool no_draw;
 };
 
 int get_args(int argc, const char *argv[], Options& aOptions);
@@ -50,7 +51,8 @@ int main(int argc, const char *argv[])
                 write_settings(signature_page.settings(), options.init_settings_filename);
             }
             signature_page.prepare();
-            signature_page.draw();
+            if (!options.no_draw)
+                signature_page.draw();
         }
         catch (std::exception& err) {
             std::cerr << err.what() << std::endl;
@@ -74,6 +76,7 @@ int get_args(int argc, const char *argv[], Options& aOptions)
               // ("init-tree", bool_switch(&aOptions.layout_tree)->default_value(false), "initialize with tree layout")
             ("tree", value<std::string>(&aOptions.tree_filename)->required(), "path to tree to draw")
             ("report-cumulative", bool_switch(&aOptions.report_cumulative)->default_value(false), "report cumulative edge lengths for leaf nodes of the tree")
+            ("no-draw", bool_switch(&aOptions.no_draw)->default_value(false), "do not generate pdf")
             ("chart", value<std::string>(&aOptions.chart_filename), "path to chart for signature page")
             ("output,o", value<std::string>(&aOptions.output_filename)->required(), "output pdf")
             ;

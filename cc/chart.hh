@@ -204,6 +204,7 @@ class Chart
         {
             make_point_by_name();
             const auto p = mPointByName.find(aName);
+              // std::cerr << "Chart::find_antigen " << aName << " " << (p != mPointByName.end()) << std::endl;
             return p == mPointByName.end() ? AntigenNotFound : p->second;
         }
 
