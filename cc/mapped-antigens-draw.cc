@@ -7,8 +7,8 @@
 
 void MappedAntigensDraw::prepare()
 {
-    size_t matched = 0;
-    auto match_chart_antigens = [this,&matched](Node& aNode) {
+    std::set<std::string> matched_names;
+    auto match_chart_antigens = [this,&matched_names](Node& aNode) {
         aNode.draw.chart_antigen_index = Chart::AntigenNotFound;
         if (aNode.draw.shown) {
             const std::vector<std::string>* hi_names = aNode.data.hi_names();
@@ -17,7 +17,7 @@ void MappedAntigensDraw::prepare()
                     const size_t antigen_index = mChart.find_antigen(name);
                     if (antigen_index != Chart::AntigenNotFound) {
                         aNode.draw.chart_antigen_index = antigen_index;
-                        ++matched;
+                        matched_names.insert(name);
                         break;
                     }
                 }
@@ -26,7 +26,17 @@ void MappedAntigensDraw::prepare()
     };
     tree::iterate_leaf(mTree, match_chart_antigens);
 
-    std::cerr << "Tree sequences found in the chart: " << matched << std::endl;
+    std::cout << "Tree sequences found in the chart: " << matched_names.size() << std::endl;
+
+    // std::cerr << "Matched names:" << std::endl << "  ";
+    // std::copy(matched_names.begin(), matched_names.end(), std::ostream_iterator<std::string>(std::cerr, "\n  "));
+    // std::cerr << std::endl << std::endl;
+
+    // std::cerr << "Not matched names:" << std::endl;
+    // for (const auto& point: mChart.points()) {
+    //     if (point.attributes.antigen && matched_names.find(point.name) == matched_names.end())
+    //         std::cerr << "  " << point.name << std::endl;
+    // }
 
 } // MappedAntigensDraw::prepare
 
