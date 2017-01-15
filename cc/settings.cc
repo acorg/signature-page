@@ -2296,6 +2296,7 @@ template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writ
                   << jsw::key("border_width") << aSettings.border_width
                   << jsw::key("grid_line_width") << aSettings.grid_line_width
                   << jsw::key("grid_line_color") << aSettings.grid_line_color
+                  << jsw::key("point_scale") << aSettings.point_scale
                   << jsw::key("serum_scale") << aSettings.serum_scale
                   << jsw::key("reference_antigen_scale") << aSettings.reference_antigen_scale
                   << jsw::key("test_antigen_scale") << aSettings.test_antigen_scale

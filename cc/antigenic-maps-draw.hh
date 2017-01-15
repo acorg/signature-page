@@ -44,7 +44,7 @@ class AntigenicMapsDrawSettings
           sequenced_antigen_outline_width(0.5), tracked_antigen_outline_width(0.5),
           serum_outline_color("grey88"), reference_antigen_outline_color("grey88"), test_antigen_outline_color("grey88"),
           test_antigen_fill_color("grey88"), vaccine_antigen_outline_color("white"), sequenced_antigen_outline_color("white"), sequenced_antigen_fill_color("grey63"),
-          tracked_antigen_outline_color("white"), tracked_antigen_colored_by_clade(false), tracked_antigen_color("green2"),
+          tracked_antigen_outline_color("white"), tracked_antigen_colored_by_clade(false), tracked_antigen_color("green3"),
           reassortant_rotation(0.5 /* M_PI / 6.0 */), egg_antigen_aspect(0.75),
           show_tracked_sera(true), serum_circle_color("grey50"), tracked_serum_outline_color("black"), serum_circle_thickness(0.1), tracked_serum_outline_width(0.1),
           map_title_color("black"), map_title_offset{0.1, 0.1}, map_title_size(1),
