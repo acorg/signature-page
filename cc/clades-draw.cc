@@ -142,14 +142,12 @@ void CladesDraw::init_settings()
 
 void CladesDraw::draw()
 {
-      // mSurface.border("violet", 10);
-
     auto draw_lines = mTimeSeriesDraw.offset().width < mSurface.offset().width ? &CladesDraw::draw_right : &CladesDraw::draw_left;
 
     for (const auto& name_clade: mClades) {
         const auto& clade = name_clade.second;
-        if (clade.shown()) {
-            const auto& for_clade = mSettings.for_clade(name_clade.first);
+        const auto& for_clade = mSettings.for_clade(name_clade.first);
+        if (clade.shown() && for_clade.show) {
             for (const auto& section: clade.sections) {
                 const double top = section.first->draw.vertical_pos - mTreeDraw.vertical_step() / 2;
                 const double bottom = section.last->draw.vertical_pos + mTreeDraw.vertical_step() / 2;
