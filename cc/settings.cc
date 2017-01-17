@@ -543,7 +543,7 @@ const std::map<std::string, TreeDrawLegendSettingsHandler::Keys> TreeDrawLegendS
 class TreeDrawSettingsHandler : public HandlerBase
 {
  private:
-    enum class Keys {Unknown, root, hide_isolated_before, hide_if_cumulative_edge_length_bigger_than,
+    enum class Keys {Unknown, root, hide_isolated_before, hide_if_cumulative_edge_length_bigger_than, hide_if,
                 force_line_width, line_width, root_edge, line_color, label_style,
                 name_offset, color_nodes, aa_transition, vaccines, legend};
 
@@ -577,6 +577,9 @@ class TreeDrawSettingsHandler : public HandlerBase
             switch (mKey) {
               case Keys::hide_isolated_before:
                   mTarget.tree_draw.hide_isolated_before.assign(str, length);
+                  break;
+              case Keys::hide_if:
+                  mTarget.tree_draw.hide_if.assign(str, length);
                   break;
               case Keys::line_color:
                   mTarget.tree_draw.line_color.from_string(str, length);
@@ -657,6 +660,7 @@ class TreeDrawSettingsHandler : public HandlerBase
 
 const std::map<std::string, TreeDrawSettingsHandler::Keys> TreeDrawSettingsHandler::key_mapper {
     {"hide_isolated_before", Keys::hide_isolated_before},
+    {"hide_if", Keys::hide_if},
     {"hide_if_cumulative_edge_length_bigger_than", Keys::hide_if_cumulative_edge_length_bigger_than},
     {"force_line_width", Keys::force_line_width},
     {"line_width", Keys::line_width},
@@ -2127,6 +2131,7 @@ template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writ
                   << jsw::key("root") << aSettings.root
                   << jsw::key("hide_isolated_before") << aSettings.hide_isolated_before
                   << jsw::key("hide_if_cumulative_edge_length_bigger_than") << aSettings.hide_if_cumulative_edge_length_bigger_than
+                  << jsw::key("hide_if") << aSettings.hide_if
                   << jsw::key("force_line_width") << aSettings.force_line_width
                   << jsw::key("line_width") << aSettings.line_width
                   << jsw::key("root_edge") << aSettings.root_edge

@@ -98,6 +98,7 @@ class TreeDrawSettings
     std::string root;           // re-root tree
     std::string hide_isolated_before; // hide leaves isolated before the date (empty -> do not hide based on date)
     double hide_if_cumulative_edge_length_bigger_than; // hide long branches
+    std::string hide_if;                               // built-in function to hide stains based on complicated criteria
     bool force_line_width;
     double line_width;
     double root_edge;
@@ -178,6 +179,8 @@ class TreeDraw
     void init_settings(const Clades* aClades);
     void set_line_no(bool aForce, bool aHideLeaves);
     inline Surface& surface() { return mSurface; }
+
+    bool hide_leaf_if(const Node& aNode) const; // called from lambda, has to be public
 
  private:
     Surface& mSurface;
