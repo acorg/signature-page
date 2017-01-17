@@ -543,7 +543,7 @@ const std::map<std::string, TreeDrawLegendSettingsHandler::Keys> TreeDrawLegendS
 class TreeDrawSettingsHandler : public HandlerBase
 {
  private:
-    enum class Keys {Unknown, hide_isolated_before, hide_if_cumulative_edge_length_bigger_than,
+    enum class Keys {Unknown, root, hide_isolated_before, hide_if_cumulative_edge_length_bigger_than,
                 force_line_width, line_width, root_edge, line_color, label_style,
                 name_offset, color_nodes, aa_transition, vaccines, legend};
 
@@ -583,6 +583,9 @@ class TreeDrawSettingsHandler : public HandlerBase
                   break;
               case Keys::color_nodes:
                   mTarget.tree_draw.color_nodes.assign(str, length);
+                  break;
+              case Keys::root:
+                  mTarget.tree_draw.root.assign(str, length);
                   break;
               default:
                   result = HandlerBase::String(str, length);
@@ -657,6 +660,7 @@ const std::map<std::string, TreeDrawSettingsHandler::Keys> TreeDrawSettingsHandl
     {"hide_if_cumulative_edge_length_bigger_than", Keys::hide_if_cumulative_edge_length_bigger_than},
     {"force_line_width", Keys::force_line_width},
     {"line_width", Keys::line_width},
+    {"root", Keys::root},
     {"root_edge", Keys::root_edge},
     {"line_color", Keys::line_color},
     {"label_style", Keys::label_style},
@@ -2120,6 +2124,7 @@ template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writ
 template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const TreeDrawSettings& aSettings)
 {
     return writer << jsw::start_object
+                  << jsw::key("root") << aSettings.root
                   << jsw::key("hide_isolated_before") << aSettings.hide_isolated_before
                   << jsw::key("hide_if_cumulative_edge_length_bigger_than") << aSettings.hide_if_cumulative_edge_length_bigger_than
                   << jsw::key("force_line_width") << aSettings.force_line_width

@@ -79,7 +79,7 @@ class SignaturePageDraw
     void init_layout();
     void init_settings();
     inline Settings& settings() { return *mSettings; }
-    void tree(std::string aTreeFilename, std::string aSeqdbFilename, std::string aReRoot);
+    void tree(std::string aTreeFilename, std::string aSeqdbFilename);
     inline Tree& tree() { return *mTree; }
     void chart(std::string aChartFilename);
 

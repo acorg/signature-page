@@ -95,6 +95,7 @@ class TreeDrawSettings
             return *p;
         }
 
+    std::string root;           // re-root tree
     std::string hide_isolated_before; // hide leaves isolated before the date (empty -> do not hide based on date)
     double hide_if_cumulative_edge_length_bigger_than; // hide long branches
     bool force_line_width;
