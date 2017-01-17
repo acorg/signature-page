@@ -184,7 +184,7 @@ void SignaturePageDraw::init_settings()
 
 // ----------------------------------------------------------------------
 
-void SignaturePageDraw::tree(std::string aTreeFilename, std::string aSeqdbFilename)
+void SignaturePageDraw::tree(std::string aTreeFilename, std::string aSeqdbFilename, std::string aReRoot)
 {
     tree_import(aTreeFilename, *mTree);
     if (!aSeqdbFilename.empty()) {
@@ -192,6 +192,8 @@ void SignaturePageDraw::tree(std::string aTreeFilename, std::string aSeqdbFilena
         mTree->match_seqdb(*mSeqdb);
     }
     mTree->set_continents(*mLocdb);
+    if (!aReRoot.empty())
+        mTree->re_root(aReRoot);
       // tree.report_cumulative_edge_length(std::cout);
     mTree->ladderize(Tree::LadderizeMethod::NumberOfLeaves);           // must be before clade_setup
     mTree->make_aa_transitions();

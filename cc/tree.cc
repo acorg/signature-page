@@ -492,6 +492,8 @@ void Tree::re_root(const std::vector<const Node*>& aNewRoot)
     }
     subtree = new_subtree;
     edge_length = 0;
+    mMaxCumulativeEdgeLength = -1;
+    set_number_strains();
 
 } // Tree::re_root
 

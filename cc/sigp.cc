@@ -39,9 +39,7 @@ int main(int argc, const char *argv[])
         try {
             SignaturePageDraw signature_page;
             signature_page.load_settings(options.settings_filename);
-            signature_page.tree(options.tree_filename, options.seqdb_filename);
-            if (!options.re_root_tree.empty())
-                signature_page.tree().re_root(options.re_root_tree);
+            signature_page.tree(options.tree_filename, options.seqdb_filename, options.re_root_tree);
             if (options.report_cumulative)
                 signature_page.tree().report_cumulative_edge_length(std::cout);
             if (!options.chart_filename.empty())
