@@ -29,6 +29,7 @@ PYBIND11_PLUGIN(signature_page_cc)
             .def(py::init<>())
             .def("match_seqdb", &Tree::match_seqdb, py::arg("seqdb"))
             .def("ladderize", [](Tree& tree, std::string ladderize_type) { tree.ladderize(ladderize_type_decode(ladderize_type)); }, py::arg("ladderize_type"))
+            .def("re_root", static_cast<void (Tree::*)(std::string)>(&Tree::re_root), py::arg("name"))
             ;
 
     // py::class_<Surface>(m, "Surface")

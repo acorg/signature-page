@@ -434,6 +434,79 @@ std::string Tree::virus_type() const
 
 // ----------------------------------------------------------------------
 
+std::vector<const Node*> Tree::find_name(std::string aName) const
+{
+    std::vector<const Node*> path;
+    bool found = find_name_r(aName, path);
+    if (!found)
+        throw std::runtime_error(aName + " not found in the tree");
+    return path;
+
+} // Tree::find_name
+
+// ----------------------------------------------------------------------
+
+bool Node::find_name_r(std::string aName, std::vector<const Node*>& aPath) const
+{
+    bool found = false;
+    if (is_leaf()) {
+        if (seq_id == aName) {
+            aPath.push_back(this);
+            found = true;
+        }
+    }
+    else {
+        aPath.push_back(this);
+        for (const Node& child: subtree) {
+            found = child.find_name_r(aName, aPath);
+            if (found)
+                break;
+        }
+        if (!found)
+            aPath.pop_back();
+    }
+    return found;
+
+} // Node::find_name_r
+
+// ----------------------------------------------------------------------
+
+void Tree::re_root(const std::vector<const Node*>& aNewRoot)
+{
+    if (aNewRoot.front() != this)
+        throw std::invalid_argument("Invalid path passed to Tree::re_root");
+
+    std::vector<Node> nodes;
+    for (size_t item_no = 0; item_no < (aNewRoot.size() - 1); ++item_no) {
+        const Node& source = *aNewRoot[item_no];
+        nodes.push_back(Node());
+        std::copy_if(source.subtree.begin(), source.subtree.end(), std::back_inserter(nodes.back().subtree), [&](const Node& to_copy) -> bool { return &to_copy != aNewRoot[item_no + 1]; });
+        nodes.back().edge_length = aNewRoot[item_no + 1]->edge_length;
+    }
+
+    std::vector<Node> new_subtree(aNewRoot.back()->subtree.begin(), aNewRoot.back()->subtree.end());
+    Subtree* append_to = &new_subtree;
+    for (auto child = nodes.rbegin(); child != nodes.rend(); ++child) {
+        append_to->push_back(*child);
+        append_to = &append_to->back().subtree;
+    }
+    subtree = new_subtree;
+    edge_length = 0;
+
+} // Tree::re_root
+
+// ----------------------------------------------------------------------
+
+void Tree::re_root(std::string aName)
+{
+    std::vector<const Node*> path = find_name(aName);
+    path.pop_back();
+    re_root(path);
+
+} // Tree::re_root
+
+// ----------------------------------------------------------------------
+
 
 // ----------------------------------------------------------------------
 /// Local Variables:

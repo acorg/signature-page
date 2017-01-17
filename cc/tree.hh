@@ -105,6 +105,7 @@ class Node
 
  protected:
     void compute_cumulative_edge_length(double initial_edge_length, double& max_cumulative_edge_length);
+    bool find_name_r(std::string aName, std::vector<const Node*>& aPath) const;
 
 }; // class Node
 
@@ -185,6 +186,11 @@ class Tree : public Node
 
     void sequences_per_month(std::map<Date, size_t>& spm) const;
     std::string virus_type() const;
+
+    std::vector<const Node*> find_name(std::string aName) const;
+    void re_root(const std::vector<const Node*>& aNewRoot);
+      // re-roots tree making the parent of the leaf node with the passed name root
+    void re_root(std::string aName);
 
  private:
     double mMaxCumulativeEdgeLength;
