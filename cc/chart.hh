@@ -6,7 +6,7 @@
 #include <set>
 #include <iomanip>
 
-#include "acmacs-base/color.hh"
+#include "acmacs-draw/color.hh"
 #include "size.hh"
 
 // ----------------------------------------------------------------------
