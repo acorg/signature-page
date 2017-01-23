@@ -69,6 +69,7 @@ void TreeDraw::prepare()
 
 void TreeDraw::draw()
 {
+    std::cout << "Tree surface: " << mSurface.size() << std::endl;
     mLineWidth = mSettings.force_line_width ? mSettings.line_width : std::min(mSettings.line_width, mVerticalStep * 0.5);
     std::cout << "Tree line width: " << mLineWidth << "  Settings: " << mSettings.line_width << "  vertical_step/2: " << mVerticalStep * 0.5 << std::endl;
     fit_labels_into_viewport();
