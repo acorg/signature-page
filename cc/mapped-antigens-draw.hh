@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include "surface.hh"
+#include "acmacs-draw/surface.hh"
 
 // ----------------------------------------------------------------------
 

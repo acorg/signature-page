@@ -4,7 +4,7 @@
 #include "tree-draw.hh"
 #include "tree.hh"
 #include "tree-iterate.hh"
-#include "surface.hh"
+#include "acmacs-draw/surface.hh"
 #include "coloring.hh"
 
 // ----------------------------------------------------------------------

@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "surface.hh"
+#include "acmacs-draw/surface.hh"
 #include "acmacs-base/date.hh"
 
 // ----------------------------------------------------------------------

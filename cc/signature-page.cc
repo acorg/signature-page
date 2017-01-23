@@ -10,7 +10,7 @@
 #include "tree-draw.hh"
 #include "time-series-draw.hh"
 #include "settings.hh"
-#include "surface-cairo.hh"
+#include "acmacs-draw/surface-cairo.hh"
 #include "chart.hh"
 #include "mapped-antigens-draw.hh"
 #include "antigenic-maps-draw.hh"

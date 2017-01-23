@@ -7,7 +7,7 @@
 #include <iomanip>
 
 #include "acmacs-draw/color.hh"
-#include "size.hh"
+#include "acmacs-draw/size.hh"
 
 // ----------------------------------------------------------------------
 

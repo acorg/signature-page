@@ -5,7 +5,7 @@
 #include <vector>
 #include <map>
 
-#include "surface.hh"
+#include "acmacs-draw/surface.hh"
 #include "tree.hh"
 
 // ----------------------------------------------------------------------

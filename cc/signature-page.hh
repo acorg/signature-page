@@ -5,7 +5,7 @@
 // #include <utility>
 #include <memory>
 
-#include "surface.hh"
+#include "acmacs-draw/surface.hh"
 
 // ----------------------------------------------------------------------
 

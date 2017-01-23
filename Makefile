@@ -6,15 +6,12 @@ MAKEFLAGS = -w
 
 # ----------------------------------------------------------------------
 
-DRAW_SOURCES = surface-cairo.cc
 SIGNATURE_PAGE_SOURCES = tree.cc tree-export.cc \
 			 chart.cc sdb.cc \
 			 signature-page.cc tree-draw.cc time-series-draw.cc clades-draw.cc \
 			 mapped-antigens-draw.cc antigenic-maps-draw.cc title-draw.cc \
-			 coloring.cc continent-path.cc settings.cc $(DRAW_SOURCES)
+			 coloring.cc continent-path.cc settings.cc
 SIGNATURE_PAGE_CC_PY_SOURCES = py.cc $(SIGNATURE_PAGE_SOURCES)
-TEST_CAIRO_SOURCES = test-cairo.cc $(DRAW_SOURCES)
-TEST_CAIRO_FONTS_SOURCES = test-cairo-fonts.cc $(DRAW_SOURCES)
 SIGP_SOURCES = sigp.cc $(SIGNATURE_PAGE_SOURCES)
 SETTINGS_CREATE_SOURCES = settings-create.cc settings.cc
 TEST_SETTINGS_COPY_SOURCES = test-settings-copy.cc settings.cc
@@ -48,7 +45,6 @@ PKG_INCLUDES = $$(pkg-config --cflags cairo) $$(pkg-config --cflags liblzma) $$(
 LIB_DIR = $(ACMACSD_ROOT)/lib
 ACMACSD_LIBS = -L$(LIB_DIR) -lacmacsbase -lacmacsdraw -lseqdb -lhidb -llocationdb -lboost_program_options -lboost_filesystem -lboost_system
 SETTINGS_CREATE_LDLIBS = $(ACMACSD_LIBS) $$(pkg-config --libs liblzma)
-TEST_CAIRO_LDLIBS = -L$(LIB_DIR) -lacmacsbase $$(pkg-config --libs cairo)
 SIGP_LDLIBS = $(ACMACSD_LIBS) $$(pkg-config --libs cairo) $$(pkg-config --libs liblzma)
 
 # ----------------------------------------------------------------------
@@ -58,7 +54,7 @@ DIST = $(abspath dist)
 
 # ----------------------------------------------------------------------
 
-all: check-python $(DIST)/signature_page_cc$(PYTHON_MODULE_SUFFIX) $(DIST)/sigp-settings-create $(DIST)/test-settings-copy $(DIST)/test-cairo $(DIST)/test-cairo-fonts $(DIST)/sigp
+all: check-python $(DIST)/signature_page_cc$(PYTHON_MODULE_SUFFIX) $(DIST)/sigp-settings-create $(DIST)/test-settings-copy $(DIST)/sigp
 
 # ----------------------------------------------------------------------
 
@@ -73,12 +69,6 @@ $(DIST)/sigp-settings-create: $(patsubst %.cc,$(BUILD)/%.o,$(SETTINGS_CREATE_SOU
 
 $(DIST)/test-settings-copy: $(patsubst %.cc,$(BUILD)/%.o,$(TEST_SETTINGS_COPY_SOURCES)) | $(DIST)
 	g++ $(LDFLAGS) -o $@ $^ $(SETTINGS_CREATE_LDLIBS)
-
-$(DIST)/test-cairo: $(patsubst %.cc,$(BUILD)/%.o,$(TEST_CAIRO_SOURCES)) | $(DIST)
-	g++ $(LDFLAGS) -o $@ $^ $(TEST_CAIRO_LDLIBS)
-
-$(DIST)/test-cairo-fonts: $(patsubst %.cc,$(BUILD)/%.o,$(TEST_CAIRO_FONTS_SOURCES)) | $(DIST)
-	g++ $(LDFLAGS) -o $@ $^ $(TEST_CAIRO_LDLIBS)
 
 $(DIST)/sigp: $(patsubst %.cc,$(BUILD)/%.o,$(SIGP_SOURCES)) | $(DIST)
 	g++ $(LDFLAGS) -o $@ $^ $(SIGP_LDLIBS)
@@ -97,7 +87,7 @@ clean:
 distclean: clean
 	rm -rf $(BUILD)
 
-test: install $(DIST)/test-cairo $(DIST)/test-cairo-fonts $(DIST)/sigp
+test: install $(DIST)/sigp
 	test/test
 
 # ----------------------------------------------------------------------

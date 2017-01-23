@@ -6,7 +6,7 @@
 #include <memory>
 #include <algorithm>
 
-#include "surface.hh"
+#include "acmacs-draw/surface.hh"
 #include "legend.hh"
 #include "clades-draw.hh"
 
