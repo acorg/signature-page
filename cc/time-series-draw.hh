@@ -45,8 +45,8 @@ class TimeSeriesDraw
     void prepare();
     void draw();
 
-    inline const Size& size() const { return mSurface.size(); }
-    inline const Size& offset() const { return mSurface.offset(); }
+    inline const Size& size() const { return mSurface.viewport().size; }
+    inline const Location& origin_in_parent() const { return mSurface.origin_in_parent(); }
 
     void init_settings();
     inline Surface& surface() { return mSurface; }

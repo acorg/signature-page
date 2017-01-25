@@ -58,7 +58,7 @@ void TreeDraw::prepare()
 {
     set_line_no(true, true);
     const size_t number_of_hz_sections = prepare_hz_sections();
-    const auto canvas_size = mSurface.size();
+    const auto& canvas_size = mSurface.viewport().size;
     mHorizontalStep = canvas_size.width / mTree.width(mSettings.hide_if_cumulative_edge_length_bigger_than);
     mVerticalStep = (canvas_size.height - (number_of_hz_sections - 1) * mHzSections.vertical_gap) / static_cast<double>(mTree.height() + 2); // +2 to add space at the top and bottom
     set_vertical_pos();
@@ -69,13 +69,13 @@ void TreeDraw::prepare()
 
 void TreeDraw::draw()
 {
-    std::cout << "Tree surface: " << mSurface.size() << std::endl;
+    std::cout << "Tree surface: " << mSurface.viewport() << std::endl;
     mLineWidth = mSettings.force_line_width ? mSettings.line_width : std::min(mSettings.line_width, mVerticalStep * 0.5);
-    std::cout << "Tree line width: " << mLineWidth << "  Settings: " << mSettings.line_width << "  vertical_step/2: " << mVerticalStep * 0.5 << std::endl;
+      // std::cout << "Tree line width: " << mLineWidth.valeu() << "  Settings: " << mSettings.line_width << "  vertical_step/2: " << mVerticalStep * 0.5 << std::endl;
     fit_labels_into_viewport();
 
     double vertical_gap = 0;
-    draw_node(mTree, mLineWidth / 2, vertical_gap, mSettings.root_edge);
+    draw_node(mTree, 0 /*mLineWidth / 2*/, vertical_gap, mSettings.root_edge);
     mColoring->report();
     draw_legend();
 
@@ -221,7 +221,7 @@ void TreeDraw::fit_labels_into_viewport()
 {
     mFontSize = mVerticalStep;
 
-    const double canvas_width = mSurface.size().width;
+    const double canvas_width = mSurface.viewport().size.width;
 
     for (double label_offset = max_label_offset(); label_offset > canvas_width; label_offset = max_label_offset()) {
         const double scale = std::min(canvas_width / label_offset, 0.99); // to avoid too much looping
@@ -268,10 +268,10 @@ void TreeDraw::draw_node(const Node& aNode, double aOriginX, double& aVerticalGa
                 const auto& settings = mSettings.vaccine(aNode.draw.vaccine_label);
                 Size label_offset{-20, 20}; // TODO: settings
                 const Location label_origin = text_origin + label_offset;
-                mSurface.text(label_origin, aNode.draw.vaccine_label, settings.label_color, settings.label_size, settings.label_style);
-                const auto vlsize = mSurface.text_size(aNode.draw.vaccine_label, settings.label_size, settings.label_style);
+                mSurface.text(label_origin, aNode.draw.vaccine_label, settings.label_color, Pixels{settings.label_size}, settings.label_style);
+                const auto vlsize = mSurface.text_size(aNode.draw.vaccine_label, Pixels{settings.label_size}, settings.label_style);
                 const auto line_origin = label_origin + Size(vlsize.width / 2, label_offset.height > 0 ? - vlsize.height : 0);
-                mSurface.line(line_origin, text_origin, settings.line_color, settings.line_width);
+                mSurface.line(line_origin, text_origin, settings.line_color, Pixels{settings.line_width});
             }
         }
         else {
@@ -304,20 +304,20 @@ void TreeDraw::draw_aa_transition(const Node& aNode, const Location& aOrigin, do
         if (!labels.empty()) {
             const auto& branch_settings = settings.per_branch;
             const auto longest_label = std::max_element(labels.begin(), labels.end(), [](const auto& a, const auto& b) { return a.first.size() < b.first.size(); });
-            const auto longest_label_size = mSurface.text_size(longest_label->first, branch_settings.size, branch_settings.style);
+            const auto longest_label_size = mSurface.text_size(longest_label->first, Pixels{branch_settings.size}, branch_settings.style);
             const auto node_line_width = aRight - aOrigin.x;
             Size offset(node_line_width > longest_label_size.width ? (node_line_width - longest_label_size.width) / 2 : (node_line_width - longest_label_size.width),
                         longest_label_size.height * branch_settings.interline);
             offset += branch_settings.label_offset;
             Location origin = aOrigin + offset;
             for (const auto& label: labels) {
-                const auto label_width = mSurface.text_size(label.first, branch_settings.size, branch_settings.style).width;
+                const auto label_width = mSurface.text_size(label.first, Pixels{branch_settings.size}, branch_settings.style).width;
                 const Location label_xy(origin.x + (longest_label_size.width - label_width) / 2, origin.y);
-                mSurface.text(label_xy, label.first, branch_settings.color, branch_settings.size, branch_settings.style);
+                mSurface.text(label_xy, label.first, branch_settings.color, Pixels{branch_settings.size}, branch_settings.style);
                 if (settings.show_node_for_left_line && label.second) {
                     mSurface.line(Location{},
                                   Location(mHorizontalStep * label.second->data.cumulative_edge_length, mVerticalStep * label.second->draw.line_no),
-                                  settings.node_for_left_line_color, settings.node_for_left_line_width);
+                                  settings.node_for_left_line_color, Pixels{settings.node_for_left_line_width});
                 }
                 origin.y += longest_label_size.height * branch_settings.interline;
             }
@@ -352,7 +352,7 @@ void TreeDraw::draw_legend()
 {
     const Legend* legend = coloring_legend();
     if (legend) {
-        Surface& legend_surface{mSurface.subsurface(mSettings.legend.offset, {mSettings.legend.width,  mSettings.legend.width / legend->size().aspect()}, legend->size().width, false)};
+        Surface& legend_surface = mSurface.subsurface(mSettings.legend.offset, Scaled{legend->size().width}, {Location{}, Size{mSettings.legend.width,  mSettings.legend.width / legend->size().aspect()}}, false);
         legend->draw(legend_surface, mSettings.legend);
           // legend_surface->border("red", 1);
     }

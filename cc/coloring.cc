@@ -165,18 +165,18 @@ class ColoringByPosLegend : public Legend
     virtual void draw(Surface& aSurface, const LegendSettings& aSettings) const
         {
               // aSurface.border(0xA0FFA000, 1);
-            const auto title_size = aSurface.text_size(mTitle, aSettings.title_size, aSettings.title_style);
+            const auto title_size = aSurface.text_size(mTitle, Pixels{aSettings.title_size}, aSettings.title_style);
             Location origin{0, title_size.height};
               //origin += Size((aSurface.text_size(mTitle, mFontSize, mStyle).width - label_size.width) / 2, label_size.height * mInterline);
-            const auto text_size = aSurface.text_size("W", aSettings.text_size, aSettings.text_style);
+            const auto text_size = aSurface.text_size("W", Pixels{aSettings.text_size}, aSettings.text_style);
             double max_width = 0;
             for (auto& label_color: mColoring.used_colors()) {
                 origin.y += text_size.height * aSettings.interline;
                 const std::string text = std::string(1, label_color.first) + " (" + std::to_string(label_color.second.second) + ")";
-                aSurface.text(origin, text, label_color.second.first, aSettings.text_size, aSettings.text_style);
-                max_width = std::max(max_width, aSurface.text_size(text, aSettings.text_size, aSettings.text_style).width);
+                aSurface.text(origin, text, label_color.second.first, Pixels{aSettings.text_size}, aSettings.text_style);
+                max_width = std::max(max_width, aSurface.text_size(text, Pixels{aSettings.text_size}, aSettings.text_style).width);
             }
-            aSurface.text({(max_width - title_size.width) / 2, title_size.height}, mTitle, "black", aSettings.title_size, aSettings.title_style);
+            aSurface.text({(max_width - title_size.width) / 2, title_size.height}, mTitle, "black", Pixels{aSettings.title_size}, aSettings.title_style);
         }
 
     virtual Size size() const

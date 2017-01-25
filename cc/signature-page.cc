@@ -247,7 +247,7 @@ void SignaturePageDraw::prepare()
 
 void SignaturePageDraw::make_layout_tree_ts_clades()
 {
-    const Size page_size = mSurface->size();
+    const Size& page_size = mSurface->viewport().size;
     const double section_height = page_size.height - (mSettings->signature_page.top + mSettings->signature_page.bottom);
 
     const double clades_width = mSettings->signature_page.clades_width;
@@ -257,9 +257,9 @@ void SignaturePageDraw::make_layout_tree_ts_clades()
     const double ts_left = mSettings->signature_page.left + tree_width + mSettings->signature_page.tree_margin_right;
     const double clades_left = ts_left + ts_width;
 
-    mTreeDraw->surface().move_resize({mSettings->signature_page.left, mSettings->signature_page.top}, {tree_width, section_height}, page_size.width);
-    mTimeSeriesDraw->surface().move_resize({ts_left, mSettings->signature_page.top}, {ts_width, section_height}, page_size.width * ts_width / tree_width);
-    mCladesDraw->surface().move_resize({clades_left, mSettings->signature_page.top}, {clades_width, section_height}, page_size.width * clades_width / tree_width);
+    mTreeDraw->surface().move_resize_viewport({mSettings->signature_page.left, mSettings->signature_page.top}, page_size.width, Size{tree_width, section_height});
+    mTimeSeriesDraw->surface().move_resize_viewport({ts_left, mSettings->signature_page.top}, page_size.width * ts_width / tree_width, Size{ts_width, section_height});
+    mCladesDraw->surface().move_resize_viewport({clades_left, mSettings->signature_page.top}, page_size.width * clades_width / tree_width, Size{clades_width, section_height});
 
 } // SignaturePageDraw::make_layout_tree_ts_clades
 
@@ -267,7 +267,7 @@ void SignaturePageDraw::make_layout_tree_ts_clades()
 
 void SignaturePageDraw::make_layout_tree_clades_ts_maps()
 {
-    const Size page_size = mSurface->size();
+    const Size& page_size = mSurface->viewport().size;
     const double section_height = page_size.height - (mSettings->signature_page.top + mSettings->signature_page.bottom);
 
     const double antigic_maps_width = mSettings->antigenic_maps.width;
@@ -288,12 +288,12 @@ void SignaturePageDraw::make_layout_tree_clades_ts_maps()
     // std::cerr << "time series " << Size{ts_width, section_height} << std::endl;
     // std::cerr << "clades " << Size{clades_width, section_height} << std::endl;
 
-    mTreeDraw->surface().move_resize({mSettings->signature_page.left, mSettings->signature_page.top}, {tree_width, section_height}, page_size.width);
-    mTimeSeriesDraw->surface().move_resize({ts_left, mSettings->signature_page.top}, {ts_width, section_height}, page_size.width * ts_width / tree_width);
-    mCladesDraw->surface().move_resize({clades_left, mSettings->signature_page.top}, {clades_width, section_height}, page_size.width * clades_width / tree_width);
-    mMappedAntigensDraw->surface().move_resize({mapped_antigens_left, mSettings->signature_page.top}, {mapped_antigens_width, section_height}, page_size.width * mapped_antigens_width / tree_width);
-    mAntigenicMapsDraw->surface().move_resize({antigic_maps_left, mSettings->signature_page.top}, {antigic_maps_width, section_height}, page_size.width * antigic_maps_width / tree_width);
-    mTitleDraw->surface().move_resize({0, 0}, page_size, page_size.width);
+    mTreeDraw->surface().move_resize_viewport({mSettings->signature_page.left, mSettings->signature_page.top}, page_size.width, Size{tree_width, section_height});
+    mTimeSeriesDraw->surface().move_resize_viewport({ts_left, mSettings->signature_page.top}, page_size.width * ts_width / tree_width, Size{ts_width, section_height});
+    mCladesDraw->surface().move_resize_viewport({clades_left, mSettings->signature_page.top}, page_size.width * clades_width / tree_width, Size{clades_width, section_height});
+    mMappedAntigensDraw->surface().move_resize_viewport({mapped_antigens_left, mSettings->signature_page.top}, page_size.width * mapped_antigens_width / tree_width, Size{mapped_antigens_width, section_height});
+    mAntigenicMapsDraw->surface().move_resize_viewport({antigic_maps_left, mSettings->signature_page.top}, page_size.width * antigic_maps_width / tree_width, Size{antigic_maps_width, section_height});
+    mTitleDraw->surface().move_resize_viewport({0, 0}, page_size.width, page_size);
 
 } // SignaturePageDraw::make_layout_tree_clades_ts_maps
 

@@ -142,7 +142,7 @@ void CladesDraw::init_settings()
 
 void CladesDraw::draw()
 {
-    auto draw_lines = mTimeSeriesDraw.offset().width < mSurface.offset().width ? &CladesDraw::draw_right : &CladesDraw::draw_left;
+    auto draw_lines = mTimeSeriesDraw.origin_in_parent().x < mSurface.origin_in_parent().x ? &CladesDraw::draw_right : &CladesDraw::draw_left;
 
     for (const auto& name_clade: mClades) {
         const auto& clade = name_clade.second;
@@ -151,7 +151,7 @@ void CladesDraw::draw()
             for (const auto& section: clade.sections) {
                 const double top = section.first->draw.vertical_pos - mTreeDraw.vertical_step() / 2;
                 const double bottom = section.last->draw.vertical_pos + mTreeDraw.vertical_step() / 2;
-                const double label_height = mSurface.text_size("W", for_clade.label_size, for_clade.label_style).height;
+                const double label_height = mSurface.text_size("W", Pixels{for_clade.label_size}, for_clade.label_style).height;
                 double label_vpos = top + label_height;
                 if (for_clade.label_position == "middle") {
                     label_vpos = (top + bottom + label_height) / 2.0;
@@ -171,12 +171,12 @@ void CladesDraw::draw()
 void CladesDraw::draw_right(size_t aSlot, std::string aCladeName, double top, double bottom, double label_vpos, const CladeDrawSettings& for_clade)
 {
     const auto x = (aSlot + 1) * mSettings.slot_width;
-    mSurface.double_arrow({x, top}, {x, bottom}, for_clade.arrow_color, for_clade.line_width, for_clade.arrow_width);
+    mSurface.double_arrow({x, top}, {x, bottom}, for_clade.arrow_color, Pixels{for_clade.line_width}, Pixels{for_clade.arrow_width});
     std::string name = for_clade.display_name.empty() ? aCladeName : for_clade.display_name;
-    mSurface.text(Location{x, label_vpos} + for_clade.label_offset, name, for_clade.label_color, for_clade.label_size, for_clade.label_style, for_clade.label_rotation);
+    mSurface.text(Location{x, label_vpos} + for_clade.label_offset, name, for_clade.label_color, Pixels{for_clade.label_size}, for_clade.label_style, for_clade.label_rotation);
     const double left = mTimeSeriesDraw.size().width;
-    mSurface.line({x, top}, {-left, top}, for_clade.separator_color, for_clade.separator_width);
-    mSurface.line({x, bottom}, {-left, bottom}, for_clade.separator_color, for_clade.separator_width);
+    mSurface.line({x, top}, {-left, top}, for_clade.separator_color, Pixels{for_clade.separator_width});
+    mSurface.line({x, bottom}, {-left, bottom}, for_clade.separator_color, Pixels{for_clade.separator_width});
 
 } // CladesDraw::draw_right
 
@@ -184,20 +184,17 @@ void CladesDraw::draw_right(size_t aSlot, std::string aCladeName, double top, do
 
 void CladesDraw::draw_left(size_t aSlot, std::string aCladeName, double top, double bottom, double label_vpos, const CladeDrawSettings& for_clade)
 {
-    const auto x = mSurface.size().width - (aSlot + 1) * mSettings.slot_width;
-    mSurface.double_arrow({x, top}, {x, bottom}, for_clade.arrow_color, for_clade.line_width, for_clade.arrow_width);
+    const auto x = mSurface.viewport().size.width - (aSlot + 1) * mSettings.slot_width;
+    mSurface.double_arrow({x, top}, {x, bottom}, for_clade.arrow_color, Pixels{for_clade.line_width}, Pixels{for_clade.arrow_width});
     std::string name = for_clade.display_name.empty() ? aCladeName : for_clade.display_name;
-    const double label_width = mSurface.text_size(name, for_clade.label_size, for_clade.label_style).width;
+    const double label_width = mSurface.text_size(name, Pixels{for_clade.label_size}, for_clade.label_style).width;
     mSurface.text(Location{x, label_vpos} + Size{- for_clade.label_offset.width - label_width, for_clade.label_offset.height},
-                  name, for_clade.label_color, for_clade.label_size, for_clade.label_style, for_clade.label_rotation);
-    const double right = mSurface.size().width + mTimeSeriesDraw.size().width;
-    mSurface.line({x, top}, {right, top}, for_clade.separator_color, for_clade.separator_width);
-    mSurface.line({x, bottom}, {right, bottom}, for_clade.separator_color, for_clade.separator_width);
+                  name, for_clade.label_color, Pixels{for_clade.label_size}, for_clade.label_style, for_clade.label_rotation);
+    const double right = mSurface.viewport().size.width + mTimeSeriesDraw.size().width;
+    mSurface.line({x, top}, {right, top}, for_clade.separator_color, Pixels{for_clade.separator_width});
+    mSurface.line({x, bottom}, {right, bottom}, for_clade.separator_color, Pixels{for_clade.separator_width});
 
 } // CladesDraw::draw_left
-
-// ----------------------------------------------------------------------
-
 
 // ----------------------------------------------------------------------
 /// Local Variables:

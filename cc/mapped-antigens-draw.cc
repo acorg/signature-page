@@ -46,13 +46,13 @@ void MappedAntigensDraw::draw()
 {
       // mSurface.border("brown", 1);
 
-    const double surface_width = mSurface.size().width;
+    const double surface_width = mSurface.viewport().size.width;
     const double line_length = surface_width * mSettings.line_length;
     const double base_x = (surface_width - line_length) / 2;
 
     auto draw_dash = [&](const Node& aNode) {
         if (aNode.draw.shown && aNode.draw.chart_antigen_index != Chart::AntigenNotFound) {
-            mSurface.line({base_x, aNode.draw.vertical_pos}, {base_x + line_length, aNode.draw.vertical_pos}, mSettings.line_color, mSettings.line_width, Surface::LineCap::Round);
+            mSurface.line({base_x, aNode.draw.vertical_pos}, {base_x + line_length, aNode.draw.vertical_pos}, mSettings.line_color, Pixels{mSettings.line_width}, Surface::LineCap::Round);
         }
     };
     tree::iterate_leaf(mTree, draw_dash);

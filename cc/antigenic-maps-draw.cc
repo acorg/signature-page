@@ -30,7 +30,7 @@ void AntigenicMapsDraw::init_settings()
           break;
     }
     size_t maps_per_column = number_sections / mSettings.columns + ((number_sections % mSettings.columns) == 0 ? 0 : 1);
-    const double map_width = 150; // height is not available at this moment mSurface.size().height / (maps_per_column + mSettings.gap * (maps_per_column - 1));
+    const double map_width = 150; // height is not available at this moment mSurface.viewport().size.height / (maps_per_column + mSettings.gap * (maps_per_column - 1));
     mSettings.width = map_width * mSettings.columns + (mSettings.columns - 1) * mSettings.gap;
 
     std::cerr << "columns:" << mSettings.columns << " maps_per_column:" << maps_per_column << " map_width:" << map_width << " width:" << mSettings.width << std::endl;

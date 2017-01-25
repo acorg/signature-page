@@ -192,8 +192,8 @@ class TreeDraw
 
     double mHorizontalStep;
     double mVerticalStep;
-    double mLineWidth;
-    double mFontSize;
+    Scaled mLineWidth;
+    Scaled mFontSize;
     double mNameOffset;
     bool hiding_leaves_done;
     bool setting_line_no_done;

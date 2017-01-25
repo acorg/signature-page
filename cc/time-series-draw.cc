@@ -47,7 +47,7 @@ void TimeSeriesDraw::draw()
 {
     // mSurface.border("green3", 1);
 
-    const double month_width = mSurface.size().width / mNumberOfMonths;
+    const double month_width = mSurface.viewport().size.width / mNumberOfMonths;
     draw_labels(month_width);
     draw_month_separators(month_width);
     draw_dashes(month_width);
@@ -59,10 +59,10 @@ void TimeSeriesDraw::draw()
 
 void TimeSeriesDraw::draw_labels(double month_width)
 {
-    const Size surface_size = mSurface.size();
-    const double month_max_height = mSurface.text_size("May ", mSettings.label_size, mSettings.label_style).width;
+    const Size& surface_size = mSurface.viewport().size;
+    const double month_max_height = mSurface.text_size("May ", Pixels{mSettings.label_size}, mSettings.label_style).width;
     double x_bearing;
-    const auto big_label_size = mSurface.text_size("May 99", mSettings.label_size, mSettings.label_style, &x_bearing);
+    const auto big_label_size = mSurface.text_size("May 99", Pixels{mSettings.label_size}, mSettings.label_style, &x_bearing);
     const auto text_up = (month_width - big_label_size.height) * 0.5;
 
     draw_labels_at_side({text_up, - big_label_size.width - x_bearing - mSettings.month_year_to_timeseries_gap}, month_width, month_max_height);
@@ -77,8 +77,8 @@ void TimeSeriesDraw::draw_labels_at_side(const Location& aOrigin, double month_w
     Date current_month = mBegin;
     for (size_t month_no = 0; month_no < mNumberOfMonths; ++month_no, current_month.increment_month()) {
         const double left = aOrigin.x + month_no * month_width;
-        mSurface.text({left, aOrigin.y}, current_month.month_3(), 0, mSettings.label_size, mSettings.label_style, M_PI_2);
-        mSurface.text({left, aOrigin.y + month_max_height}, current_month.year_2(), 0, mSettings.label_size, mSettings.label_style, M_PI_2);
+        mSurface.text({left, aOrigin.y}, current_month.month_3(), 0, Pixels{mSettings.label_size}, mSettings.label_style, M_PI_2);
+        mSurface.text({left, aOrigin.y + month_max_height}, current_month.year_2(), 0, Pixels{mSettings.label_size}, mSettings.label_style, M_PI_2);
     }
 
 } // TimeSeriesDraw::draw_labels_at_side
@@ -87,10 +87,10 @@ void TimeSeriesDraw::draw_labels_at_side(const Location& aOrigin, double month_w
 
 void TimeSeriesDraw::draw_month_separators(double month_width)
 {
-    const double bottom = mSurface.size().height;
+    const double bottom = mSurface.viewport().size.height;
     for (size_t month_no = 0; month_no <= mNumberOfMonths; ++month_no) {
         const double left = month_no * month_width;
-        mSurface.line({left, 0}, {left, bottom}, mSettings.month_separator_color, mSettings.month_separator_width);
+        mSurface.line({left, 0}, {left, bottom}, mSettings.month_separator_color, Pixels{mSettings.month_separator_width});
     }
 
 } // TimeSeriesDraw::draw_month_separators
@@ -107,7 +107,7 @@ void TimeSeriesDraw::draw_dashes(double month_width)
             const int month_no = months_between_dates(mBegin, Date(aNode.data.date()));
             if (month_no >= 0) {
                 const Location a{base_x + month_width * month_no, aNode.draw.vertical_pos};
-                mSurface.line(a, {a.x + month_width * mSettings.dash_width, a.y}, coloring.color(aNode), mSettings.dash_line_width, Surface::LineCap::Round);
+                mSurface.line(a, {a.x + month_width * mSettings.dash_width, a.y}, coloring.color(aNode), Pixels{mSettings.dash_line_width}, Surface::LineCap::Round);
             }
         }
     };
@@ -127,7 +127,7 @@ void TimeSeriesDraw::draw_hz_section_lines()
                 double y = aNode.draw.vertical_pos;
                 if (section_settings.show_line) {
                     y = (previous_vertical_pos + aNode.draw.vertical_pos) / 2;
-                    mSurface.line({0, y}, {mSurface.size().width, y}, mHzSections.line_color, mHzSections.line_width);
+                    mSurface.line({0, y}, {mSurface.viewport().size.width, y}, mHzSections.line_color, Pixels{mHzSections.line_width});
                 }
                 if (section_settings.show_label_in_time_series) {
                     draw_hz_section_label(section_settings, y);
@@ -146,8 +146,8 @@ void TimeSeriesDraw::draw_hz_section_label(const HzSection& aSection, double aY)
 {
     if (aSection.show && aSection.show_map) {
         std::string label = aSection.index; // (1, 'A' + static_cast<char>(aSectionNo));
-        const Size tsize = mSurface.text_size(label, mHzSections.ts_label_size, mHzSections.ts_label_style);
-        mSurface.text({mSurface.size().width - tsize.width * 1.2, aY + tsize.height * 1.2}, label, mHzSections.ts_label_color, mHzSections.ts_label_size, mHzSections.ts_label_style);
+        const Size tsize = mSurface.text_size(label, Pixels{mHzSections.ts_label_size}, mHzSections.ts_label_style);
+        mSurface.text({mSurface.viewport().size.width - tsize.width * 1.2, aY + tsize.height * 1.2}, label, mHzSections.ts_label_color, Pixels{mHzSections.ts_label_size}, mHzSections.ts_label_style);
     }
 
 } // TimeSeriesDraw::draw_hz_section_label
