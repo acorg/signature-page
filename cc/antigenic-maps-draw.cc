@@ -350,9 +350,10 @@ void AntigenicMapsLayout::draw_map_title(Surface& aSurface, size_t aSectionIndex
     std::string title = section.index + "."; // std::string(1, 'A' + static_cast<char>(aSectionNo)) + ".";
     if (!section.label.empty())
         title += " " + section.label;
+    const Size wsize = aSurface.text_size("W", Pixels{settings.map_title_size});
     const Size tsize = aSurface.text_size(title, Pixels{settings.map_title_size});
-    aSurface.text({settings.map_title_offset.width - aSurface.viewport().origin.x,
-                    settings.map_title_offset.height + tsize.height - aSurface.viewport().origin.y},
+    aSurface.text({settings.map_title_offset.width * wsize.width + aSurface.viewport().origin.x,
+                    settings.map_title_offset.height * wsize.height + tsize.height + aSurface.viewport().origin.y},
         title, settings.map_title_color, Pixels{settings.map_title_size});
 
 } // AntigenicMapsLayout::draw_map_title
@@ -445,9 +446,6 @@ void LabelledGrid::draw_mapped_antigens_section(size_t aSectionIndex)
     surface.line({right, top}, {right, bottom}, settings.mapped_antigens_section_line_color, Pixels{settings.mapped_antigens_section_line_width}, Surface::LineCap::Square);
 
 } // LabelledGrid::draw_mapped_antigens_section
-
-// ----------------------------------------------------------------------
-
 
 // ----------------------------------------------------------------------
 /// Local Variables:

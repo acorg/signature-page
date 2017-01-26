@@ -47,7 +47,7 @@ class AntigenicMapsDrawSettings
           tracked_antigen_outline_color("white"), tracked_antigen_colored_by_clade(false), tracked_antigen_color("green3"),
           reassortant_rotation(0.5 /* M_PI / 6.0 */), egg_antigen_aspect(0.75),
           show_tracked_sera(true), serum_circle_color("grey50"), tracked_serum_outline_color("black"), serum_circle_thickness(0.1), tracked_serum_outline_width(0.1),
-          map_title_color("black"), map_title_offset{0.1, 0.1}, map_title_size(1),
+          map_title_color("black"), map_title_offset{0.3, 0.4}, map_title_size(10),
           mapped_antigens_section_line_color("black"), mapped_antigens_section_line_width(1),
           mark_antigens{{true, "VT 14-002966-VIR SIAT1 (2014-06-29)"}}
         {}
@@ -74,7 +74,7 @@ class AntigenicMapsDrawSettings
     Color serum_circle_color, tracked_serum_outline_color;
     double serum_circle_thickness, tracked_serum_outline_width;
     Color map_title_color;
-    Size map_title_offset;
+    Size map_title_offset;      // offset of the top left corner of the text in letter W fraction
     double map_title_size;
     Color mapped_antigens_section_line_color;
     double mapped_antigens_section_line_width;
