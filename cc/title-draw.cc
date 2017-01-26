@@ -14,12 +14,12 @@ void TitleDraw::init_settings()
         if (!mSettings.title.empty())
             mSettings.title += " ";
         mSettings.title += mChart->chart_info().lab;
-        mSettings.size = 10;
-        mSettings.offset.set(5, 5 + mSettings.size);
+        // mSettings.size = 10;
+        // mSettings.offset.set(5, 5 + mSettings.size);
     }
     else {
-        mSettings.size = 20;
-        mSettings.offset.set(10, 10 + mSettings.size);
+        // mSettings.size = 20;
+        // mSettings.offset.set(10, 10 + mSettings.size);
     }
 
 } // TitleDraw::init_settings

@@ -93,7 +93,7 @@ void SignaturePageDraw::init_layout()
         mSettings->signature_page.time_series_width = 300;
         mSettings->signature_page.clades_width = 60;
         mSettings->signature_page.tree_margin_right = 10;
-        mSettings->tree_draw.aa_transition.per_branch.size = mSettings->signature_page.time_series_width * 0.1;
+        // mSettings->tree_draw.aa_transition.per_branch.size = mSettings->signature_page.time_series_width * 0.1;
     }
     else {
         mSettings->signature_page.top = 30;
@@ -104,7 +104,7 @@ void SignaturePageDraw::init_layout()
         mSettings->signature_page.clades_width = 20;
         mSettings->signature_page.tree_margin_right = 10;
         mSettings->signature_page.mapped_antigens_margin_right = 10;
-        mSettings->tree_draw.aa_transition.per_branch.size = mSettings->signature_page.time_series_width * 0.075;
+        // mSettings->tree_draw.aa_transition.per_branch.size = mSettings->signature_page.time_series_width * 0.075;
     }
 
 } // SignaturePageDraw::init_layout
@@ -128,25 +128,25 @@ void SignaturePageDraw::init_settings()
         mTimeSeriesDraw->init_settings();
 
     if (mSurface->aspect() > 1) { // with maps
-        mSettings->tree_draw.vaccines[0].label_size = 10;
-        mSettings->tree_draw.aa_transition.per_branch.size = 15;
+        // mSettings->tree_draw.vaccines[0].label_size = 10;
+        // mSettings->tree_draw.aa_transition.per_branch.size = 15;
         mSettings->tree_draw.legend.offset.set(0, 1100);
         mSettings->tree_draw.legend.width = 250;
 
-        mSettings->time_series.label_size = 18;
-        mSettings->time_series.month_separator_width = 1;
+        // mSettings->time_series.label_size = 18;
+        // mSettings->time_series.month_separator_width = 1;
         mSettings->time_series.month_year_to_timeseries_gap = 1;
-        mSettings->time_series.dash_line_width = 0.8;
+        // mSettings->time_series.dash_line_width = 0.8;
 
         mSettings->hz_sections.vertical_gap = 15;
-        mSettings->hz_sections.ts_label_size = 20;
-        mSettings->hz_sections.line_width = 1;
+        // mSettings->hz_sections.ts_label_size = 20;
+        // mSettings->hz_sections.line_width = 1;
 
         mSettings->clades.slot_width = 10;
         for (auto& clade: mSettings->clades.clades) {
-            clade.label_size = 20;
-            clade.line_width = 1;
-            clade.arrow_width = clade.line_width * 5;
+            // clade.label_size = 20;
+            // clade.line_width = 1;
+            // clade.arrow_width = clade.line_width * 5;
             clade.label_offset.set(1, 0);
         }
 
@@ -154,28 +154,28 @@ void SignaturePageDraw::init_settings()
             mAntigenicMapsDraw->init_settings();
     }
     else {                      // just tree
-        mSettings->tree_draw.vaccines[0].label_size = 40;
-        mSettings->tree_draw.aa_transition.per_branch.size = 20;
+        // mSettings->tree_draw.vaccines[0].label_size = 40;
+        // mSettings->tree_draw.aa_transition.per_branch.size = 20;
         mSettings->tree_draw.legend.offset.set(500, 1900);
         mSettings->tree_draw.legend.width = 500;
 
-        mSettings->time_series.label_size = 20;
-        mSettings->time_series.month_separator_width = 1;
+        // mSettings->time_series.label_size = 20;
+        // mSettings->time_series.month_separator_width = 1;
         mSettings->time_series.month_year_to_timeseries_gap = 5;
-        mSettings->time_series.dash_line_width = 3;
+        // mSettings->time_series.dash_line_width = 3;
 
         mSettings->hz_sections.vertical_gap = 40;
-        mSettings->hz_sections.ts_label_size = 35;
-        mSettings->hz_sections.line_width = 2;
+        // mSettings->hz_sections.ts_label_size = 35;
+        // mSettings->hz_sections.line_width = 2;
         for (auto& section: mSettings->hz_sections.sections) {
             section.show_label_in_time_series = false;
         }
 
         mSettings->clades.slot_width = 20;
         for (auto& clade: mSettings->clades.clades) {
-            clade.label_size = 33;
-            clade.line_width = 2;
-            clade.arrow_width = clade.line_width * 5;
+            // clade.label_size = 33;
+            // clade.line_width = 2;
+            // clade.arrow_width = clade.line_width * 5;
             clade.label_offset.set(10, 0);
         }
     }
@@ -257,9 +257,10 @@ void SignaturePageDraw::make_layout_tree_ts_clades()
     const double ts_left = mSettings->signature_page.left + tree_width + mSettings->signature_page.tree_margin_right;
     const double clades_left = ts_left + ts_width;
 
-    mTreeDraw->surface().move_resize_viewport({mSettings->signature_page.left, mSettings->signature_page.top}, page_size.width, Size{tree_width, section_height});
-    mTimeSeriesDraw->surface().move_resize_viewport({ts_left, mSettings->signature_page.top}, page_size.width * ts_width / tree_width, Size{ts_width, section_height});
-    mCladesDraw->surface().move_resize_viewport({clades_left, mSettings->signature_page.top}, page_size.width * clades_width / tree_width, Size{clades_width, section_height});
+    mTreeDraw->surface().move_resize_viewport({mSettings->signature_page.left, mSettings->signature_page.top}, tree_width, Size{1000, 1000 * section_height / tree_width});
+    mTimeSeriesDraw->surface().move_resize_viewport({ts_left, mSettings->signature_page.top}, ts_width, Size{1000, 1000 * section_height / ts_width});
+    mCladesDraw->surface().move_resize_viewport({clades_left, mSettings->signature_page.top}, clades_width, Size{1000, 1000 * section_height / clades_width});
+    mTitleDraw->surface().move_resize_viewport(Location{}, page_size.width, page_size);
 
 } // SignaturePageDraw::make_layout_tree_ts_clades
 
@@ -288,12 +289,19 @@ void SignaturePageDraw::make_layout_tree_clades_ts_maps()
     // std::cerr << "time series " << Size{ts_width, section_height} << std::endl;
     // std::cerr << "clades " << Size{clades_width, section_height} << std::endl;
 
-    mTreeDraw->surface().move_resize_viewport({mSettings->signature_page.left, mSettings->signature_page.top}, page_size.width, Size{tree_width, section_height});
-    mTimeSeriesDraw->surface().move_resize_viewport({ts_left, mSettings->signature_page.top}, page_size.width * ts_width / tree_width, Size{ts_width, section_height});
-    mCladesDraw->surface().move_resize_viewport({clades_left, mSettings->signature_page.top}, page_size.width * clades_width / tree_width, Size{clades_width, section_height});
-    mMappedAntigensDraw->surface().move_resize_viewport({mapped_antigens_left, mSettings->signature_page.top}, page_size.width * mapped_antigens_width / tree_width, Size{mapped_antigens_width, section_height});
-    mAntigenicMapsDraw->surface().move_resize_viewport({antigic_maps_left, mSettings->signature_page.top}, page_size.width * antigic_maps_width / tree_width, Size{antigic_maps_width, section_height});
-    mTitleDraw->surface().move_resize_viewport({0, 0}, page_size.width, page_size);
+    // mTreeDraw->surface().move_resize_viewport({mSettings->signature_page.left, mSettings->signature_page.top}, page_size.width, Size{tree_width, section_height});
+    // mTimeSeriesDraw->surface().move_resize_viewport({ts_left, mSettings->signature_page.top}, page_size.width * ts_width / tree_width, Size{ts_width, section_height});
+    // mCladesDraw->surface().move_resize_viewport({clades_left, mSettings->signature_page.top}, page_size.width * clades_width / tree_width, Size{clades_width, section_height});
+    // mMappedAntigensDraw->surface().move_resize_viewport({mapped_antigens_left, mSettings->signature_page.top}, page_size.width * mapped_antigens_width / tree_width, Size{mapped_antigens_width, section_height});
+    // mAntigenicMapsDraw->surface().move_resize_viewport({antigic_maps_left, mSettings->signature_page.top}, page_size.width * antigic_maps_width / tree_width, Size{antigic_maps_width, section_height});
+    // mTitleDraw->surface().move_resize_viewport({0, 0}, page_size.width, page_size);
+
+    mTreeDraw->surface().move_resize_viewport({mSettings->signature_page.left, mSettings->signature_page.top}, tree_width, Size{1000, 1000 * section_height / tree_width});
+    mTimeSeriesDraw->surface().move_resize_viewport({ts_left, mSettings->signature_page.top}, ts_width, Size{1000, 1000 * section_height / ts_width});
+    mCladesDraw->surface().move_resize_viewport({clades_left, mSettings->signature_page.top}, clades_width, Size{1000, 1000 * section_height / clades_width});
+    mMappedAntigensDraw->surface().move_resize_viewport({mapped_antigens_left, mSettings->signature_page.top}, mapped_antigens_width, Size{1000, 1000 * section_height / mapped_antigens_width});
+    mAntigenicMapsDraw->surface().move_resize_viewport({antigic_maps_left, mSettings->signature_page.top}, antigic_maps_width, Size{1000, 1000 * section_height / antigic_maps_width});
+    mTitleDraw->surface().move_resize_viewport(Location{}, page_size.width, page_size);
 
 } // SignaturePageDraw::make_layout_tree_clades_ts_maps
 

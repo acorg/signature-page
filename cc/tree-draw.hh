@@ -22,7 +22,7 @@ class AATransitionPerBranchDrawSettings
 {
  public:
     inline AATransitionPerBranchDrawSettings()
-        : size(20), color("black"), style("Courier New"), interline(1.2),
+        : size(8), color("black"), style("Courier New"), interline(1.2),
           label_offset{-40, 20}, label_connection_line_width(0.1), label_connection_line_color("black") {}
 
     double size;
@@ -61,7 +61,7 @@ class TreeDrawVaccineSettings
 {
  public:
     inline TreeDrawVaccineSettings()
-        : label_color("black"), label_size(20), line_color("black"), line_width(1) {}
+        : label_color("black"), label_size(10), line_color("black"), line_width(1) {}
 
     std::string name;           // empty for default settings
     Color label_color;
@@ -141,7 +141,7 @@ class HzSections
 {
  public:
     inline HzSections()
-        : vertical_gap(50), line_color("grey63"), line_width(10), ts_label_size(50), ts_label_color("black") {}
+        : vertical_gap(50), line_color("grey63"), line_width(2), ts_label_size(5), ts_label_color("black") {}
     ~HzSections();
 
     void sort(const Tree& aTree);
