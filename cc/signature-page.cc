@@ -130,8 +130,8 @@ void SignaturePageDraw::init_settings()
     if (mSurface->aspect() > 1) { // with maps
         // mSettings->tree_draw.vaccines[0].label_size = 10;
         // mSettings->tree_draw.aa_transition.per_branch.size = 15;
-        mSettings->tree_draw.legend.offset.set(0, 1100);
-        mSettings->tree_draw.legend.width = 250;
+        // mSettings->tree_draw.legend.offset.set(0, 1100);
+        mSettings->tree_draw.legend.width = 300;
 
         // mSettings->time_series.label_size = 18;
         // mSettings->time_series.month_separator_width = 1;
@@ -156,8 +156,8 @@ void SignaturePageDraw::init_settings()
     else {                      // just tree
         // mSettings->tree_draw.vaccines[0].label_size = 40;
         // mSettings->tree_draw.aa_transition.per_branch.size = 20;
-        mSettings->tree_draw.legend.offset.set(500, 1900);
-        mSettings->tree_draw.legend.width = 500;
+        // mSettings->tree_draw.legend.offset.set(500, 1900);
+        mSettings->tree_draw.legend.width = 300;
 
         // mSettings->time_series.label_size = 20;
         // mSettings->time_series.month_separator_width = 1;

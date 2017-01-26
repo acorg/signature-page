@@ -352,7 +352,7 @@ void TreeDraw::draw_legend()
 {
     const Legend* legend = coloring_legend();
     if (legend) {
-        Surface& legend_surface = mSurface.subsurface(mSettings.legend.offset, Scaled{legend->size().width}, {Location{}, Size{mSettings.legend.width,  mSettings.legend.width / legend->size().aspect()}}, false);
+        Surface& legend_surface = mSurface.subsurface(mSettings.legend.offset, Scaled{mSettings.legend.width}, legend->size(), false);
         legend->draw(legend_surface, mSettings.legend);
           // legend_surface->border("red", 1);
     }
