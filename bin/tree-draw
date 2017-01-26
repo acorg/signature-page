@@ -11,14 +11,14 @@ sys.path[:0] = [str(Path(os.environ["ACMACSD_ROOT"]).resolve().joinpath("py"))]
 import logging; module_logger = logging.getLogger(__name__)
 
 import seqdb as seqdb_m
-import signature_page_cc
+import signature_page
 from acmacs_base import timeit
 
 # ----------------------------------------------------------------------
 
 def main(args):
-    tree = signature_page_cc.Tree()
-    signature_page_cc.tree_import(args.input[0], tree)
+    tree = signature_page.Tree()
+    signature_page.tree_import(args.input[0], tree)
     seqdb = seqdb_m.Seqdb()
     seqdb.load(args.seqdb)
     tree.match_seqdb(seqdb)

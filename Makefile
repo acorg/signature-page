@@ -11,7 +11,7 @@ SIGNATURE_PAGE_SOURCES = tree.cc tree-export.cc \
 			 signature-page.cc tree-draw.cc time-series-draw.cc clades-draw.cc \
 			 mapped-antigens-draw.cc antigenic-maps-draw.cc title-draw.cc \
 			 coloring.cc continent-path.cc settings.cc
-SIGNATURE_PAGE_CC_PY_SOURCES = py.cc $(SIGNATURE_PAGE_SOURCES)
+SIGNATURE_PAGE_PY_SOURCES = py.cc $(SIGNATURE_PAGE_SOURCES)
 SIGP_SOURCES = sigp.cc $(SIGNATURE_PAGE_SOURCES)
 SETTINGS_CREATE_SOURCES = settings-create.cc settings.cc
 TEST_SETTINGS_COPY_SOURCES = test-settings-copy.cc settings.cc
@@ -54,14 +54,14 @@ DIST = $(abspath dist)
 
 # ----------------------------------------------------------------------
 
-all: check-python $(DIST)/signature_page_cc$(PYTHON_MODULE_SUFFIX) $(DIST)/sigp-settings-create $(DIST)/test-settings-copy $(DIST)/sigp
+all: check-python $(DIST)/signature_page_backend$(PYTHON_MODULE_SUFFIX) $(DIST)/sigp-settings-create $(DIST)/test-settings-copy $(DIST)/sigp
 
 # ----------------------------------------------------------------------
 
 # $(DIST)/: $(patsubst %.cc,$(BUILD)/%.o,$(_SOURCES)) | $(DIST) check-acmacsd-root
 #	g++ $(LDFLAGS) -o $@ $^
 
-$(DIST)/signature_page_cc$(PYTHON_MODULE_SUFFIX):  $(patsubst %.cc,$(BUILD)/%.o,$(SIGNATURE_PAGE_CC_PY_SOURCES)) | $(DIST) check-acmacsd-root
+$(DIST)/signature_page_backend$(PYTHON_MODULE_SUFFIX):  $(patsubst %.cc,$(BUILD)/%.o,$(SIGNATURE_PAGE_PY_SOURCES)) | $(DIST) check-acmacsd-root
 	g++ -shared $(LDFLAGS) -o $@ $^ $(SIGP_LDLIBS) $(PYTHON_LD_LIB)
 
 $(DIST)/sigp-settings-create: $(patsubst %.cc,$(BUILD)/%.o,$(SETTINGS_CREATE_SOURCES)) | $(DIST)
@@ -75,11 +75,11 @@ $(DIST)/sigp: $(patsubst %.cc,$(BUILD)/%.o,$(SIGP_SOURCES)) | $(DIST)
 
 # ----------------------------------------------------------------------
 
-install: $(DIST)/signature_page_cc$(PYTHON_MODULE_SUFFIX) $(DIST)/sigp | check-acmacsd-root
+install: $(DIST)/signature_page_backend$(PYTHON_MODULE_SUFFIX) $(DIST)/sigp | check-acmacsd-root
 	ln -sf $(abspath bin)/sigp-* $(ACMACSD_ROOT)/bin
 	ln -sf $(DIST)/sigp $(ACMACSD_ROOT)/bin
 	ln -sf $(abspath py)/* $(ACMACSD_ROOT)/py
-	ln -sf $(DIST)/signature_page_cc$(PYTHON_MODULE_SUFFIX) $(ACMACSD_ROOT)/py
+	ln -sf $(DIST)/signature_page_backend$(PYTHON_MODULE_SUFFIX) $(ACMACSD_ROOT)/py
 
 clean:
 	rm -rf $(DIST) $(BUILD)/*.o $(BUILD)/*.d

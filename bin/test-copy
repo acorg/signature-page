@@ -10,15 +10,15 @@ from pathlib import Path
 sys.path[:0] = [str(Path(os.environ["ACMACSD_ROOT"]).resolve().joinpath("py"))]
 import logging; module_logger = logging.getLogger(__name__)
 
-import signature_page_cc
+import signature_page
 from acmacs_base import timeit
 
 # ----------------------------------------------------------------------
 
 def main(args):
-    tree = signature_page_cc.Tree()
-    signature_page_cc.tree_import(args.input[0], tree)
-    signature_page_cc.tree_export(args.output[0], tree)
+    tree = signature_page.Tree()
+    signature_page.tree_import(args.input[0], tree)
+    signature_page.tree_export(args.output[0], tree)
 
 # ----------------------------------------------------------------------
 

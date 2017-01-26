@@ -17,9 +17,9 @@ inline Tree::LadderizeMethod ladderize_type_decode(std::string ladderize_type)
 
 // ----------------------------------------------------------------------
 
-PYBIND11_PLUGIN(signature_page_cc)
+PYBIND11_PLUGIN(signature_page_backend)
 {
-    py::module m("signature_page_cc", "Tree and signature page generator plugin");
+    py::module m("signature_page_backend", "Tree and signature page generator plugin");
 
     py::class_<Node>(m, "Node")
             .def(py::init<>())
