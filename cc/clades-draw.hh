@@ -22,8 +22,8 @@ class CladeDrawSettings
 
     inline CladeDrawSettings(std::string aName = std::string{}, bool aShow = true)
         : name(aName), show(aShow), section_inclusion_tolerance(10), section_exclusion_tolerance(5), show_section_size_in_label(true),
-          arrow_color("black"), line_width(1), arrow_width(15), separator_color("grey63"), separator_width(1),
-          label_position("middle"), label_offset{10, 0}, label_color("black"), label_size(40), label_rotation(0),
+          arrow_color("black"), line_width(0.8), arrow_width(3), separator_color("grey63"), separator_width(0.5),
+          label_position("middle"), label_offset{10, 0}, label_color("black"), label_size(11), label_rotation(0),
           slot(NoSlot)
         {}
     inline CladeDrawSettings(const CladeDrawSettings&) = default;
@@ -58,7 +58,7 @@ class CladesDrawSettings
  public:
     inline CladesDrawSettings()
         : clades{{CladeDrawSettings{}, CladeDrawSettings{"gly", false}, CladeDrawSettings{"no-gly", false}}},
-          slot_width(30) {}
+          slot_width(10) {}
     ~CladesDrawSettings();
 
     inline const CladeDrawSettings& for_clade(std::string name) const

@@ -8,7 +8,7 @@ class LegendSettings
 {
  public:
     inline LegendSettings()
-        : offset{0, 1100}, width{100}, title_style{"sans_serif", TextStyle::Slant::Normal, TextStyle::Weight::Bold},
+        : offset{0, 900}, width{100}, title_style{"sans_serif", TextStyle::Slant::Normal, TextStyle::Weight::Bold},
           title_size{10}, text_style{"monospace"}, text_size{10}, interline{1.5} {}
 
     Size offset;                // in enclosing surface
