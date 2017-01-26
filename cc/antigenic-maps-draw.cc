@@ -389,6 +389,7 @@ void LabelledGrid::draw()
 {
     const AntigenicMapsDrawSettings& settings = mAntigenicMapsDraw.settings();
     Surface& surface = mAntigenicMapsDraw.surface();
+    std::cerr << "Maps " << surface << std::endl;
 
     const double map_width = (surface.viewport().size.width - (settings.columns - 1) * settings.gap) / settings.columns;
 
@@ -396,7 +397,9 @@ void LabelledGrid::draw()
     for (const auto& section: mAntigenicMapsDraw.hz_sections().sections) {
         if (section.show && section.show_map) {
             Surface& map_surface = surface.subsurface({column * (map_width + settings.gap), row * (map_width + settings.gap)},
-                                                      Scaled{map_width}, mMapViewport, true);
+                                                      Scaled{map_width}, Viewport{Location{1, 1}, Size{20, 20}} /*mMapViewport*/, true);
+            std::cerr << "Map " << map_surface << std::endl;
+            std::cerr << "origin_offset: " << map_surface.origin_offset() << "  scale: " << map_surface.scale() << std::endl;
             draw_chart(map_surface, section_index);
             draw_mapped_antigens_section(section_index);
             ++column;
