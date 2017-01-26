@@ -18,8 +18,8 @@ class TimeSeriesDrawSettings
 {
  public:
     inline TimeSeriesDrawSettings()
-        : label_size(40), month_year_to_timeseries_gap(10), month_separator_color("black"),
-          month_separator_width(1), dash_width(0.5), dash_line_width(5)
+        : label_size(8), month_year_to_timeseries_gap(10), month_separator_color("black"),
+          month_separator_width(0.5), dash_width(0.5), dash_line_width(1)
         {}
     ~TimeSeriesDrawSettings();
 

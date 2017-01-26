@@ -64,9 +64,10 @@ void TimeSeriesDraw::draw_labels(double month_width)
     double x_bearing;
     const auto big_label_size = mSurface.text_size("May 99", Pixels{mSettings.label_size}, mSettings.label_style, &x_bearing);
     const auto text_up = (month_width - big_label_size.height) * 0.5;
+    const double month_year_to_timeseries_gap = mSurface.convert(Pixels{mSettings.month_year_to_timeseries_gap}).value();
 
-    draw_labels_at_side({text_up, - big_label_size.width - x_bearing - mSettings.month_year_to_timeseries_gap}, month_width, month_max_height);
-    draw_labels_at_side({text_up, surface_size.height + x_bearing + mSettings.month_year_to_timeseries_gap}, month_width, month_max_height);
+    draw_labels_at_side({text_up, - big_label_size.width - x_bearing - month_year_to_timeseries_gap}, month_width, month_max_height);
+    draw_labels_at_side({text_up, surface_size.height + x_bearing + month_year_to_timeseries_gap}, month_width, month_max_height);
 
 } // TimeSeriesDraw::draw_labels
 

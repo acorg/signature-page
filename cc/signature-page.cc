@@ -135,7 +135,7 @@ void SignaturePageDraw::init_settings()
 
         // mSettings->time_series.label_size = 18;
         // mSettings->time_series.month_separator_width = 1;
-        mSettings->time_series.month_year_to_timeseries_gap = 1;
+        // mSettings->time_series.month_year_to_timeseries_gap = 1;
         // mSettings->time_series.dash_line_width = 0.8;
 
         mSettings->hz_sections.vertical_gap = 15;
@@ -161,7 +161,7 @@ void SignaturePageDraw::init_settings()
 
         // mSettings->time_series.label_size = 20;
         // mSettings->time_series.month_separator_width = 1;
-        mSettings->time_series.month_year_to_timeseries_gap = 5;
+        // mSettings->time_series.month_year_to_timeseries_gap = 5;
         // mSettings->time_series.dash_line_width = 3;
 
         mSettings->hz_sections.vertical_gap = 40;
