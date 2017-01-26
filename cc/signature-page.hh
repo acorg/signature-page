@@ -30,7 +30,7 @@ class SignaturePageDrawSettings
 
     inline SignaturePageDrawSettings()
         : layout(Layout::Auto), top(60), bottom(60), left(50), right(20),
-          tree_margin_right(30), mapped_antigens_margin_right(30), time_series_width(400), clades_width(100)
+          tree_margin_right(0), mapped_antigens_margin_right(30), time_series_width(400), clades_width(100)
         {}
 
     Layout layout;
