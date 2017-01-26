@@ -282,7 +282,7 @@ void AntigenicMapsLayout::draw_chart(Surface& aSurface, size_t aSectionIndex)
 
     aSurface.background(settings.background_color);
     aSurface.grid(Scaled{1}, settings.grid_line_color, Pixels{settings.grid_line_width});
-    aSurface.viewport_offset(mMapViewport.offset());
+    aSurface.viewport(mMapViewport);
 
     mark_tracked_antigens(aSectionIndex);
     mark_tracked_sera(aSectionIndex);
@@ -351,8 +351,8 @@ void AntigenicMapsLayout::draw_map_title(Surface& aSurface, size_t aSectionIndex
     if (!section.label.empty())
         title += " " + section.label;
     const Size tsize = aSurface.text_size(title, Pixels{settings.map_title_size});
-    aSurface.text({settings.map_title_offset.width - aSurface.viewport_offset().width,
-                    settings.map_title_offset.height + tsize.height - aSurface.viewport_offset().height},
+    aSurface.text({settings.map_title_offset.width - aSurface.viewport().origin.x,
+                    settings.map_title_offset.height + tsize.height - aSurface.viewport().origin.y},
         title, settings.map_title_color, Pixels{settings.map_title_size});
 
 } // AntigenicMapsLayout::draw_map_title
@@ -396,7 +396,7 @@ void LabelledGrid::draw()
     for (const auto& section: mAntigenicMapsDraw.hz_sections().sections) {
         if (section.show && section.show_map) {
             Surface& map_surface = surface.subsurface({column * (map_width + settings.gap), row * (map_width + settings.gap)},
-                                                      {map_width, map_width}, mMapViewport.size.width, true);
+                                                      Scaled{map_width}, mMapViewport, true);
             draw_chart(map_surface, section_index);
             draw_mapped_antigens_section(section_index);
             ++column;
