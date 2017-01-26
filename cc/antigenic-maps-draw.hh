@@ -19,7 +19,7 @@ class MarkAntigenSettings
     inline MarkAntigenSettings(bool aShow = true, std::string aName = std::string())
         : show(aShow), name(aName), label(aName), scale(15), aspect(1), rotation(0), outline_width(1), label_line_width(0.1),
           fill_color("red"), outline_color("white"),
-          label_color("black"), label_line_color("transparent"), label_offset{-5, 2}, label_size(0.5) {}
+          label_color("black"), label_line_color("transparent"), label_offset{-2, 2}, label_size(9) {}
 
     bool show;
     std::string name, label;
