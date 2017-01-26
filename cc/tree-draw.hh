@@ -141,7 +141,7 @@ class HzSections
 {
  public:
     inline HzSections()
-        : vertical_gap(20), line_color("grey63"), line_width(1), ts_label_size(5), ts_label_color("black") {}
+        : vertical_gap(20), line_color("grey63"), line_width(1), ts_label_size(10), ts_label_color("black") {}
     ~HzSections();
 
     void sort(const Tree& aTree);
