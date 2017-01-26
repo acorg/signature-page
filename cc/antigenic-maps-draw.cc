@@ -65,10 +65,10 @@ void AntigenicMapsDraw::draw()
 
 void DrawSerum::draw(Surface& aSurface, const Point& aPoint, const PointStyle& aStyle, const AntigenicMapsDrawSettings& aSettings) const
 {
-    const double size = aSettings.serum_scale * aSettings.point_scale;
     if (!aPoint.coordinates.isnan()) {
-        aSurface.rectangle_filled(aPoint.coordinates, {size * aspect(aPoint, aStyle, aSettings), size}, outline_color(aPoint, aStyle, aSettings),
-                                  outline_width(aPoint, aStyle, aSettings) * aSettings.point_scale, "transparent");
+        aSurface.square_filled(aPoint.coordinates, Pixels{aSettings.serum_scale * aSettings.point_scale},
+                               aspect(aPoint, aStyle, aSettings), 0.0, outline_color(aPoint, aStyle, aSettings),
+                               Pixels{outline_width(aPoint, aStyle, aSettings) * aSettings.point_scale}, "transparent");
     }
 
 } // DrawSerum::draw
@@ -78,9 +78,10 @@ void DrawSerum::draw(Surface& aSurface, const Point& aPoint, const PointStyle& a
 void DrawReferenceAntigen::draw(Surface& aSurface, const Point& aPoint, const PointStyle& aStyle, const AntigenicMapsDrawSettings& aSettings) const
 {
     if (!aPoint.coordinates.isnan()) {
-        aSurface.circle_filled(aPoint.coordinates, aSettings.reference_antigen_scale * aSettings.point_scale, aspect(aPoint, aStyle, aSettings), rotation(aPoint, aStyle, aSettings),
+        aSurface.circle_filled(aPoint.coordinates, Pixels{aSettings.reference_antigen_scale * aSettings.point_scale},
+                               aspect(aPoint, aStyle, aSettings), rotation(aPoint, aStyle, aSettings),
                                aSettings.reference_antigen_outline_color,
-                               aSettings.reference_antigen_outline_width * aSettings.point_scale, "transparent");
+                               Pixels{aSettings.reference_antigen_outline_width * aSettings.point_scale}, "transparent");
     }
 
 } // DrawReferenceAntigen::draw
@@ -90,9 +91,10 @@ void DrawReferenceAntigen::draw(Surface& aSurface, const Point& aPoint, const Po
 void DrawTestAntigen::draw(Surface& aSurface, const Point& aPoint, const PointStyle& aStyle, const AntigenicMapsDrawSettings& aSettings) const
 {
     if (!aPoint.coordinates.isnan()) {
-        aSurface.circle_filled(aPoint.coordinates, aSettings.test_antigen_scale * aSettings.point_scale, aspect(aPoint, aStyle, aSettings), rotation(aPoint, aStyle, aSettings),
+        aSurface.circle_filled(aPoint.coordinates, Pixels{aSettings.test_antigen_scale * aSettings.point_scale},
+                               aspect(aPoint, aStyle, aSettings), rotation(aPoint, aStyle, aSettings),
                                aSettings.test_antigen_outline_color,
-                               aSettings.test_antigen_outline_width * aSettings.point_scale, aSettings.test_antigen_fill_color);
+                               Pixels{aSettings.test_antigen_outline_width * aSettings.point_scale}, aSettings.test_antigen_fill_color);
     }
 
 } // DrawTestAntigen::draw
@@ -102,9 +104,10 @@ void DrawTestAntigen::draw(Surface& aSurface, const Point& aPoint, const PointSt
 void DrawSequencedAntigen::draw(Surface& aSurface, const Point& aPoint, const PointStyle& aStyle, const AntigenicMapsDrawSettings& aSettings) const
 {
     if (!aPoint.coordinates.isnan()) {
-        aSurface.circle_filled(aPoint.coordinates, aSettings.test_antigen_scale * aSettings.point_scale, aspect(aPoint, aStyle, aSettings), rotation(aPoint, aStyle, aSettings),
+        aSurface.circle_filled(aPoint.coordinates, Pixels{aSettings.test_antigen_scale * aSettings.point_scale},
+                               aspect(aPoint, aStyle, aSettings), rotation(aPoint, aStyle, aSettings),
                                aSettings.sequenced_antigen_outline_color,
-                               aSettings.sequenced_antigen_outline_width * aSettings.point_scale, aSettings.sequenced_antigen_fill_color);
+                               Pixels{aSettings.sequenced_antigen_outline_width * aSettings.point_scale}, aSettings.sequenced_antigen_fill_color);
     }
 
 } // DrawSequencedAntigen::draw
@@ -114,9 +117,10 @@ void DrawSequencedAntigen::draw(Surface& aSurface, const Point& aPoint, const Po
 void DrawTrackedAntigen::draw(Surface& aSurface, const Point& aPoint, const PointStyle& aStyle, const AntigenicMapsDrawSettings& aSettings) const
 {
     if (!aPoint.coordinates.isnan()) {
-        aSurface.circle_filled(aPoint.coordinates, aSettings.tracked_antigen_scale * aSettings.point_scale, aspect(aPoint, aStyle, aSettings), rotation(aPoint, aStyle, aSettings),
+        aSurface.circle_filled(aPoint.coordinates, Pixels{aSettings.tracked_antigen_scale * aSettings.point_scale},
+                               aspect(aPoint, aStyle, aSettings), rotation(aPoint, aStyle, aSettings),
                                aSettings.tracked_antigen_outline_color,
-                               aSettings.tracked_antigen_outline_width * aSettings.point_scale, mColor);
+                               Pixels{aSettings.tracked_antigen_outline_width * aSettings.point_scale}, mColor);
     }
 
 } // DrawTrackedAntigen::draw
@@ -127,9 +131,9 @@ void DrawTrackedSerum::draw(Surface& aSurface, const Point& aPoint, const PointS
 {
     DrawSerum::draw(aSurface, aPoint, aStyle, aSettings);
     // std::cout << "    Tracked serum " << aPoint.name << " radius:" << aPoint.attributes.serum_circle_radius << std::endl;
-    aSurface.circle(aPoint.coordinates, aPoint.attributes.serum_circle_radius * 2, 1, 0,
+    aSurface.circle(aPoint.coordinates, Scaled{aPoint.attributes.serum_circle_radius * 2}, 1, 0,
                     outline_color(aPoint, aStyle, aSettings), // aSettings.serum_circle_color,
-                    aSettings.serum_circle_thickness * aSettings.point_scale);
+                    Pixels{aSettings.serum_circle_thickness * aSettings.point_scale});
 
 } // DrawTrackedSerum::draw
 
@@ -139,9 +143,10 @@ void DrawVaccineAntigen::draw(Surface& aSurface, const Point& aPoint, const Poin
 {
     if (!aPoint.coordinates.isnan()) {
         std::cout << "    Vaccine " << aPoint.name << " " << fill_color(aPoint, aStyle, aSettings) << std::endl;
-        aSurface.circle_filled(aPoint.coordinates, aSettings.vaccine_antigen_scale * aSettings.point_scale, aspect(aPoint, aStyle, aSettings), rotation(aPoint, aStyle, aSettings),
+        aSurface.circle_filled(aPoint.coordinates, Pixels{aSettings.vaccine_antigen_scale * aSettings.point_scale},
+                               aspect(aPoint, aStyle, aSettings), rotation(aPoint, aStyle, aSettings),
                                aSettings.vaccine_antigen_outline_color, // aPoint.attributes.vaccine.outline_color,
-                               aSettings.vaccine_antigen_outline_width * aSettings.point_scale,
+                               Pixels{aSettings.vaccine_antigen_outline_width * aSettings.point_scale},
                                fill_color(aPoint, aStyle, aSettings) /*aPoint.attributes.vaccine.fill_color*/);
     }
 
@@ -152,15 +157,17 @@ void DrawVaccineAntigen::draw(Surface& aSurface, const Point& aPoint, const Poin
 void DrawMarkedAntigen::draw(Surface& aSurface, const Point& aPoint, const PointStyle& /*aStyle*/, const AntigenicMapsDrawSettings& aSettings) const
 {
     if (!aPoint.coordinates.isnan()) {
-        aSurface.circle_filled(aPoint.coordinates, mData.scale * aSettings.point_scale, mData.aspect, mData.rotation, mData.outline_color, mData.outline_width * aSettings.point_scale, mData.fill_color);
+        aSurface.circle_filled(aPoint.coordinates, Pixels{mData.scale * aSettings.point_scale},
+                               mData.aspect, mData.rotation, mData.outline_color,
+                               Pixels{mData.outline_width * aSettings.point_scale}, mData.fill_color);
         if (!mData.label.empty()) {
             const TextStyle style; //(mData.label_font);
-            const auto text_size = aSurface.text_size(mData.label, mData.label_size, style);
+            const auto text_size = aSurface.text_size(mData.label, Pixels{mData.label_size}, style);
             const Location text_origin = aPoint.coordinates + mData.label_offset;
-            aSurface.text(text_origin, mData.label, mData.label_color, mData.label_size, style);
+            aSurface.text(text_origin, mData.label, mData.label_color, Pixels{mData.label_size}, style);
             const Location text_middle = text_origin + Size(text_size.width / 2, text_origin.y > aPoint.coordinates.y ? - text_size.height * 1.2 : text_size.height * 0.2);
             std::cerr << "    Mark antigen " << aPoint.name << " " << aPoint.coordinates << " " << text_middle << std::endl;
-            aSurface.line(aPoint.coordinates, text_middle, mData.label_line_color, mData.label_line_width);
+            aSurface.line(aPoint.coordinates, text_middle, mData.label_line_color, Pixels{mData.label_line_width});
         }
     }
 
@@ -274,7 +281,7 @@ void AntigenicMapsLayout::draw_chart(Surface& aSurface, size_t aSectionIndex)
     const Chart& chart = mAntigenicMapsDraw.chart();
 
     aSurface.background(settings.background_color);
-    aSurface.grid(1, settings.grid_line_color, settings.grid_line_width);
+    aSurface.grid(Scaled{1}, settings.grid_line_color, Pixels{settings.grid_line_width});
     aSurface.viewport_offset(mMapViewport.offset());
 
     mark_tracked_antigens(aSectionIndex);
@@ -293,7 +300,7 @@ void AntigenicMapsLayout::draw_chart(Surface& aSurface, size_t aSectionIndex)
         std::cerr << "Warning: " << drawn << " points of " << mDrawPoints.size() << " were drawn" << std::endl;
 
     draw_map_title(aSurface, aSectionIndex);
-    aSurface.border(settings.border_color, settings.border_width * 2);
+    aSurface.border(settings.border_color, Pixels{settings.border_width * 2});
 
 } // AntigenicMapsLayout::draw_chart
 
@@ -343,9 +350,10 @@ void AntigenicMapsLayout::draw_map_title(Surface& aSurface, size_t aSectionIndex
     std::string title = section.index + "."; // std::string(1, 'A' + static_cast<char>(aSectionNo)) + ".";
     if (!section.label.empty())
         title += " " + section.label;
-    const Size tsize = aSurface.text_size(title, settings.map_title_size);
-    aSurface.text({settings.map_title_offset.width - aSurface.viewport_offset().width, settings.map_title_offset.height + tsize.height - aSurface.viewport_offset().height},
-                  title, settings.map_title_color, settings.map_title_size);
+    const Size tsize = aSurface.text_size(title, Pixels{settings.map_title_size});
+    aSurface.text({settings.map_title_offset.width - aSurface.viewport_offset().width,
+                    settings.map_title_offset.height + tsize.height - aSurface.viewport_offset().height},
+        title, settings.map_title_color, Pixels{settings.map_title_size});
 
 } // AntigenicMapsLayout::draw_map_title
 
@@ -382,7 +390,7 @@ void LabelledGrid::draw()
     const AntigenicMapsDrawSettings& settings = mAntigenicMapsDraw.settings();
     Surface& surface = mAntigenicMapsDraw.surface();
 
-    const double map_width = (surface.size().width - (settings.columns - 1) * settings.gap) / settings.columns;
+    const double map_width = (surface.viewport().size.width - (settings.columns - 1) * settings.gap) / settings.columns;
 
     size_t row = 0, column = 0, section_index = 0;
     for (const auto& section: mAntigenicMapsDraw.hz_sections().sections) {
@@ -402,7 +410,7 @@ void LabelledGrid::draw()
 
     const size_t rows = row + (column ? 1 : 0);
     const double maps_height = map_width * rows + (rows - 1) * settings.gap;
-    const double suggested_surface_width = settings.width * surface.size().height / maps_height;
+    const double suggested_surface_width = settings.width * surface.viewport().size.height / maps_height;
     std::cout << "Map area height: " << maps_height << std::endl;
     if (std::abs((settings.width - suggested_surface_width) / settings.width) > 0.01)
         std::cout << "Change antigenic_maps.width from " << settings.width << " to " << suggested_surface_width << std::endl;
@@ -427,11 +435,11 @@ void LabelledGrid::draw_mapped_antigens_section(size_t aSectionIndex)
     Surface& surface = mAntigenicMapsDraw.mapped_antigens_draw().surface();
     const auto& section = mAntigenicMapsDraw.hz_sections().sections[aSectionIndex];
 
-    const double left = 0, right = surface.size().width;
+    const double left = 0, right = surface.viewport().size.width;
     const double top = section.first->draw.vertical_pos, bottom = section.last->draw.vertical_pos;
-    surface.line({left, top}, {right, top}, settings.mapped_antigens_section_line_color, settings.mapped_antigens_section_line_width, Surface::LineCap::Square);
-    surface.line({left, bottom}, {right, bottom}, settings.mapped_antigens_section_line_color, settings.mapped_antigens_section_line_width, Surface::LineCap::Square);
-    surface.line({right, top}, {right, bottom}, settings.mapped_antigens_section_line_color, settings.mapped_antigens_section_line_width, Surface::LineCap::Square);
+    surface.line({left, top}, {right, top}, settings.mapped_antigens_section_line_color, Pixels{settings.mapped_antigens_section_line_width}, Surface::LineCap::Square);
+    surface.line({left, bottom}, {right, bottom}, settings.mapped_antigens_section_line_color, Pixels{settings.mapped_antigens_section_line_width}, Surface::LineCap::Square);
+    surface.line({right, top}, {right, bottom}, settings.mapped_antigens_section_line_color, Pixels{settings.mapped_antigens_section_line_width}, Surface::LineCap::Square);
 
 } // LabelledGrid::draw_mapped_antigens_section
 
