@@ -35,6 +35,15 @@ SignaturePageDraw::~SignaturePageDraw()
 
 // ----------------------------------------------------------------------
 
+void SignaturePageDraw::load_settings(const std::vector<std::string>& aFilenames)
+{
+    for (const auto& filename: aFilenames)
+        load_settings(filename);
+
+} // SignaturePageDraw::load_settings
+
+// ----------------------------------------------------------------------
+
 void SignaturePageDraw::load_settings(std::string aFilename)
 {
     if (!aFilename.empty())

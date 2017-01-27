@@ -15,7 +15,7 @@
 class Options
 {
  public:
-    std::string settings_filename;
+    std::vector<std::string> settings_filename;
     std::string init_settings_filename;
     std::string tree_filename;
     std::string output_filename;
@@ -71,7 +71,7 @@ int get_args(int argc, const char *argv[], Options& aOptions)
     desc.add_options()
             ("help", "Print help messages")
             ("seqdb", value<std::string>(&aOptions.seqdb_filename)/* ->required() */, "path to seqdb")
-            ("settings,s", value<std::string>(&aOptions.settings_filename), "signature page drawing settings (json) filename")
+            ("settings,s", value<std::vector<std::string>>(&aOptions.settings_filename), "signature page drawing settings (json) filename")
             ("init-settings", value<std::string>(&aOptions.init_settings_filename), "initialize signature page drawing settings (json) filename")
               // ("init-tree", bool_switch(&aOptions.layout_tree)->default_value(false), "initialize with tree layout")
             ("tree", value<std::string>(&aOptions.tree_filename)->required(), "path to tree to draw")

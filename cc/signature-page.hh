@@ -72,6 +72,7 @@ class SignaturePageDraw
     ~SignaturePageDraw();
 
     void load_settings(std::string aFilename);
+    void load_settings(const std::vector<std::string>& aFilenames);
     void make_surface(std::string aFilename);
     void init_layout();
     void init_settings();

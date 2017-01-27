@@ -2127,6 +2127,7 @@ const std::map<std::string, SettingsRootHandler::Keys> SettingsRootHandler::key_
 
 void read_settings(Settings& aSettings, std::string aFilename)
 {
+    std::cout << "Reading settings from " << aFilename << std::endl;
     json_reader::read_from_file<Settings, SettingsRootHandler>(aFilename, aSettings);
 
 } // read_settings
