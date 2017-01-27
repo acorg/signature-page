@@ -14,7 +14,7 @@ class Chart;
 class TitleDrawSettings
 {
  public:
-    inline TitleDrawSettings() : color("black"), size(12), offset{10, 30} {}
+    TitleDrawSettings();
     ~TitleDrawSettings();
 
     std::string title;

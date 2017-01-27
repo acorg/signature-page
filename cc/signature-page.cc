@@ -126,25 +126,10 @@ void SignaturePageDraw::init_settings()
         mTimeSeriesDraw->init_settings();
 
     if (mSurface->aspect() > 1) { // with maps
-        // mSettings->tree_draw.vaccines[0].label_size = 10;
-        // mSettings->tree_draw.aa_transition.per_branch.size = 15;
-        // mSettings->tree_draw.legend.offset.set(0, 1100);
         mSettings->tree_draw.legend.width = 100;
-
-        // mSettings->time_series.label_size = 18;
-        // mSettings->time_series.month_separator_width = 1;
-        // mSettings->time_series.month_year_to_timeseries_gap = 1;
-        // mSettings->time_series.dash_line_width = 0.8;
-
         mSettings->hz_sections.vertical_gap = 15;
-        // mSettings->hz_sections.ts_label_size = 20;
-        // mSettings->hz_sections.line_width = 1;
-
         mSettings->clades.slot_width = 10;
         for (auto& clade: mSettings->clades.clades) {
-            // clade.label_size = 20;
-            // clade.line_width = 1;
-            // clade.arrow_width = clade.line_width * 5;
             clade.label_offset.set(1, 0);
         }
 
@@ -152,28 +137,14 @@ void SignaturePageDraw::init_settings()
             mAntigenicMapsDraw->init_settings();
     }
     else {                      // just tree
-        // mSettings->tree_draw.vaccines[0].label_size = 40;
-        // mSettings->tree_draw.aa_transition.per_branch.size = 20;
-        // mSettings->tree_draw.legend.offset.set(500, 1900);
         mSettings->tree_draw.legend.width = 200;
-
-        // mSettings->time_series.label_size = 20;
-        // mSettings->time_series.month_separator_width = 1;
-        // mSettings->time_series.month_year_to_timeseries_gap = 5;
-        // mSettings->time_series.dash_line_width = 3;
-
         mSettings->hz_sections.vertical_gap = 15;
-        // mSettings->hz_sections.ts_label_size = 35;
-        // mSettings->hz_sections.line_width = 2;
         for (auto& section: mSettings->hz_sections.sections) {
             section.show_label_in_time_series = false;
         }
 
         mSettings->clades.slot_width = 10;
         for (auto& clade: mSettings->clades.clades) {
-            // clade.label_size = 33;
-            // clade.line_width = 2;
-            // clade.arrow_width = clade.line_width * 5;
             clade.label_offset.set(10, 0);
         }
     }
@@ -322,9 +293,6 @@ void SignaturePageDraw::draw()
         mTitleDraw->draw();
 
 } // SignaturePageDraw::draw
-
-// ----------------------------------------------------------------------
-
 
 // ----------------------------------------------------------------------
 /// Local Variables:

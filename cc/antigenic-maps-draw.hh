@@ -16,10 +16,7 @@ class HzSections;
 class MarkAntigenSettings
 {
  public:
-    inline MarkAntigenSettings(bool aShow = true, std::string aName = std::string())
-        : show(aShow), name(aName), label(aName), scale(15), aspect(1), rotation(0), outline_width(1), label_line_width(0.1),
-          fill_color("red"), outline_color("white"),
-          label_color("black"), label_line_color("transparent"), label_offset{-2, 2}, label_size(9) {}
+    MarkAntigenSettings(bool aShow = true, std::string aName = std::string{});
 
     bool show;
     std::string name, label;
@@ -35,22 +32,7 @@ class MarkAntigenSettings
 class AntigenicMapsDrawSettings
 {
  public:
-    inline AntigenicMapsDrawSettings()
-        : layout("labelled_grid"), width(500), columns(3), gap(20),
-          border_width(1), grid_line_width(0.5),
-          border_color("black"), grid_line_color("grey63"), background_color("white"), // 0xFFFFF8
-          point_scale(1), serum_scale(5), reference_antigen_scale(5), test_antigen_scale(3), vaccine_antigen_scale(15), tracked_antigen_scale(5),
-          serum_outline_width(0.5), reference_antigen_outline_width(0.5), test_antigen_outline_width(0.5), vaccine_antigen_outline_width(0.5),
-          sequenced_antigen_outline_width(0.5), tracked_antigen_outline_width(0.5),
-          serum_outline_color("grey88"), reference_antigen_outline_color("grey88"), test_antigen_outline_color("grey88"),
-          test_antigen_fill_color("grey88"), vaccine_antigen_outline_color("white"), sequenced_antigen_outline_color("white"), sequenced_antigen_fill_color("grey63"),
-          tracked_antigen_outline_color("white"), tracked_antigen_colored_by_clade(false), tracked_antigen_color("green3"),
-          reassortant_rotation(0.5 /* M_PI / 6.0 */), egg_antigen_aspect(0.75),
-          show_tracked_sera(true), serum_circle_color("grey50"), tracked_serum_outline_color("black"), serum_circle_thickness(0.1), tracked_serum_outline_width(0.1),
-          map_title_color("black"), map_title_offset{0.3, 0.4}, map_title_size(11),
-          mapped_antigens_section_line_color("black"), mapped_antigens_section_line_width(1),
-          mark_antigens{{true, "VT 14-002966-VIR SIAT1 (2014-06-29)"}}
-        {}
+    AntigenicMapsDrawSettings();
     ~AntigenicMapsDrawSettings();
 
     std::string layout;

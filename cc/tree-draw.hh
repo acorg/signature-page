@@ -21,9 +21,7 @@ class Coloring;
 class AATransitionPerBranchDrawSettings
 {
  public:
-    inline AATransitionPerBranchDrawSettings()
-        : size(8), color("black"), style("Courier New"), interline(1.2),
-          label_offset{-40, 20}, label_connection_line_width(0.1), label_connection_line_color("black") {}
+    AATransitionPerBranchDrawSettings();
 
     double size;
     Color color;
@@ -40,10 +38,7 @@ class AATransitionPerBranchDrawSettings
 class AATransitionDrawSettings
 {
  public:
-    inline AATransitionDrawSettings()
-        : show(true), number_strains_threshold(20), show_empty_left(false), show_node_for_left_line(false),
-          node_for_left_line_color("green"), node_for_left_line_width(1)
-        {}
+    AATransitionDrawSettings();
 
     bool show;
     size_t number_strains_threshold; // Do not show aa transition label if number_strains (leaf nodes) for the branch is less than this value.
@@ -60,8 +55,7 @@ class AATransitionDrawSettings
 class TreeDrawVaccineSettings
 {
  public:
-    inline TreeDrawVaccineSettings()
-        : label_color("black"), label_size(10), line_color("black"), line_width(1) {}
+    TreeDrawVaccineSettings();
 
     std::string name;           // empty for default settings
     Color label_color;
@@ -77,12 +71,7 @@ class TreeDrawVaccineSettings
 class TreeDrawSettings
 {
  public:
-    inline TreeDrawSettings()
-        : hide_if_cumulative_edge_length_bigger_than(0.05), //(std::numeric_limits<double>::max()),
-          force_line_width(false),
-          line_width(1), root_edge(0), line_color(0), name_offset(0.3), color_nodes("continent"),
-          vaccines{{TreeDrawVaccineSettings{}}}
-        {}
+    TreeDrawSettings();
     ~TreeDrawSettings();
 
     inline const TreeDrawVaccineSettings& vaccine(std::string aName) const
@@ -117,8 +106,7 @@ class TreeDrawSettings
 class HzSection
 {
  public:
-    inline HzSection(std::string aName = std::string{}, bool aShowLine = true)
-        : show(true), show_line(aShowLine), show_label_in_time_series(true), show_map(true), name(aName), first(nullptr), last(nullptr), index(1, '?') {}
+    HzSection(std::string aName = std::string{}, bool aShowLine = true);
     inline HzSection(const HzSection&) = default;
     // inline HzSection(HzSection&&) = default;
     ~HzSection();
@@ -140,8 +128,7 @@ class HzSection
 class HzSections
 {
  public:
-    inline HzSections()
-        : vertical_gap(20), line_color("grey63"), line_width(1), ts_label_size(10), ts_label_color("black") {}
+    HzSections();
     ~HzSections();
 
     void sort(const Tree& aTree);

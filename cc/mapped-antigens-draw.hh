@@ -15,7 +15,7 @@ class Chart;
 class MappedAntigensDrawSettings
 {
  public:
-    inline MappedAntigensDrawSettings() : width(10), line_width(0.5), line_color("grey56"), line_length(0.5) {}
+    MappedAntigensDrawSettings();
     ~MappedAntigensDrawSettings();
 
     double width;

@@ -17,10 +17,7 @@ class HzSections;
 class TimeSeriesDrawSettings
 {
  public:
-    inline TimeSeriesDrawSettings()
-        : label_size(8), month_year_to_timeseries_gap(2), month_separator_color("black"),
-          month_separator_width(0.5), dash_width(0.5), dash_line_width(1)
-        {}
+    TimeSeriesDrawSettings();
     ~TimeSeriesDrawSettings();
 
     std::string begin, end;

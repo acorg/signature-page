@@ -22,19 +22,37 @@ using HandlerBase = json_reader::HandlerBase<Settings>;
 
 // ----------------------------------------------------------------------
 
+AATransitionPerBranchDrawSettings::AATransitionPerBranchDrawSettings()
+    : size(8), color("black"), style("Courier New"), interline(1.2),
+      label_offset{-40, 20}, label_connection_line_width(0.1), label_connection_line_color("black")
+{
+}
+
+AATransitionDrawSettings::AATransitionDrawSettings()
+    : show(true), number_strains_threshold(20), show_empty_left(false), show_node_for_left_line(false),
+      node_for_left_line_color("green"), node_for_left_line_width(1)
+{
+}
+
+TreeDrawVaccineSettings::TreeDrawVaccineSettings()
+    : label_color("black"), label_size(10), line_color("black"), line_width(1)
+{
+}
+
+TreeDrawSettings::TreeDrawSettings()
+    : hide_if_cumulative_edge_length_bigger_than(0.05), //(std::numeric_limits<double>::max()),
+      force_line_width(false),
+      line_width(1), root_edge(0), line_color(0), name_offset(0.3), color_nodes("continent"),
+      vaccines{{TreeDrawVaccineSettings{}}}
+{
+}
+
 TreeDrawSettings::~TreeDrawSettings()
 {
 }
 
-TimeSeriesDrawSettings::~TimeSeriesDrawSettings()
-{
-}
-
-CladeDrawSettings::~CladeDrawSettings()
-{
-}
-
-CladesDrawSettings::~CladesDrawSettings()
+HzSection::HzSection(std::string aName, bool aShowLine)
+    : show(true), show_line(aShowLine), show_label_in_time_series(true), show_map(true), name(aName), first(nullptr), last(nullptr), index(1, '?')
 {
 }
 
@@ -42,7 +60,48 @@ HzSection::~HzSection()
 {
 }
 
+HzSections::HzSections()
+    : vertical_gap(20), line_color("grey63"), line_width(1), ts_label_size(10), ts_label_color("black")
+{
+}
+
 HzSections::~HzSections()
+{
+}
+
+TimeSeriesDrawSettings::TimeSeriesDrawSettings()
+    : label_size(8), month_year_to_timeseries_gap(2), month_separator_color("black"),
+      month_separator_width(0.5), dash_width(0.5), dash_line_width(1)
+{
+}
+
+TimeSeriesDrawSettings::~TimeSeriesDrawSettings()
+{
+}
+
+CladeDrawSettings::CladeDrawSettings(std::string aName, bool aShow)
+    : name(aName), show(aShow), section_inclusion_tolerance(10), section_exclusion_tolerance(5), show_section_size_in_label(true),
+      arrow_color("black"), line_width(0.8), arrow_width(3), separator_color("grey63"), separator_width(0.5),
+      label_position("middle"), label_offset{10, 0}, label_color("black"), label_size(11), label_rotation(0),
+      slot(NoSlot)
+{
+}
+
+CladeDrawSettings::~CladeDrawSettings()
+{
+}
+
+CladesDrawSettings::CladesDrawSettings()
+    : clades{{CladeDrawSettings{}, CladeDrawSettings{"gly", false}, CladeDrawSettings{"no-gly", false}}}, slot_width(10)
+{
+}
+
+CladesDrawSettings::~CladesDrawSettings()
+{
+}
+
+MappedAntigensDrawSettings::MappedAntigensDrawSettings()
+    : width(10), line_width(0.5), line_color("grey56"), line_length(0.5)
 {
 }
 
@@ -50,7 +109,37 @@ MappedAntigensDrawSettings::~MappedAntigensDrawSettings()
 {
 }
 
+MarkAntigenSettings::MarkAntigenSettings(bool aShow, std::string aName)
+    : show(aShow), name(aName), label(aName), scale(15), aspect(1), rotation(0), outline_width(1), label_line_width(0.1),
+    fill_color("red"), outline_color("white"),
+    label_color("black"), label_line_color("transparent"), label_offset{-2, 2}, label_size(9)
+{
+}
+
+AntigenicMapsDrawSettings::AntigenicMapsDrawSettings()
+    : layout("labelled_grid"), width(500), columns(3), gap(20),
+      border_width(1), grid_line_width(0.5),
+      border_color("black"), grid_line_color("grey63"), background_color("white"), // 0xFFFFF8
+      point_scale(1), serum_scale(5), reference_antigen_scale(5), test_antigen_scale(3), vaccine_antigen_scale(15), tracked_antigen_scale(5),
+      serum_outline_width(0.5), reference_antigen_outline_width(0.5), test_antigen_outline_width(0.5), vaccine_antigen_outline_width(0.5),
+      sequenced_antigen_outline_width(0.5), tracked_antigen_outline_width(0.5),
+      serum_outline_color("grey88"), reference_antigen_outline_color("grey88"), test_antigen_outline_color("grey88"),
+      test_antigen_fill_color("grey88"), vaccine_antigen_outline_color("white"), sequenced_antigen_outline_color("white"), sequenced_antigen_fill_color("grey63"),
+      tracked_antigen_outline_color("white"), tracked_antigen_colored_by_clade(false), tracked_antigen_color("green3"),
+      reassortant_rotation(0.5 /* M_PI / 6.0 */), egg_antigen_aspect(0.75),
+      show_tracked_sera(true), serum_circle_color("grey50"), tracked_serum_outline_color("black"), serum_circle_thickness(0.1), tracked_serum_outline_width(0.1),
+      map_title_color("black"), map_title_offset{0.3, 0.4}, map_title_size(11),
+      mapped_antigens_section_line_color("black"), mapped_antigens_section_line_width(1),
+      mark_antigens{{true, "? VT 14-002966-VIR SIAT1 (2014-06-29)"}}
+{
+}
+
 AntigenicMapsDrawSettings::~AntigenicMapsDrawSettings()
+{
+}
+
+TitleDrawSettings::TitleDrawSettings()
+    : color("black"), size(12), offset{10, 30}
 {
 }
 

@@ -1,8 +1,5 @@
 #pragma once
 
-// #include <string>
-// #include <limits>
-// #include <utility>
 #include <memory>
 
 #include "acmacs-draw/surface.hh"
