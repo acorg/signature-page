@@ -151,7 +151,7 @@ class HzSections
     std::vector<HzSection> sections;
 
       // for json importer
-    std::vector<HzSection>& get_sections() { return sections; }
+    inline std::vector<HzSection>& get_sections() { return sections; }
 };
 
 // ----------------------------------------------------------------------

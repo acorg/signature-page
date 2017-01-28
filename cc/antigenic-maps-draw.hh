@@ -63,6 +63,10 @@ class AntigenicMapsDrawSettings
 
     std::vector<MarkAntigenSettings> mark_antigens;
 
+      // for json importer
+    inline std::vector<MarkAntigenSettings>& get_mark_antigens() { return mark_antigens; }
+    inline std::vector<double>& get_transformation() { return transformation; }
+
 }; // class AntigenicMapsDrawSettings
 
 // ----------------------------------------------------------------------
