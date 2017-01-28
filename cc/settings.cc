@@ -147,8 +147,68 @@ void Settings::version(const char* str, size_t length)
         throw std::runtime_error("Unsupported sigp settings version: \"" + version + "\"");
 }
 
+class ColorStorer : public jsi::StorerBase
+{
+ public:
+    inline ColorStorer(Color& aTarget) : mTarget(aTarget) {}
+    inline virtual Base* String(const char* str, rapidjson::SizeType length) { mTarget.from_string(str, length); throw jsi::storers::Base::Pop(); }
+
+ private:
+    Color& mTarget;
+};
+
+class SizeStorer : public jsi::StorerBase
+{
+ public:
+    inline SizeStorer(Size& aTarget) : mTarget(aTarget), mPos(0) {}
+
+    inline virtual Base* StartArray()
+        {
+            if (mPos)
+                throw Base::Failure(typeid(*this).name() + std::string(": unexpected StartArray event"));
+            ++mPos;
+            return nullptr;
+        }
+
+    inline virtual Base* EndArray()
+        {
+            if (mPos != 3)
+                throw Base::Failure(typeid(*this).name() + std::string(": unexpected EndArray event"));
+            throw Base::Pop();
+        }
+
+    inline virtual Base* Double(double d)
+        {
+            switch (mPos) {
+              case 1:
+                  mTarget.width = d;
+                  break;
+              case 2:
+                  mTarget.height = d;
+                  break;
+              default:
+                  throw Base::Failure(typeid(*this).name() + std::string(": unexpected Double event"));
+            }
+            ++mPos;
+            return nullptr;
+        }
+
+    inline virtual Base* Int(int i) { return Double(static_cast<double>(i)); }
+    inline virtual Base* Uint(unsigned u) { return Double(static_cast<double>(u)); }
+
+ private:
+    Size& mTarget;
+    size_t mPos;
+};
+
 void read_settings(Settings& aSettings, std::string aFilename)
 {
+    jsi::data<TextStyle> style_data = {
+        {"family", jsi::field(static_cast<void (TextStyle::*)(const char*, size_t)>(&TextStyle::font_family))},
+        {"slant", jsi::field(static_cast<void (TextStyle::*)(const char*, size_t)>(&TextStyle::slant))},
+        {"weight", jsi::field(static_cast<void (TextStyle::*)(const char*, size_t)>(&TextStyle::weight))},
+    };
+
     jsi::data<SignaturePageDrawSettings> signature_page_data = {
         {"layout", jsi::field(&SignaturePageDrawSettings::set_layot)},
         {"top", jsi::field(&SignaturePageDrawSettings::top)},
@@ -181,10 +241,10 @@ void read_settings(Settings& aSettings, std::string aFilename)
 
     jsi::data<TitleDrawSettings> title_data = {
         {"title", jsi::field(&TitleDrawSettings::title)},
-    // Color color;
+        {"color", jsi::field<ColorStorer>(&TitleDrawSettings::color)},
         {"size", jsi::field(&TitleDrawSettings::size)},
-    // TextStyle style;
-    // Size offset;
+        {"style", jsi::field(&TitleDrawSettings::style, style_data)},
+        {"offset", jsi::field<SizeStorer>(&TitleDrawSettings::offset)},
     };
 
 
