@@ -36,7 +36,7 @@ class TimeSeriesDrawSettings
 class TimeSeriesDraw
 {
  public:
-    inline TimeSeriesDraw(Surface& aSurface, Tree& aTree, const TreeDraw& aTreeDraw, const HzSections& aHzSections, TimeSeriesDrawSettings& aSettings)
+    inline TimeSeriesDraw(Surface& aSurface, Tree& aTree, const TreeDraw& aTreeDraw, HzSections& aHzSections, TimeSeriesDrawSettings& aSettings)
         : mSurface(aSurface), mTree(aTree), mTreeDraw(aTreeDraw), mSettings(aSettings), mHzSections(aHzSections) {}
 
     void prepare();
@@ -47,13 +47,14 @@ class TimeSeriesDraw
 
     void init_settings();
     inline Surface& surface() { return mSurface; }
+    void hide_hz_section_labels_in_time_series();
 
  private:
     Surface& mSurface;
     Tree& mTree;
     const TreeDraw& mTreeDraw;
     TimeSeriesDrawSettings& mSettings;
-    const HzSections& mHzSections;
+    HzSections& mHzSections;
     Date mBegin, mEnd;
     size_t mNumberOfMonths;
 

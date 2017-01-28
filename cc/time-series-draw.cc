@@ -154,6 +154,15 @@ void TimeSeriesDraw::draw_hz_section_label(const HzSection& aSection, double aY)
 } // TimeSeriesDraw::draw_hz_section_label
 
 // ----------------------------------------------------------------------
+
+void TimeSeriesDraw::hide_hz_section_labels_in_time_series()
+{
+    for (auto& section: mHzSections.sections)
+        section.show_label_in_time_series = false;
+
+} // TimeSeriesDraw::hide_hz_section_labels_in_time_series
+
+// ----------------------------------------------------------------------
 /// Local Variables:
 /// eval: (if (fboundp 'eu-rename-buffer) (eu-rename-buffer))
 /// End:

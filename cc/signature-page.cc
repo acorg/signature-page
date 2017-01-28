@@ -198,6 +198,9 @@ void SignaturePageDraw::prepare()
       case SignaturePageDrawSettings::Layout::TreeTSClades:
       case SignaturePageDrawSettings::Layout::Auto:
           make_layout_tree_ts_clades();
+            // hide hz section lables in time series
+          if (mTimeSeriesDraw)
+              mTimeSeriesDraw->hide_hz_section_labels_in_time_series();
           break;
       case SignaturePageDrawSettings::Layout::TreeCladesTSMaps:
           make_layout_tree_clades_ts_maps();
