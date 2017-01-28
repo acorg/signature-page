@@ -222,6 +222,24 @@ void read_settings(Settings& aSettings, std::string aFilename)
     };
 
     jsi::data<TreeDrawSettings> tree_draw_data = {
+        {"root", jsi::field(&TreeDrawSettings::root)},
+        {"hide_isolated_before", jsi::field(&TreeDrawSettings::hide_isolated_before)},
+        {"hide_if_cumulative_edge_length_bigger_than", jsi::field(&TreeDrawSettings::hide_if_cumulative_edge_length_bigger_than)},
+        {"hide_if", jsi::field(&TreeDrawSettings::hide_if)},
+        {"force_line_width", jsi::field(&TreeDrawSettings::force_line_width)},
+        {"line_width", jsi::field(&TreeDrawSettings::line_width)},
+        {"root_edge", jsi::field(&TreeDrawSettings::root_edge)},
+        {"line_color", jsi::field<ColorStorer>(&TreeDrawSettings::line_color)},
+        {"label_style", jsi::field<>(&TreeDrawSettings::label_style, style_data)},
+        {"name_offset", jsi::field(&TreeDrawSettings::name_offset)},
+        {"color_nodes", jsi::field(&TreeDrawSettings::color_nodes)},
+        // {"aa_transition", jsi::field(&TreeDrawSettings::aa_transition)},
+        // {"vaccines", jsi::field(&TreeDrawSettings::vaccines)},
+        // {"legend", jsi::field(&TreeDrawSettings::legend)},
+
+    // AATransitionDrawSettings aa_transition;
+    // std::vector<TreeDrawVaccineSettings> vaccines;
+    // LegendSettings legend;
     };
 
     jsi::data<TimeSeriesDrawSettings> time_series_data = {
@@ -252,7 +270,7 @@ void read_settings(Settings& aSettings, std::string aFilename)
         {"_", jsi::field(&Settings::indentation)},
         {"  version", jsi::field(&Settings::version)},
         {"signature_page", jsi::field(&Settings::signature_page, signature_page_data)},
-        {"tree_draw", jsi::field(&Settings::tree_draw, tree_draw_data)},
+        {"tree", jsi::field(&Settings::tree_draw, tree_draw_data)},
         {"time_series", jsi::field(&Settings::time_series, time_series_data)},
         {"clades", jsi::field(&Settings::clades, clades_data)},
         {"hz_sections", jsi::field(&Settings::hz_sections, hz_sections_data)},
