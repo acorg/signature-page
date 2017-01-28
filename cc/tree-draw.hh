@@ -99,6 +99,9 @@ class TreeDrawSettings
     std::vector<TreeDrawVaccineSettings> vaccines;
     LegendSettings legend;
 
+      // for json importer
+    inline std::vector<TreeDrawVaccineSettings>& get_vaccines() { return vaccines; }
+
 }; // class TreeDrawSettings
 
 // ----------------------------------------------------------------------

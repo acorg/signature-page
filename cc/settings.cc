@@ -221,6 +221,45 @@ void read_settings(Settings& aSettings, std::string aFilename)
         {"clades_width", jsi::field(&SignaturePageDrawSettings::clades_width)},
     };
 
+    jsi::data<AATransitionPerBranchDrawSettings> per_branch_data = {
+        {"size", jsi::field(&AATransitionPerBranchDrawSettings::size)},
+        {"color", jsi::field<ColorStorer>(&AATransitionPerBranchDrawSettings::color)},
+        {"style", jsi::field(&AATransitionPerBranchDrawSettings::style, style_data)},
+        {"interline", jsi::field(&AATransitionPerBranchDrawSettings::interline)},
+        {"label_offset", jsi::field<SizeStorer>(&AATransitionPerBranchDrawSettings::label_offset)},
+        {"label_connection_line_width", jsi::field(&AATransitionPerBranchDrawSettings::label_connection_line_width)},
+        {"label_connection_line_color", jsi::field<ColorStorer>(&AATransitionPerBranchDrawSettings::label_connection_line_color)},
+    };
+
+    jsi::data<AATransitionDrawSettings> aa_transition_data = {
+        {"show", jsi::field(&AATransitionDrawSettings::show)},
+        {"number_strains_threshold", jsi::field(&AATransitionDrawSettings::number_strains_threshold)},
+        {"show_empty_left", jsi::field(&AATransitionDrawSettings::show_empty_left)},
+        {"per_branch", jsi::field(&AATransitionDrawSettings::per_branch, per_branch_data)},
+        {"show_node_for_left_line", jsi::field(&AATransitionDrawSettings::show_node_for_left_line)},
+        {"node_for_left_line_color", jsi::field<ColorStorer>(&AATransitionDrawSettings::node_for_left_line_color)},
+        {"node_for_left_line_width", jsi::field(&AATransitionDrawSettings::node_for_left_line_width)},
+    };
+
+    jsi::data<TreeDrawVaccineSettings> vaccine_data = {
+        {"name", jsi::field(&TreeDrawVaccineSettings::name)},
+        {"label_color", jsi::field<ColorStorer>(&TreeDrawVaccineSettings::label_color)},
+        {"label_size", jsi::field(&TreeDrawVaccineSettings::label_size)},
+        {"label_style", jsi::field(&TreeDrawVaccineSettings::label_style, style_data)},
+        {"line_color", jsi::field<ColorStorer>(&TreeDrawVaccineSettings::line_color)},
+        {"line_width", jsi::field(&TreeDrawVaccineSettings::line_width)},
+    };
+
+    jsi::data<LegendSettings> legend_data = {
+        {"offset", jsi::field<SizeStorer>(&LegendSettings::offset)},
+        {"width", jsi::field(&LegendSettings::width)},
+        {"title_style", jsi::field(&LegendSettings::title_style, style_data)},
+        {"title_size", jsi::field(&LegendSettings::title_size)},
+        {"text_style", jsi::field(&LegendSettings::text_style, style_data)},
+        {"text_size", jsi::field(&LegendSettings::text_size)},
+        {"interline", jsi::field(&LegendSettings::interline)},
+    };
+
     jsi::data<TreeDrawSettings> tree_draw_data = {
         {"root", jsi::field(&TreeDrawSettings::root)},
         {"hide_isolated_before", jsi::field(&TreeDrawSettings::hide_isolated_before)},
@@ -233,13 +272,9 @@ void read_settings(Settings& aSettings, std::string aFilename)
         {"label_style", jsi::field<>(&TreeDrawSettings::label_style, style_data)},
         {"name_offset", jsi::field(&TreeDrawSettings::name_offset)},
         {"color_nodes", jsi::field(&TreeDrawSettings::color_nodes)},
-        // {"aa_transition", jsi::field(&TreeDrawSettings::aa_transition)},
-        // {"vaccines", jsi::field(&TreeDrawSettings::vaccines)},
-        // {"legend", jsi::field(&TreeDrawSettings::legend)},
-
-    // AATransitionDrawSettings aa_transition;
-    // std::vector<TreeDrawVaccineSettings> vaccines;
-    // LegendSettings legend;
+        {"aa_transition", jsi::field(&TreeDrawSettings::aa_transition, aa_transition_data)},
+        {"vaccines", jsi::field(&TreeDrawSettings::get_vaccines, vaccine_data)},
+        {"legend", jsi::field(&TreeDrawSettings::legend, legend_data)},
     };
 
     jsi::data<TimeSeriesDrawSettings> time_series_data = {
