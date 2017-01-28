@@ -149,6 +149,9 @@ class HzSections
     TextStyle ts_label_style;
     Color ts_label_color;
     std::vector<HzSection> sections;
+
+      // for json importer
+    std::vector<HzSection>& get_sections() { return sections; }
 };
 
 // ----------------------------------------------------------------------

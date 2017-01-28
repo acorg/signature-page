@@ -278,18 +278,68 @@ void read_settings(Settings& aSettings, std::string aFilename)
     };
 
     jsi::data<TimeSeriesDrawSettings> time_series_data = {
+        {"begin", jsi::field(&TimeSeriesDrawSettings::begin)},
+        {"end", jsi::field(&TimeSeriesDrawSettings::end)},
+        {"label_size", jsi::field(&TimeSeriesDrawSettings::label_size)},
+        {"label_style", jsi::field(&TimeSeriesDrawSettings::label_style, style_data)},
+        {"month_year_to_timeseries_gap", jsi::field(&TimeSeriesDrawSettings::month_year_to_timeseries_gap)},
+        {"month_separator_color", jsi::field<ColorStorer>(&TimeSeriesDrawSettings::month_separator_color)},
+        {"month_separator_width", jsi::field(&TimeSeriesDrawSettings::month_separator_width)},
+        {"dash_width", jsi::field(&TimeSeriesDrawSettings::dash_width)},
+        {"dash_line_width", jsi::field(&TimeSeriesDrawSettings::dash_line_width)},
+    };
+
+    jsi::data<CladeDrawSettings> clade_data = {
+        {"name", jsi::field(&CladeDrawSettings::name)},
+        {"display_name", jsi::field(&CladeDrawSettings::display_name)},
+        {"show", jsi::field(&CladeDrawSettings::show)},
+        {"section_inclusion_tolerance", jsi::field(&CladeDrawSettings::section_inclusion_tolerance)},
+        {"section_exclusion_tolerance", jsi::field(&CladeDrawSettings::section_exclusion_tolerance)},
+        {"show_section_size_in_label", jsi::field(&CladeDrawSettings::show_section_size_in_label)},
+        {"arrow_color", jsi::field<ColorStorer>(&CladeDrawSettings::arrow_color)},
+        {"line_width", jsi::field(&CladeDrawSettings::line_width)},
+        {"arrow_width", jsi::field(&CladeDrawSettings::arrow_width)},
+        {"separator_color", jsi::field<ColorStorer>(&CladeDrawSettings::separator_color)},
+        {"separator_width", jsi::field(&CladeDrawSettings::separator_width)},
+        {"label_position", jsi::field(&CladeDrawSettings::label_position)},
+        {"label_offset", jsi::field<SizeStorer>(&CladeDrawSettings::label_offset)},
+        {"label_color", jsi::field<ColorStorer>(&CladeDrawSettings::label_color)},
+        {"label_size", jsi::field(&CladeDrawSettings::label_size)},
+        {"label_style", jsi::field(&CladeDrawSettings::label_style, style_data)},
+        {"label_rotation", jsi::field(&CladeDrawSettings::label_rotation)},
+        {"slot", jsi::field(&CladeDrawSettings::slot)},
     };
 
     jsi::data<CladesDrawSettings> clades_data = {
+        {"clades", jsi::field(&CladesDrawSettings::get_clades, clade_data)},
+        {"slot_width", jsi::field(&CladesDrawSettings::slot_width)},
+    };
+
+    jsi::data<HzSection> hz_section_data = {
+        {"show", jsi::field(&HzSection::show)},
+        {"show_line", jsi::field(&HzSection::show_line)},
+        {"show_label_in_time_series", jsi::field(&HzSection::show_label_in_time_series)},
+        {"show_map", jsi::field(&HzSection::show_map)},
+        {"name", jsi::field(&HzSection::name)},
+        {"label", jsi::field(&HzSection::label)},
     };
 
     jsi::data<HzSections> hz_sections_data = {
+        {"vertical_gap", jsi::field(&HzSections::vertical_gap)},
+        {"line_color", jsi::field<ColorStorer>(&HzSections::line_color)},
+        {"line_width", jsi::field(&HzSections::line_width)},
+        {"ts_label_size", jsi::field(&HzSections::ts_label_size)},
+        {"ts_label_style", jsi::field(&HzSections::ts_label_style, style_data)},
+        {"ts_label_color", jsi::field<ColorStorer>(&HzSections::ts_label_color)},
+        {"sections", jsi::field(&HzSections::get_sections, hz_section_data)},
     };
 
     jsi::data<MappedAntigensDrawSettings> mapped_antigens_data = {
+        // {"", jsi::field(&MappedAntigensDrawSettings::)},
     };
 
     jsi::data<AntigenicMapsDrawSettings> antigenic_maps_data = {
+        // {"", jsi::field(&AntigenicMapsDrawSettings::)},
     };
 
     jsi::data<TitleDrawSettings> title_data = {

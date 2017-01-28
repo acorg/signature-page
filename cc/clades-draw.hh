@@ -68,6 +68,9 @@ class CladesDrawSettings
     std::vector<CladeDrawSettings> clades;
     double slot_width;
 
+      // for json importer
+    inline std::vector<CladeDrawSettings>& get_clades() { return clades; }
+
 }; // class CladesDrawSettings
 
 // ----------------------------------------------------------------------
