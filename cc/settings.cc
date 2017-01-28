@@ -161,10 +161,44 @@ void read_settings(Settings& aSettings, std::string aFilename)
         {"clades_width", jsi::field(&SignaturePageDrawSettings::clades_width)},
     };
 
+    jsi::data<TreeDrawSettings> tree_draw_data = {
+    };
+
+    jsi::data<TimeSeriesDrawSettings> time_series_data = {
+    };
+
+    jsi::data<CladesDrawSettings> clades_data = {
+    };
+
+    jsi::data<HzSections> hz_sections_data = {
+    };
+
+    jsi::data<MappedAntigensDrawSettings> mapped_antigens_data = {
+    };
+
+    jsi::data<AntigenicMapsDrawSettings> antigenic_maps_data = {
+    };
+
+    jsi::data<TitleDrawSettings> title_data = {
+        {"title", jsi::field(&TitleDrawSettings::title)},
+    // Color color;
+        {"size", jsi::field(&TitleDrawSettings::size)},
+    // TextStyle style;
+    // Size offset;
+    };
+
+
     jsi::data<Settings> settings_data = {
         {"_", jsi::field(&Settings::indentation)},
         {"  version", jsi::field(&Settings::version)},
         {"signature_page", jsi::field(&Settings::signature_page, signature_page_data)},
+        {"tree_draw", jsi::field(&Settings::tree_draw, tree_draw_data)},
+        {"time_series", jsi::field(&Settings::time_series, time_series_data)},
+        {"clades", jsi::field(&Settings::clades, clades_data)},
+        {"hz_sections", jsi::field(&Settings::hz_sections, hz_sections_data)},
+        {"mapped_antigens", jsi::field(&Settings::mapped_antigens, mapped_antigens_data)},
+        {"antigenic_maps", jsi::field(&Settings::antigenic_maps, antigenic_maps_data)},
+        {"title", jsi::field(&Settings::title, title_data)},
     };
 
     std::cout << "Reading settings from " << aFilename << std::endl;
