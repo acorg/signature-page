@@ -24,6 +24,9 @@ class Settings
     AntigenicMapsDrawSettings antigenic_maps;
     TitleDrawSettings title;
 
+    inline void indentation(const char* /*str*/, size_t /*length*/) {}
+    void version(const char* str, size_t length);
+
 }; // class Settings
 
 // ----------------------------------------------------------------------
