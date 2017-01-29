@@ -480,7 +480,7 @@ bool Node::find_name_r(std::string aName, std::vector<const Node*>& aPath) const
 
 void Tree::re_root(const std::vector<const Node*>& aNewRoot)
 {
-    std::cout << "TREE: re-rooting" << std::endl;
+      // std::cout << "TREE: re-rooting" << std::endl;
 
     if (aNewRoot.front() != this)
         throw std::invalid_argument("Invalid path passed to Tree::re_root");

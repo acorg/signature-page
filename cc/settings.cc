@@ -180,9 +180,9 @@ void Settings::upgrade()             // upgrade to the new version in case old v
         if (!tree_draw._root.empty())
             tree_draw.mods.emplace_back("root", tree_draw._root);
         if (!tree_draw._hide_isolated_before.empty())
-            tree_draw.mods.emplace_back("hide_isolated_before", tree_draw._hide_isolated_before);
+            tree_draw.mods.emplace_back("hide-isolated-before", tree_draw._hide_isolated_before);
         if (tree_draw._hide_if_cumulative_edge_length_bigger_than > 0.0)
-            tree_draw.mods.emplace_back("hide_if_cumulative_edge_length_bigger_than", tree_draw._hide_if_cumulative_edge_length_bigger_than);
+            tree_draw.mods.emplace_back("hide-if-cumulative-edge-length-bigger-than", tree_draw._hide_if_cumulative_edge_length_bigger_than);
         if (!tree_draw._hide_if.empty())
             tree_draw.mods.emplace_back(tree_draw._hide_if);
     }
@@ -675,8 +675,8 @@ template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writ
                   << jsw::key("ladderize") << aSettings.ladderize_to_string()
                   << jsw::key("mods 1?") << "mods is a list of objects:"
                   << jsw::key("mods 2?") << "{mod: root, s1: new-root}"
-                  << jsw::key("mods 3?") << "{mod: hide_isolated_before, s1: date}"
-                  << jsw::key("mods 4?") << "{mod: hide_if_cumulative_edge_length_bigger_than, d1: cumulative-length-threshold}"
+                  << jsw::key("mods 3?") << "{mod: hide-isolated-before, s1: date}"
+                  << jsw::key("mods 4?") << "{mod: hide-if-cumulative-edge-length-bigger-than, d1: cumulative-length-threshold}"
                   << jsw::key("mods 5?") << "{mod: before2015-58P-or-146I-or-559I}"
                   << jsw::key("mods 6?") << "{mod: hide-between, s1: first-name-to-hide, s2: last-name-to-hide} - after ladderizing"
                   << jsw::key("mods") << aSettings.mods

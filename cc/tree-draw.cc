@@ -81,11 +81,26 @@ void TreeDraw::prepare(const LocDb& aLocDb)
 bool TreeDraw::apply_mods()
 {
     for (const auto& mod: mSettings.mods) {
-        std::cout << "TREE-mod: " << mod.mod << std::endl;
-      // apply mods: re-root, hide
-      //   mTree.re_root(root);
+        if (mod.mod == "root") {
+            std::cout << "TREE-mod: " << mod.mod << " " << mod.s1 << std::endl;
+            mTree.re_root(mod.s1);
+        }
+        else if (mod.mod == "hide-isolated-before") {
+            std::cout << "TREE-mod: " << mod.mod << " " << mod.s1 << std::endl;
+        }
+        else if (mod.mod == "hide-if-cumulative-edge-length-bigger-than") {
+            std::cout << "TREE-mod: " << mod.mod << " " << mod.d1 << std::endl;
+        }
+        else if (mod.mod == "before2015-58P-or-146I-or-559I") {
+            std::cout << "TREE-mod: " << mod.mod << std::endl;
+        }
+        else if (mod.mod == "hide-between") {
+            std::cout << "TREE-mod: " << mod.mod << " \"" << mod.s1 << "\" \"" << mod.s2 << "\"" << std::endl;
+        }
+        else
+            throw std::runtime_error("Unrecognized tree mod: " + mod.mod);
     }
-    return false;
+    return !mSettings.mods.empty();
 
 } // TreeDraw::apply_mods
 
