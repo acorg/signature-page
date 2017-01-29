@@ -86,7 +86,8 @@ void Tree::set_number_strains()
     auto set_number_strains = [](Node& aNode) {
         aNode.data.number_strains = 0;
         for (const auto& subnode: aNode.subtree) {
-            aNode.data.number_strains += subnode.data.number_strains;
+            if (aNode.draw.shown)
+                aNode.data.number_strains += subnode.data.number_strains;
         }
     };
     tree::iterate_post(*this, set_number_strains);
@@ -182,18 +183,18 @@ void Tree::report_cumulative_edge_length(std::ostream& out)
 
 // ----------------------------------------------------------------------
 
-double Tree::width(double ignore_if_cumulative_edge_length_bigger_than)
-{
-    compute_cumulative_edge_length();
-    double width = 0;
-    auto set_width = [&width,&ignore_if_cumulative_edge_length_bigger_than](Node& aNode) {
-        if (aNode.data.cumulative_edge_length <= ignore_if_cumulative_edge_length_bigger_than && aNode.data.cumulative_edge_length > width)
-            width = aNode.data.cumulative_edge_length;
-    };
-    tree::iterate_leaf(*this, set_width);
-    return width;
+// double Tree::width(double ignore_if_cumulative_edge_length_bigger_than)
+// {
+//     compute_cumulative_edge_length();
+//     double width = 0;
+//     auto set_width = [&width,&ignore_if_cumulative_edge_length_bigger_than](Node& aNode) {
+//         if (aNode.data.cumulative_edge_length <= ignore_if_cumulative_edge_length_bigger_than && aNode.data.cumulative_edge_length > width)
+//             width = aNode.data.cumulative_edge_length;
+//     };
+//     tree::iterate_leaf(*this, set_width);
+//     return width;
 
-} // Tree::width
+// } // Tree::width
 
 // ----------------------------------------------------------------------
 

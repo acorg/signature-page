@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <iomanip>
 #include <string>
 #include <vector>
 #include <map>
@@ -146,20 +147,23 @@ class Tree : public Node
 
     inline void compute_cumulative_edge_length()
         {
-            if (mMaxCumulativeEdgeLength < 0)
-                Node::compute_cumulative_edge_length(0, mMaxCumulativeEdgeLength);
+            const double was = mMaxCumulativeEdgeLength;
+            mMaxCumulativeEdgeLength = -1;
+            Node::compute_cumulative_edge_length(0, mMaxCumulativeEdgeLength);
+            std::cout << "TREE: compute_cumulative_edge_length " << std::setprecision(10) << was << " --> " << mMaxCumulativeEdgeLength << std::endl;
         }
+
     void compute_distance_from_previous();
 
     size_t height() const; // number of lines in the tree
-    inline double width() { compute_cumulative_edge_length(); return mMaxCumulativeEdgeLength; }
-    double width(double ignore_if_cumulative_edge_length_bigger_than);
+    inline double width() { return mMaxCumulativeEdgeLength; }
+    // double width(double ignore_if_cumulative_edge_length_bigger_than);
 
     void report_cumulative_edge_length(std::ostream& out);
 
     inline void leaf_nodes_sorted_by_cumulative_edge_length(std::vector<const Node*>& nodes)
         {
-            compute_cumulative_edge_length();
+              // compute_cumulative_edge_length();
             leaf_nodes_sorted_by(nodes, [](const Node* a, const Node* b) -> bool { return a->data.cumulative_edge_length > b->data.cumulative_edge_length; });
         }
 

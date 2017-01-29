@@ -126,7 +126,7 @@ void SignaturePageDraw::init_settings()
     if (mTitleDraw)
         mTitleDraw->init_settings();
     if (mTreeDraw)
-        mTreeDraw->set_line_no(true, true); // hides leaves too
+        mTreeDraw->set_line_no();
     if (mCladesDraw)
         mCladesDraw->init_settings();
     if (mTreeDraw)
@@ -169,8 +169,6 @@ void SignaturePageDraw::tree(std::string aTreeFilename, std::string aSeqdbFilena
         mSeqdb->load(aSeqdbFilename);
         mTree->match_seqdb(*mSeqdb);
     }
-
-      // tree.report_cumulative_edge_length(std::cout);
 
     mTree->add_vaccine("A/SOUTH%20AUCKLAND/17/2016__MDCK%3F/SIAT1", "A/SOUTH AUCKLAND/17/2016 C");
 

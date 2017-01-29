@@ -213,7 +213,7 @@ class TreeDraw
     double vertical_step() const { return mVerticalStep; }
 
     void init_settings(const Clades* aClades);
-    void set_line_no(bool aForce, bool aHideLeaves);
+    void set_line_no();
     inline Surface& surface() { return mSurface; }
 
     // bool hide_leaf_if(const Node& aNode) const; // called from lambda, has to be public
@@ -231,10 +231,9 @@ class TreeDraw
     Scaled mLineWidth;
     Scaled mFontSize;
     double mNameOffset;
-    bool hiding_leaves_done;
-    bool setting_line_no_done;
 
-    void hide_leaves(bool aForce);
+    bool apply_mods();          // returns if nodes were hidden
+    // void hide_leaves(bool aForce);
     void set_vertical_pos();
     size_t prepare_hz_sections();
     void draw_node(const Node& aNode, double aOriginX, double& aVerticalGap, double aEdgeLength = -1);

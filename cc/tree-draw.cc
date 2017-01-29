@@ -10,8 +10,7 @@
 // ----------------------------------------------------------------------
 
 TreeDraw::TreeDraw(Surface& aSurface, Tree& aTree, TreeDrawSettings& aSettings, HzSections& aHzSections)
-    : mSurface(aSurface), mTree(aTree), mSettings(aSettings), mHzSections(aHzSections),
-      hiding_leaves_done(false), setting_line_no_done(false)
+    : mSurface(aSurface), mTree(aTree), mSettings(aSettings), mHzSections(aHzSections)
 {
     make_coloring();
 }
@@ -47,7 +46,7 @@ void TreeDraw::make_coloring()
 
 void TreeDraw::init_settings(const Clades* aClades)
 {
-    set_line_no(false, true);    // line_no is necessary to sort detected hz sections, but set_line_no is called by SignaturePageDraw::init_settings(), so this call is perhaps redundant
+      // set_line_no();    // line_no is necessary to sort detected hz sections, but set_line_no is called by SignaturePageDraw::init_settings(), so this call is redundant
     mHzSections.auto_detect(mTree, aClades);
 
 } // TreeDraw::init_settings
@@ -59,21 +58,36 @@ void TreeDraw::prepare(const LocDb& aLocDb)
     mTree.set_continents(aLocDb);
     mTree.set_number_strains();
     mTree.ladderize(mSettings.ladderize);
-      // apply mods: re-root, hide
-      //   mTree.re_root(root);
-      // if nodes were hidden:
-      //   mTree.set_number_strains();
-      //   mTree.ladderize(mSettings.ladderize);
-      // mTree.make_aa_transitions();
+    mTree.compute_cumulative_edge_length();
+    if (apply_mods()) {
+          // nodes were hidden:
+        mTree.set_number_strains();
+        mTree.ladderize(mSettings.ladderize);
+        mTree.compute_cumulative_edge_length();
+    }
+    mTree.make_aa_transitions();
+    set_line_no();
 
-    set_line_no(true, true);
     const size_t number_of_hz_sections = prepare_hz_sections();
     const auto& canvas_size = mSurface.viewport().size;
-    mHorizontalStep = canvas_size.width / mTree.width(10000 /* mSettings.hide_if_cumulative_edge_length_bigger_than */);
+    mHorizontalStep = canvas_size.width / mTree.width();
     mVerticalStep = (canvas_size.height - (number_of_hz_sections - 1) * mHzSections.vertical_gap) / static_cast<double>(mTree.height() + 2); // +2 to add space at the top and bottom
     set_vertical_pos();
 
 } // TreeDraw::prepare
+
+// ----------------------------------------------------------------------
+
+bool TreeDraw::apply_mods()
+{
+    for (const auto& mod: mSettings.mods) {
+        std::cout << "TREE-mod: " << mod.mod << std::endl;
+      // apply mods: re-root, hide
+      //   mTree.re_root(root);
+    }
+    return false;
+
+} // TreeDraw::apply_mods
 
 // ----------------------------------------------------------------------
 
@@ -95,29 +109,30 @@ void TreeDraw::draw()
 
 // ----------------------------------------------------------------------
 
-void TreeDraw::hide_leaves(bool aForce)
-{
-    if (aForce || !hiding_leaves_done) {
-        auto hide_show_leaf = [this](Node& aNode) {
-            aNode.draw.shown = true; // ! (aNode.data.date() < mSettings.hide_isolated_before || aNode.data.cumulative_edge_length > mSettings.hide_if_cumulative_edge_length_bigger_than || this->hide_leaf_if(aNode));
-        };
+// void TreeDraw::hide_leaves(bool aForce)
+// {
+//     std::cout << "TREE: hide_leaves " << aForce << std::endl;
+//     if (aForce || !hiding_leaves_done) {
+//         auto hide_show_leaf = [this](Node& aNode) {
+//             aNode.draw.shown = true; // ! (aNode.data.date() < mSettings.hide_isolated_before || aNode.data.cumulative_edge_length > mSettings.hide_if_cumulative_edge_length_bigger_than || this->hide_leaf_if(aNode));
+//         };
 
-        auto hide_show_branch = [](Node& aNode) {
-            aNode.draw.shown = false;
-            for (const auto& node: aNode.subtree) {
-                if (node.draw.shown) {
-                    aNode.draw.shown = true;
-                    break;
-                }
-            }
-        };
+//         auto hide_show_branch = [](Node& aNode) {
+//             aNode.draw.shown = false;
+//             for (const auto& node: aNode.subtree) {
+//                 if (node.draw.shown) {
+//                     aNode.draw.shown = true;
+//                     break;
+//                 }
+//             }
+//         };
 
-        mTree.compute_cumulative_edge_length();
-        tree::iterate_leaf_post(mTree, hide_show_leaf, hide_show_branch);
-        hiding_leaves_done = true;
-    }
+//           // mTree.compute_cumulative_edge_length();
+//         tree::iterate_leaf_post(mTree, hide_show_leaf, hide_show_branch);
+//         hiding_leaves_done = true;
+//     }
 
-} // TreeDraw::hide_leaves
+// } // TreeDraw::hide_leaves
 
 // ----------------------------------------------------------------------
 
@@ -136,23 +151,17 @@ void TreeDraw::hide_leaves(bool aForce)
 
 // ----------------------------------------------------------------------
 
-void TreeDraw::set_line_no(bool aForce, bool aHideLeaves)
+void TreeDraw::set_line_no()
 {
-    std::cout << "TREE: set_line_no" << std::endl;
-    if (aHideLeaves)
-        hide_leaves(aForce);
-    if (aForce || !setting_line_no_done) {
-        size_t current_line = 1;    // line of the first node is 1, we have 1 line space at the top and bottom of the tree
-        auto set_line_no = [&current_line](Node& aNode) {
-            if (aNode.draw.shown) {
-                aNode.draw.line_no = current_line;
-                ++current_line;
-            }
-        };
-        tree::iterate_leaf(mTree, set_line_no);
-        setting_line_no_done = true;
-        std::cout << "Lines in the tree: " << current_line << std::endl;
-    }
+    size_t current_line = 1;    // line of the first node is 1, we have 1 line space at the top and bottom of the tree
+    auto set_line_no = [&current_line](Node& aNode) {
+        if (aNode.draw.shown) {
+            aNode.draw.line_no = current_line;
+            ++current_line;
+        }
+    };
+    tree::iterate_leaf(mTree, set_line_no);
+    std::cout << "TREE-lines: " << current_line << std::endl;
 
 } // TreeDraw::set_line_no
 
