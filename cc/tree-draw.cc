@@ -59,7 +59,7 @@ void TreeDraw::prepare()
     set_line_no(true, true);
     const size_t number_of_hz_sections = prepare_hz_sections();
     const auto& canvas_size = mSurface.viewport().size;
-    mHorizontalStep = canvas_size.width / mTree.width(mSettings.hide_if_cumulative_edge_length_bigger_than);
+    mHorizontalStep = canvas_size.width / mTree.width(10000 /* mSettings.hide_if_cumulative_edge_length_bigger_than */);
     mVerticalStep = (canvas_size.height - (number_of_hz_sections - 1) * mHzSections.vertical_gap) / static_cast<double>(mTree.height() + 2); // +2 to add space at the top and bottom
     set_vertical_pos();
 
@@ -89,7 +89,7 @@ void TreeDraw::hide_leaves(bool aForce)
 {
     if (aForce || !hiding_leaves_done) {
         auto hide_show_leaf = [this](Node& aNode) {
-            aNode.draw.shown = ! (aNode.data.date() < mSettings.hide_isolated_before || aNode.data.cumulative_edge_length > mSettings.hide_if_cumulative_edge_length_bigger_than || this->hide_leaf_if(aNode));
+            aNode.draw.shown = true; // ! (aNode.data.date() < mSettings.hide_isolated_before || aNode.data.cumulative_edge_length > mSettings.hide_if_cumulative_edge_length_bigger_than || this->hide_leaf_if(aNode));
         };
 
         auto hide_show_branch = [](Node& aNode) {
@@ -114,12 +114,12 @@ void TreeDraw::hide_leaves(bool aForce)
 bool TreeDraw::hide_leaf_if(const Node& aNode) const
 {
     bool result = false;
-    if (mSettings.hide_if == "before2015-58P-or-146I-or-559I") {
-        if (aNode.data.date() < "2015-01-01") {
-            const std::string aa = aNode.data.amino_acids();
-            result = aa[57] == 'P' || aa[145] == 'I' || aa[559] == 'I';
-        }
-    }
+    // if (mSettings.hide_if == "before2015-58P-or-146I-or-559I") {
+    //     if (aNode.data.date() < "2015-01-01") {
+    //         const std::string aa = aNode.data.amino_acids();
+    //         result = aa[57] == 'P' || aa[145] == 'I' || aa[559] == 'I';
+    //     }
+    // }
     return result;
 
 } // TreeDraw::hide_leaf_if

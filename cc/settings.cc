@@ -31,11 +31,26 @@ TreeDrawVaccineSettings::TreeDrawVaccineSettings()
 {
 }
 
+TreeDrawMod::TreeDrawMod(std::string aMod)
+    : mod(aMod), d1(-1)
+{
+}
+
+TreeDrawMod::TreeDrawMod(std::string aMod, double aD1)
+    : mod(aMod), d1(aD1)
+{
+}
+
+TreeDrawMod::TreeDrawMod(std::string aMod, std::string aS1, std::string aS2)
+    : mod(aMod), d1(-1), s1(aS1), s2(aS2)
+{
+}
+
 TreeDrawSettings::TreeDrawSettings()
-    : hide_if_cumulative_edge_length_bigger_than(0.05), //(std::numeric_limits<double>::max()),
-      force_line_width(false),
+    : force_line_width(false),
       line_width(1), root_edge(0), line_color(0), name_offset(0.3), color_nodes("continent"),
-      vaccines{{TreeDrawVaccineSettings{}}}
+      vaccines{{TreeDrawVaccineSettings{}}},
+      _hide_if_cumulative_edge_length_bigger_than(-1)
 {
 }
 
@@ -162,11 +177,23 @@ void Settings::upgrade()             // upgrade to the new version in case old v
 {
     if (version == SETTINGS_VERSION_OLD) {
         signature_page.antigenic_maps_width = antigenic_maps._width;
+        if (!tree_draw._hide_isolated_before.empty())
+            tree_draw.mods.emplace_back("hide_isolated_before", tree_draw._hide_isolated_before);
+        if (tree_draw._hide_if_cumulative_edge_length_bigger_than > 0.0)
+            tree_draw.mods.emplace_back("hide_if_cumulative_edge_length_bigger_than", tree_draw._hide_if_cumulative_edge_length_bigger_than);
+        if (!tree_draw._hide_if.empty())
+            tree_draw.mods.emplace_back(tree_draw._hide_if);
     }
     else if (version == SETTINGS_VERSION) {
           // fail, if old version data provided
         if (!float_zero(antigenic_maps._width))
             throw std::runtime_error("antigenic_maps.width provided, must be signature_page.antigenic_maps_width");
+        if (!tree_draw._hide_isolated_before.empty())
+            throw std::runtime_error("tree_draw.hide_isolated_before provided, must be in tree_draw.mods");
+        if (tree_draw._hide_if_cumulative_edge_length_bigger_than > 0.0)
+            throw std::runtime_error("tree_draw.hide_if_cumulative_edge_length_bigger_than provided, must be in tree_draw.mods");
+        if (!tree_draw._hide_if.empty())
+            throw std::runtime_error("tree_draw.hide_if provided, must be in tree_draw.mods");
     }
 
 } // Settings::upgrade
@@ -357,11 +384,16 @@ void read_settings(Settings& aSettings, std::string aFilename)
         {"interline", jsi::field(&LegendSettings::interline)},
     };
 
+    jsi::data<TreeDrawMod> tree_draw_mod_data = {
+        {"mod", jsi::field(&TreeDrawMod::mod)},
+        {"d1", jsi::field(&TreeDrawMod::d1)},
+        {"s1", jsi::field(&TreeDrawMod::s1)},
+        {"s2", jsi::field(&TreeDrawMod::s2)},
+    };
+
     jsi::data<TreeDrawSettings> tree_draw_data = {
         {"root", jsi::field(&TreeDrawSettings::root)},
-        {"hide_isolated_before", jsi::field(&TreeDrawSettings::hide_isolated_before)},
-        {"hide_if_cumulative_edge_length_bigger_than", jsi::field(&TreeDrawSettings::hide_if_cumulative_edge_length_bigger_than)},
-        {"hide_if", jsi::field(&TreeDrawSettings::hide_if)},
+        {"mods", jsi::field(&TreeDrawSettings::get_mods, tree_draw_mod_data)},
         {"force_line_width", jsi::field(&TreeDrawSettings::force_line_width)},
         {"line_width", jsi::field(&TreeDrawSettings::line_width)},
         {"root_edge", jsi::field(&TreeDrawSettings::root_edge)},
@@ -372,6 +404,10 @@ void read_settings(Settings& aSettings, std::string aFilename)
         {"aa_transition", jsi::field(&TreeDrawSettings::aa_transition, aa_transition_data)},
         {"vaccines", jsi::field(&TreeDrawSettings::get_vaccines, vaccine_data)},
         {"legend", jsi::field(&TreeDrawSettings::legend, legend_data)},
+          // v2
+        {"hide_isolated_before", jsi::field(&TreeDrawSettings::_hide_isolated_before)},
+        {"hide_if_cumulative_edge_length_bigger_than", jsi::field(&TreeDrawSettings::_hide_if_cumulative_edge_length_bigger_than)},
+        {"hide_if", jsi::field(&TreeDrawSettings::_hide_if)},
     };
 
     jsi::data<TimeSeriesDrawSettings> time_series_data = {
@@ -614,13 +650,33 @@ template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writ
 
 // ----------------------------------------------------------------------
 
+template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const TreeDrawMod& aMod)
+{
+    return writer << jsw::start_object
+                  << jsw::key("mod") << aMod.mod
+                  << jsw::if_non_negative("d1", aMod.d1)
+                  << jsw::if_not_empty("s1", aMod.s1)
+                  << jsw::if_not_empty("s2", aMod.s1)
+                  << jsw::end_object;
+}
+
+// ----------------------------------------------------------------------
+
 template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const TreeDrawSettings& aSettings)
 {
     return writer << jsw::start_object
                   << jsw::key("root") << aSettings.root
-                  << jsw::key("hide_isolated_before") << aSettings.hide_isolated_before
-                  << jsw::key("hide_if_cumulative_edge_length_bigger_than") << aSettings.hide_if_cumulative_edge_length_bigger_than
-                  << jsw::key("hide_if") << aSettings.hide_if
+
+                  << jsw::key("mods 1?") << "mods is a list of objects:"
+                  << jsw::key("mods 2?") << "{mod: hide_isolated_before, s1: date}"
+                  << jsw::key("mods 3?") << "{mod: hide_if_cumulative_edge_length_bigger_than, d1: cumulative-length-threshold}"
+                  << jsw::key("mods 4?") << "{mod: before2015-58P-or-146I-or-559I}"
+                  << jsw::key("mods 5?") << "{mod: hide-between, s1: first-name-to-hide, s2: last-name-to-hide} - after ladderizing"
+                  << jsw::key("mods") << aSettings.mods
+                  // v2 << jsw::key("hide_isolated_before") << aSettings.hide_isolated_before
+                  // v2 << jsw::key("hide_if_cumulative_edge_length_bigger_than") << aSettings.hide_if_cumulative_edge_length_bigger_than
+                  // v2 << jsw::key("hide_if") << aSettings.hide_if
+
                   << jsw::key("force_line_width") << aSettings.force_line_width
                   << jsw::key("line_width") << aSettings.line_width
                   << jsw::key("root_edge") << aSettings.root_edge

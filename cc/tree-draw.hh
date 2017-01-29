@@ -68,6 +68,22 @@ class TreeDrawVaccineSettings
 
 // ----------------------------------------------------------------------
 
+class TreeDrawMod
+{
+ public:
+    TreeDrawMod(std::string aMod = std::string{});
+    TreeDrawMod(std::string aMod, double aD1);
+    TreeDrawMod(std::string aMod, std::string aS1, std::string aS2 = std::string{});
+
+    std::string mod;            // hide_isolated_before, hide_if_cumulative_edge_length_bigger_than, hide_between, before2015-58P-or-146I-or-559I
+    double d1;                  // depends on mod
+    std::string s1;             // depends on mod
+    std::string s2;             // depends on mod
+
+}; // class TreeDrawMod
+
+// ----------------------------------------------------------------------
+
 class TreeDrawSettings
 {
  public:
@@ -85,9 +101,7 @@ class TreeDrawSettings
         }
 
     std::string root;           // re-root tree
-    std::string hide_isolated_before; // hide leaves isolated before the date (empty -> do not hide based on date)
-    double hide_if_cumulative_edge_length_bigger_than; // hide long branches
-    std::string hide_if;                               // built-in function to hide stains based on complicated criteria
+    std::vector<TreeDrawMod> mods;
     bool force_line_width;
     double line_width;
     double root_edge;
@@ -99,8 +113,14 @@ class TreeDrawSettings
     std::vector<TreeDrawVaccineSettings> vaccines;
     LegendSettings legend;
 
+      // obsolete: v2
+    std::string _hide_isolated_before; // hide leaves isolated before the date (empty -> do not hide based on date)
+    double _hide_if_cumulative_edge_length_bigger_than; // hide long branches
+    std::string _hide_if;                               // built-in function to hide stains based on complicated criteria
+
       // for json importer
     inline std::vector<TreeDrawVaccineSettings>& get_vaccines() { return vaccines; }
+    inline std::vector<TreeDrawMod>& get_mods() { return mods; }
 
 }; // class TreeDrawSettings
 
