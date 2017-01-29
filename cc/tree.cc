@@ -21,6 +21,8 @@ void Tree::match_seqdb(const seqdb::Seqdb& seqdb)
 
 void Tree::ladderize(Tree::LadderizeMethod aLadderizeMethod)
 {
+    std::cout << "TREE: ladderizing" << std::endl;
+
     auto set_max_edge = [](Node& aNode) {
         aNode.data.ladderize_max_edge_length = aNode.edge_length;
         aNode.data.ladderize_max_date = aNode.data.date();
@@ -79,6 +81,8 @@ void Tree::ladderize(Tree::LadderizeMethod aLadderizeMethod)
 
 void Tree::set_number_strains()
 {
+    std::cout << "TREE: set number strains" << std::endl;
+
     auto set_number_strains = [](Node& aNode) {
         aNode.data.number_strains = 0;
         for (const auto& subnode: aNode.subtree) {
@@ -93,6 +97,8 @@ void Tree::set_number_strains()
 
 void Tree::set_continents(const LocDb& locdb)
 {
+    std::cout << "TREE: set continents" << std::endl;
+
     auto set_continents = [&locdb](Node& aNode) {
         aNode.data.set_continent(locdb, aNode.seq_id);
     };
@@ -473,6 +479,8 @@ bool Node::find_name_r(std::string aName, std::vector<const Node*>& aPath) const
 
 void Tree::re_root(const std::vector<const Node*>& aNewRoot)
 {
+    std::cout << "TREE: re-rooting" << std::endl;
+
     if (aNewRoot.front() != this)
         throw std::invalid_argument("Invalid path passed to Tree::re_root");
 
@@ -493,7 +501,7 @@ void Tree::re_root(const std::vector<const Node*>& aNewRoot)
     subtree = new_subtree;
     edge_length = 0;
     mMaxCumulativeEdgeLength = -1;
-    set_number_strains();
+      // set_number_strains();
 
 } // Tree::re_root
 

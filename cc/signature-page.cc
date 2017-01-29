@@ -169,12 +169,8 @@ void SignaturePageDraw::tree(std::string aTreeFilename, std::string aSeqdbFilena
         mSeqdb->load(aSeqdbFilename);
         mTree->match_seqdb(*mSeqdb);
     }
-    mTree->set_continents(*mLocdb);
-    if (!mSettings->tree_draw.root.empty())
-        mTree->re_root(mSettings->tree_draw.root);
+
       // tree.report_cumulative_edge_length(std::cout);
-    mTree->ladderize(Tree::LadderizeMethod::NumberOfLeaves);           // must be before clade_setup
-    mTree->make_aa_transitions();
 
     mTree->add_vaccine("A/SOUTH%20AUCKLAND/17/2016__MDCK%3F/SIAT1", "A/SOUTH AUCKLAND/17/2016 C");
 
@@ -212,7 +208,7 @@ void SignaturePageDraw::prepare()
     if (mTitleDraw)
         mTitleDraw->prepare();
     if (mTreeDraw)
-        mTreeDraw->prepare();
+        mTreeDraw->prepare(*mLocdb);
     if (mTimeSeriesDraw)
         mTimeSeriesDraw->prepare();
     if (mCladesDraw)

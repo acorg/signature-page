@@ -47,7 +47,7 @@ TreeDrawMod::TreeDrawMod(std::string aMod, std::string aS1, std::string aS2)
 }
 
 TreeDrawSettings::TreeDrawSettings()
-    : force_line_width(false),
+    : ladderize(Tree::LadderizeMethod::NumberOfLeaves), force_line_width(false),
       line_width(1), root_edge(0), line_color(0), name_offset(0.3), color_nodes("continent"),
       vaccines{{TreeDrawVaccineSettings{}}},
       _hide_if_cumulative_edge_length_bigger_than(-1)
@@ -177,6 +177,8 @@ void Settings::upgrade()             // upgrade to the new version in case old v
 {
     if (version == SETTINGS_VERSION_OLD) {
         signature_page.antigenic_maps_width = antigenic_maps._width;
+        if (!tree_draw._root.empty())
+            tree_draw.mods.emplace_back("root", tree_draw._root);
         if (!tree_draw._hide_isolated_before.empty())
             tree_draw.mods.emplace_back("hide_isolated_before", tree_draw._hide_isolated_before);
         if (tree_draw._hide_if_cumulative_edge_length_bigger_than > 0.0)
@@ -194,6 +196,8 @@ void Settings::upgrade()             // upgrade to the new version in case old v
             throw std::runtime_error("tree_draw.hide_if_cumulative_edge_length_bigger_than provided, must be in tree_draw.mods");
         if (!tree_draw._hide_if.empty())
             throw std::runtime_error("tree_draw.hide_if provided, must be in tree_draw.mods");
+        if (!tree_draw._root.empty())
+            throw std::runtime_error("tree_draw.root provided, must be in tree_draw.mods");
     }
 
 } // Settings::upgrade
@@ -392,7 +396,7 @@ void read_settings(Settings& aSettings, std::string aFilename)
     };
 
     jsi::data<TreeDrawSettings> tree_draw_data = {
-        {"root", jsi::field(&TreeDrawSettings::root)},
+        {"ladderize", jsi::field(&TreeDrawSettings::ladderize_from_string)},
         {"mods", jsi::field(&TreeDrawSettings::get_mods, tree_draw_mod_data)},
         {"force_line_width", jsi::field(&TreeDrawSettings::force_line_width)},
         {"line_width", jsi::field(&TreeDrawSettings::line_width)},
@@ -405,6 +409,7 @@ void read_settings(Settings& aSettings, std::string aFilename)
         {"vaccines", jsi::field(&TreeDrawSettings::get_vaccines, vaccine_data)},
         {"legend", jsi::field(&TreeDrawSettings::legend, legend_data)},
           // v2
+        {"root", jsi::field(&TreeDrawSettings::_root)},
         {"hide_isolated_before", jsi::field(&TreeDrawSettings::_hide_isolated_before)},
         {"hide_if_cumulative_edge_length_bigger_than", jsi::field(&TreeDrawSettings::_hide_if_cumulative_edge_length_bigger_than)},
         {"hide_if", jsi::field(&TreeDrawSettings::_hide_if)},
@@ -665,17 +670,20 @@ template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writ
 template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const TreeDrawSettings& aSettings)
 {
     return writer << jsw::start_object
-                  << jsw::key("root") << aSettings.root
 
+                  << jsw::key("ladderize?") << "number-of-leaves, max-edge-length"
+                  << jsw::key("ladderize") << aSettings.ladderize_to_string()
                   << jsw::key("mods 1?") << "mods is a list of objects:"
-                  << jsw::key("mods 2?") << "{mod: hide_isolated_before, s1: date}"
-                  << jsw::key("mods 3?") << "{mod: hide_if_cumulative_edge_length_bigger_than, d1: cumulative-length-threshold}"
-                  << jsw::key("mods 4?") << "{mod: before2015-58P-or-146I-or-559I}"
-                  << jsw::key("mods 5?") << "{mod: hide-between, s1: first-name-to-hide, s2: last-name-to-hide} - after ladderizing"
+                  << jsw::key("mods 2?") << "{mod: root, s1: new-root}"
+                  << jsw::key("mods 3?") << "{mod: hide_isolated_before, s1: date}"
+                  << jsw::key("mods 4?") << "{mod: hide_if_cumulative_edge_length_bigger_than, d1: cumulative-length-threshold}"
+                  << jsw::key("mods 5?") << "{mod: before2015-58P-or-146I-or-559I}"
+                  << jsw::key("mods 6?") << "{mod: hide-between, s1: first-name-to-hide, s2: last-name-to-hide} - after ladderizing"
                   << jsw::key("mods") << aSettings.mods
-                  // v2 << jsw::key("hide_isolated_before") << aSettings.hide_isolated_before
-                  // v2 << jsw::key("hide_if_cumulative_edge_length_bigger_than") << aSettings.hide_if_cumulative_edge_length_bigger_than
-                  // v2 << jsw::key("hide_if") << aSettings.hide_if
+              // v2 << jsw::key("root") << aSettings.root
+              // v2 << jsw::key("hide_isolated_before") << aSettings.hide_isolated_before
+              // v2 << jsw::key("hide_if_cumulative_edge_length_bigger_than") << aSettings.hide_if_cumulative_edge_length_bigger_than
+              // v2 << jsw::key("hide_if") << aSettings.hide_if
 
                   << jsw::key("force_line_width") << aSettings.force_line_width
                   << jsw::key("line_width") << aSettings.line_width

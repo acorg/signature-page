@@ -75,7 +75,7 @@ class TreeDrawMod
     TreeDrawMod(std::string aMod, double aD1);
     TreeDrawMod(std::string aMod, std::string aS1, std::string aS2 = std::string{});
 
-    std::string mod;            // hide_isolated_before, hide_if_cumulative_edge_length_bigger_than, hide_between, before2015-58P-or-146I-or-559I
+    std::string mod;            // root, hide_isolated_before, hide_if_cumulative_edge_length_bigger_than, hide_between, before2015-58P-or-146I-or-559I
     double d1;                  // depends on mod
     std::string s1;             // depends on mod
     std::string s2;             // depends on mod
@@ -100,7 +100,7 @@ class TreeDrawSettings
             return *p;
         }
 
-    std::string root;           // re-root tree
+    Tree::LadderizeMethod ladderize;
     std::vector<TreeDrawMod> mods;
     bool force_line_width;
     double line_width;
@@ -114,6 +114,7 @@ class TreeDrawSettings
     LegendSettings legend;
 
       // obsolete: v2
+    std::string _root;           // re-root tree
     std::string _hide_isolated_before; // hide leaves isolated before the date (empty -> do not hide based on date)
     double _hide_if_cumulative_edge_length_bigger_than; // hide long branches
     std::string _hide_if;                               // built-in function to hide stains based on complicated criteria
@@ -121,6 +122,28 @@ class TreeDrawSettings
       // for json importer
     inline std::vector<TreeDrawVaccineSettings>& get_vaccines() { return vaccines; }
     inline std::vector<TreeDrawMod>& get_mods() { return mods; }
+
+    inline std::string ladderize_to_string() const
+        {
+            switch (ladderize) {
+              case Tree::LadderizeMethod::NumberOfLeaves:
+                  return "number-of-leaves";
+              case Tree::LadderizeMethod::MaxEdgeLength:
+                  return "max-edge-length";
+            }
+            return "number-of-leaves";
+        }
+
+    inline void ladderize_from_string(const char* str, size_t length)
+        {
+            const std::string s(str, length);
+            if (s == "number-of-leaves")
+                ladderize = Tree::LadderizeMethod::NumberOfLeaves;
+            else if (s == "max-edge-length")
+                ladderize = Tree::LadderizeMethod::MaxEdgeLength;
+            else
+                throw std::runtime_error("Unrecognized ladderize method: " + s);
+        }
 
 }; // class TreeDrawSettings
 
@@ -182,7 +205,7 @@ class TreeDraw
     TreeDraw(Surface& aSurface, Tree& aTree, TreeDrawSettings& aSettings, HzSections& aHzSections);
     ~TreeDraw();
 
-    void prepare();
+    void prepare(const LocDb& aLocDb);
     void draw();
 
     const Legend* coloring_legend() const;
@@ -193,7 +216,7 @@ class TreeDraw
     void set_line_no(bool aForce, bool aHideLeaves);
     inline Surface& surface() { return mSurface; }
 
-    bool hide_leaf_if(const Node& aNode) const; // called from lambda, has to be public
+    // bool hide_leaf_if(const Node& aNode) const; // called from lambda, has to be public
 
  private:
     Surface& mSurface;

@@ -54,8 +54,18 @@ void TreeDraw::init_settings(const Clades* aClades)
 
 // ----------------------------------------------------------------------
 
-void TreeDraw::prepare()
+void TreeDraw::prepare(const LocDb& aLocDb)
 {
+    mTree.set_continents(aLocDb);
+    mTree.set_number_strains();
+    mTree.ladderize(mSettings.ladderize);
+      // apply mods: re-root, hide
+      //   mTree.re_root(root);
+      // if nodes were hidden:
+      //   mTree.set_number_strains();
+      //   mTree.ladderize(mSettings.ladderize);
+      // mTree.make_aa_transitions();
+
     set_line_no(true, true);
     const size_t number_of_hz_sections = prepare_hz_sections();
     const auto& canvas_size = mSurface.viewport().size;
@@ -111,23 +121,24 @@ void TreeDraw::hide_leaves(bool aForce)
 
 // ----------------------------------------------------------------------
 
-bool TreeDraw::hide_leaf_if(const Node& aNode) const
-{
-    bool result = false;
-    // if (mSettings.hide_if == "before2015-58P-or-146I-or-559I") {
-    //     if (aNode.data.date() < "2015-01-01") {
-    //         const std::string aa = aNode.data.amino_acids();
-    //         result = aa[57] == 'P' || aa[145] == 'I' || aa[559] == 'I';
-    //     }
-    // }
-    return result;
+// bool TreeDraw::hide_leaf_if(const Node& aNode) const
+// {
+//     bool result = false;
+//     // if (mSettings.hide_if == "before2015-58P-or-146I-or-559I") {
+//     //     if (aNode.data.date() < "2015-01-01") {
+//     //         const std::string aa = aNode.data.amino_acids();
+//     //         result = aa[57] == 'P' || aa[145] == 'I' || aa[559] == 'I';
+//     //     }
+//     // }
+//     return result;
 
-} // TreeDraw::hide_leaf_if
+// } // TreeDraw::hide_leaf_if
 
 // ----------------------------------------------------------------------
 
 void TreeDraw::set_line_no(bool aForce, bool aHideLeaves)
 {
+    std::cout << "TREE: set_line_no" << std::endl;
     if (aHideLeaves)
         hide_leaves(aForce);
     if (aForce || !setting_line_no_done) {

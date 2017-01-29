@@ -33,7 +33,7 @@ class SignaturePageDrawSettings
     double time_series_width;
     double clades_width;
     double antigenic_maps_width;
-    
+
     inline std::string layout_to_string() const
         {
             switch (layout) {
