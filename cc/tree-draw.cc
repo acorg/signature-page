@@ -99,6 +99,10 @@ bool TreeDraw::apply_mods()
         }
         else if (mod.mod == "hide-between") {
             std::cout << "TREE-mod: " << mod.mod << " \"" << mod.s1 << "\" \"" << mod.s2 << "\"" << std::endl;
+            hide_between(mod.s1, mod.s2);
+        }
+        else if (mod.mod.empty() || mod.mod[0] == '?') {
+              // commented out mod
         }
         else
             throw std::runtime_error("Unrecognized tree mod: " + mod.mod);
@@ -170,6 +174,35 @@ void TreeDraw::hide_before2015_58P_or_146I_or_559I()
 
 void TreeDraw::hide_between(std::string aFirst, std::string aLast)
 {
+    bool hiding = false;
+    size_t hidden = 0;
+    auto hide_show_leaf = [aFirst,aLast,&hiding,&hidden](Node& aNode) {
+        if (aNode.seq_id == aFirst) {
+            if (hiding)
+                throw std::runtime_error("tree hide_between: first node found and hiding is active: " + aFirst);
+            hiding = true;
+            aNode.draw.shown = false;
+            ++hidden;
+        }
+        else if (aNode.seq_id == aLast) {
+            if (!hiding)
+                throw std::runtime_error("tree hide_between: last node found and hiding is not active: " + aLast);
+            hiding = false;
+            aNode.draw.shown = false; // hide the last node
+            ++hidden;
+        }
+        else if (hiding) {
+            aNode.draw.shown = false;
+            ++hidden;
+        }
+    };
+
+    tree::iterate_leaf_post(mTree, hide_show_leaf, hide_branch);
+    if (hiding)
+        throw std::runtime_error("tree hide_between: last node not found: " + aLast);
+    if (hidden == 0)
+        throw std::runtime_error("tree hide_between: no nodes hidden");
+    std::cout << "leaf nodes hidden: " << hidden << std::endl;
 
 } // TreeDraw::hide_between
 
