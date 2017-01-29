@@ -9,7 +9,8 @@ namespace jsw = json_writer;
 
 // ----------------------------------------------------------------------
 
-static constexpr const char* SETTINGS_VERSION = "signature-page-settings-v2";
+static constexpr const char* SETTINGS_VERSION = "signature-page-settings-v3";
+static constexpr const char* SETTINGS_VERSION_OLD = "signature-page-settings-v2";
 
 // ----------------------------------------------------------------------
 
@@ -108,7 +109,7 @@ MarkAntigenSettings::MarkAntigenSettings(bool aShow, std::string aName)
 }
 
 AntigenicMapsDrawSettings::AntigenicMapsDrawSettings()
-    : layout("labelled_grid"), width(500), columns(3), gap(20),
+    : layout("labelled_grid"), columns(3), gap(20),
       border_width(1), grid_line_width(0.5),
       border_color("black"), grid_line_color("grey63"), background_color("white"), // 0xFFFFF8
       point_scale(1), serum_scale(5), reference_antigen_scale(5), test_antigen_scale(3), vaccine_antigen_scale(15), tracked_antigen_scale(5),
@@ -121,7 +122,8 @@ AntigenicMapsDrawSettings::AntigenicMapsDrawSettings()
       show_tracked_sera(true), serum_circle_color("grey50"), tracked_serum_outline_color("black"), serum_circle_thickness(0.1), tracked_serum_outline_width(0.1),
       map_title_color("black"), map_title_offset{0.3, 0.4}, map_title_size(11),
       mapped_antigens_section_line_color("black"), mapped_antigens_section_line_width(1),
-      mark_antigens{{true, "? VT 14-002966-VIR SIAT1 (2014-06-29)"}}
+      mark_antigens{{true, "? VT 14-002966-VIR SIAT1 (2014-06-29)"}},
+      _width(0)
 {
 }
 
@@ -138,14 +140,38 @@ TitleDrawSettings::~TitleDrawSettings()
 {
 }
 
+SignaturePageDrawSettings::SignaturePageDrawSettings()
+    : layout(Layout::Auto), top(60), bottom(60), left(50), right(20),
+      tree_margin_right(0), mapped_antigens_margin_right(30), time_series_width(400), clades_width(100),
+      antigenic_maps_width(500)
+{
+}
+
 // **********************************************************************
 
-void Settings::version(const char* str, size_t length)
+void Settings::set_version(const char* str, size_t length)
 {
-    const std::string version{str, length};
-    if (version != SETTINGS_VERSION)
+    version.assign(str, length);
+    if (version != SETTINGS_VERSION && version != SETTINGS_VERSION_OLD)
         throw std::runtime_error("Unsupported sigp settings version: \"" + version + "\"");
 }
+
+// ----------------------------------------------------------------------
+
+void Settings::upgrade()             // upgrade to the new version in case old version data provided
+{
+    if (version == SETTINGS_VERSION_OLD) {
+        signature_page.antigenic_maps_width = antigenic_maps._width;
+    }
+    else if (version == SETTINGS_VERSION) {
+          // fail, if old version data provided
+        if (!float_zero(antigenic_maps._width))
+            throw std::runtime_error("antigenic_maps.width provided, must be signature_page.antigenic_maps_width");
+    }
+
+} // Settings::upgrade
+
+// ----------------------------------------------------------------------
 
 class ColorStorer : public jsi::StorerBase
 {
@@ -431,7 +457,7 @@ void read_settings(Settings& aSettings, std::string aFilename)
 
     jsi::data<AntigenicMapsDrawSettings> antigenic_maps_data = {
         {"layout", jsi::field(&AntigenicMapsDrawSettings::layout)},
-        {"width", jsi::field(&AntigenicMapsDrawSettings::width)},
+        {"width", jsi::field(&AntigenicMapsDrawSettings::_width)}, // v2
         {"columns", jsi::field(&AntigenicMapsDrawSettings::columns)},
         {"gap", jsi::field(&AntigenicMapsDrawSettings::gap)},
         {"transformation", jsi::field(&AntigenicMapsDrawSettings::get_transformation)},
@@ -489,7 +515,7 @@ void read_settings(Settings& aSettings, std::string aFilename)
 
     jsi::data<Settings> settings_data = {
         {"_", jsi::field(&Settings::indentation)},
-        {"  version", jsi::field(&Settings::version)},
+        {"  version", jsi::field(&Settings::set_version)},
         {"signature_page", jsi::field(&Settings::signature_page, signature_page_data)},
         {"tree", jsi::field(&Settings::tree_draw, tree_draw_data)},
         {"time_series", jsi::field(&Settings::time_series, time_series_data)},
@@ -502,6 +528,7 @@ void read_settings(Settings& aSettings, std::string aFilename)
 
     std::cout << "Reading settings from " << aFilename << std::endl;
     jsi::import(acmacs_base::read_file(aFilename), aSettings, settings_data);
+    aSettings.upgrade();
 
 } // read_settings
 
@@ -622,6 +649,7 @@ template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writ
                   << jsw::key("mapped_antigens_margin_right") << aSettings.mapped_antigens_margin_right
                   << jsw::key("time_series_width") << aSettings.time_series_width
                   << jsw::key("clades_width") << aSettings.clades_width
+                  << jsw::key("antigenic_maps_width") << aSettings.antigenic_maps_width
                   << jsw::end_object;
 }
 
@@ -758,7 +786,7 @@ template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writ
 {
     return writer << jsw::start_object
                   << jsw::key("layout") << aSettings.layout
-                  << jsw::key("width") << aSettings.width
+              // v2 << jsw::key("width") << aSettings.width
                   << jsw::key("columns") << aSettings.columns
                   << jsw::key("gap") << aSettings.gap
                   << jsw::key("transformation") << aSettings.transformation

@@ -2,6 +2,7 @@
 #include "tree-draw.hh"
 #include "mapped-antigens-draw.hh"
 #include "tree-iterate.hh"
+#include "signature-page.hh"
 
 // ----------------------------------------------------------------------
 
@@ -31,9 +32,9 @@ void AntigenicMapsDraw::init_settings()
     }
     size_t maps_per_column = number_sections / mSettings.columns + ((number_sections % mSettings.columns) == 0 ? 0 : 1);
     const double map_width = 150; // height is not available at this moment mSurface.viewport().size.height / (maps_per_column + mSettings.gap * (maps_per_column - 1));
-    mSettings.width = map_width * mSettings.columns + (mSettings.columns - 1) * mSettings.gap;
+    mSignaturePageDrawSettings.antigenic_maps_width = map_width * mSettings.columns + (mSettings.columns - 1) * mSettings.gap;
 
-    std::cerr << "columns:" << mSettings.columns << " maps_per_column:" << maps_per_column << " map_width:" << map_width << " width:" << mSettings.width << std::endl;
+    std::cerr << "columns:" << mSettings.columns << " maps_per_column:" << maps_per_column << " map_width:" << map_width << " width:" << mSignaturePageDrawSettings.antigenic_maps_width << std::endl;
 
     mChart.init_settings();
 
@@ -412,14 +413,15 @@ void LabelledGrid::draw()
         ++section_index;
     }
 
+    const double antigenic_maps_width = mAntigenicMapsDraw.signature_page_settings().antigenic_maps_width;
     const size_t rows = row + (column ? 1 : 0);
     const double maps_height = map_width * rows + (rows - 1) * settings.gap;
-    const double suggested_surface_width = settings.width * surface.viewport().size.height / maps_height;
+    const double suggested_surface_width = antigenic_maps_width * surface.viewport().size.height / maps_height;
     std::cout << "Map area height: " << maps_height << std::endl;
-    if (std::abs((settings.width - suggested_surface_width) / settings.width) > 0.01)
-        std::cout << "Change antigenic_maps.width from " << settings.width << " to " << suggested_surface_width << std::endl;
+    if (std::abs((antigenic_maps_width - suggested_surface_width) / antigenic_maps_width) > 0.01)
+        std::cout << "Change antigenic_maps.width from " << antigenic_maps_width << " to " << suggested_surface_width << std::endl;
     else
-        std::cout << "antigenic_maps.width is OK: " << settings.width << " vs. suggested " << suggested_surface_width << std::endl;
+        std::cout << "antigenic_maps.width is OK: " << antigenic_maps_width << " vs. suggested " << suggested_surface_width << std::endl;
 
 } // LabelledGrid::draw
 

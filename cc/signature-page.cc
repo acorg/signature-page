@@ -84,7 +84,7 @@ void SignaturePageDraw::make_surface(std::string aFilename)
 
     if (mChart) {
         mMappedAntigensDraw = std::make_unique<MappedAntigensDraw>(mSurface->subsurface(false), *mTree, *mChart, mSettings->mapped_antigens);
-        mAntigenicMapsDraw = std::make_unique<AntigenicMapsDraw>(mSurface->subsurface(false), *mTree, *mChart, mSettings->hz_sections, *mMappedAntigensDraw, mSettings->antigenic_maps);
+        mAntigenicMapsDraw = std::make_unique<AntigenicMapsDraw>(mSurface->subsurface(false), *mTree, *mChart, mSettings->hz_sections, *mMappedAntigensDraw, mSettings->signature_page, mSettings->antigenic_maps);
     }
 
 } // SignaturePageDraw::make_surface
@@ -256,7 +256,7 @@ void SignaturePageDraw::make_layout_tree_clades_ts_maps()
     const Size& page_size = mSurface->viewport().size;
     const double section_height = page_size.height - (mSettings->signature_page.top + mSettings->signature_page.bottom);
 
-    const double antigic_maps_width = mSettings->antigenic_maps.width;
+    const double antigic_maps_width = mSettings->signature_page.antigenic_maps_width;
     const double mapped_antigens_width = mSettings->mapped_antigens.width;
     const double clades_width = mSettings->signature_page.clades_width;
     const double ts_width = mSettings->signature_page.time_series_width;

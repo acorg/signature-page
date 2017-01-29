@@ -25,7 +25,10 @@ class Settings
     TitleDrawSettings title;
 
     inline void indentation(const char* /*str*/, size_t /*length*/) {}
-    void version(const char* str, size_t length);
+    void set_version(const char* str, size_t length);
+    void upgrade();             // upgrade to the new version in case old version data provided
+
+    std::string version;
 
 }; // class Settings
 

@@ -25,17 +25,15 @@ class SignaturePageDrawSettings
  public:
     enum class Layout { Auto, TreeTSClades, TreeCladesTSMaps };
 
-    inline SignaturePageDrawSettings()
-        : layout(Layout::Auto), top(60), bottom(60), left(50), right(20),
-          tree_margin_right(0), mapped_antigens_margin_right(30), time_series_width(400), clades_width(100)
-        {}
+    SignaturePageDrawSettings();
 
     Layout layout;
     double top, bottom, left, right;
     double tree_margin_right, mapped_antigens_margin_right;
     double time_series_width;
     double clades_width;
-
+    double antigenic_maps_width;
+    
     inline std::string layout_to_string() const
         {
             switch (layout) {

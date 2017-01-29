@@ -10,6 +10,7 @@
 class Tree;
 class TreeDraw;
 class HzSections;
+class SignaturePageDrawSettings;
 
 // ----------------------------------------------------------------------
 
@@ -36,7 +37,6 @@ class AntigenicMapsDrawSettings
     ~AntigenicMapsDrawSettings();
 
     std::string layout;
-    double width;
     size_t columns;
     double gap;
     Transformation transformation;
@@ -62,6 +62,8 @@ class AntigenicMapsDrawSettings
     double mapped_antigens_section_line_width;
 
     std::vector<MarkAntigenSettings> mark_antigens;
+
+    double _width; // obsolete, moved to SignaturePageDrawSettings
 
       // for json importer
     inline std::vector<MarkAntigenSettings>& get_mark_antigens() { return mark_antigens; }
@@ -220,8 +222,9 @@ class AntigenicMapsLayout
 class AntigenicMapsDraw
 {
  public:
-    inline AntigenicMapsDraw(Surface& aSurface, Tree& aTree, Chart& aChart, HzSections& aHzSections, MappedAntigensDraw& aMappedAntigensDraw, AntigenicMapsDrawSettings& aSettings)
-        : mSurface(aSurface), mTree(aTree), mChart(aChart), mHzSections(aHzSections), mMappedAntigensDraw(aMappedAntigensDraw), mSettings(aSettings) {}
+    inline AntigenicMapsDraw(Surface& aSurface, Tree& aTree, Chart& aChart, HzSections& aHzSections, MappedAntigensDraw& aMappedAntigensDraw, SignaturePageDrawSettings& aSignaturePageDrawSettings, AntigenicMapsDrawSettings& aSettings)
+        : mSurface(aSurface), mTree(aTree), mChart(aChart), mHzSections(aHzSections), mMappedAntigensDraw(aMappedAntigensDraw),
+          mSignaturePageDrawSettings(aSignaturePageDrawSettings), mSettings(aSettings) {}
 
     void init_settings();
     void prepare();
@@ -232,6 +235,7 @@ class AntigenicMapsDraw
     inline const Chart& chart() const { return mChart; }
     inline const HzSections& hz_sections() const { return mHzSections; }
     inline MappedAntigensDraw& mapped_antigens_draw() { return mMappedAntigensDraw; }
+    inline const SignaturePageDrawSettings& signature_page_settings() const { return mSignaturePageDrawSettings; }
     inline const AntigenicMapsDrawSettings& settings() const { return mSettings; }
 
  private:
@@ -240,6 +244,7 @@ class AntigenicMapsDraw
     Chart& mChart;
     HzSections& mHzSections;
     MappedAntigensDraw& mMappedAntigensDraw;
+    SignaturePageDrawSettings& mSignaturePageDrawSettings;
     AntigenicMapsDrawSettings& mSettings;
     std::unique_ptr<AntigenicMapsLayout> mLayout;
 
