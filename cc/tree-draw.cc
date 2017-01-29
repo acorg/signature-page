@@ -309,11 +309,16 @@ size_t TreeDraw::prepare_hz_sections()
     for (const auto& section: mHzSections.sections) {
         Node* section_start = mTree.find_leaf_by_seqid(section.name);
         if (section_start) {
-            section_start->draw.hz_section_index = section_index;
-            ++number_of_hz_sections;
+            if (section_start->draw.shown) {
+                section_start->draw.hz_section_index = section_index;
+                ++number_of_hz_sections;
+            }
+            else {
+                std::cerr << "TreeDraw:0: warning: HzSection ignored because its node is hidden: " << section.name << std::endl;
+            }
         }
         else {
-            std::cerr << "WARNING: HzSection seq_id not found: " << section.name << std::endl;
+            std::cerr << "TreeDraw:0: warning: HzSection seq_id not found: " << section.name << std::endl;
         }
         ++section_index;
     }

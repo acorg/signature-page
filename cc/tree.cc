@@ -213,7 +213,7 @@ void Tree::make_aa_transitions()
         make_aa_transitions(all_positions);
     }
     else {
-        std::cerr << "WARNING: cannot make AA transition labels: no AA sequences present (match with seqdb?)" << std::endl;
+        std::cerr << "Tree:0: warning: cannot make AA transition labels: no AA sequences present (match with seqdb?)" << std::endl;
     }
 
 } // Tree::make_aa_transitions

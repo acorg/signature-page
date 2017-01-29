@@ -298,7 +298,7 @@ void AntigenicMapsLayout::draw_chart(Surface& aSurface, size_t aSectionIndex)
         }
     }
     if (drawn != mDrawPoints.size())
-        std::cerr << "Warning: " << drawn << " points of " << mDrawPoints.size() << " were drawn" << std::endl;
+        std::cerr << "AntigenicMapsLayout:0: warning: " << drawn << " points of " << mDrawPoints.size() << " were drawn" << std::endl;
 
     draw_map_title(aSurface, aSectionIndex);
     aSurface.border(settings.border_color, Pixels{settings.border_width});
