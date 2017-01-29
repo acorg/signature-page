@@ -347,6 +347,7 @@ void read_settings(Settings& aSettings, std::string aFilename)
         {"mapped_antigens_margin_right", jsi::field(&SignaturePageDrawSettings::mapped_antigens_margin_right)},
         {"time_series_width", jsi::field(&SignaturePageDrawSettings::time_series_width)},
         {"clades_width", jsi::field(&SignaturePageDrawSettings::clades_width)},
+        {"antigenic_maps_width", jsi::field(&SignaturePageDrawSettings::antigenic_maps_width)},
     };
 
     jsi::data<AATransitionPerBranchDrawSettings> per_branch_data = {
