@@ -216,8 +216,6 @@ class TreeDraw
     void set_line_no();
     inline Surface& surface() { return mSurface; }
 
-    // bool hide_leaf_if(const Node& aNode) const; // called from lambda, has to be public
-
  private:
     Surface& mSurface;
     Tree& mTree;
@@ -233,7 +231,6 @@ class TreeDraw
     double mNameOffset;
 
     bool apply_mods();          // returns if nodes were hidden
-    // void hide_leaves(bool aForce);
     void set_vertical_pos();
     size_t prepare_hz_sections();
     void draw_node(const Node& aNode, double aOriginX, double& aVerticalGap, double aEdgeLength = -1);
@@ -246,6 +243,12 @@ class TreeDraw
     double max_label_offset();
 
     void make_coloring();
+
+    void hide_isolated_before(std::string aDate);
+    void hide_if_cumulative_edge_length_bigger_than(double aThreshold);
+    void hide_before2015_58P_or_146I_or_559I();
+    void hide_between(std::string aFirst, std::string aLast);
+    static void hide_branch(Node& aNode);
 
 }; // class TreeDraw
 

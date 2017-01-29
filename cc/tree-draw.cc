@@ -87,12 +87,15 @@ bool TreeDraw::apply_mods()
         }
         else if (mod.mod == "hide-isolated-before") {
             std::cout << "TREE-mod: " << mod.mod << " " << mod.s1 << std::endl;
+            hide_isolated_before(mod.s1);
         }
         else if (mod.mod == "hide-if-cumulative-edge-length-bigger-than") {
             std::cout << "TREE-mod: " << mod.mod << " " << mod.d1 << std::endl;
+            hide_if_cumulative_edge_length_bigger_than(mod.d1);
         }
         else if (mod.mod == "before2015-58P-or-146I-or-559I") {
             std::cout << "TREE-mod: " << mod.mod << std::endl;
+            hide_before2015_58P_or_146I_or_559I();
         }
         else if (mod.mod == "hide-between") {
             std::cout << "TREE-mod: " << mod.mod << " \"" << mod.s1 << "\" \"" << mod.s2 << "\"" << std::endl;
@@ -124,6 +127,68 @@ void TreeDraw::draw()
 
 // ----------------------------------------------------------------------
 
+void TreeDraw::hide_isolated_before(std::string aDate)
+{
+    auto hide_show_leaf = [aDate](Node& aNode) {
+        aNode.draw.shown &= aNode.data.date() >= aDate;
+    };
+
+    tree::iterate_leaf_post(mTree, hide_show_leaf, hide_branch);
+
+} // TreeDraw::hide_isolated_before
+
+// ----------------------------------------------------------------------
+
+void TreeDraw::hide_if_cumulative_edge_length_bigger_than(double aThreshold)
+{
+    auto hide_show_leaf = [aThreshold](Node& aNode) {
+        aNode.draw.shown &= aNode.data.cumulative_edge_length <= aThreshold;
+    };
+
+    tree::iterate_leaf_post(mTree, hide_show_leaf, hide_branch);
+
+} // TreeDraw::hide_if_cumulative_edge_length_bigger_than
+
+// ----------------------------------------------------------------------
+
+void TreeDraw::hide_before2015_58P_or_146I_or_559I()
+{
+    auto hide_show_leaf = [](Node& aNode) {
+        if (aNode.data.date() < "2015-01-01") {
+            const std::string aa = aNode.data.amino_acids();
+            if (aa[57] == 'P' || aa[145] == 'I' || aa[559] == 'I')
+                aNode.draw.shown = false;
+        }
+
+    };
+
+    tree::iterate_leaf_post(mTree, hide_show_leaf, hide_branch);
+
+} // TreeDraw::hide_before2015_58P_or_146I_or_559I
+
+// ----------------------------------------------------------------------
+
+void TreeDraw::hide_between(std::string aFirst, std::string aLast)
+{
+
+} // TreeDraw::hide_between
+
+// ----------------------------------------------------------------------
+
+void TreeDraw::hide_branch(Node& aNode)
+{
+    aNode.draw.shown = false;
+    for (const auto& node: aNode.subtree) {
+        if (node.draw.shown) {
+            aNode.draw.shown = true;
+            break;
+        }
+    }
+
+} // TreeDraw::hide_branch
+
+// ----------------------------------------------------------------------
+
 // void TreeDraw::hide_leaves(bool aForce)
 // {
 //     std::cout << "TREE: hide_leaves " << aForce << std::endl;
@@ -148,21 +213,6 @@ void TreeDraw::draw()
 //     }
 
 // } // TreeDraw::hide_leaves
-
-// ----------------------------------------------------------------------
-
-// bool TreeDraw::hide_leaf_if(const Node& aNode) const
-// {
-//     bool result = false;
-//     // if (mSettings.hide_if == "before2015-58P-or-146I-or-559I") {
-//     //     if (aNode.data.date() < "2015-01-01") {
-//     //         const std::string aa = aNode.data.amino_acids();
-//     //         result = aa[57] == 'P' || aa[145] == 'I' || aa[559] == 'I';
-//     //     }
-//     // }
-//     return result;
-
-// } // TreeDraw::hide_leaf_if
 
 // ----------------------------------------------------------------------
 
