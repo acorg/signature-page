@@ -1,4 +1,3 @@
-// #include "acmacs-draw/continent-path.hh"
 #include "acmacs-draw/continent-map.hh"
 
 #include "coloring.hh"
@@ -7,80 +6,11 @@
 
 // ----------------------------------------------------------------------
 
-// const char* const ColoringByContinent::ContinentLabels[9] = {
-//     "EUROPE", "CENTRAL-AMERICA", "MIDDLE-EAST", "NORTH-AMERICA", "AFRICA", "ASIA", "RUSSIA", "AUSTRALIA-OCEANIA", "SOUTH-AMERICA" //, "ANTARCTICA"
-// };
-
-// ----------------------------------------------------------------------
-
-// #pragma GCC diagnostic push
-// #ifdef __clang__
-// #pragma GCC diagnostic ignored "-Wglobal-constructors"
-// #pragma GCC diagnostic ignored "-Wexit-time-destructors"
-// #endif
-
-// const std::map<std::string, Color> ColoringByContinent::mContinents = {
-//     {"EUROPE",            0x00FF00},
-//     {"CENTRAL-AMERICA",   0xAAF9FF},
-//     {"MIDDLE-EAST",       0x8000FF},
-//     {"NORTH-AMERICA",     0x00008B},
-//     {"AFRICA",            0xFF8000},
-//     {"ASIA",              0xFF0000},
-//     {"RUSSIA",            0xB03060},
-//     {"AUSTRALIA-OCEANIA", 0xFF69B4},
-//     {"SOUTH-AMERICA",     0x40E0D0},
-//     {"ANTARCTICA",        0x808080},
-//     {"CHINA-SOUTH",       0xFF0000},
-//     {"CHINA-NORTH",       0x6495ED},
-//     {"CHINA-UNKNOWN",     0x808080},
-//     {"UNKNOWN",           0x808080},
-// };
-
-// #pragma GCC diagnostic pop
-
-// ----------------------------------------------------------------------
-
 Color ColoringByContinent::color(const Node& aNode) const
 {
-    // return color(aNode.data.continent);
     return continent_color(aNode.data.continent);
 
 } // ColoringByContinent::color
-
-// ----------------------------------------------------------------------
-
-// class ColoringByContinentLegend : public Legend
-// {
-
-//  public:
-//     inline ColoringByContinentLegend(const ColoringByContinent& aColoring) : Legend(), mColoring(aColoring) {}
-
-//     virtual void draw(Surface& aSurface, const Viewport& aViewport, const SettingsLegend& aSettings) const
-//         {
-//             auto const label_size = aSurface.text_size("W", aSettings.font_size, aSettings.style);
-//             auto y = aViewport.origin.y + label_size.height;
-//             for (const auto& label: ColoringByContinentLegendLabels) {
-//                 aSurface.text({aViewport.origin.x, y}, label, mColoring.color(label), aSettings.font_size, aSettings.style);
-//                 y += label_size.height * aSettings.interline;
-//             }
-//         }
-
-//     virtual Size size(Surface& aSurface, const SettingsLegend& aSettings) const
-//         {
-//             Size size(0, 0);
-//             for (const auto& label: ColoringByContinentLegendLabels) {
-//                 const auto label_size = aSurface.text_size(label, aSettings.font_size, aSettings.style);
-//                 size.height += label_size.height * aSettings.interline;
-//                 if (label_size.width > size.width)
-//                     size.width = label_size.width;
-//             }
-//             return size;
-//         }
-
-//  private:
-//     const ColoringByContinent& mColoring;
-
-// }; // class ColoringByContinentLegend
 
 // ----------------------------------------------------------------------
 
@@ -89,16 +19,6 @@ class ColoringByContinentMapLegend : public Legend
 
  public:
     inline ColoringByContinentMapLegend() = default;
-    // inline ColoringByContinentMapLegend(const ColoringByContinent& aColoring) : Legend(), mColoring(aColoring) {}
-
-    // virtual void draw(Surface& aSurface, const LegendSettings& /*aSettings*/) const
-    //     {
-    //         for (const auto& continent: ColoringByContinent::ContinentLabels) {
-    //             const auto& path = continent_map_path(continent);
-    //               // aSurface.path_outline(path.first, path.second, geographic_map_outline_color, geographic_map_outline_width);
-    //             aSurface.path_fill(path.first, path.second, mColoring.color(continent));
-    //         }
-    //     }
 
     virtual void draw(Surface& aSurface, const LegendSettings& /*aSettings*/) const
         {
@@ -107,11 +27,8 @@ class ColoringByContinentMapLegend : public Legend
 
     virtual Size size() const
         {
-            return continent_map_size(); // {continent_map_size[0], continent_map_size[1]};
+            return continent_map_size();
         }
-
- // private:
- //    const ColoringByContinent& mColoring;
 
 }; // class ColoringByContinentMapLegend
 
@@ -119,13 +36,7 @@ class ColoringByContinentMapLegend : public Legend
 
 Legend* ColoringByContinent::legend() const
 {
-    return new ColoringByContinentMapLegend(); // (*this);
-    // Legend* legend;
-    // if (aSettings.geographic_map)
-    //       // legend = new ColoringByContinentMapLegend(*this);
-    // else
-    //     legend = new ColoringByContinentLegend(*this);
-    // return legend;
+    return new ColoringByContinentMapLegend();
 
 } // ColoringByContinent::legend
 
