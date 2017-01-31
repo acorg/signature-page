@@ -173,7 +173,7 @@ void CladesDraw::draw_right(size_t aSlot, std::string aCladeName, double top, do
     const auto x = (aSlot + 1) * mSettings.slot_width;
     mSurface.double_arrow({x, top}, {x, bottom}, for_clade.arrow_color, Pixels{for_clade.line_width}, Pixels{for_clade.arrow_width});
     std::string name = for_clade.display_name.empty() ? aCladeName : for_clade.display_name;
-    mSurface.text(Location{x, label_vpos} + for_clade.label_offset, name, for_clade.label_color, Pixels{for_clade.label_size}, for_clade.label_style, for_clade.label_rotation);
+    mSurface.text(Location{x, label_vpos} + for_clade.label_offset, name, for_clade.label_color, Pixels{for_clade.label_size}, for_clade.label_style, Rotation{for_clade.label_rotation});
     const double left = mTimeSeriesDraw.size().width;
     mSurface.line({x, top}, {-left, top}, for_clade.separator_color, Pixels{for_clade.separator_width});
     mSurface.line({x, bottom}, {-left, bottom}, for_clade.separator_color, Pixels{for_clade.separator_width});
@@ -189,7 +189,7 @@ void CladesDraw::draw_left(size_t aSlot, std::string aCladeName, double top, dou
     std::string name = for_clade.display_name.empty() ? aCladeName : for_clade.display_name;
     const double label_width = mSurface.text_size(name, Pixels{for_clade.label_size}, for_clade.label_style).width;
     mSurface.text(Location{x, label_vpos} + Size{- for_clade.label_offset.width - label_width, for_clade.label_offset.height},
-                  name, for_clade.label_color, Pixels{for_clade.label_size}, for_clade.label_style, for_clade.label_rotation);
+                  name, for_clade.label_color, Pixels{for_clade.label_size}, for_clade.label_style, Rotation{for_clade.label_rotation});
     const double right = mSurface.viewport().size.width + mTimeSeriesDraw.size().width;
     mSurface.line({x, top}, {right, top}, for_clade.separator_color, Pixels{for_clade.separator_width});
     mSurface.line({x, bottom}, {right, bottom}, for_clade.separator_color, Pixels{for_clade.separator_width});

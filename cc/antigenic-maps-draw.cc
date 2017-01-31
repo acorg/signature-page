@@ -68,7 +68,7 @@ void DrawSerum::draw(Surface& aSurface, const Point& aPoint, const PointStyle& a
 {
     if (!aPoint.coordinates.isnan()) {
         aSurface.square_filled(aPoint.coordinates, Pixels{aSettings.serum_scale * aSettings.point_scale},
-                               aspect(aPoint, aStyle, aSettings), 0.0, outline_color(aPoint, aStyle, aSettings),
+                               aspect(aPoint, aStyle, aSettings), NoRotation, outline_color(aPoint, aStyle, aSettings),
                                Pixels{outline_width(aPoint, aStyle, aSettings) * aSettings.point_scale}, "transparent");
     }
 
@@ -132,7 +132,7 @@ void DrawTrackedSerum::draw(Surface& aSurface, const Point& aPoint, const PointS
 {
     DrawSerum::draw(aSurface, aPoint, aStyle, aSettings);
     // std::cout << "    Tracked serum " << aPoint.name << " radius:" << aPoint.attributes.serum_circle_radius << std::endl;
-    aSurface.circle(aPoint.coordinates, Scaled{aPoint.attributes.serum_circle_radius * 2}, 1, 0,
+    aSurface.circle(aPoint.coordinates, Scaled{aPoint.attributes.serum_circle_radius * 2}, AspectNormal, NoRotation,
                     outline_color(aPoint, aStyle, aSettings), // aSettings.serum_circle_color,
                     Pixels{aSettings.serum_circle_thickness * aSettings.point_scale});
 
@@ -159,7 +159,7 @@ void DrawMarkedAntigen::draw(Surface& aSurface, const Point& aPoint, const Point
 {
     if (!aPoint.coordinates.isnan()) {
         aSurface.circle_filled(aPoint.coordinates, Pixels{mData.scale * aSettings.point_scale},
-                               mData.aspect, mData.rotation, mData.outline_color,
+                               Aspect{mData.aspect}, Rotation{mData.rotation}, mData.outline_color,
                                Pixels{mData.outline_width * aSettings.point_scale}, mData.fill_color);
         if (!mData.label.empty()) {
             const TextStyle style; //(mData.label_font);

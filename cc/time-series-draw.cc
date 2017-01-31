@@ -78,8 +78,8 @@ void TimeSeriesDraw::draw_labels_at_side(const Location& aOrigin, double month_w
     Date current_month = mBegin;
     for (size_t month_no = 0; month_no < mNumberOfMonths; ++month_no, current_month.increment_month()) {
         const double left = aOrigin.x + month_no * month_width;
-        mSurface.text({left, aOrigin.y}, current_month.month_3(), 0, Pixels{mSettings.label_size}, mSettings.label_style, M_PI_2);
-        mSurface.text({left, aOrigin.y + month_max_height}, current_month.year_2(), 0, Pixels{mSettings.label_size}, mSettings.label_style, M_PI_2);
+        mSurface.text({left, aOrigin.y}, current_month.month_3(), 0, Pixels{mSettings.label_size}, mSettings.label_style, Rotation{M_PI_2});
+        mSurface.text({left, aOrigin.y + month_max_height}, current_month.year_2(), 0, Pixels{mSettings.label_size}, mSettings.label_style, Rotation{M_PI_2});
     }
 
 } // TimeSeriesDraw::draw_labels_at_side

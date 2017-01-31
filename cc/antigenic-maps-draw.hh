@@ -83,8 +83,8 @@ class DrawPoint
     inline DrawPoint& operator=(const DrawPoint&) = default;
     virtual void draw(Surface& aSurface, const Point& aPoint, const PointStyle& aStyle, const AntigenicMapsDrawSettings& aSettings) const = 0;
     virtual size_t level() const = 0;
-    virtual inline double aspect(const Point&, const PointStyle& aStyle, const AntigenicMapsDrawSettings&) const { return aStyle.aspect; }
-    virtual inline double rotation(const Point& aPoint, const PointStyle& aStyle, const AntigenicMapsDrawSettings& aSettings) const { return aPoint.attributes.reassortant ? aSettings.reassortant_rotation : aStyle.rotation; }
+    virtual inline Aspect aspect(const Point&, const PointStyle& aStyle, const AntigenicMapsDrawSettings&) const { return Aspect{aStyle.aspect}; }
+    virtual inline Rotation rotation(const Point& aPoint, const PointStyle& aStyle, const AntigenicMapsDrawSettings& aSettings) const { return Rotation{aPoint.attributes.reassortant ? aSettings.reassortant_rotation : aStyle.rotation}; }
     virtual inline Color fill_color(const Point&, const PointStyle& aStyle, const AntigenicMapsDrawSettings&) const { return aStyle.fill_color; }
     virtual inline Color outline_color(const Point&, const PointStyle& aStyle, const AntigenicMapsDrawSettings&) const { return aStyle.outline_color; }
 };
@@ -101,7 +101,7 @@ class DrawSerum : public DrawPoint
 class DrawAntigen : public DrawPoint
 {
  public:
-    virtual inline double aspect(const Point& aPoint, const PointStyle& aStyle, const AntigenicMapsDrawSettings& aSettings) const { return aPoint.attributes.egg ? aSettings.egg_antigen_aspect : aStyle.aspect; }
+    virtual inline Aspect aspect(const Point& aPoint, const PointStyle& aStyle, const AntigenicMapsDrawSettings& aSettings) const { return Aspect{aPoint.attributes.egg ? aSettings.egg_antigen_aspect : aStyle.aspect}; }
 };
 
 class DrawReferenceAntigen : public DrawAntigen
