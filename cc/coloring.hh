@@ -35,23 +35,23 @@ class ColoringBlack : public Coloring
 class ColoringByContinent : public Coloring
 {
  public:
-    inline Color color(std::string aContinent) const
-        {
-            try {
-                return mContinents.at(aContinent);
-            }
-            catch (std::out_of_range&) {
-                return mContinents.at("UNKNOWN");
-            }
-        }
+    // inline Color color(std::string aContinent) const
+    //     {
+    //         try {
+    //             return mContinents.at(aContinent);
+    //         }
+    //         catch (std::out_of_range&) {
+    //             return mContinents.at("UNKNOWN");
+    //         }
+    //     }
 
     virtual Color color(const Node& aNode) const;
     virtual Legend* legend() const;
 
-    static const char* const ContinentLabels[9];
+    // static const char* const ContinentLabels[9];
 
- private:
-    static const std::map<std::string, Color> mContinents;
+ // private:
+ //    static const std::map<std::string, Color> mContinents;
 };
 
 
