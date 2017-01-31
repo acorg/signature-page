@@ -1,6 +1,7 @@
+#include "acmacs-draw/continent-path.hh"
+
 #include "coloring.hh"
 #include "tree.hh"
-#include "continent-path.hh"
 #include "legend.hh"
 
 // ----------------------------------------------------------------------

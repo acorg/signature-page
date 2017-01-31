@@ -10,7 +10,7 @@ SIGNATURE_PAGE_SOURCES = tree.cc tree-export.cc \
 			 chart.cc sdb.cc \
 			 signature-page.cc tree-draw.cc time-series-draw.cc clades-draw.cc \
 			 mapped-antigens-draw.cc antigenic-maps-draw.cc title-draw.cc \
-			 coloring.cc continent-path.cc settings.cc
+			 coloring.cc settings.cc
 SIGNATURE_PAGE_PY_SOURCES = py.cc $(SIGNATURE_PAGE_SOURCES)
 SIGP_SOURCES = sigp.cc $(SIGNATURE_PAGE_SOURCES)
 SETTINGS_CREATE_SOURCES = settings-create.cc settings.cc
