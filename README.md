@@ -17,12 +17,16 @@ Programs to import phylogenetic tree and draw it on a tree or signature page
         mkdir "$WORKING_DIR"
         cd "$WORKING_DIR"
 
-  - export sequences from ~/AD/data/seqdb.json.xz
+  - copy seqdb from ~/AD/data/seqdb.json.xz
 
-    - base-seq. Use ~/AD/bin/seqdb-list --db ~/AD/data/seqdb.json.xz --re <name> to check, if the name below returns just one seq_id
+        cp ~/AD/data/seqdb.json.xz .
+
+  - export sequences from ./seqdb.json.xz
+
+    - base-seq. Use ~/AD/bin/seqdb-list --db ./seqdb.json.xz --re <name> to check, if the name below returns just one seq_id
 
         BVIC: "VICTORIA/830/2013 MDCK2"
-        BYAM: "B/PHUKET/3073/2013 E4/E2" # "CAMBODIA/FSS29374/2014 MDCK1"
+        BYAM: "B/PHUKET/3073/2013 E4/E3" # "CAMBODIA/FSS29374/2014 MDCK1"
         H3:   "HAWAII/22/2012 MDCK"
         H1:   "SWITZERLAND/9772556/2013 SIAT2"
 
@@ -34,7 +38,12 @@ Programs to import phylogenetic tree and draw it on a tree or signature page
 
     - export command
 
-        env LD_LIBRARY_PATH=$HOME/AD/lib ~/AD/bin/seqdb-export --db ~/AD/data/seqdb.json.xz --flu $VIRUS_TYPE --recent 4000 --hamming-distance-threshold 160 --tree-maker --base-seq $BASE_SEQ $WORKING_DIR/source.fas
+        env LD_LIBRARY_PATH=$HOME/AD/lib ~/AD/bin/seqdb-export --db ./seqdb.json.xz --flu $VIRUS_TYPE --recent 4000 --hamming-distance-threshold 160 --tree-maker --base-seq $BASE_SEQ $WORKING_DIR/source.fas
+
+        env LD_LIBRARY_PATH=$HOME/AD/lib ~/AD/bin/seqdb-export --db ./seqdb.json.xz --flu h3 --recent 4000 --hamming-distance-threshold 160 --tree-maker --base-seq "HAWAII/22/2012 MDCK" source.fas
+        env LD_LIBRARY_PATH=$HOME/AD/lib ~/AD/bin/seqdb-export --db ./seqdb.json.xz --flu h1 --recent 4000 --hamming-distance-threshold 160 --tree-maker --base-seq "SWITZERLAND/9772556/2013 SIAT2" source.fas
+        env LD_LIBRARY_PATH=$HOME/AD/lib ~/AD/bin/seqdb-export --db ./seqdb.json.xz --flu bvic --recent 4000 --hamming-distance-threshold 160 --tree-maker --base-seq "VICTORIA/830/2013 MDCK2" source.fas
+        env LD_LIBRARY_PATH=$HOME/AD/lib ~/AD/bin/seqdb-export --db ./seqdb.json.xz --flu byam --recent 4000 --hamming-distance-threshold 160 --tree-maker --base-seq "B/PHUKET/3073/2013 E4/E3" source.fas
 
   - Initilialize tree maker
 
