@@ -146,7 +146,7 @@ void SignaturePageDraw::init_settings()
             mAntigenicMapsDraw->init_settings();
     }
     else {                      // just tree
-        mSettings->tree_draw.legend.width = 200;
+        mSettings->tree_draw.legend.width = 180;
         mSettings->hz_sections.vertical_gap = 15;
         for (auto& section: mSettings->hz_sections.sections) {
             section.show_label_in_time_series = false;

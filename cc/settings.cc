@@ -31,6 +31,12 @@ TreeDrawVaccineSettings::TreeDrawVaccineSettings()
 {
 }
 
+LegendSettings::LegendSettings()
+    : offset{-30, 950}, width{100}, title_style{"sans_serif", TextStyle::Slant::Normal, TextStyle::Weight::Bold},
+      title_size{10}, text_style{"monospace"}, text_size{10}, interline{1.5}
+{
+}
+
 TreeDrawMod::TreeDrawMod(std::string aMod)
     : mod(aMod), d1(-1)
 {
