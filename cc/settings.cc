@@ -89,7 +89,7 @@ TimeSeriesDrawSettings::~TimeSeriesDrawSettings()
 CladeDrawSettings::CladeDrawSettings(std::string aName, bool aShow)
     : name(aName), show(aShow), section_inclusion_tolerance(10), section_exclusion_tolerance(5), show_section_size_in_label(true),
       arrow_color("black"), line_width(0.8), arrow_width(3), separator_color("grey63"), separator_width(0.5),
-      label_position("middle"), label_offset{10, 0}, label_color("black"), label_size(11), label_rotation(0),
+      label_position("middle"), label_offset{5, 0}, label_color("black"), label_size(11), label_rotation(0),
       slot(NoSlot)
 {
 }

@@ -39,8 +39,6 @@ int main(int argc, const char *argv[])
             SignaturePageDraw signature_page;
             signature_page.load_settings(options.settings_filename);
             signature_page.tree(options.tree_filename, options.seqdb_filename);
-            if (options.report_cumulative)
-                signature_page.tree().report_cumulative_edge_length(std::cout);
             if (!options.chart_filename.empty())
                 signature_page.chart(options.chart_filename); // before make_surface!
             signature_page.make_surface(options.output_filename); // before init_layout!
@@ -51,6 +49,8 @@ int main(int argc, const char *argv[])
                 write_settings(signature_page.settings(), options.init_settings_filename);
             }
             signature_page.prepare();
+            if (options.report_cumulative)
+                signature_page.tree().report_cumulative_edge_length(std::cout);
             if (!options.no_draw)
                 signature_page.draw();
         }
