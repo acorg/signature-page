@@ -64,8 +64,9 @@ void Chart::apply_transformation(const Transformation* aSettingsTransformation)
     std::cout << "transformation: " << t << std::endl;
     for (auto& p: mPoints) {
         if (!p.coordinates.isnan()) {
-            p.coordinates.x = p.coordinates.x * t[0] + p.coordinates.y * t[2];
+            const auto x = p.coordinates.x * t[0] + p.coordinates.y * t[2];
             p.coordinates.y = p.coordinates.x * t[1] + p.coordinates.y * t[3];
+            p.coordinates.x = x;
         }
     }
 
