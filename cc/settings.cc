@@ -140,7 +140,7 @@ AntigenicMapsDrawSettings::AntigenicMapsDrawSettings()
       test_antigen_fill_color("grey88"), vaccine_antigen_outline_color("white"), sequenced_antigen_outline_color("white"), sequenced_antigen_fill_color("grey63"),
       tracked_antigen_outline_color("white"), tracked_antigen_colored_by_clade(false), tracked_antigen_color("green3"),
       reassortant_rotation(0.5 /* M_PI / 6.0 */), egg_antigen_aspect(0.75),
-      show_tracked_sera(true), serum_circle_color("grey50"), tracked_serum_outline_color("black"), serum_circle_thickness(0.1), tracked_serum_outline_width(0.1),
+      show_tracked_sera(false), serum_circle_color("grey50"), tracked_serum_outline_color("black"), serum_circle_thickness(0.1), tracked_serum_outline_width(0.1),
       map_title_color("black"), map_title_offset{0.3, 0.4}, map_title_size(11),
       mapped_antigens_section_line_color("black"), mapped_antigens_section_line_width(1),
       mark_antigens{{true, "? VT 14-002966-VIR SIAT1 (2014-06-29)"}},
@@ -862,6 +862,7 @@ template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writ
                   << jsw::key("gap") << aSettings.gap
                   << jsw::key("transformation") << aSettings.transformation
                   << jsw::key("viewport") << aSettings.viewport
+                  << jsw::key("show_tracked_sera") << aSettings.show_tracked_sera
                   << jsw::key("background_color") << aSettings.background_color
                   << jsw::key("border_color") << aSettings.border_color
                   << jsw::key("border_width") << aSettings.border_width
