@@ -125,7 +125,7 @@ MappedAntigensDrawSettings::~MappedAntigensDrawSettings()
 MarkAntigenSettings::MarkAntigenSettings(bool aShow, std::string aName)
     : show(aShow), name(aName), label(aName), scale(15), aspect(1), rotation(0), outline_width(1), label_line_width(0.1),
     fill_color("red"), outline_color("white"),
-    label_color("black"), label_line_color("transparent"), label_offset{-2, 2}, label_size(9)
+    label_color("black"), label_line_color("transparent"), label_offset{-0.5, 0.5}, label_size(9)
 {
 }
 
