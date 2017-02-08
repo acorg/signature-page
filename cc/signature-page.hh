@@ -13,7 +13,9 @@ class LocDb;
 class TreeDraw;
 class TimeSeriesDraw;
 class CladesDraw;
-class Chart;
+namespace signature_page {
+    class Chart;
+}
 class MappedAntigensDraw;
 class AntigenicMapsDraw;
 class TitleDraw;
@@ -91,7 +93,7 @@ class SignaturePageDraw
     std::unique_ptr<TreeDraw> mTreeDraw;
     std::unique_ptr<TimeSeriesDraw> mTimeSeriesDraw;
     std::unique_ptr<CladesDraw> mCladesDraw;
-    std::unique_ptr<Chart> mChart;
+    std::unique_ptr<signature_page::Chart> mChart;
     std::unique_ptr<MappedAntigensDraw> mMappedAntigensDraw;
     std::unique_ptr<AntigenicMapsDraw> mAntigenicMapsDraw;
     std::unique_ptr<TitleDraw> mTitleDraw;

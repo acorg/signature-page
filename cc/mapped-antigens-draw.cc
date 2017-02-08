@@ -9,13 +9,13 @@ void MappedAntigensDraw::prepare()
 {
     std::set<std::string> matched_names;
     auto match_chart_antigens = [this,&matched_names](Node& aNode) {
-        aNode.draw.chart_antigen_index = Chart::AntigenNotFound;
+        aNode.draw.chart_antigen_index = signature_page::Chart::AntigenNotFound;
         if (aNode.draw.shown) {
             const std::vector<std::string>* hi_names = aNode.data.hi_names();
             if (hi_names) {
                 for (const auto& name: *hi_names) {
                     const size_t antigen_index = mChart.find_antigen(name);
-                    if (antigen_index != Chart::AntigenNotFound) {
+                    if (antigen_index != signature_page::Chart::AntigenNotFound) {
                         aNode.draw.chart_antigen_index = antigen_index;
                         matched_names.insert(name);
                         break;
@@ -51,7 +51,7 @@ void MappedAntigensDraw::draw()
     const double base_x = (surface_width - line_length) / 2;
 
     auto draw_dash = [&](const Node& aNode) {
-        if (aNode.draw.shown && aNode.draw.chart_antigen_index != Chart::AntigenNotFound) {
+        if (aNode.draw.shown && aNode.draw.chart_antigen_index != signature_page::Chart::AntigenNotFound) {
             mSurface.line({base_x, aNode.draw.vertical_pos}, {base_x + line_length, aNode.draw.vertical_pos}, mSettings.line_color, Pixels{mSettings.line_width}, Surface::LineCap::Round);
         }
     };

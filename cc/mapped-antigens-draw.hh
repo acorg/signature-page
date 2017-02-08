@@ -8,7 +8,9 @@
 
 class Tree;
 class TreeDraw;
-class Chart;
+namespace signature_page {
+    class Chart;
+}
 
 // ----------------------------------------------------------------------
 
@@ -30,7 +32,7 @@ class MappedAntigensDrawSettings
 class MappedAntigensDraw
 {
  public:
-    inline MappedAntigensDraw(Surface& aSurface, Tree& aTree, /* const TreeDraw& aTreeDraw, */ const Chart& aChart, MappedAntigensDrawSettings& aSettings)
+    inline MappedAntigensDraw(Surface& aSurface, Tree& aTree, /* const TreeDraw& aTreeDraw, */ const signature_page::Chart& aChart, MappedAntigensDrawSettings& aSettings)
         : mSurface(aSurface), mTree(aTree), /* mTreeDraw(aTreeDraw), */ mChart(aChart), mSettings(aSettings) {}
 
     void prepare();
@@ -42,7 +44,7 @@ class MappedAntigensDraw
     Surface& mSurface;
     Tree& mTree;
     // const TreeDraw& mTreeDraw;
-    const Chart& mChart;
+    const signature_page::Chart& mChart;
     MappedAntigensDrawSettings& mSettings;
 
 }; // class MappedAntigensDraw

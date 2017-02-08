@@ -31,7 +31,7 @@ int main(int argc, const char *argv[])
     if (exit_code == 0) {
         try {
             auto chart = std::make_unique<Chart>();
-            read_chart_from_sdb(*chart, options.chart_filename);
+            signature_page::read_chart_from_sdb(*chart, options.chart_filename);
             auto viewport = chart->viewport(nullptr);
             std::cout << viewport << std::endl;
 

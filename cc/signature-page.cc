@@ -178,8 +178,8 @@ void SignaturePageDraw::tree(std::string aTreeFilename, std::string aSeqdbFilena
 
 void SignaturePageDraw::chart(std::string aChartFilename)
 {
-    mChart = std::make_unique<Chart>();
-    read_chart_from_sdb(*mChart, aChartFilename);
+    mChart = std::make_unique<signature_page::Chart>();
+    signature_page::read_chart_from_sdb(*mChart, aChartFilename);
 
 } // SignaturePageDraw::chart
 

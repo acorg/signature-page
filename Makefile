@@ -44,10 +44,10 @@ PYTHON_LD_LIB = $$($(PYTHON_CONFIG) --ldflags | sed -E 's/-Wl,-stack_size,[0-9]+
 PKG_INCLUDES = $$(pkg-config --cflags cairo) $$(pkg-config --cflags liblzma) $$($(PYTHON_CONFIG) --includes)
 
 LIB_DIR = $(ACMACSD_ROOT)/lib
-ACMACSD_LIBS = -L$(LIB_DIR) -lacmacsbase -lacmacsdraw -lseqdb -lhidb -llocationdb -lboost_program_options -lboost_filesystem -lboost_system
+ACMACSD_LIBS = -L$(LIB_DIR) -lacmacsbase -lacmacschart -lacmacsdraw -lseqdb -lhidb -llocationdb -lboost_program_options -lboost_filesystem -lboost_system
 SETTINGS_CREATE_LDLIBS = $(ACMACSD_LIBS) $$(pkg-config --libs liblzma)
 SIGP_LDLIBS = $(ACMACSD_LIBS) $$(pkg-config --libs cairo) $$(pkg-config --libs liblzma)
-TEST_DRAW_CHART__LDLIBS = -L$(LIB_DIR) -lacmacsbase -lacmacsdraw -lseqdb -lhidb -llocationdb -lboost_program_options -lboost_filesystem -lboost_system $$(pkg-config --libs cairo) $$(pkg-config --libs liblzma)
+TEST_DRAW_CHART__LDLIBS = -L$(LIB_DIR) -lacmacsbase -lacmacschart -lacmacsdraw -lseqdb -lhidb -llocationdb -lboost_program_options -lboost_filesystem -lboost_system $$(pkg-config --libs cairo) $$(pkg-config --libs liblzma)
 
 # ----------------------------------------------------------------------
 

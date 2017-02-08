@@ -76,6 +76,9 @@ class AntigenicMapsDrawSettings
 class DrawPoint
 {
  public:
+    using Point = signature_page::Point;
+    using PointStyle = signature_page::PointStyle;
+
     inline DrawPoint() = default;
     inline DrawPoint(const DrawPoint&) = default;
     inline DrawPoint(DrawPoint&&) = default;
@@ -222,6 +225,8 @@ class AntigenicMapsLayout
 class AntigenicMapsDraw
 {
  public:
+    using Chart = signature_page::Chart;
+
     inline AntigenicMapsDraw(Surface& aSurface, Tree& aTree, Chart& aChart, HzSections& aHzSections, MappedAntigensDraw& aMappedAntigensDraw, SignaturePageDrawSettings& aSignaturePageDrawSettings, AntigenicMapsDrawSettings& aSettings)
         : mSurface(aSurface), mTree(aTree), mChart(aChart), mHzSections(aHzSections), mMappedAntigensDraw(aMappedAntigensDraw),
           mSignaturePageDrawSettings(aSignaturePageDrawSettings), mSettings(aSettings) {}

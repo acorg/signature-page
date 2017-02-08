@@ -4,6 +4,8 @@
 #include "tree-iterate.hh"
 #include "signature-page.hh"
 
+using namespace signature_page;
+
 // ----------------------------------------------------------------------
 
 void AntigenicMapsDraw::init_settings()
@@ -212,7 +214,7 @@ void AntigenicMapsLayout::find_sequenced_antigens()
     auto find_antigens = [this,&hz_section_index](const Node& aNode) {
         if (aNode.draw.hz_section_index != NodeDrawData::HzSectionNoIndex)
             hz_section_index = aNode.draw.hz_section_index;
-        if (aNode.draw.chart_antigen_index != Chart::AntigenNotFound)
+        if (aNode.draw.chart_antigen_index != signature_page::Chart::AntigenNotFound)
             mSequencedAntigens[aNode.draw.chart_antigen_index] = hz_section_index;
     };
 
@@ -263,7 +265,7 @@ void AntigenicMapsLayout::mark_marked_antigens()
     for (const auto& to_mark: mark_antigens) {
         if (to_mark.show) {
             const size_t point_no = mAntigenicMapsDraw.chart().find_antigen(to_mark.name);
-            if (point_no != Chart::AntigenNotFound) {
+            if (point_no != signature_page::Chart::AntigenNotFound) {
                 mDrawMarkedAntigens.emplace_back(to_mark);
                 mDrawPoints[point_no] = &mDrawMarkedAntigens.back();
             }
@@ -279,7 +281,7 @@ void AntigenicMapsLayout::draw_chart(Surface& aSurface, size_t aSectionIndex)
     std::cout << "\nMAP: " << aSectionIndex << std::endl;
 
     const AntigenicMapsDrawSettings& settings = mAntigenicMapsDraw.settings();
-    const Chart& chart = mAntigenicMapsDraw.chart();
+    const signature_page::Chart& chart = mAntigenicMapsDraw.chart();
 
     aSurface.background(settings.background_color);
     aSurface.grid(Scaled{1}, settings.grid_line_color, Pixels{settings.grid_line_width});

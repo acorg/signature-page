@@ -1,6 +1,8 @@
 #include "chart.hh"
 #include "antigenic-maps-draw.hh"
 
+using namespace signature_page;
+
 // ----------------------------------------------------------------------
 
 Chart::~Chart()

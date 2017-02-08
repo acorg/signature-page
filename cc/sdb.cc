@@ -1,6 +1,8 @@
 #include <limits>
 
 #include "chart.hh"
+using namespace signature_page;
+
 #include "acmacs-base/json-reader.hh"
 
 // ----------------------------------------------------------------------
@@ -643,11 +645,11 @@ const std::map<std::string, ChartRootHandler::Keys> ChartRootHandler::key_mapper
 
 // ----------------------------------------------------------------------
 
-void read_chart_from_sdb(Chart& aChart, std::string aFilename)
+void signature_page::read_chart_from_sdb(Chart& aChart, std::string aFilename)
 {
     json_reader::read_from_file<Chart, ChartRootHandler>(aFilename, aChart);
 
-} // read_chart_from_sdb
+} // signature_page::read_chart_from_sdb
 
 // ----------------------------------------------------------------------
 
