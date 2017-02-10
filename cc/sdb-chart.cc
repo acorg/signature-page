@@ -1,7 +1,7 @@
-#include "chart.hh"
+#include "sdb-chart.hh"
 #include "antigenic-maps-draw.hh"
 
-using namespace signature_page;
+using namespace sdb;
 
 // ----------------------------------------------------------------------
 

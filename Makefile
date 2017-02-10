@@ -7,7 +7,7 @@ MAKEFLAGS = -w
 # ----------------------------------------------------------------------
 
 SIGNATURE_PAGE_SOURCES = tree.cc tree-export.cc \
-			 chart.cc sdb.cc \
+			 sdb-chart.cc sdb.cc \
 			 signature-page.cc tree-draw.cc time-series-draw.cc clades-draw.cc \
 			 mapped-antigens-draw.cc antigenic-maps-draw.cc title-draw.cc \
 			 coloring.cc settings.cc

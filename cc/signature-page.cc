@@ -11,10 +11,10 @@
 #include "time-series-draw.hh"
 #include "settings.hh"
 #include "acmacs-draw/surface-cairo.hh"
-#include "chart.hh"
 #include "mapped-antigens-draw.hh"
 #include "antigenic-maps-draw.hh"
 #include "title-draw.hh"
+#include "sdb-chart.hh"
 
 // ----------------------------------------------------------------------
 
@@ -178,8 +178,8 @@ void SignaturePageDraw::tree(std::string aTreeFilename, std::string aSeqdbFilena
 
 void SignaturePageDraw::chart(std::string aChartFilename)
 {
-    mChart = std::make_unique<signature_page::Chart>();
-    signature_page::read_chart_from_sdb(*mChart, aChartFilename);
+    mChart = std::make_unique<sdb::Chart>();
+    sdb::read_chart_from_sdb(*mChart, aChartFilename);
 
 } // SignaturePageDraw::chart
 

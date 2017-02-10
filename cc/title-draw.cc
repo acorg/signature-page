@@ -1,6 +1,6 @@
 #include "title-draw.hh"
 #include "tree.hh"
-#include "chart.hh"
+#include "sdb-chart.hh"
 
 // ----------------------------------------------------------------------
 

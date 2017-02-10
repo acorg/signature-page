@@ -8,7 +8,7 @@
 
 class Tree;
 class TreeDraw;
-namespace signature_page {
+namespace sdb {
     class Chart;
 }
 
@@ -32,7 +32,7 @@ class MappedAntigensDrawSettings
 class MappedAntigensDraw
 {
  public:
-    inline MappedAntigensDraw(Surface& aSurface, Tree& aTree, /* const TreeDraw& aTreeDraw, */ const signature_page::Chart& aChart, MappedAntigensDrawSettings& aSettings)
+    inline MappedAntigensDraw(Surface& aSurface, Tree& aTree, /* const TreeDraw& aTreeDraw, */ const sdb::Chart& aChart, MappedAntigensDrawSettings& aSettings)
         : mSurface(aSurface), mTree(aTree), /* mTreeDraw(aTreeDraw), */ mChart(aChart), mSettings(aSettings) {}
 
     void prepare();
@@ -44,7 +44,7 @@ class MappedAntigensDraw
     Surface& mSurface;
     Tree& mTree;
     // const TreeDraw& mTreeDraw;
-    const signature_page::Chart& mChart;
+    const sdb::Chart& mChart;
     MappedAntigensDrawSettings& mSettings;
 
 }; // class MappedAntigensDraw

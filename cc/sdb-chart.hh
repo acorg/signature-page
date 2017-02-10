@@ -15,7 +15,7 @@ class AntigenicMapsDrawSettings;
 
 // ----------------------------------------------------------------------
 
-namespace signature_page
+namespace sdb
 {
 
 // class VaccineData
@@ -207,7 +207,7 @@ namespace signature_page
 
     void read_chart_from_sdb(Chart& aChart, std::string aFilename);
 
-} // namespace signature_page
+} // namespace sdb
 
 // ----------------------------------------------------------------------
 /// Local Variables:

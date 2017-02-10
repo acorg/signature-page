@@ -4,8 +4,6 @@
 #include "tree-iterate.hh"
 #include "signature-page.hh"
 
-using namespace signature_page;
-
 // ----------------------------------------------------------------------
 
 void AntigenicMapsDraw::init_settings()
@@ -66,7 +64,7 @@ void AntigenicMapsDraw::draw()
 
 // ----------------------------------------------------------------------
 
-void DrawSerum::draw(Surface& aSurface, const Point& aPoint, const PointStyle& aStyle, const AntigenicMapsDrawSettings& aSettings) const
+void DrawSerum::draw(Surface& aSurface, const sdb::Point& aPoint, const sdb::PointStyle& aStyle, const AntigenicMapsDrawSettings& aSettings) const
 {
     if (!aPoint.coordinates.isnan()) {
         aSurface.square_filled(aPoint.coordinates, Pixels{aSettings.serum_scale * aSettings.point_scale},
@@ -78,7 +76,7 @@ void DrawSerum::draw(Surface& aSurface, const Point& aPoint, const PointStyle& a
 
 // ----------------------------------------------------------------------
 
-void DrawReferenceAntigen::draw(Surface& aSurface, const Point& aPoint, const PointStyle& aStyle, const AntigenicMapsDrawSettings& aSettings) const
+void DrawReferenceAntigen::draw(Surface& aSurface, const sdb::Point& aPoint, const sdb::PointStyle& aStyle, const AntigenicMapsDrawSettings& aSettings) const
 {
     if (!aPoint.coordinates.isnan()) {
         aSurface.circle_filled(aPoint.coordinates, Pixels{aSettings.reference_antigen_scale * aSettings.point_scale},
@@ -91,7 +89,7 @@ void DrawReferenceAntigen::draw(Surface& aSurface, const Point& aPoint, const Po
 
 // ----------------------------------------------------------------------
 
-void DrawTestAntigen::draw(Surface& aSurface, const Point& aPoint, const PointStyle& aStyle, const AntigenicMapsDrawSettings& aSettings) const
+void DrawTestAntigen::draw(Surface& aSurface, const sdb::Point& aPoint, const sdb::PointStyle& aStyle, const AntigenicMapsDrawSettings& aSettings) const
 {
     if (!aPoint.coordinates.isnan()) {
         aSurface.circle_filled(aPoint.coordinates, Pixels{aSettings.test_antigen_scale * aSettings.point_scale},
@@ -104,7 +102,7 @@ void DrawTestAntigen::draw(Surface& aSurface, const Point& aPoint, const PointSt
 
 // ----------------------------------------------------------------------
 
-void DrawSequencedAntigen::draw(Surface& aSurface, const Point& aPoint, const PointStyle& aStyle, const AntigenicMapsDrawSettings& aSettings) const
+void DrawSequencedAntigen::draw(Surface& aSurface, const sdb::Point& aPoint, const sdb::PointStyle& aStyle, const AntigenicMapsDrawSettings& aSettings) const
 {
     if (!aPoint.coordinates.isnan()) {
         aSurface.circle_filled(aPoint.coordinates, Pixels{aSettings.test_antigen_scale * aSettings.point_scale},
@@ -117,7 +115,7 @@ void DrawSequencedAntigen::draw(Surface& aSurface, const Point& aPoint, const Po
 
 // ----------------------------------------------------------------------
 
-void DrawTrackedAntigen::draw(Surface& aSurface, const Point& aPoint, const PointStyle& aStyle, const AntigenicMapsDrawSettings& aSettings) const
+void DrawTrackedAntigen::draw(Surface& aSurface, const sdb::Point& aPoint, const sdb::PointStyle& aStyle, const AntigenicMapsDrawSettings& aSettings) const
 {
     if (!aPoint.coordinates.isnan()) {
         aSurface.circle_filled(aPoint.coordinates, Pixels{aSettings.tracked_antigen_scale * aSettings.point_scale},
@@ -130,7 +128,7 @@ void DrawTrackedAntigen::draw(Surface& aSurface, const Point& aPoint, const Poin
 
 // ----------------------------------------------------------------------
 
-void DrawTrackedSerum::draw(Surface& aSurface, const Point& aPoint, const PointStyle& aStyle, const AntigenicMapsDrawSettings& aSettings) const
+void DrawTrackedSerum::draw(Surface& aSurface, const sdb::Point& aPoint, const sdb::PointStyle& aStyle, const AntigenicMapsDrawSettings& aSettings) const
 {
     DrawSerum::draw(aSurface, aPoint, aStyle, aSettings);
     // std::cout << "    Tracked serum " << aPoint.name << " radius:" << aPoint.attributes.serum_circle_radius << std::endl;
@@ -142,7 +140,7 @@ void DrawTrackedSerum::draw(Surface& aSurface, const Point& aPoint, const PointS
 
 // ----------------------------------------------------------------------
 
-void DrawVaccineAntigen::draw(Surface& aSurface, const Point& aPoint, const PointStyle& aStyle, const AntigenicMapsDrawSettings& aSettings) const
+void DrawVaccineAntigen::draw(Surface& aSurface, const sdb::Point& aPoint, const sdb::PointStyle& aStyle, const AntigenicMapsDrawSettings& aSettings) const
 {
     if (!aPoint.coordinates.isnan()) {
         std::cout << "    Vaccine " << aPoint.name << " " << fill_color(aPoint, aStyle, aSettings) << std::endl;
@@ -157,7 +155,7 @@ void DrawVaccineAntigen::draw(Surface& aSurface, const Point& aPoint, const Poin
 
 // ----------------------------------------------------------------------
 
-void DrawMarkedAntigen::draw(Surface& aSurface, const Point& aPoint, const PointStyle& /*aStyle*/, const AntigenicMapsDrawSettings& aSettings) const
+void DrawMarkedAntigen::draw(Surface& aSurface, const sdb::Point& aPoint, const sdb::PointStyle& /*aStyle*/, const AntigenicMapsDrawSettings& aSettings) const
 {
     if (!aPoint.coordinates.isnan()) {
         aSurface.circle_filled(aPoint.coordinates, Pixels{mData.scale * aSettings.point_scale},
@@ -214,7 +212,7 @@ void AntigenicMapsLayout::find_sequenced_antigens()
     auto find_antigens = [this,&hz_section_index](const Node& aNode) {
         if (aNode.draw.hz_section_index != NodeDrawData::HzSectionNoIndex)
             hz_section_index = aNode.draw.hz_section_index;
-        if (aNode.draw.chart_antigen_index != signature_page::Chart::AntigenNotFound)
+        if (aNode.draw.chart_antigen_index != sdb::Chart::AntigenNotFound)
             mSequencedAntigens[aNode.draw.chart_antigen_index] = hz_section_index;
     };
 
@@ -265,7 +263,7 @@ void AntigenicMapsLayout::mark_marked_antigens()
     for (const auto& to_mark: mark_antigens) {
         if (to_mark.show) {
             const size_t point_no = mAntigenicMapsDraw.chart().find_antigen(to_mark.name);
-            if (point_no != signature_page::Chart::AntigenNotFound) {
+            if (point_no != sdb::Chart::AntigenNotFound) {
                 mDrawMarkedAntigens.emplace_back(to_mark);
                 mDrawPoints[point_no] = &mDrawMarkedAntigens.back();
             }
@@ -281,7 +279,7 @@ void AntigenicMapsLayout::draw_chart(Surface& aSurface, size_t aSectionIndex)
     std::cout << "\nMAP: " << aSectionIndex << std::endl;
 
     const AntigenicMapsDrawSettings& settings = mAntigenicMapsDraw.settings();
-    const signature_page::Chart& chart = mAntigenicMapsDraw.chart();
+    const sdb::Chart& chart = mAntigenicMapsDraw.chart();
 
     aSurface.background(settings.background_color);
     aSurface.grid(Scaled{1}, settings.grid_line_color, Pixels{settings.grid_line_width});
@@ -313,7 +311,7 @@ void AntigenicMapsLayout::mark_tracked_sera(size_t aSectionIndex)
 {
     const AntigenicMapsDrawSettings& settings = mAntigenicMapsDraw.settings();
     if (settings.show_tracked_sera) {
-        const std::vector<Point>& points = mAntigenicMapsDraw.chart().points();
+        const std::vector<sdb::Point>& points = mAntigenicMapsDraw.chart().points();
         mDrawTrackedSera.clear();
         mDrawTrackedSera.reserve(mDrawPoints.size()); // to avoid copying entries during emplace_back and loosing pointer for mDrawPoints
         for (size_t point_no = 0; point_no < mDrawPoints.size(); ++point_no) {
