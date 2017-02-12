@@ -188,6 +188,17 @@ void Tree::report_cumulative_edge_length(std::ostream& out)
 
 // ----------------------------------------------------------------------
 
+void Tree::list_strains(std::ostream& out)
+{
+    auto report = [&out](const Node& aNode) {
+        out << aNode.seq_id << std::endl;
+    };
+    tree::iterate_leaf(*this, report);
+
+} // Tree::list_strains
+
+// ----------------------------------------------------------------------
+
 // double Tree::width(double ignore_if_cumulative_edge_length_bigger_than)
 // {
 //     compute_cumulative_edge_length();

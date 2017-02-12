@@ -160,6 +160,7 @@ class Tree : public Node
     // double width(double ignore_if_cumulative_edge_length_bigger_than);
 
     void report_cumulative_edge_length(std::ostream& out);
+    void list_strains(std::ostream& out);
 
     inline void leaf_nodes_sorted_by_cumulative_edge_length(std::vector<const Node*>& nodes)
         {

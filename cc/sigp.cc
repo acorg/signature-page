@@ -23,6 +23,7 @@ class Options
     std::string chart_filename;
       //bool layout_tree;  // for init settings only
     bool report_cumulative;
+    bool list_ladderized;
     bool no_draw;
 };
 
@@ -51,6 +52,8 @@ int main(int argc, const char *argv[])
             signature_page.prepare();
             if (options.report_cumulative)
                 signature_page.tree().report_cumulative_edge_length(std::cout);
+            if (options.list_ladderized)
+                signature_page.tree().list_strains(std::cout);
             if (!options.no_draw)
                 signature_page.draw();
         }
@@ -76,6 +79,7 @@ int get_args(int argc, const char *argv[], Options& aOptions)
               // ("init-tree", bool_switch(&aOptions.layout_tree)->default_value(false), "initialize with tree layout")
             ("tree", value<std::string>(&aOptions.tree_filename)->required(), "path to tree to draw")
             ("report-cumulative", bool_switch(&aOptions.report_cumulative)->default_value(false), "report cumulative edge lengths for leaf nodes of the tree")
+            ("list-ladderized", bool_switch(&aOptions.list_ladderized)->default_value(false), "list strain names after ladderizing")
             ("no-draw", bool_switch(&aOptions.no_draw)->default_value(false), "do not generate pdf")
             ("chart", value<std::string>(&aOptions.chart_filename), "path to chart for signature page")
             ("output,o", value<std::string>(&aOptions.output_filename)->required(), "output pdf")
