@@ -11,22 +11,16 @@ Programs to import phylogenetic tree and draw it on a tree or signature page
 
         env LD_LIBRARY_PATH=$HOME/AD/lib ~/AD/bin/seqdb-create --db ~/AD/data/seqdb.json.xz --match-hidb --clades ~/ac/tables-store/sequences/*.fas.bz2
 
-  - mkdir $WORKING_DIR $(date +%Y-%m%d-%H%M)
+  - mkdir $(date +%Y-%m%d-%H%M), copy seqdb
 
-        WORKING_DIR="/syn/eu/ac/results/whocc-tree/$VIRUS_TYPE/$(date +%Y-%m%d-%H%M)"
-        mkdir "$WORKING_DIR"
-        cd "$WORKING_DIR"
-
-  - copy seqdb from ~/AD/data/seqdb.json.xz
-
-        cp ~/AD/data/seqdb.json.xz .
+        D=$(date +%Y-%m%d-%H%M) && for V in bvic byam h1 h3; do mkdir /syn/eu/ac/results/whocc-tree/$V/$D; cp ~/AD/data/seqdb.json.xz /syn/eu/ac/results/whocc-tree/$V/$D; done
 
   - export sequences from ./seqdb.json.xz
 
     - base-seq. Use ~/AD/bin/seqdb-list --db ./seqdb.json.xz --re <name> to check, if the name below returns just one seq_id
 
         BVIC: "VICTORIA/830/2013 MDCK2"
-        BYAM: "B/PHUKET/3073/2013 E4/E3" # "CAMBODIA/FSS29374/2014 MDCK1"
+        BYAM: "B/CHRISTCHURCH/503/2013 MDCK1" (since 2017-0214) "B/PHUKET/3073/2013 E4/E3" # "CAMBODIA/FSS29374/2014 MDCK1"
         H3:   "HAWAII/22/2012 MDCK"
         H1:   "SWITZERLAND/9772556/2013 SIAT2"
 
@@ -43,7 +37,7 @@ Programs to import phylogenetic tree and draw it on a tree or signature page
         env LD_LIBRARY_PATH=$HOME/AD/lib ~/AD/bin/seqdb-export --db ./seqdb.json.xz --flu h3 --recent 4000 --hamming-distance-threshold 160 --tree-maker --base-seq "HAWAII/22/2012 MDCK" source.fas
         env LD_LIBRARY_PATH=$HOME/AD/lib ~/AD/bin/seqdb-export --db ./seqdb.json.xz --flu h1 --recent 4000 --hamming-distance-threshold 160 --tree-maker --base-seq "SWITZERLAND/9772556/2013 SIAT2" source.fas
         env LD_LIBRARY_PATH=$HOME/AD/lib ~/AD/bin/seqdb-export --db ./seqdb.json.xz --flu bvic --recent 4000 --hamming-distance-threshold 160 --tree-maker --base-seq "VICTORIA/830/2013 MDCK2" source.fas
-        env LD_LIBRARY_PATH=$HOME/AD/lib ~/AD/bin/seqdb-export --db ./seqdb.json.xz --flu byam --recent 4000 --hamming-distance-threshold 160 --tree-maker --base-seq "B/PHUKET/3073/2013 E4/E3" source.fas
+        env LD_LIBRARY_PATH=$HOME/AD/lib ~/AD/bin/seqdb-export --db ./seqdb.json.xz --flu byam --recent 4000 --hamming-distance-threshold 160 --tree-maker --base-seq "B/CHRISTCHURCH/503/2013 MDCK1" source.fas
 
   - Initilialize tree maker
 
