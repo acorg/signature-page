@@ -60,7 +60,7 @@ class CladesDrawSettings
             if (p == clades.end()) {
                 p = std::find_if(clades.begin(), clades.end(), [](const auto& c) { return c.name.empty(); });
                 if (p == clades.end())
-                    throw std::runtime_error("CladeDrawSettings::for_clade");
+                    throw std::runtime_error("ERROR: no clade entry with empty name (for default settings)");
             }
             return *p;
         }
