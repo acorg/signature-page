@@ -271,8 +271,11 @@ void TreeDraw::set_vertical_pos()
     bool topmost_node = true;
     auto set_leaf_vertical_pos = [&](Node& aNode) {
         if (aNode.draw.shown) {
-            if (!topmost_node && aNode.draw.hz_section_index != NodeDrawData::HzSectionNoIndex && mHzSections.sections[aNode.draw.hz_section_index].show)
-                vertical_pos += mHzSections.vertical_gap;
+            if (aNode.draw.hz_section_index != NodeDrawData::HzSectionNoIndex && mHzSections.sections[aNode.draw.hz_section_index].show) {
+                std::cout << "TREE-hz-section: " << aNode.draw.hz_section_index << " " << aNode.seq_id << std::endl;
+                if (!topmost_node)
+                    vertical_pos += mHzSections.vertical_gap;
+            }
             aNode.draw.vertical_pos = vertical_pos;
             vertical_pos += mVerticalStep;
             topmost_node = false;
@@ -314,11 +317,11 @@ size_t TreeDraw::prepare_hz_sections()
                 ++number_of_hz_sections;
             }
             else {
-                std::cerr << "TreeDraw:0: warning: HzSection ignored because its node is hidden: " << section.name << std::endl;
+                std::cerr << "WARNING: HzSection ignored because its node is hidden: " << section.name << std::endl;
             }
         }
         else {
-            std::cerr << "TreeDraw:0: warning: HzSection seq_id not found: " << section.name << std::endl;
+            std::cerr << "WARNING: HzSection seq_id not found: " << section.name << std::endl;
         }
         ++section_index;
     }
@@ -496,7 +499,13 @@ void HzSections::sort(const Tree& aTree)
     tree::iterate_leaf(aTree, set_first_node);
 
       // remove not found sections before sorting (e.g. having no name or not found name)
-    sections.erase(std::remove_if(sections.begin(), sections.end(), [](const auto& a) -> bool { return a.first == nullptr; }), sections.end());
+    auto remove_section = [](const auto& a) -> bool {
+        const bool remove = a.first == nullptr;
+        if (remove)
+            std::cerr << "WARNING: HZ section removed (leaf node not found): " << a.name << std::endl;
+        return remove;
+    };
+    sections.erase(std::remove_if(sections.begin(), sections.end(), remove_section), sections.end());
 
     std::sort(sections.begin(), sections.end(), [](const auto& a, const auto& b) -> bool { return a.first->draw.line_no < b.first->draw.line_no; });
 
