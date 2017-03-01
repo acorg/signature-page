@@ -81,7 +81,7 @@ $(DIST)/sigp: $(patsubst %.cc,$(BUILD)/%.o,$(SIGP_SOURCES)) | $(DIST)
 # ----------------------------------------------------------------------
 
 install: $(DIST)/signature_page_backend$(PYTHON_MODULE_SUFFIX) $(DIST)/sigp | check-acmacsd-root
-	ln -sf $(abspath bin)/sigp-* $(ACMACSD_ROOT)/bin
+	@#ln -sf $(abspath bin)/sigp-* $(ACMACSD_ROOT)/bin
 	ln -sf $(DIST)/sigp $(ACMACSD_ROOT)/bin
 	ln -sf $(abspath py)/* $(ACMACSD_ROOT)/py
 	ln -sf $(DIST)/signature_page_backend$(PYTHON_MODULE_SUFFIX) $(ACMACSD_ROOT)/py
