@@ -2,7 +2,7 @@
 
 #include <map>
 
-#include "acmacs-draw/color.hh"
+#include "acmacs-base/color.hh"
 
 // ----------------------------------------------------------------------
 

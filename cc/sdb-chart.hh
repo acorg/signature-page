@@ -6,7 +6,7 @@
 #include <set>
 
 #include "acmacs-base/transformation.hh"
-#include "acmacs-draw/color.hh"
+#include "acmacs-base/color.hh"
 #include "acmacs-draw/viewport.hh"
 
 // ----------------------------------------------------------------------
