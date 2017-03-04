@@ -46,6 +46,7 @@ Color ColoringByPos::color(const Node& aNode) const
 {
     Color c("pink");
     const auto amino_acids = aNode.data.amino_acids();
+    auto distinct_colors = Color::distinct_colors();
     if (amino_acids.size() > mPos) {
         const char aa = amino_acids[mPos];
         try {
@@ -55,7 +56,7 @@ Color ColoringByPos::color(const Node& aNode) const
         }
         catch (std::out_of_range&) {
             if (aa != 'X')      // X is always black
-                c = Color::DistinctColors[mUsed.size()];
+                c = distinct_colors[mUsed.size()];
             mUsed[aa] = std::make_pair(c, 1);
         }
     }
