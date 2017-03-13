@@ -408,7 +408,7 @@ void Tree::sequences_per_month(std::map<Date, size_t>& spm) const
     auto worker = [&spm](const Node& aNode) -> void {
         const auto d = aNode.data.date();
         if (!d.empty() && aNode.draw.shown) {
-            ++spm[Date(d).remove_day()];
+            ++spm[Date(d).beginning_of_month()];
         }
     };
     tree::iterate_leaf(*this, worker);

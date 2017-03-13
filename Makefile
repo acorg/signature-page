@@ -44,10 +44,9 @@ PYTHON_LD_LIB = $$($(PYTHON_CONFIG) --ldflags | sed -E 's/-Wl,-stack_size,[0-9]+
 PKG_INCLUDES = $$(pkg-config --cflags cairo) $$(pkg-config --cflags liblzma) $$($(PYTHON_CONFIG) --includes)
 
 LIB_DIR = $(ACMACSD_ROOT)/lib
-ACMACSD_LIBS = -L$(LIB_DIR) -lacmacsbase -lacmacschart -lacmacsdraw -lseqdb -lhidb -llocationdb -lboost_program_options -lboost_filesystem -lboost_system
+ACMACSD_LIBS = -L$(LIB_DIR) -lacmacsbase -lacmacschart -lacmacsdraw -lseqdb -lhidb -llocationdb -lboost_date_time -lboost_program_options -lboost_filesystem -lboost_system
 SETTINGS_CREATE_LDLIBS = $(ACMACSD_LIBS) $$(pkg-config --libs liblzma)
 SIGP_LDLIBS = $(ACMACSD_LIBS) $$(pkg-config --libs cairo) $$(pkg-config --libs liblzma)
-TEST_DRAW_CHART__LDLIBS = -L$(LIB_DIR) -lacmacsbase -lacmacschart -lacmacsdraw -lseqdb -lhidb -llocationdb -lboost_program_options -lboost_filesystem -lboost_system $$(pkg-config --libs cairo) $$(pkg-config --libs liblzma)
 
 # ----------------------------------------------------------------------
 
@@ -73,7 +72,7 @@ $(DIST)/test-settings-copy: $(patsubst %.cc,$(BUILD)/%.o,$(TEST_SETTINGS_COPY_SO
 	g++ $(LDFLAGS) -o $@ $^ $(SETTINGS_CREATE_LDLIBS)
 
 $(DIST)/test-draw-chart: $(patsubst %.cc,$(BUILD)/%.o,$(TEST_DRAW_CHART_SOURCES)) | $(DIST)
-	g++ $(LDFLAGS) -o $@ $^ $(TEST_DRAW_CHART__LDLIBS)
+	g++ $(LDFLAGS) -o $@ $^ $(SIGP_LDLIBS)
 
 $(DIST)/sigp: $(patsubst %.cc,$(BUILD)/%.o,$(SIGP_SOURCES)) | $(DIST)
 	g++ $(LDFLAGS) -o $@ $^ $(SIGP_LDLIBS)
