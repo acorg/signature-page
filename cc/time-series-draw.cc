@@ -29,7 +29,7 @@ void TimeSeriesDraw::prepare()
         std::cout << "  " << e.first << " " << e.second << std::endl;
     }
 
-    mNumberOfMonths = static_cast<size_t>(months_between_dates(mBegin, mEnd)) + 1;
+    mNumberOfMonths = static_cast<size_t>(months_between_dates(mBegin, mEnd)) + 2;
     std::cout << "dates to show: " << mBegin << " .. " << mEnd << "  months: " << mNumberOfMonths << std::endl;
 
 } // TimeSeriesDraw::prepare
