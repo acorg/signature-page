@@ -217,6 +217,8 @@ class TreeDraw
     void set_line_no();
     inline Surface& surface() { return mSurface; }
 
+    static constexpr const size_t sFirstLineNo = 1; // line of the first node is 1, we have 1 line space at the top and bottom of the tree
+    
  private:
     Surface& mSurface;
     Tree& mTree;

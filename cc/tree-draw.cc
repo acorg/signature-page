@@ -251,7 +251,7 @@ void TreeDraw::hide_branch(Node& aNode)
 
 void TreeDraw::set_line_no()
 {
-    size_t current_line = 1;    // line of the first node is 1, we have 1 line space at the top and bottom of the tree
+    size_t current_line = sFirstLineNo;    // line of the first node is 1, we have 1 line space at the top and bottom of the tree
     auto set_line_no = [&current_line](Node& aNode) {
         if (aNode.draw.shown) {
             aNode.draw.line_no = current_line;
@@ -314,7 +314,6 @@ size_t TreeDraw::prepare_hz_sections()
             Node* section_start = mTree.find_leaf_by_seqid(section.name);
             if (section_start) {
                 if (section_start->draw.shown) {
-                    std::cerr << "HZS: " << section_index << " " << section.name << std::endl;
                     section_start->draw.hz_section_index = section_index;
                     ++number_of_hz_sections;
                 }
@@ -503,19 +502,25 @@ void HzSections::sort(const Tree& aTree)
 
       // remove not found sections before sorting (e.g. having no name or not found name)
     auto remove_section = [](const auto& a) -> bool {
-        const bool remove = a.first == nullptr;
-        if (remove)
+        bool remove = false;
+        if (a.first == nullptr) {
             std::cerr << "WARNING: HZ section removed (leaf node not found): " << a.name << std::endl;
+            remove = true;
+        }
+        else if (!a.first->draw.shown) {
+            std::cerr << "WARNING: HZ section removed (leaf node not shown): " << a.name << std::endl;
+            remove = true;
+        }
         return remove;
     };
     sections.erase(std::remove_if(sections.begin(), sections.end(), remove_section), sections.end());
 
     std::sort(sections.begin(), sections.end(), [](const auto& a, const auto& b) -> bool { return a.first->draw.line_no < b.first->draw.line_no; });
 
-    const Node& first_leaf = find_first_leaf(aTree);
-    if (sections.empty() || sections.front().first != &first_leaf) {
+    const Node* first_leaf = aTree.find_leaf_by_line_no(TreeDraw::sFirstLineNo);
+    if (sections.empty() || sections.front().first != first_leaf) {
           // if the first section does not start with the topmost node, prepend section list with the new section
-        sections.emplace(sections.begin(), first_leaf, true, false);
+        sections.emplace(sections.begin(), *first_leaf, true, false);
     }
 
     for (size_t sec_index = 1; sec_index < sections.size(); ++sec_index) {
@@ -590,8 +595,6 @@ void HzSections::auto_detect(Tree& aTree, const Clades* aClades)
     }
 
 } // HzSections::auto_detect
-
-// ----------------------------------------------------------------------
 
 // ----------------------------------------------------------------------
 /// Local Variables:
