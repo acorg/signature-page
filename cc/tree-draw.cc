@@ -512,7 +512,8 @@ void HzSections::sort(const Tree& aTree)
     for (size_t sec_index = 1; sec_index < sections.size(); ++sec_index) {
         sections[sec_index - 1].last = aTree.find_leaf_by_line_no(sections[sec_index].first->draw.line_no - 1);
     }
-    sections.back().last = &find_last_leaf(aTree);
+    if (!sections.empty())
+        sections.back().last = &find_last_leaf(aTree);
 
     size_t section_index = 0;
     for (auto& section: sections) {
