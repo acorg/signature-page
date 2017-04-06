@@ -314,6 +314,7 @@ size_t TreeDraw::prepare_hz_sections()
             Node* section_start = mTree.find_leaf_by_seqid(section.name);
             if (section_start) {
                 if (section_start->draw.shown) {
+                    std::cerr << "HZS: " << section_index << " " << section.name << std::endl;
                     section_start->draw.hz_section_index = section_index;
                     ++number_of_hz_sections;
                 }
@@ -327,8 +328,8 @@ size_t TreeDraw::prepare_hz_sections()
         }
         ++section_index;
     }
-    if (number_of_hz_sections == 0)
-        number_of_hz_sections = 1;
+    // if (number_of_hz_sections == 0)
+    //     number_of_hz_sections = 1;
     std::cerr << "HZ sections: " << number_of_hz_sections << std::endl;
     return number_of_hz_sections;
 
@@ -510,6 +511,12 @@ void HzSections::sort(const Tree& aTree)
     sections.erase(std::remove_if(sections.begin(), sections.end(), remove_section), sections.end());
 
     std::sort(sections.begin(), sections.end(), [](const auto& a, const auto& b) -> bool { return a.first->draw.line_no < b.first->draw.line_no; });
+
+    const Node& first_leaf = find_first_leaf(aTree);
+    if (sections.empty() || sections.front().first != &first_leaf) {
+          // if the first section does not start with the topmost node, prepend section list with the new section
+        sections.emplace(sections.begin(), first_leaf, true, false);
+    }
 
     for (size_t sec_index = 1; sec_index < sections.size(); ++sec_index) {
         sections[sec_index - 1].last = aTree.find_leaf_by_line_no(sections[sec_index].first->draw.line_no - 1);

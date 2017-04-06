@@ -69,6 +69,11 @@ HzSection::HzSection(std::string aName, bool aShowLine)
 {
 }
 
+HzSection::HzSection(const Node& aFirst, bool aShow, bool aShowLine)
+    : show(aShow), show_line(aShowLine), show_label_in_time_series(false), show_map(true), name(aFirst.seq_id), first(&aFirst), last(nullptr), index(1, '?')
+{
+}
+
 HzSection::~HzSection()
 {
 }
