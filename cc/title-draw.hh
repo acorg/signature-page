@@ -7,7 +7,7 @@
 // ----------------------------------------------------------------------
 
 class Tree;
-namespace sdb { class Chart; }
+class ChartDrawBase;
 
 // ----------------------------------------------------------------------
 
@@ -30,7 +30,7 @@ class TitleDrawSettings
 class TitleDraw
 {
  public:
-    inline TitleDraw(Surface& aSurface, const Tree& aTree, const sdb::Chart* aChart, TitleDrawSettings& aSettings)
+    inline TitleDraw(Surface& aSurface, const Tree& aTree, const ChartDrawBase* aChart, TitleDrawSettings& aSettings)
         : mSurface(aSurface), mTree(aTree), mChart(aChart), mSettings(aSettings) {}
 
     void init_settings();
@@ -42,7 +42,7 @@ class TitleDraw
  private:
     Surface& mSurface;
     const Tree& mTree;
-    const sdb::Chart* mChart;
+    const ChartDrawBase* mChart;
     TitleDrawSettings& mSettings;
 
 }; // class TitleDraw

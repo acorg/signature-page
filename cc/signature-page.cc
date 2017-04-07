@@ -14,7 +14,6 @@
 #include "mapped-antigens-draw.hh"
 #include "antigenic-maps-draw.hh"
 #include "title-draw.hh"
-#include "sdb-chart.hh"
 
 // ----------------------------------------------------------------------
 
@@ -178,8 +177,8 @@ void SignaturePageDraw::tree(std::string aTreeFilename, std::string aSeqdbFilena
 
 void SignaturePageDraw::chart(std::string aChartFilename)
 {
-    mChart = std::make_unique<sdb::Chart>();
-    sdb::read_chart_from_sdb(*mChart, aChartFilename);
+      // mChart = std::make_unique<sdb::Chart>();
+    mChart = std::unique_ptr<ChartDrawBase>(sdb::read_chart_from_sdb(aChartFilename));
 
 } // SignaturePageDraw::chart
 

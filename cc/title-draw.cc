@@ -1,6 +1,6 @@
 #include "title-draw.hh"
 #include "tree.hh"
-#include "sdb-chart.hh"
+#include "chart-draw.hh"
 
 // ----------------------------------------------------------------------
 
@@ -13,7 +13,7 @@ void TitleDraw::init_settings()
     if (mChart) {
         if (!mSettings.title.empty())
             mSettings.title += " ";
-        mSettings.title += mChart->chart_info().lab;
+        mSettings.title += mChart->lab();
         mSettings.offset.set(10, 10);
     }
     else {

@@ -222,7 +222,7 @@ class AntigenicMapsLayout
 class AntigenicMapsDraw
 {
  public:
-    inline AntigenicMapsDraw(Surface& aSurface, Tree& aTree, sdb::Chart& aChart, HzSections& aHzSections, MappedAntigensDraw& aMappedAntigensDraw, SignaturePageDrawSettings& aSignaturePageDrawSettings, AntigenicMapsDrawSettings& aSettings)
+    inline AntigenicMapsDraw(Surface& aSurface, Tree& aTree, ChartDrawBase& aChart, HzSections& aHzSections, MappedAntigensDraw& aMappedAntigensDraw, SignaturePageDrawSettings& aSignaturePageDrawSettings, AntigenicMapsDrawSettings& aSettings)
         : mSurface(aSurface), mTree(aTree), mChart(aChart), mHzSections(aHzSections), mMappedAntigensDraw(aMappedAntigensDraw),
           mSignaturePageDrawSettings(aSignaturePageDrawSettings), mSettings(aSettings) {}
 
@@ -232,7 +232,7 @@ class AntigenicMapsDraw
 
     inline Surface& surface() { return mSurface; }
     inline const Tree& tree() const { return mTree; }
-    inline const sdb::Chart& chart() const { return mChart; }
+    inline const sdb::Chart& chart() const { return dynamic_cast<const sdb::Chart&>(mChart); }
     inline const HzSections& hz_sections() const { return mHzSections; }
     inline MappedAntigensDraw& mapped_antigens_draw() { return mMappedAntigensDraw; }
     inline const SignaturePageDrawSettings& signature_page_settings() const { return mSignaturePageDrawSettings; }
@@ -241,7 +241,7 @@ class AntigenicMapsDraw
  private:
     Surface& mSurface;
     Tree& mTree;
-    sdb::Chart& mChart;
+    ChartDrawBase& mChart;
     HzSections& mHzSections;
     MappedAntigensDraw& mMappedAntigensDraw;
     SignaturePageDrawSettings& mSignaturePageDrawSettings;

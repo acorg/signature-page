@@ -9,8 +9,9 @@ namespace jsw = json_writer;
 
 // ----------------------------------------------------------------------
 
-static constexpr const char* SETTINGS_VERSION = "signature-page-settings-v3";
-static constexpr const char* SETTINGS_VERSION_OLD = "signature-page-settings-v2";
+static constexpr const char* SETTINGS_VERSION_4 = "signature-page-settings-v4";
+static constexpr const char* SETTINGS_VERSION_3 = "signature-page-settings-v3";
+static constexpr const char* SETTINGS_VERSION_2 = "signature-page-settings-v2";
 
 // ----------------------------------------------------------------------
 
@@ -178,7 +179,7 @@ SignaturePageDrawSettings::SignaturePageDrawSettings()
 void Settings::set_version(const char* str, size_t length)
 {
     version.assign(str, length);
-    if (version != SETTINGS_VERSION && version != SETTINGS_VERSION_OLD)
+    if (version != SETTINGS_VERSION_4 && version != SETTINGS_VERSION_3 && version != SETTINGS_VERSION_2)
         throw std::runtime_error("Unsupported sigp settings version: \"" + version + "\"");
 }
 
@@ -186,7 +187,7 @@ void Settings::set_version(const char* str, size_t length)
 
 void Settings::upgrade()             // upgrade to the new version in case old version data provided
 {
-    if (version == SETTINGS_VERSION_OLD) {
+    if (version == SETTINGS_VERSION_2) {
         signature_page.antigenic_maps_width = antigenic_maps._width;
         if (!tree_draw._root.empty())
             tree_draw.mods.emplace_back("root", tree_draw._root);
@@ -197,7 +198,7 @@ void Settings::upgrade()             // upgrade to the new version in case old v
         if (!tree_draw._hide_if.empty())
             tree_draw.mods.emplace_back(tree_draw._hide_if);
     }
-    else if (version == SETTINGS_VERSION) {
+    else if (version == SETTINGS_VERSION_3) {
           // fail, if old version data provided
         if (!float_zero(antigenic_maps._width))
             throw std::runtime_error("antigenic_maps.width provided, must be signature_page.antigenic_maps_width");
@@ -930,7 +931,7 @@ template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writ
 template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const Settings& aSettings)
 {
     return writer << jsw::start_object
-                  << jsw::key("  version") << SETTINGS_VERSION
+                  << jsw::key("  version") << SETTINGS_VERSION_4
                   << jsw::key("signature_page") << aSettings.signature_page
                   << jsw::key("title") << aSettings.title
                   << jsw::key("tree") << aSettings.tree_draw
@@ -946,7 +947,7 @@ template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writ
 
 void write_settings(const Settings& aSettings, std::string aFilename, size_t aIndent)
 {
-    jsw::export_to_json(aSettings, SETTINGS_VERSION, aFilename, aIndent);
+    jsw::export_to_json(aSettings, SETTINGS_VERSION_4, aFilename, aIndent);
 
 } // write_settings
 

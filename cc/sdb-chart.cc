@@ -5,13 +5,6 @@ using namespace sdb;
 
 // ----------------------------------------------------------------------
 
-Chart::~Chart()
-{
-
-} // Chart::~Chart
-
-// ----------------------------------------------------------------------
-
 void Chart::init_settings()
 {
     calculate_viewport(nullptr);

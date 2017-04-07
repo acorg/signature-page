@@ -8,7 +8,7 @@
 #pragma GCC diagnostic pop
 
 #include "acmacs-draw/surface-cairo.hh"
-#include "sdb-chart.hh"
+#include "chart-draw.hh"
 #include "antigenic-maps-draw.hh"
 
 // ----------------------------------------------------------------------
@@ -30,8 +30,7 @@ int main(int argc, const char *argv[])
     int exit_code = get_args(argc, argv, options);
     if (exit_code == 0) {
         try {
-            auto chart = std::make_unique<sdb::Chart>();
-            sdb::read_chart_from_sdb(*chart, options.chart_filename);
+            auto chart = std::unique_ptr<sdb::Chart>{dynamic_cast<sdb::Chart*>(sdb::read_chart_from_sdb(options.chart_filename))};
             auto viewport = chart->viewport(nullptr);
             std::cout << viewport << std::endl;
 

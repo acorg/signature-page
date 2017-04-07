@@ -81,7 +81,7 @@ int get_args(int argc, const char *argv[], Options& aOptions)
             ("report-cumulative", bool_switch(&aOptions.report_cumulative)->default_value(false), "report cumulative edge lengths for leaf nodes of the tree")
             ("list-ladderized", bool_switch(&aOptions.list_ladderized)->default_value(false), "list strain names after ladderizing")
             ("no-draw", bool_switch(&aOptions.no_draw)->default_value(false), "do not generate pdf")
-            ("chart", value<std::string>(&aOptions.chart_filename), "path to chart for signature page")
+            ("chart", value<std::string>(&aOptions.chart_filename), "path to a chart for the signature page")
             ("output,o", value<std::string>(&aOptions.output_filename)->required(), "output pdf")
             ;
     positional_options_description pos_opt;

@@ -645,9 +645,11 @@ const std::map<std::string, ChartRootHandler::Keys> ChartRootHandler::key_mapper
 
 // ----------------------------------------------------------------------
 
-void sdb::read_chart_from_sdb(Chart& aChart, std::string aFilename)
+sdb::Chart* sdb::read_chart_from_sdb(std::string aFilename)
 {
-    json_reader::read_from_file<Chart, ChartRootHandler>(aFilename, aChart);
+    sdb::Chart* chart = new sdb::Chart{};
+    json_reader::read_from_file<Chart, ChartRootHandler>(aFilename, *chart);
+    return chart;
 
 } // sdb::read_chart_from_sdb
 

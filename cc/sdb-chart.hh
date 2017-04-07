@@ -5,9 +5,8 @@
 #include <map>
 #include <set>
 
-#include "acmacs-base/transformation.hh"
 #include "acmacs-base/color.hh"
-#include "acmacs-draw/viewport.hh"
+#include "chart-draw.hh"
 
 // ----------------------------------------------------------------------
 
@@ -111,19 +110,19 @@ namespace sdb
 
 // ----------------------------------------------------------------------
 
-    class Chart
+    class Chart : public ChartDrawBase
     {
      public:
         inline Chart() : mStress(-1) {}
-        ~Chart();
 
-        void init_settings();
-        void prepare(const AntigenicMapsDrawSettings& aSettings);
+        virtual void init_settings();
+        virtual void prepare(const AntigenicMapsDrawSettings& aSettings);
+
+        virtual inline std::string lab() const { return chart_info().lab; }
 
           // void preprocess(const SettingsAntigenicMaps& aSettings);
           // void draw_points_reset(const SettingsAntigenicMaps& aSettings) const;
 
-        constexpr static const size_t AntigenNotFound = static_cast<size_t>(-1);
           // returns AntigenNotFound if not found
         inline size_t find_antigen(std::string aName) const
             {
@@ -162,7 +161,7 @@ namespace sdb
         inline std::vector<double>& column_bases() { return mColumnBases; }
 
         inline const Viewport& viewport(const Transformation* aSettingsTransformation) { calculate_viewport(aSettingsTransformation); return mViewport; }
-        inline const Viewport& viewport(const Transformation* aSettingsTransformation) const { return const_cast<Chart*>(this)->viewport(aSettingsTransformation); }
+        using ChartDrawBase::viewport;
 
      private:
         double mStress;
@@ -205,7 +204,7 @@ namespace sdb
 
 // ----------------------------------------------------------------------
 
-    void read_chart_from_sdb(Chart& aChart, std::string aFilename);
+    Chart* read_chart_from_sdb(std::string aFilename);
 
 } // namespace sdb
 
