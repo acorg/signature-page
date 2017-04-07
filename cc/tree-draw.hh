@@ -153,7 +153,7 @@ class HzSection
 {
  public:
     HzSection(std::string aName = std::string{}, bool aShowLine = true);
-    HzSection(const Node& aFirst, bool aShow, bool aShowLine);
+    HzSection(const Node& aFirst, bool aShow, bool aShowLine, bool aShowMap);
     inline HzSection(const HzSection&) = default;
     // inline HzSection(HzSection&&) = default;
     ~HzSection();

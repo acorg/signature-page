@@ -520,7 +520,7 @@ void HzSections::sort(const Tree& aTree)
     const Node* first_leaf = aTree.find_leaf_by_line_no(TreeDraw::sFirstLineNo);
     if (sections.empty() || sections.front().first != first_leaf) {
           // if the first section does not start with the topmost node, prepend section list with the new section
-        sections.emplace(sections.begin(), *first_leaf, true, false);
+        sections.emplace(sections.begin(), *first_leaf, true, false, false);
     }
 
     for (size_t sec_index = 1; sec_index < sections.size(); ++sec_index) {
