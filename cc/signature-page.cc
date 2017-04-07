@@ -148,9 +148,9 @@ void SignaturePageDraw::init_settings()
     else {                      // just tree
         mSettings->tree_draw.legend.width = 180;
         mSettings->hz_sections.vertical_gap = 15;
-        for (auto& section: mSettings->hz_sections.sections) {
-            section.show_label_in_time_series = false;
-        }
+        // for (auto& section: mSettings->hz_sections.sections) {
+        //     section.show_label_in_time_series = false;
+        // }
 
         mSettings->clades.slot_width = 10;
         for (auto& clade: mSettings->clades.clades) {
@@ -192,12 +192,16 @@ void SignaturePageDraw::prepare()
       case SignaturePageDrawSettings::Layout::TreeTSClades:
       case SignaturePageDrawSettings::Layout::Auto:
           make_layout_tree_ts_clades();
-            // hide hz section lables in time series
           if (mTimeSeriesDraw)
-              mTimeSeriesDraw->hide_hz_section_labels_in_time_series();
+              mTimeSeriesDraw->tree_mode(true);
+          //   // hide hz section lables in time series
+          // if (mTimeSeriesDraw)
+          //     mTimeSeriesDraw->hide_hz_section_labels_in_time_series();
           break;
       case SignaturePageDrawSettings::Layout::TreeCladesTSMaps:
           make_layout_tree_clades_ts_maps();
+          if (mTimeSeriesDraw)
+              mTimeSeriesDraw->tree_mode(false);
           break;
     }
 

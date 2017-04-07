@@ -79,7 +79,7 @@ HzSection::~HzSection()
 }
 
 HzSections::HzSections()
-    : vertical_gap(20), line_color("grey63"), line_width(1), ts_label_size(10), ts_label_color("black")
+    : vertical_gap(20), line_color("grey63"), line_width(1), ts_label_size(10), ts_label_color("black"), show_labels_in_time_series_in_tree_mode(false)
 {
 }
 
@@ -481,6 +481,7 @@ void read_settings(Settings& aSettings, std::string aFilename)
         {"ts_label_size", jsi::field(&HzSections::ts_label_size)},
         {"ts_label_style", jsi::field(&HzSections::ts_label_style, style_data)},
         {"ts_label_color", jsi::field<ColorStorer>(&HzSections::ts_label_color)},
+        {"show_labels_in_time_series_in_tree_mode", jsi::field(&HzSections::show_labels_in_time_series_in_tree_mode)},
         {"sections", jsi::field(&HzSections::get_sections, hz_section_data)},
     };
 
@@ -807,6 +808,7 @@ template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writ
                   << jsw::key("ts_label_size") << aSettings.ts_label_size
                   << jsw::key("ts_label_style") << aSettings.ts_label_style
                   << jsw::key("ts_label_color") << aSettings.ts_label_color
+                  << jsw::key("show_labels_in_time_series_in_tree_mode") << aSettings.show_labels_in_time_series_in_tree_mode
                   << jsw::key("sections") << aSettings.sections
                   << jsw::end_object;
 }

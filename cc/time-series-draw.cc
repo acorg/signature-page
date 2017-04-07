@@ -130,7 +130,7 @@ void TimeSeriesDraw::draw_hz_section_lines()
                     y = (previous_vertical_pos + aNode.draw.vertical_pos) / 2;
                     mSurface.line({0, y}, {mSurface.viewport().size.width, y}, mHzSections.line_color, Pixels{mHzSections.line_width});
                 }
-                if (section_settings.show_label_in_time_series) {
+                if ((!mTreeMode || mHzSections.show_labels_in_time_series_in_tree_mode) && section_settings.show_label_in_time_series) {
                     draw_hz_section_label(section_settings, y);
                 }
             }
@@ -155,12 +155,12 @@ void TimeSeriesDraw::draw_hz_section_label(const HzSection& aSection, double aY)
 
 // ----------------------------------------------------------------------
 
-void TimeSeriesDraw::hide_hz_section_labels_in_time_series()
-{
-    for (auto& section: mHzSections.sections)
-        section.show_label_in_time_series = false;
+// void TimeSeriesDraw::hide_hz_section_labels_in_time_series()
+// {
+//     for (auto& section: mHzSections.sections)
+//         section.show_label_in_time_series = false;
 
-} // TimeSeriesDraw::hide_hz_section_labels_in_time_series
+// } // TimeSeriesDraw::hide_hz_section_labels_in_time_series
 
 // ----------------------------------------------------------------------
 /// Local Variables:

@@ -193,6 +193,7 @@ class HzSections
     TextStyle ts_label_style;
     Color ts_label_color;
     std::vector<HzSection> sections;
+    bool show_labels_in_time_series_in_tree_mode;
 
       // for json importer
     inline std::vector<HzSection>& get_sections() { return sections; }
@@ -218,7 +219,7 @@ class TreeDraw
     inline Surface& surface() { return mSurface; }
 
     static constexpr const size_t sFirstLineNo = 1; // line of the first node is 1, we have 1 line space at the top and bottom of the tree
-    
+
  private:
     Surface& mSurface;
     Tree& mTree;
