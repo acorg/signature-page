@@ -76,12 +76,13 @@ class SignaturePageDraw
     inline Settings& settings() { return *mSettings; }
     void tree(std::string aTreeFilename, std::string aSeqdbFilename);
     inline Tree& tree() { return *mTree; }
-    void chart(std::string aChartFilename);
+    inline void chart(std::string aChartFilename) { mChartFilename = aChartFilename; }
 
     void prepare();
     void draw();
 
  private:
+    std::string mChartFilename;
     std::unique_ptr<Surface> mSurface;
     std::unique_ptr<Settings> mSettings;
     std::unique_ptr<LocDb> mLocdb;
@@ -90,7 +91,7 @@ class SignaturePageDraw
     std::unique_ptr<TreeDraw> mTreeDraw;
     std::unique_ptr<TimeSeriesDraw> mTimeSeriesDraw;
     std::unique_ptr<CladesDraw> mCladesDraw;
-    std::unique_ptr<ChartDrawBase> mChart;
+      // std::unique_ptr<ChartDrawBase> mChart;
     std::unique_ptr<MappedAntigensDraw> mMappedAntigensDraw;
     std::unique_ptr<AntigenicMapsDrawBase> mAntigenicMapsDraw;
     std::unique_ptr<TitleDraw> mTitleDraw;

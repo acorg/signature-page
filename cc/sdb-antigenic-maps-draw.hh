@@ -165,6 +165,7 @@ namespace sdb
         virtual void prepare();
         virtual void draw(Surface& aMappedAntigensDrawSurface);
         virtual inline const ChartDrawBase& chart() const { return mChart; }
+        virtual inline ChartDrawBase& chart() { return mChart; }
 
         inline const sdb::Chart& chart_sdb() const { return dynamic_cast<const sdb::Chart&>(mChart); }
 

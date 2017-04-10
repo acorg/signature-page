@@ -54,7 +54,7 @@ void SignaturePageDraw::load_settings(std::string aFilename)
 
 SignaturePageDrawSettings::Layout SignaturePageDraw::detect_layout() const
 {
-    return mSettings->signature_page.layout == SignaturePageDrawSettings::Layout::Auto ? (mChart ? SignaturePageDrawSettings::Layout::TreeCladesTSMaps : SignaturePageDrawSettings::Layout::TreeTSClades) : mSettings->signature_page.layout;
+    return mSettings->signature_page.layout == SignaturePageDrawSettings::Layout::Auto ? (mChartFilename.empty() ? SignaturePageDrawSettings::Layout::TreeTSClades : SignaturePageDrawSettings::Layout::TreeCladesTSMaps) : mSettings->signature_page.layout;
 
 } // SignaturePageDraw::detect_layout
 
@@ -76,14 +76,18 @@ void SignaturePageDraw::make_surface(std::string aFilename)
     }
     mSurface = std::make_unique<PdfCairo>(aFilename, width, height);
 
-    mTitleDraw = std::make_unique<TitleDraw>(mSurface->subsurface(false), *mTree, mChart.get(), mSettings->title);
     mTreeDraw = std::make_unique<TreeDraw>(mSurface->subsurface(false), *mTree, mSettings->tree_draw, mSettings->hz_sections);
     mTimeSeriesDraw = std::make_unique<TimeSeriesDraw>(mSurface->subsurface(false), *mTree, *mTreeDraw, mSettings->hz_sections, mSettings->time_series);
     mCladesDraw = std::make_unique<CladesDraw>(mSurface->subsurface(false), *mTree, *mTreeDraw, *mTimeSeriesDraw, mSettings->clades);
 
-    if (mChart) {
-        mAntigenicMapsDraw = std::make_unique<sdb::AntigenicMapsDraw>(mSurface->subsurface(false), *mTree, *mChart, mSettings->hz_sections, /* *mMappedAntigensDraw, */ mSettings->signature_page, mSettings->antigenic_maps);
-        mMappedAntigensDraw = std::make_unique<MappedAntigensDraw>(mSurface->subsurface(false), *mTree, *mChart, mSettings->mapped_antigens);
+    if (!mChartFilename.empty()) {
+        auto* chart = sdb::read_chart_from_sdb(mChartFilename);
+        mAntigenicMapsDraw = std::make_unique<sdb::AntigenicMapsDraw>(mSurface->subsurface(false), *mTree, *chart, mSettings->hz_sections, mSettings->signature_page, mSettings->antigenic_maps);
+        mMappedAntigensDraw = std::make_unique<MappedAntigensDraw>(mSurface->subsurface(false), *mTree, mAntigenicMapsDraw->chart(), mSettings->mapped_antigens);
+        mTitleDraw = std::make_unique<TitleDraw>(mSurface->subsurface(false), *mTree, &mAntigenicMapsDraw->chart(), mSettings->title);
+    }
+    else {
+        mTitleDraw = std::make_unique<TitleDraw>(mSurface->subsurface(false), *mTree, nullptr, mSettings->title);
     }
 
 } // SignaturePageDraw::make_surface
@@ -92,7 +96,7 @@ void SignaturePageDraw::make_surface(std::string aFilename)
 
 void SignaturePageDraw::init_layout()
 {
-    if (!mChart) {
+    if (mChartFilename.empty()) {
         mSettings->signature_page.top = 60;
         mSettings->signature_page.bottom = 60;
         mSettings->signature_page.left = 50;
@@ -175,12 +179,12 @@ void SignaturePageDraw::tree(std::string aTreeFilename, std::string aSeqdbFilena
 
 // ----------------------------------------------------------------------
 
-void SignaturePageDraw::chart(std::string aChartFilename)
-{
-      // mChart = std::make_unique<sdb::Chart>();
-    mChart = std::unique_ptr<ChartDrawBase>(sdb::read_chart_from_sdb(aChartFilename));
+// void SignaturePageDraw::chart(std::string aChartFilename)
+// {
+//       // mChart = std::make_unique<sdb::Chart>();
+//     mChart = std::unique_ptr<ChartDrawBase>(sdb::read_chart_from_sdb(aChartFilename));
 
-} // SignaturePageDraw::chart
+// } // SignaturePageDraw::chart
 
 // ----------------------------------------------------------------------
 
@@ -214,8 +218,8 @@ void SignaturePageDraw::prepare()
         mTimeSeriesDraw->prepare();
     if (mCladesDraw)
         mCladesDraw->prepare();
-    if (mChart)
-        mChart->prepare(mSettings->antigenic_maps);
+    // if (mChart)
+    //     mChart->prepare(mSettings->antigenic_maps);
     if (mAntigenicMapsDraw)
         mAntigenicMapsDraw->prepare();
 

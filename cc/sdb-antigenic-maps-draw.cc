@@ -44,6 +44,7 @@ void sdb::AntigenicMapsDraw::init_settings()
 
 void sdb::AntigenicMapsDraw::prepare()
 {
+    chart().prepare(settings());
     if (settings().layout == "labelled_grid") {
         mLayout = std::make_unique<LabelledGrid>(*this);
     }
