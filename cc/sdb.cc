@@ -1,4 +1,5 @@
 #include <limits>
+// #include <typeinfo>
 
 #include "sdb-chart.hh"
 using namespace sdb;
@@ -647,9 +648,15 @@ const std::map<std::string, ChartRootHandler::Keys> ChartRootHandler::key_mapper
 
 sdb::Chart* sdb::read_chart_from_sdb(std::string aFilename)
 {
-    sdb::Chart* chart = new sdb::Chart{};
-    json_reader::read_from_file<Chart, ChartRootHandler>(aFilename, *chart);
-    return chart;
+    try {
+        sdb::Chart* chart = new sdb::Chart{};
+        json_reader::read_from_file<Chart, ChartRootHandler>(aFilename, *chart);
+        return chart;
+    }
+    catch (std::exception& err) {
+          // std::cerr << typeid(err).name() << " Cannot read sdb chart from " << aFilename << ": " << err.what() << std::endl;
+        throw ChartReadError(err.what());
+    }
 
 } // sdb::read_chart_from_sdb
 

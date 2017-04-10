@@ -29,6 +29,10 @@ class ChartDrawBase
 }; // class ChartDrawBase
 
 // ----------------------------------------------------------------------
+
+class ChartReadError : public std::runtime_error { public: using std::runtime_error::runtime_error; };
+
+// ----------------------------------------------------------------------
 /// Local Variables:
 /// eval: (if (fboundp 'eu-rename-buffer) (eu-rename-buffer))
 /// End:
