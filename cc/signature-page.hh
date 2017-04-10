@@ -15,7 +15,7 @@ class TreeDraw;
 class TimeSeriesDraw;
 class CladesDraw;
 class MappedAntigensDraw;
-class AntigenicMapsDraw;
+class AntigenicMapsDrawBase;
 class TitleDraw;
 
 // ----------------------------------------------------------------------
@@ -93,7 +93,7 @@ class SignaturePageDraw
     std::unique_ptr<CladesDraw> mCladesDraw;
     std::unique_ptr<ChartDrawBase> mChart;
     std::unique_ptr<MappedAntigensDraw> mMappedAntigensDraw;
-    std::unique_ptr<AntigenicMapsDraw> mAntigenicMapsDraw;
+    std::unique_ptr<AntigenicMapsDrawBase> mAntigenicMapsDraw;
     std::unique_ptr<TitleDraw> mTitleDraw;
 
     SignaturePageDrawSettings::Layout detect_layout() const;

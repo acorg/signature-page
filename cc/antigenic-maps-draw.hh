@@ -11,6 +11,40 @@ class Tree;
 class TreeDraw;
 class HzSections;
 class SignaturePageDrawSettings;
+class MappedAntigensDraw;
+
+// ----------------------------------------------------------------------
+
+class AntigenicMapsDrawBase
+{
+ public:
+    inline AntigenicMapsDrawBase(Surface& aSurface, Tree& aTree, HzSections& aHzSections, MappedAntigensDraw& aMappedAntigensDraw, SignaturePageDrawSettings& aSignaturePageDrawSettings, AntigenicMapsDrawSettings& aSettings)
+        : mSurface(aSurface), mTree(aTree), mHzSections(aHzSections), mMappedAntigensDraw(aMappedAntigensDraw),
+          mSignaturePageDrawSettings(aSignaturePageDrawSettings), mSettings(aSettings) {}
+    virtual inline ~AntigenicMapsDrawBase() {}
+
+    virtual void init_settings() = 0;
+    virtual void prepare() = 0;
+    virtual void draw() = 0;
+
+    inline Surface& surface() { return mSurface; }
+    inline const Tree& tree() const { return mTree; }
+    inline const HzSections& hz_sections() const { return mHzSections; }
+    inline MappedAntigensDraw& mapped_antigens_draw() { return mMappedAntigensDraw; }
+    inline SignaturePageDrawSettings& signature_page_settings() { return mSignaturePageDrawSettings; }
+    inline const SignaturePageDrawSettings& signature_page_settings() const { return mSignaturePageDrawSettings; }
+    inline AntigenicMapsDrawSettings& settings() { return mSettings; }
+    inline const AntigenicMapsDrawSettings& settings() const { return mSettings; }
+
+ private:
+    Surface& mSurface;
+    Tree& mTree;
+    HzSections& mHzSections;
+    MappedAntigensDraw& mMappedAntigensDraw;
+    SignaturePageDrawSettings& mSignaturePageDrawSettings;
+    AntigenicMapsDrawSettings& mSettings;
+
+}; // class AntigenicMapsDrawBase
 
 // ----------------------------------------------------------------------
 
@@ -175,8 +209,6 @@ class DrawMarkedAntigen : public DrawAntigen
 // ----------------------------------------------------------------------
 
 class AntigenicMapsDraw;
-class HzSection;
-class MappedAntigensDraw;
 
 class AntigenicMapsLayout
 {
@@ -219,33 +251,34 @@ class AntigenicMapsLayout
 
 // ----------------------------------------------------------------------
 
-class AntigenicMapsDraw
+class AntigenicMapsDraw : public AntigenicMapsDrawBase
 {
  public:
     inline AntigenicMapsDraw(Surface& aSurface, Tree& aTree, ChartDrawBase& aChart, HzSections& aHzSections, MappedAntigensDraw& aMappedAntigensDraw, SignaturePageDrawSettings& aSignaturePageDrawSettings, AntigenicMapsDrawSettings& aSettings)
-        : mSurface(aSurface), mTree(aTree), mChart(aChart), mHzSections(aHzSections), mMappedAntigensDraw(aMappedAntigensDraw),
-          mSignaturePageDrawSettings(aSignaturePageDrawSettings), mSettings(aSettings) {}
+        : AntigenicMapsDrawBase(aSurface, aTree, aHzSections, aMappedAntigensDraw, aSignaturePageDrawSettings, aSettings), mChart(aChart) {}
+          // mSurface(aSurface), mTree(aTree), mChart(aChart), mHzSections(aHzSections), mMappedAntigensDraw(aMappedAntigensDraw),
+          // mSignaturePageDrawSettings(aSignaturePageDrawSettings), mSettings(aSettings) {}
 
-    void init_settings();
-    void prepare();
-    void draw();
+    virtual void init_settings();
+    virtual void prepare();
+    virtual void draw();
 
-    inline Surface& surface() { return mSurface; }
-    inline const Tree& tree() const { return mTree; }
+    // inline Surface& surface() { return mSurface; }
+    // inline const Tree& tree() const { return mTree; }
     inline const sdb::Chart& chart() const { return dynamic_cast<const sdb::Chart&>(mChart); }
-    inline const HzSections& hz_sections() const { return mHzSections; }
-    inline MappedAntigensDraw& mapped_antigens_draw() { return mMappedAntigensDraw; }
-    inline const SignaturePageDrawSettings& signature_page_settings() const { return mSignaturePageDrawSettings; }
-    inline const AntigenicMapsDrawSettings& settings() const { return mSettings; }
+    // inline const HzSections& hz_sections() const { return mHzSections; }
+    // inline MappedAntigensDraw& mapped_antigens_draw() { return mMappedAntigensDraw; }
+    // inline const SignaturePageDrawSettings& signature_page_settings() const { return mSignaturePageDrawSettings; }
+    // inline const AntigenicMapsDrawSettings& settings() const { return mSettings; }
 
  private:
-    Surface& mSurface;
-    Tree& mTree;
+    // Surface& mSurface;
+    // Tree& mTree;
     ChartDrawBase& mChart;
-    HzSections& mHzSections;
-    MappedAntigensDraw& mMappedAntigensDraw;
-    SignaturePageDrawSettings& mSignaturePageDrawSettings;
-    AntigenicMapsDrawSettings& mSettings;
+    // HzSections& mHzSections;
+    // MappedAntigensDraw& mMappedAntigensDraw;
+    // SignaturePageDrawSettings& mSignaturePageDrawSettings;
+    // AntigenicMapsDrawSettings& mSettings;
     std::unique_ptr<AntigenicMapsLayout> mLayout;
 
 }; // class AntigenicMapsDraw
