@@ -179,15 +179,6 @@ void SignaturePageDraw::tree(std::string aTreeFilename, std::string aSeqdbFilena
 
 // ----------------------------------------------------------------------
 
-// void SignaturePageDraw::chart(std::string aChartFilename)
-// {
-//       // mChart = std::make_unique<sdb::Chart>();
-//     mChart = std::unique_ptr<ChartDrawBase>(sdb::read_chart_from_sdb(aChartFilename));
-
-// } // SignaturePageDraw::chart
-
-// ----------------------------------------------------------------------
-
 void SignaturePageDraw::prepare()
 {
     std::cout << std::endl << "PREPARE:" << std::endl;
@@ -218,8 +209,6 @@ void SignaturePageDraw::prepare()
         mTimeSeriesDraw->prepare();
     if (mCladesDraw)
         mCladesDraw->prepare();
-    // if (mChart)
-    //     mChart->prepare(mSettings->antigenic_maps);
     if (mAntigenicMapsDraw)
         mAntigenicMapsDraw->prepare();
 

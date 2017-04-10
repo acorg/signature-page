@@ -91,7 +91,6 @@ class SignaturePageDraw
     std::unique_ptr<TreeDraw> mTreeDraw;
     std::unique_ptr<TimeSeriesDraw> mTimeSeriesDraw;
     std::unique_ptr<CladesDraw> mCladesDraw;
-      // std::unique_ptr<ChartDrawBase> mChart;
     std::unique_ptr<MappedAntigensDraw> mMappedAntigensDraw;
     std::unique_ptr<AntigenicMapsDrawBase> mAntigenicMapsDraw;
     std::unique_ptr<TitleDraw> mTitleDraw;
