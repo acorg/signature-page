@@ -9,7 +9,7 @@
 
 #include "acmacs-draw/surface-cairo.hh"
 #include "chart-draw.hh"
-#include "antigenic-maps-draw.hh"
+#include "sdb-antigenic-maps-draw.hh"
 
 // ----------------------------------------------------------------------
 
@@ -34,11 +34,11 @@ int main(int argc, const char *argv[])
             auto viewport = chart->viewport(nullptr);
             std::cout << viewport << std::endl;
 
-            DrawSerum draw_serum;
-            DrawVaccineAntigen draw_vaccine;
-            DrawReferenceAntigen draw_reference;
-            DrawTestAntigen draw_test;
-            std::vector<const DrawPoint*> draw_points(chart->points().size(), nullptr);
+            sdb::DrawSerum draw_serum;
+            sdb::DrawVaccineAntigen draw_vaccine;
+            sdb::DrawReferenceAntigen draw_reference;
+            sdb::DrawTestAntigen draw_test;
+            std::vector<const sdb::DrawPoint*> draw_points(chart->points().size(), nullptr);
             for (size_t point_no = 0; point_no < chart->points().size(); ++point_no) {
                 const auto& p = chart->points()[point_no];
                 if (p.attributes.antigen) {

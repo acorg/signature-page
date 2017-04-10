@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include "acmacs-draw/surface.hh"
+#include "antigenic-maps-draw.hh"
 #include "chart-draw.hh"
 
 // ----------------------------------------------------------------------
@@ -15,7 +15,6 @@ class TreeDraw;
 class TimeSeriesDraw;
 class CladesDraw;
 class MappedAntigensDraw;
-class AntigenicMapsDrawBase;
 class TitleDraw;
 
 // ----------------------------------------------------------------------
