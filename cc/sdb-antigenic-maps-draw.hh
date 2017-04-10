@@ -158,19 +158,19 @@ namespace sdb
     class AntigenicMapsDraw : public AntigenicMapsDrawBase
     {
      public:
-        inline AntigenicMapsDraw(Surface& aSurface, Tree& aTree, ChartDrawBase& aChart, HzSections& aHzSections, /* MappedAntigensDraw& aMappedAntigensDraw, */ SignaturePageDrawSettings& aSignaturePageDrawSettings, AntigenicMapsDrawSettings& aSettings)
-            : AntigenicMapsDrawBase(aSurface, aTree, aHzSections, /* aMappedAntigensDraw, */ aSignaturePageDrawSettings, aSettings), mChart(aChart) {}
+        inline AntigenicMapsDraw(Surface& aSurface, Tree& aTree, ChartDrawBase* aChart, HzSections& aHzSections, SignaturePageDrawSettings& aSignaturePageDrawSettings, AntigenicMapsDrawSettings& aSettings)
+            : AntigenicMapsDrawBase(aSurface, aTree, aHzSections, aSignaturePageDrawSettings, aSettings), mChart(aChart) {}
 
         virtual void init_settings();
         virtual void prepare();
         virtual void draw(Surface& aMappedAntigensDrawSurface);
-        virtual inline const ChartDrawBase& chart() const { return mChart; }
-        virtual inline ChartDrawBase& chart() { return mChart; }
+        virtual inline const ChartDrawBase& chart() const { return *mChart; }
+        virtual inline ChartDrawBase& chart() { return *mChart; }
 
-        inline const sdb::Chart& chart_sdb() const { return dynamic_cast<const sdb::Chart&>(mChart); }
+        inline const sdb::Chart& chart_sdb() const { return dynamic_cast<const sdb::Chart&>(*mChart); }
 
      private:
-        ChartDrawBase& mChart;
+        std::unique_ptr<ChartDrawBase> mChart;
         std::unique_ptr<AntigenicMapsLayout> mLayout;
 
     }; // class AntigenicMapsDraw

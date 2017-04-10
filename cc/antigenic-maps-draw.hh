@@ -20,8 +20,8 @@ class ChartDrawBase;
 class AntigenicMapsDrawBase
 {
  public:
-    inline AntigenicMapsDrawBase(Surface& aSurface, Tree& aTree, HzSections& aHzSections, /*MappedAntigensDraw& aMappedAntigensDraw,*/ SignaturePageDrawSettings& aSignaturePageDrawSettings, AntigenicMapsDrawSettings& aSettings)
-        : mSurface(aSurface), mTree(aTree), mHzSections(aHzSections), // mMappedAntigensDraw(aMappedAntigensDraw),
+    inline AntigenicMapsDrawBase(Surface& aSurface, Tree& aTree, HzSections& aHzSections, SignaturePageDrawSettings& aSignaturePageDrawSettings, AntigenicMapsDrawSettings& aSettings)
+        : mSurface(aSurface), mTree(aTree), mHzSections(aHzSections),
           mSignaturePageDrawSettings(aSignaturePageDrawSettings), mSettings(aSettings) {}
     virtual ~AntigenicMapsDrawBase();
 
@@ -33,7 +33,6 @@ class AntigenicMapsDrawBase
     inline Surface& surface() { return mSurface; }
     inline const Tree& tree() const { return mTree; }
     inline const HzSections& hz_sections() const { return mHzSections; }
-    // inline MappedAntigensDraw& mapped_antigens_draw() { return mMappedAntigensDraw; }
     inline SignaturePageDrawSettings& signature_page_settings() { return mSignaturePageDrawSettings; }
     inline const SignaturePageDrawSettings& signature_page_settings() const { return mSignaturePageDrawSettings; }
     inline AntigenicMapsDrawSettings& settings() { return mSettings; }
@@ -48,6 +47,10 @@ class AntigenicMapsDrawBase
     AntigenicMapsDrawSettings& mSettings;
 
 }; // class AntigenicMapsDrawBase
+
+// ----------------------------------------------------------------------
+
+AntigenicMapsDrawBase* make_antigenic_maps_draw(std::string aChartFilename, Surface& aSurface, Tree& aTree, HzSections& aHzSections, SignaturePageDrawSettings& aSignaturePageDrawSettings, AntigenicMapsDrawSettings& aSettings);
 
 // ----------------------------------------------------------------------
 

@@ -12,7 +12,7 @@
 #include "settings.hh"
 #include "acmacs-draw/surface-cairo.hh"
 #include "mapped-antigens-draw.hh"
-#include "sdb-antigenic-maps-draw.hh"
+#include "antigenic-maps-draw.hh"
 #include "title-draw.hh"
 
 // ----------------------------------------------------------------------
@@ -81,8 +81,7 @@ void SignaturePageDraw::make_surface(std::string aFilename)
     mCladesDraw = std::make_unique<CladesDraw>(mSurface->subsurface(false), *mTree, *mTreeDraw, *mTimeSeriesDraw, mSettings->clades);
 
     if (!mChartFilename.empty()) {
-        auto* chart = sdb::read_chart_from_sdb(mChartFilename);
-        mAntigenicMapsDraw = std::make_unique<sdb::AntigenicMapsDraw>(mSurface->subsurface(false), *mTree, *chart, mSettings->hz_sections, mSettings->signature_page, mSettings->antigenic_maps);
+        mAntigenicMapsDraw = std::unique_ptr<AntigenicMapsDrawBase>(make_antigenic_maps_draw(mChartFilename, mSurface->subsurface(false), *mTree, mSettings->hz_sections, mSettings->signature_page, mSettings->antigenic_maps));
         mMappedAntigensDraw = std::make_unique<MappedAntigensDraw>(mSurface->subsurface(false), *mTree, mAntigenicMapsDraw->chart(), mSettings->mapped_antigens);
         mTitleDraw = std::make_unique<TitleDraw>(mSurface->subsurface(false), *mTree, &mAntigenicMapsDraw->chart(), mSettings->title);
     }

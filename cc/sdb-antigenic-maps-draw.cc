@@ -36,7 +36,7 @@ void sdb::AntigenicMapsDraw::init_settings()
 
     std::cerr << "columns:" << settings().columns << " maps_per_column:" << maps_per_column << " map_width:" << map_width << " width:" << signature_page_settings().antigenic_maps_width << std::endl;
 
-    mChart.init_settings();
+    chart().init_settings();
 
 } // sdb::AntigenicMapsDraw::init_settings
 
