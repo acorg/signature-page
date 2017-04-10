@@ -82,8 +82,8 @@ void SignaturePageDraw::make_surface(std::string aFilename)
     mCladesDraw = std::make_unique<CladesDraw>(mSurface->subsurface(false), *mTree, *mTreeDraw, *mTimeSeriesDraw, mSettings->clades);
 
     if (mChart) {
+        mAntigenicMapsDraw = std::make_unique<sdb::AntigenicMapsDraw>(mSurface->subsurface(false), *mTree, *mChart, mSettings->hz_sections, /* *mMappedAntigensDraw, */ mSettings->signature_page, mSettings->antigenic_maps);
         mMappedAntigensDraw = std::make_unique<MappedAntigensDraw>(mSurface->subsurface(false), *mTree, *mChart, mSettings->mapped_antigens);
-        mAntigenicMapsDraw = std::make_unique<sdb::AntigenicMapsDraw>(mSurface->subsurface(false), *mTree, *mChart, mSettings->hz_sections, *mMappedAntigensDraw, mSettings->signature_page, mSettings->antigenic_maps);
     }
 
 } // SignaturePageDraw::make_surface
@@ -297,7 +297,7 @@ void SignaturePageDraw::draw()
     if (mMappedAntigensDraw)
         mMappedAntigensDraw->draw();
     if (mAntigenicMapsDraw)
-        mAntigenicMapsDraw->draw();
+        mAntigenicMapsDraw->draw(mMappedAntigensDraw->surface());
     if (mTitleDraw)
         mTitleDraw->draw();
 

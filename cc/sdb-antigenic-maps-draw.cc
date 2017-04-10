@@ -56,9 +56,9 @@ void sdb::AntigenicMapsDraw::prepare()
 
 // ----------------------------------------------------------------------
 
-void sdb::AntigenicMapsDraw::draw()
+void sdb::AntigenicMapsDraw::draw(Surface& aMappedAntigensDrawSurface)
 {
-    mLayout->draw();
+    mLayout->draw(aMappedAntigensDrawSurface);
 
 } // sdb::AntigenicMapsDraw::draw
 
@@ -189,7 +189,7 @@ void sdb::AntigenicMapsLayout::prepare()
         mMapViewport = mAntigenicMapsDraw.settings().viewport;
     }
     else {
-        mMapViewport = mAntigenicMapsDraw.chart().viewport(&mAntigenicMapsDraw.settings().transformation);
+        mMapViewport = mAntigenicMapsDraw.chart_sdb().viewport(&mAntigenicMapsDraw.settings().transformation);
     }
     std::cout << "Using viewport: " << mMapViewport << std::endl;
 
@@ -226,9 +226,9 @@ void sdb::AntigenicMapsLayout::draw_points_reset()
 {
     mDrawTrackedAntigen.color(mAntigenicMapsDraw.settings().tracked_antigen_color);
 
-    mDrawPoints.resize(mAntigenicMapsDraw.chart().points().size(), nullptr);
-    for (size_t point_no = 0; point_no < mAntigenicMapsDraw.chart().points().size(); ++point_no) {
-        const auto& p = mAntigenicMapsDraw.chart().points()[point_no];
+    mDrawPoints.resize(mAntigenicMapsDraw.chart_sdb().points().size(), nullptr);
+    for (size_t point_no = 0; point_no < mAntigenicMapsDraw.chart_sdb().points().size(); ++point_no) {
+        const auto& p = mAntigenicMapsDraw.chart_sdb().points()[point_no];
         if (p.attributes.antigen) {
             if (p.attributes.vaccine) {
                 mDrawPoints[point_no] = &mDrawVaccineAntigen;
@@ -279,7 +279,7 @@ void sdb::AntigenicMapsLayout::draw_chart(Surface& aSurface, size_t aSectionInde
     std::cout << "\nMAP: " << aSectionIndex << std::endl;
 
     const AntigenicMapsDrawSettings& settings = mAntigenicMapsDraw.settings();
-    const sdb::Chart& chart = mAntigenicMapsDraw.chart();
+    const sdb::Chart& chart = mAntigenicMapsDraw.chart_sdb();
 
     aSurface.background(settings.background_color);
     aSurface.grid(Scaled{1}, settings.grid_line_color, Pixels{settings.grid_line_width});
@@ -311,7 +311,7 @@ void sdb::AntigenicMapsLayout::mark_tracked_sera(size_t aSectionIndex)
 {
     const AntigenicMapsDrawSettings& settings = mAntigenicMapsDraw.settings();
     if (settings.show_tracked_sera) {
-        const std::vector<sdb::Point>& points = mAntigenicMapsDraw.chart().points();
+        const std::vector<sdb::Point>& points = mAntigenicMapsDraw.chart_sdb().points();
         mDrawTrackedSera.clear();
         mDrawTrackedSera.reserve(mDrawPoints.size()); // to avoid copying entries during emplace_back and loosing pointer for mDrawPoints
         for (size_t point_no = 0; point_no < mDrawPoints.size(); ++point_no) {
@@ -363,7 +363,7 @@ void sdb::AntigenicMapsLayout::draw_map_title(Surface& aSurface, size_t aSection
 
 void sdb::AntigenicMapsLayout::mark_tracked_antigens(size_t aSectionIndex)
 {
-    for (size_t point_no = 0; point_no < mAntigenicMapsDraw.chart().points().size(); ++point_no) {
+    for (size_t point_no = 0; point_no < mAntigenicMapsDraw.chart_sdb().points().size(); ++point_no) {
         if (mDrawPoints[point_no] == &mDrawTrackedAntigen || mDrawPoints[point_no] == &mDrawSequencedAntigen) {
             const auto sequenced = mSequencedAntigens.find(point_no);
             if (sequenced != mSequencedAntigens.end()) {
@@ -387,7 +387,7 @@ void sdb::LabelledGrid::prepare()
 
 // ----------------------------------------------------------------------
 
-void sdb::LabelledGrid::draw()
+void sdb::LabelledGrid::draw(Surface& aMappedAntigensDrawSurface)
 {
     const AntigenicMapsDrawSettings& settings = mAntigenicMapsDraw.settings();
     Surface& surface = mAntigenicMapsDraw.surface();
@@ -403,7 +403,7 @@ void sdb::LabelledGrid::draw()
             // std::cerr << "Map " << map_surface << std::endl;
             // std::cerr << "origin_offset: " << map_surface.origin_offset() << "  scale: " << map_surface.scale() << std::endl;
             draw_chart(map_surface, section_index);
-            draw_mapped_antigens_section(section_index);
+            draw_mapped_antigens_section(section_index, aMappedAntigensDrawSurface);
             ++column;
             if (column >= settings.columns) {
                 ++row;
@@ -435,17 +435,16 @@ void sdb::LabelledGrid::draw_chart(Surface& aSurface, size_t aSectionIndex)
 
 // ----------------------------------------------------------------------
 
-void sdb::LabelledGrid::draw_mapped_antigens_section(size_t aSectionIndex)
+void sdb::LabelledGrid::draw_mapped_antigens_section(size_t aSectionIndex, Surface& aMappedAntigensDrawSurface)
 {
     const AntigenicMapsDrawSettings& settings = mAntigenicMapsDraw.settings();
-    Surface& surface = mAntigenicMapsDraw.mapped_antigens_draw().surface();
     const auto& section = mAntigenicMapsDraw.hz_sections().sections[aSectionIndex];
 
-    const double left = 0, right = surface.viewport().size.width;
+    const double left = 0, right = aMappedAntigensDrawSurface.viewport().size.width;
     const double top = section.first->draw.vertical_pos, bottom = section.last->draw.vertical_pos;
-    surface.line({left, top}, {right, top}, settings.mapped_antigens_section_line_color, Pixels{settings.mapped_antigens_section_line_width}, Surface::LineCap::Square);
-    surface.line({left, bottom}, {right, bottom}, settings.mapped_antigens_section_line_color, Pixels{settings.mapped_antigens_section_line_width}, Surface::LineCap::Square);
-    surface.line({right, top}, {right, bottom}, settings.mapped_antigens_section_line_color, Pixels{settings.mapped_antigens_section_line_width}, Surface::LineCap::Square);
+    aMappedAntigensDrawSurface.line({left, top}, {right, top}, settings.mapped_antigens_section_line_color, Pixels{settings.mapped_antigens_section_line_width}, Surface::LineCap::Square);
+    aMappedAntigensDrawSurface.line({left, bottom}, {right, bottom}, settings.mapped_antigens_section_line_color, Pixels{settings.mapped_antigens_section_line_width}, Surface::LineCap::Square);
+    aMappedAntigensDrawSurface.line({right, top}, {right, bottom}, settings.mapped_antigens_section_line_color, Pixels{settings.mapped_antigens_section_line_width}, Surface::LineCap::Square);
 
 } // sdb::LabelledGrid::draw_mapped_antigens_section
 
