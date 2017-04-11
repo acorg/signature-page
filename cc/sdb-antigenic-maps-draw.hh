@@ -2,7 +2,6 @@
 
 #include <iostream>
 
-#include "acmacs-draw/surface.hh"
 #include "antigenic-maps-draw.hh"
 #include "sdb-chart.hh"
 
