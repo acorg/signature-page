@@ -28,11 +28,11 @@ class AntigenicMapsLayout
 
     virtual void find_sequenced_antigens();
 
-    virtual void draw_chart(Surface& aSurface, size_t aSectionIndex) = 0;
-    virtual void mark_tracked_sera(size_t aSectionIndex) = 0;
-    virtual void draw_map_title(Surface& aSurface, size_t aSectionIndex) = 0;
-    virtual void mark_tracked_antigens(size_t aSectionIndex) = 0;
-    virtual void mark_marked_antigens() = 0;
+    // virtual void draw_chart(Surface& aSurface, size_t aSectionIndex) = 0;
+    // virtual void mark_tracked_sera(size_t aSectionIndex) = 0;
+    // virtual void draw_map_title(Surface& aSurface, size_t aSectionIndex) = 0;
+    // virtual void mark_tracked_antigens(size_t aSectionIndex) = 0;
+    // virtual void mark_marked_antigens() = 0;
 
 }; // class AntigenicMapsLayout
 
