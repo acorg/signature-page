@@ -30,10 +30,11 @@ void AntigenicMapsDraw::init_settings()
 
 // ----------------------------------------------------------------------
 
-void AntigenicMapsDraw::prepare()
+void AntigenicMapsDraw::make_layout()
 {
+    layout(new LabelledGrid(*this));
 
-} // AntigenicMapsDraw::prepare
+} // AntigenicMapsDraw::make_layout
 
 // ----------------------------------------------------------------------
 

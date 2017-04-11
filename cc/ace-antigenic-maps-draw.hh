@@ -34,14 +34,13 @@ class AntigenicMapsDraw : public AntigenicMapsDrawBase
         : AntigenicMapsDrawBase(aSurface, aTree, aHzSections, aSignaturePageDrawSettings, aSettings), mChartDraw(aChart) {}
 
     virtual void init_settings();
-    virtual void prepare();
     virtual void draw(Surface& aMappedAntigensDrawSurface);
+    virtual void make_layout();
     virtual inline const ChartDrawBase& chart() const { return mChartDraw; }
     virtual inline ChartDrawBase& chart() { return mChartDraw; }
 
  private:
     ChartDraw mChartDraw;
-    // std::unique_ptr<AntigenicMapsLayout> mLayout;
 
 }; // class AntigenicMapsDraw
 

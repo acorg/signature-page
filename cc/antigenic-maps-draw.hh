@@ -25,9 +25,11 @@ class AntigenicMapsDrawBase
     virtual ~AntigenicMapsDrawBase();
 
     virtual void init_settings() = 0;
-    virtual void prepare() = 0;
+    virtual void prepare();
     virtual void draw(Surface& aMappedAntigensDrawSurface) = 0;
+    virtual ChartDrawBase& chart() = 0;
     virtual const ChartDrawBase& chart() const = 0;
+    virtual void make_layout() = 0;
 
     inline Surface& surface() { return mSurface; }
     inline const Tree& tree() const { return mTree; }
@@ -37,9 +39,11 @@ class AntigenicMapsDrawBase
     inline AntigenicMapsDrawSettings& settings() { return mSettings; }
     inline const AntigenicMapsDrawSettings& settings() const { return mSettings; }
 
-    void layout(AntigenicMapsLayout* aLayout);
     AntigenicMapsLayout& layout() { return *mLayout; }
       // const AntigenicMapsLayout& layout() const { return *mLayout; }
+
+ protected:
+    void layout(AntigenicMapsLayout* aLayout);
 
  private:
     Surface& mSurface;

@@ -30,6 +30,21 @@ void AntigenicMapsDrawBase::layout(AntigenicMapsLayout* aLayout)
 
 // ----------------------------------------------------------------------
 
+void AntigenicMapsDrawBase::prepare()
+{
+    chart().prepare(settings());
+    if (settings().layout == "labelled_grid") {
+        make_layout();
+    }
+    else {
+        throw std::runtime_error("Unrecognized antigenic maps layout: " + settings().layout);
+    }
+    layout().prepare();
+
+} // AntigenicMapsDrawBase::prepare
+
+// ----------------------------------------------------------------------
+
 AntigenicMapsDrawBase* make_antigenic_maps_draw(std::string aChartFilename, Surface& aSurface, Tree& aTree, HzSections& aHzSections, SignaturePageDrawSettings& aSignaturePageDrawSettings, AntigenicMapsDrawSettings& aSettings)
 {
     std::string error;

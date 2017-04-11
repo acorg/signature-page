@@ -42,18 +42,11 @@ void sdb::AntigenicMapsDraw::init_settings()
 
 // ----------------------------------------------------------------------
 
-void sdb::AntigenicMapsDraw::prepare()
+void sdb::AntigenicMapsDraw::make_layout()
 {
-    chart().prepare(settings());
-    if (settings().layout == "labelled_grid") {
-        layout(new LabelledGrid(*this));
-    }
-    else {
-        throw std::runtime_error("Unrecognized antigenic maps layout: " + settings().layout);
-    }
-    layout().prepare();
+    layout(new LabelledGrid(*this));
 
-} // sdb::AntigenicMapsDraw::prepare
+} // sdb::AntigenicMapsDraw::make_layout
 
 // ----------------------------------------------------------------------
 
