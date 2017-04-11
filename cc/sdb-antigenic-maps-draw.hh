@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "antigenic-maps-draw.hh"
+#include "antigenic-maps-layout.hh"
 #include "sdb-chart.hh"
 
 // ----------------------------------------------------------------------
@@ -111,23 +112,22 @@ namespace sdb
 
 // ----------------------------------------------------------------------
 
-    class AntigenicMapsDraw;
+    // class AntigenicMapsDraw;
 
-    class AntigenicMapsLayout
+    class AntigenicMapsLayout : public ::AntigenicMapsLayout
     {
      public:
-        inline AntigenicMapsLayout(AntigenicMapsDraw& aAntigenicMapsDraw) : mAntigenicMapsDraw(aAntigenicMapsDraw) {}
-        virtual ~AntigenicMapsLayout();
+        inline AntigenicMapsLayout(AntigenicMapsDrawBase& aAntigenicMapsDraw) : ::AntigenicMapsLayout(aAntigenicMapsDraw) {}
 
-        virtual void prepare();
-        virtual void draw(Surface& aMappedAntigensDrawSurface) = 0;
+        // virtual void prepare();
+        // virtual void draw(Surface& aMappedAntigensDrawSurface) = 0;
 
      protected:
-        AntigenicMapsDraw& mAntigenicMapsDraw;
-        Viewport mMapViewport;
+        // AntigenicMapsDraw& mAntigenicMapsDraw;
+        // Viewport mMapViewport;
 
         std::vector<const DrawPoint*> mDrawPoints;
-        std::map<size_t, size_t> mSequencedAntigens; // antigen_no to section_no
+        // std::map<size_t, size_t> mSequencedAntigens; // antigen_no to section_no
 
         DrawSerum mDrawSerum;
         DrawReferenceAntigen mDrawReferenceAntigen;
@@ -139,8 +139,8 @@ namespace sdb
         std::vector<DrawMarkedAntigen> mDrawMarkedAntigens;
         std::vector<DrawTrackedSerum> mDrawTrackedSera;
 
-        virtual void find_sequenced_antigens();
-        virtual void draw_points_reset();
+        // virtual void find_sequenced_antigens();
+        virtual void reset();
         virtual void draw_chart(Surface& aSurface, size_t aSectionIndex);
         virtual void mark_tracked_sera(size_t aSectionIndex);
         virtual void draw_map_title(Surface& aSurface, size_t aSectionIndex);
@@ -181,7 +181,7 @@ namespace sdb
      public:
         inline LabelledGrid(AntigenicMapsDraw& aAntigenicMapsDraw) : AntigenicMapsLayout(aAntigenicMapsDraw) {}
 
-        virtual void prepare();
+        // virtual void prepare();
         virtual void draw(Surface& aMappedAntigensDrawSurface);
 
      protected:
