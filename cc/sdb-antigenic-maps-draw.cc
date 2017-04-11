@@ -6,42 +6,6 @@
 
 // ----------------------------------------------------------------------
 
-void sdb::AntigenicMapsDraw::init_settings()
-{
-    const size_t number_sections = hz_sections().shown_maps();
-    switch (number_sections) {
-      case 0:
-      case 1:
-      case 2:
-      case 3:
-          settings().columns = 1;
-          break;
-      case 4:
-      case 5:
-      case 6:
-          settings().columns = 2;
-          break;
-      case 7:
-      case 8:
-      case 9:
-          settings().columns = 3;
-          break;
-      default:
-          settings().columns = 3;
-          break;
-    }
-    size_t maps_per_column = number_sections / settings().columns + ((number_sections % settings().columns) == 0 ? 0 : 1);
-    const double map_width = 150; // height is not available at this moment mSurface.viewport().size.height / (maps_per_column + settings().gap * (maps_per_column - 1));
-    signature_page_settings().antigenic_maps_width = map_width * settings().columns + (settings().columns - 1) * settings().gap;
-
-    std::cerr << "columns:" << settings().columns << " maps_per_column:" << maps_per_column << " map_width:" << map_width << " width:" << signature_page_settings().antigenic_maps_width << std::endl;
-
-    chart().init_settings();
-
-} // sdb::AntigenicMapsDraw::init_settings
-
-// ----------------------------------------------------------------------
-
 void sdb::AntigenicMapsDraw::make_layout()
 {
     layout(new LabelledGrid(*this));

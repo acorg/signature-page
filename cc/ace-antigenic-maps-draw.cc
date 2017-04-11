@@ -23,13 +23,6 @@ const Viewport& ChartDraw::viewport(const Transformation* aSettingsTransformatio
 
 // ----------------------------------------------------------------------
 
-void AntigenicMapsDraw::init_settings()
-{
-
-} // AntigenicMapsDraw::init_settings
-
-// ----------------------------------------------------------------------
-
 void AntigenicMapsDraw::make_layout()
 {
     layout(new LabelledGrid(*this));

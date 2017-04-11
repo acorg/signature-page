@@ -24,7 +24,7 @@ class AntigenicMapsDrawBase
     AntigenicMapsDrawBase(Surface& aSurface, Tree& aTree, HzSections& aHzSections, SignaturePageDrawSettings& aSignaturePageDrawSettings, AntigenicMapsDrawSettings& aSettings);
     virtual ~AntigenicMapsDrawBase();
 
-    virtual void init_settings() = 0;
+    virtual void init_settings();
     virtual void prepare();
     virtual void draw(Surface& aMappedAntigensDrawSurface);
     virtual ChartDrawBase& chart() = 0;

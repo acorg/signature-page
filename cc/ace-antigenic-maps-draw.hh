@@ -33,7 +33,6 @@ class AntigenicMapsDraw : public AntigenicMapsDrawBase
     inline AntigenicMapsDraw(Surface& aSurface, Tree& aTree, Chart* aChart, HzSections& aHzSections, SignaturePageDrawSettings& aSignaturePageDrawSettings, AntigenicMapsDrawSettings& aSettings)
         : AntigenicMapsDrawBase(aSurface, aTree, aHzSections, aSignaturePageDrawSettings, aSettings), mChartDraw(aChart) {}
 
-    virtual void init_settings();
     virtual void make_layout();
     virtual inline const ChartDrawBase& chart() const { return mChartDraw; }
     virtual inline ChartDrawBase& chart() { return mChartDraw; }
