@@ -1,8 +1,9 @@
 #pragma once
 
+#include "acmacs-chart/chart.hh"
 #include "antigenic-maps-draw.hh"
 #include "chart-draw.hh"
-#include "acmacs-chart/chart.hh"
+#include "antigenic-maps-layout.hh"
 
 // ----------------------------------------------------------------------
 
@@ -43,6 +44,34 @@ class AntigenicMapsDraw : public AntigenicMapsDrawBase
     // std::unique_ptr<AntigenicMapsLayout> mLayout;
 
 }; // class AntigenicMapsDraw
+
+// ----------------------------------------------------------------------
+
+class AntigenicMapsLayoutDrawAce : public AntigenicMapsLayoutDraw
+{
+ public:
+    inline AntigenicMapsLayoutDrawAce(AntigenicMapsDrawBase& aAntigenicMapsDraw) : AntigenicMapsLayoutDraw(aAntigenicMapsDraw) {}
+
+    virtual void draw_chart(Surface& aSurface, size_t aSectionIndex);
+
+ protected:
+    virtual void reset();
+
+}; // class AntigenicMapsLayoutDrawAce
+
+// ----------------------------------------------------------------------
+
+class LabelledGrid : public LabelledGridBase
+{
+ public:
+    inline LabelledGrid(AntigenicMapsDrawBase& aAntigenicMapsDraw) : mLayoutDraw(aAntigenicMapsDraw) {}
+
+    virtual inline AntigenicMapsLayoutDraw& layout_draw() { return mLayoutDraw; }
+
+ private:
+    AntigenicMapsLayoutDrawAce mLayoutDraw;
+
+}; // class LabelledGrid
 
 // ----------------------------------------------------------------------
 /// Local Variables:

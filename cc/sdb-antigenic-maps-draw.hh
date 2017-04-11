@@ -172,7 +172,7 @@ namespace sdb
      public:
         inline LabelledGrid(AntigenicMapsDrawBase& aAntigenicMapsDraw) : mLayoutDraw(aAntigenicMapsDraw) {}
 
-        virtual inline AntigenicMapsLayoutDraw& layout_draw() { return mLayoutDraw; }
+        virtual inline ::AntigenicMapsLayoutDraw& layout_draw() { return mLayoutDraw; }
 
      private:
         AntigenicMapsLayoutDraw mLayoutDraw;

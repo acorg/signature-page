@@ -16,21 +16,24 @@ class AntigenicMapsLayoutDraw
     virtual void prepare();
     virtual void draw_chart(Surface& aSurface, size_t aSectionIndex) = 0;
 
+    inline AntigenicMapsDrawBase& antigenic_maps_draw() { return mAntigenicMapsDraw; }
     inline const AntigenicMapsDrawSettings& settings() const { return mAntigenicMapsDraw.settings(); }
+    inline const auto& chart() const { return mAntigenicMapsDraw.chart(); }
     inline Surface& surface() const { return mAntigenicMapsDraw.surface(); }
     inline const auto& hz_sections() const { return mAntigenicMapsDraw.hz_sections(); }
     inline const auto& signature_page_settings() const { return mAntigenicMapsDraw.signature_page_settings(); }
     inline const Viewport& viewport() const { return mMapViewport; }
+    inline const auto& sequenced_antigens() const { return mSequencedAntigens; }
 
  protected:
-    AntigenicMapsDrawBase& mAntigenicMapsDraw;
-    Viewport mMapViewport;
-
-    std::map<size_t, size_t> mSequencedAntigens; // antigen_no to section_no
-
     virtual void reset() = 0;
 
     virtual void find_sequenced_antigens();
+
+ private:
+    AntigenicMapsDrawBase& mAntigenicMapsDraw;
+    Viewport mMapViewport;
+    std::map<size_t, size_t> mSequencedAntigens; // antigen_no to section_no
 
 }; // class AntigenicMapsLayoutDraw
 
