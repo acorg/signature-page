@@ -117,6 +117,7 @@ namespace sdb
 
         virtual void init_settings();
         virtual void prepare(const AntigenicMapsDrawSettings& aSettings);
+        virtual inline void draw(Surface& /*aSurface*/) const {}
 
         virtual inline std::string lab() const { return chart_info().lab; }
 

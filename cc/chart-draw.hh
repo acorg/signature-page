@@ -6,6 +6,7 @@
 // ----------------------------------------------------------------------
 
 class AntigenicMapsDrawSettings;
+class Surface;
 
 // ----------------------------------------------------------------------
 
@@ -16,6 +17,7 @@ class ChartDrawBase
 
     virtual void init_settings() = 0;
     virtual void prepare(const AntigenicMapsDrawSettings& aSettings) = 0;
+    virtual void draw(Surface& aSurface) const = 0;
 
     virtual const Viewport& viewport(const Transformation* aSettingsTransformation) = 0;
     inline const Viewport& viewport(const Transformation* aSettingsTransformation) const { return const_cast<ChartDrawBase*>(this)->viewport(aSettingsTransformation); }

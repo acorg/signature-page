@@ -1,29 +1,32 @@
 #pragma once
 
 #include "acmacs-chart/chart.hh"
+#include "acmacs-map-draw/draw.hh"
 #include "antigenic-maps-draw.hh"
 #include "chart-draw.hh"
 #include "antigenic-maps-layout.hh"
 
 // ----------------------------------------------------------------------
 
-class ChartDraw : public ChartDrawBase
+class ChartDrawInterface : public ChartDrawBase
 {
  public:
-    inline ChartDraw(Chart* aChart) : mChart(aChart) {}
+    inline ChartDrawInterface(Chart* aChart) : mChart(aChart), mChartDraw(*aChart, 0) {}
 
     virtual void init_settings();
     virtual void prepare(const AntigenicMapsDrawSettings& aSettings);
     virtual const Viewport& viewport(const Transformation* aSettingsTransformation);
     virtual inline std::string lab() const { return mChart->chart_info().lab(); }
+    virtual inline void draw(Surface& aSurface) const { /* mChartDraw.draw(aSurface); */ }
 
       // returns ChartDrawBase::AntigenNotFound if not found
     virtual inline size_t find_antigen(std::string aName) const { return mChart->antigens().find_by_name_for_exact_matching(aName); }
 
  private:
     std::unique_ptr<Chart> mChart;
+    ChartDraw mChartDraw;
 
-}; // class ChartDrawBase
+}; // class ChartDrawInterface
 
 // ----------------------------------------------------------------------
 
@@ -38,7 +41,7 @@ class AntigenicMapsDraw : public AntigenicMapsDrawBase
     virtual inline ChartDrawBase& chart() { return mChartDraw; }
 
  private:
-    ChartDraw mChartDraw;
+    ChartDrawInterface mChartDraw;
 
 }; // class AntigenicMapsDraw
 
