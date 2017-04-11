@@ -121,6 +121,7 @@ namespace sdb
 
         // virtual void prepare();
         // virtual void draw(Surface& aMappedAntigensDrawSurface) = 0;
+        virtual void draw_chart(Surface& aSurface, size_t aSectionIndex);
 
      protected:
         // AntigenicMapsDraw& mAntigenicMapsDraw;
@@ -141,7 +142,6 @@ namespace sdb
 
         // virtual void find_sequenced_antigens();
         virtual void reset();
-        virtual void draw_chart(Surface& aSurface, size_t aSectionIndex);
         virtual void mark_tracked_sera(size_t aSectionIndex);
         virtual void draw_map_title(Surface& aSurface, size_t aSectionIndex);
         virtual void mark_tracked_antigens(size_t aSectionIndex);
@@ -185,7 +185,7 @@ namespace sdb
         virtual void draw(Surface& aMappedAntigensDrawSurface);
 
      protected:
-        virtual void draw_chart(Surface& aSurface, size_t aSectionIndex);
+        // virtual void draw_chart(Surface& aSurface, size_t aSectionIndex);
         virtual void draw_mapped_antigens_section(size_t aSectionIndex, Surface& aMappedAntigensDrawSurface);
 
     }; // class LabelledGrid

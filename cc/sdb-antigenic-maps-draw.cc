@@ -424,11 +424,11 @@ void sdb::LabelledGrid::draw(Surface& aMappedAntigensDrawSurface)
 
 // ----------------------------------------------------------------------
 
-void sdb::LabelledGrid::draw_chart(Surface& aSurface, size_t aSectionIndex)
-{
-    sdb::AntigenicMapsLayout::draw_chart(aSurface, aSectionIndex);
+// void sdb::LabelledGrid::draw_chart(Surface& aSurface, size_t aSectionIndex)
+// {
+//     sdb::AntigenicMapsLayout::draw_chart(aSurface, aSectionIndex);
 
-} // sdb::LabelledGrid::draw_chart
+// } // sdb::LabelledGrid::draw_chart
 
 // ----------------------------------------------------------------------
 
