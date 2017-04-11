@@ -7,14 +7,13 @@
 
 // ----------------------------------------------------------------------
 
-AntigenicMapsLayout::~AntigenicMapsLayout()
+AntigenicMapsLayoutDraw::~AntigenicMapsLayoutDraw()
 {
-
-} // AntigenicMapsLayout::~AntigenicMapsLayout
+} // AntigenicMapsLayoutDraw::~AntigenicMapsLayoutDraw
 
 // ----------------------------------------------------------------------
 
-void AntigenicMapsLayout::prepare()
+void AntigenicMapsLayoutDraw::prepare()
 {
     if (!mAntigenicMapsDraw.settings().viewport.empty()) {
         mMapViewport = mAntigenicMapsDraw.settings().viewport;
@@ -27,11 +26,11 @@ void AntigenicMapsLayout::prepare()
     find_sequenced_antigens();
     reset();
 
-} // AntigenicMapsLayout::prepare
+} // AntigenicMapsLayoutDraw::prepare
 
 // ----------------------------------------------------------------------
 
-void AntigenicMapsLayout::find_sequenced_antigens()
+void AntigenicMapsLayoutDraw::find_sequenced_antigens()
 {
     size_t hz_section_index = NodeDrawData::HzSectionNoIndex;
     auto find_antigens = [this,&hz_section_index](const Node& aNode) {
@@ -43,34 +42,32 @@ void AntigenicMapsLayout::find_sequenced_antigens()
 
     tree::iterate_leaf(mAntigenicMapsDraw.tree(), find_antigens);
 
-} // AntigenicMapsLayout::find_sequenced_antigens
+} // AntigenicMapsLayoutDraw::find_sequenced_antigens
 
 // ----------------------------------------------------------------------
 
-void LabelledGrid::prepare()
+AntigenicMapsLayout::~AntigenicMapsLayout()
 {
-    layout().prepare();
-
-} // LabelledGrid::prepare
+} // AntigenicMapsLayout::~AntigenicMapsLayout
 
 // ----------------------------------------------------------------------
 
-void LabelledGrid::draw(Surface& aMappedAntigensDrawSurface)
+void LabelledGridBase::draw(Surface& aMappedAntigensDrawSurface)
 {
-    const AntigenicMapsDrawSettings& settings = layout().settings();
-    Surface& surface = layout().surface();
+    const AntigenicMapsDrawSettings& settings = layout_draw().settings();
+    Surface& surface = layout_draw().surface();
     // std::cerr << "Maps " << surface << std::endl;
 
     const double map_width = (surface.viewport().size.width - (settings.columns - 1) * settings.gap) / settings.columns;
 
     size_t row = 0, column = 0, section_index = 0;
-    for (const auto& section: layout().hz_sections().sections) {
+    for (const auto& section: layout_draw().hz_sections().sections) {
         if (section.show && section.show_map) {
             Surface& map_surface = surface.subsurface({column * (map_width + settings.gap), row * (map_width + settings.gap)},
-                                                      Scaled{map_width}, layout().viewport(), true);
+                                                      Scaled{map_width}, layout_draw().viewport(), true);
             // std::cerr << "Map " << map_surface << std::endl;
             // std::cerr << "origin_offset: " << map_surface.origin_offset() << "  scale: " << map_surface.scale() << std::endl;
-            layout().draw_chart(map_surface, section_index);
+            layout_draw().draw_chart(map_surface, section_index);
             draw_mapped_antigens_section(section_index, aMappedAntigensDrawSurface);
             ++column;
             if (column >= settings.columns) {
@@ -81,7 +78,7 @@ void LabelledGrid::draw(Surface& aMappedAntigensDrawSurface)
         ++section_index;
     }
 
-    const double antigenic_maps_width = layout().signature_page_settings().antigenic_maps_width;
+    const double antigenic_maps_width = layout_draw().signature_page_settings().antigenic_maps_width;
     const size_t rows = row + (column ? 1 : 0);
     const double maps_height = map_width * rows + (rows - 1) * settings.gap;
     const double suggested_surface_width = antigenic_maps_width * surface.viewport().size.height / maps_height;
@@ -91,14 +88,14 @@ void LabelledGrid::draw(Surface& aMappedAntigensDrawSurface)
     else
         std::cout << "antigenic_maps.width is OK: " << antigenic_maps_width << " vs. suggested " << suggested_surface_width << std::endl;
 
-} // LabelledGrid::draw
+} // LabelledGridBase::draw
 
 // ----------------------------------------------------------------------
 
-void LabelledGrid::draw_mapped_antigens_section(size_t aSectionIndex, Surface& aMappedAntigensDrawSurface)
+void LabelledGridBase::draw_mapped_antigens_section(size_t aSectionIndex, Surface& aMappedAntigensDrawSurface)
 {
-    const AntigenicMapsDrawSettings& settings = layout().settings();
-    const auto& section = layout().hz_sections().sections[aSectionIndex];
+    const AntigenicMapsDrawSettings& settings = layout_draw().settings();
+    const auto& section = layout_draw().hz_sections().sections[aSectionIndex];
 
     const double left = 0, right = aMappedAntigensDrawSurface.viewport().size.width;
     const double top = section.first->draw.vertical_pos, bottom = section.last->draw.vertical_pos;
@@ -106,7 +103,7 @@ void LabelledGrid::draw_mapped_antigens_section(size_t aSectionIndex, Surface& a
     aMappedAntigensDrawSurface.line({left, bottom}, {right, bottom}, settings.mapped_antigens_section_line_color, Pixels{settings.mapped_antigens_section_line_width}, Surface::LineCap::Square);
     aMappedAntigensDrawSurface.line({right, top}, {right, bottom}, settings.mapped_antigens_section_line_color, Pixels{settings.mapped_antigens_section_line_width}, Surface::LineCap::Square);
 
-} // LabelledGrid::draw_mapped_antigens_section
+} // LabelledGridBase::draw_mapped_antigens_section
 
 // ----------------------------------------------------------------------
 /// Local Variables:

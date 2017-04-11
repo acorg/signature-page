@@ -177,46 +177,7 @@ void sdb::DrawMarkedAntigen::draw(Surface& aSurface, const sdb::Point& aPoint, c
 
 // ----------------------------------------------------------------------
 
-// void sdb::AntigenicMapsLayout::prepare()
-// {
-//     if (!mAntigenicMapsDraw.settings().viewport.empty()) {
-//         mMapViewport = mAntigenicMapsDraw.settings().viewport;
-//     }
-//     else {
-//         mMapViewport = mAntigenicMapsDraw.chart().viewport(&mAntigenicMapsDraw.settings().transformation);
-//     }
-//     std::cout << "Using viewport: " << mMapViewport << std::endl;
-
-//     find_sequenced_antigens();
-//     draw_points_reset();
-
-//     // mPrefixName.clear();
-//     // for (const auto& p: mPoints) {
-//     //     mPrefixName.insert(p.name.substr(0, p.name.find(1, ' ')));
-//     // }
-
-
-// } // sdb::AntigenicMapsLayout::prepare
-
-// ----------------------------------------------------------------------
-
-// void sdb::AntigenicMapsLayout::find_sequenced_antigens()
-// {
-//     size_t hz_section_index = NodeDrawData::HzSectionNoIndex;
-//     auto find_antigens = [this,&hz_section_index](const Node& aNode) {
-//         if (aNode.draw.hz_section_index != NodeDrawData::HzSectionNoIndex)
-//             hz_section_index = aNode.draw.hz_section_index;
-//         if (aNode.draw.chart_antigen_index != ChartDrawBase::AntigenNotFound)
-//             mSequencedAntigens[aNode.draw.chart_antigen_index] = hz_section_index;
-//     };
-
-//     tree::iterate_leaf(mAntigenicMapsDraw.tree(), find_antigens);
-
-// } // AntigenicMapsLayout::find_sequenced_antigens
-
-// ----------------------------------------------------------------------
-
-void sdb::AntigenicMapsLayout::reset()
+void sdb::AntigenicMapsLayoutDraw::reset()
 {
     mDrawTrackedAntigen.color(mAntigenicMapsDraw.settings().tracked_antigen_color);
     auto& chart = dynamic_cast<sdb::AntigenicMapsDraw&>(mAntigenicMapsDraw).chart_sdb();
@@ -245,11 +206,11 @@ void sdb::AntigenicMapsLayout::reset()
 
     mark_marked_antigens();
 
-} // sdb::AntigenicMapsLayout::reset
+} // sdb::AntigenicMapsLayoutDraw::reset
 
 // ----------------------------------------------------------------------
 
-void sdb::AntigenicMapsLayout::mark_marked_antigens()
+void sdb::AntigenicMapsLayoutDraw::mark_marked_antigens()
 {
     const auto& mark_antigens = mAntigenicMapsDraw.settings().mark_antigens;
     mDrawMarkedAntigens.clear();
@@ -265,11 +226,11 @@ void sdb::AntigenicMapsLayout::mark_marked_antigens()
         }
     }
 
-} // sdb::AntigenicMapsLayout::mark_marked_antigens
+} // sdb::AntigenicMapsLayoutDraw::mark_marked_antigens
 
 // ----------------------------------------------------------------------
 
-void sdb::AntigenicMapsLayout::draw_chart(Surface& aSurface, size_t aSectionIndex)
+void sdb::AntigenicMapsLayoutDraw::draw_chart(Surface& aSurface, size_t aSectionIndex)
 {
     std::cout << "\nMAP: " << aSectionIndex << std::endl;
 
@@ -293,16 +254,16 @@ void sdb::AntigenicMapsLayout::draw_chart(Surface& aSurface, size_t aSectionInde
         }
     }
     if (drawn != mDrawPoints.size())
-        std::cerr << "AntigenicMapsLayout:0: warning: " << drawn << " points of " << mDrawPoints.size() << " were drawn" << std::endl;
+        std::cerr << "AntigenicMapsLayoutDraw:0: warning: " << drawn << " points of " << mDrawPoints.size() << " were drawn" << std::endl;
 
     draw_map_title(aSurface, aSectionIndex);
     aSurface.border(settings.border_color, Pixels{settings.border_width});
 
-} // sdb::AntigenicMapsLayout::draw_chart
+} // sdb::AntigenicMapsLayoutDraw::draw_chart
 
 // ----------------------------------------------------------------------
 
-void sdb::AntigenicMapsLayout::mark_tracked_sera(size_t aSectionIndex)
+void sdb::AntigenicMapsLayoutDraw::mark_tracked_sera(size_t aSectionIndex)
 {
     const AntigenicMapsDrawSettings& settings = mAntigenicMapsDraw.settings();
     if (settings.show_tracked_sera) {
@@ -336,11 +297,11 @@ void sdb::AntigenicMapsLayout::mark_tracked_sera(size_t aSectionIndex)
         }
     }
 
-} // sdb::AntigenicMapsLayout::mark_tracked_sera
+} // sdb::AntigenicMapsLayoutDraw::mark_tracked_sera
 
 // ----------------------------------------------------------------------
 
-void sdb::AntigenicMapsLayout::draw_map_title(Surface& aSurface, size_t aSectionIndex)
+void sdb::AntigenicMapsLayoutDraw::draw_map_title(Surface& aSurface, size_t aSectionIndex)
 {
     const AntigenicMapsDrawSettings& settings = mAntigenicMapsDraw.settings();
     const HzSection& section = mAntigenicMapsDraw.hz_sections().sections[aSectionIndex];
@@ -353,11 +314,11 @@ void sdb::AntigenicMapsLayout::draw_map_title(Surface& aSurface, size_t aSection
                     settings.map_title_offset.height * wsize.height + tsize.height + aSurface.viewport().origin.y},
         title, settings.map_title_color, Pixels{settings.map_title_size});
 
-} // sdb::AntigenicMapsLayout::draw_map_title
+} // sdb::AntigenicMapsLayoutDraw::draw_map_title
 
 // ----------------------------------------------------------------------
 
-void sdb::AntigenicMapsLayout::mark_tracked_antigens(size_t aSectionIndex)
+void sdb::AntigenicMapsLayoutDraw::mark_tracked_antigens(size_t aSectionIndex)
 {
     auto& chart = dynamic_cast<sdb::AntigenicMapsDraw&>(mAntigenicMapsDraw).chart_sdb();
     for (size_t point_no = 0; point_no < chart.points().size(); ++point_no) {
@@ -372,7 +333,7 @@ void sdb::AntigenicMapsLayout::mark_tracked_antigens(size_t aSectionIndex)
         }
     }
 
-} // sdb::AntigenicMapsLayout::mark_tracked_antigens
+} // sdb::AntigenicMapsLayoutDraw::mark_tracked_antigens
 
 // ----------------------------------------------------------------------
 
@@ -384,43 +345,43 @@ void sdb::AntigenicMapsLayout::mark_tracked_antigens(size_t aSectionIndex)
 
 // ----------------------------------------------------------------------
 
-void sdb::LabelledGrid::draw(Surface& aMappedAntigensDrawSurface)
-{
-    const AntigenicMapsDrawSettings& settings = mAntigenicMapsDraw.settings();
-    Surface& surface = mAntigenicMapsDraw.surface();
-    // std::cerr << "Maps " << surface << std::endl;
+// void sdb::LabelledGrid::draw(Surface& aMappedAntigensDrawSurface)
+// {
+//     const AntigenicMapsDrawSettings& settings = mAntigenicMapsDraw.settings();
+//     Surface& surface = mAntigenicMapsDraw.surface();
+//     // std::cerr << "Maps " << surface << std::endl;
 
-    const double map_width = (surface.viewport().size.width - (settings.columns - 1) * settings.gap) / settings.columns;
+//     const double map_width = (surface.viewport().size.width - (settings.columns - 1) * settings.gap) / settings.columns;
 
-    size_t row = 0, column = 0, section_index = 0;
-    for (const auto& section: mAntigenicMapsDraw.hz_sections().sections) {
-        if (section.show && section.show_map) {
-            Surface& map_surface = surface.subsurface({column * (map_width + settings.gap), row * (map_width + settings.gap)},
-                                                      Scaled{map_width}, mMapViewport, true);
-            // std::cerr << "Map " << map_surface << std::endl;
-            // std::cerr << "origin_offset: " << map_surface.origin_offset() << "  scale: " << map_surface.scale() << std::endl;
-            draw_chart(map_surface, section_index);
-            draw_mapped_antigens_section(section_index, aMappedAntigensDrawSurface);
-            ++column;
-            if (column >= settings.columns) {
-                ++row;
-                column = 0;
-            }
-        }
-        ++section_index;
-    }
+//     size_t row = 0, column = 0, section_index = 0;
+//     for (const auto& section: mAntigenicMapsDraw.hz_sections().sections) {
+//         if (section.show && section.show_map) {
+//             Surface& map_surface = surface.subsurface({column * (map_width + settings.gap), row * (map_width + settings.gap)},
+//                                                       Scaled{map_width}, mMapViewport, true);
+//             // std::cerr << "Map " << map_surface << std::endl;
+//             // std::cerr << "origin_offset: " << map_surface.origin_offset() << "  scale: " << map_surface.scale() << std::endl;
+//             draw_chart(map_surface, section_index);
+//             draw_mapped_antigens_section(section_index, aMappedAntigensDrawSurface);
+//             ++column;
+//             if (column >= settings.columns) {
+//                 ++row;
+//                 column = 0;
+//             }
+//         }
+//         ++section_index;
+//     }
 
-    const double antigenic_maps_width = mAntigenicMapsDraw.signature_page_settings().antigenic_maps_width;
-    const size_t rows = row + (column ? 1 : 0);
-    const double maps_height = map_width * rows + (rows - 1) * settings.gap;
-    const double suggested_surface_width = antigenic_maps_width * surface.viewport().size.height / maps_height;
-    std::cout << "Map area height: " << maps_height << std::endl;
-    if (std::abs((antigenic_maps_width - suggested_surface_width) / antigenic_maps_width) > 0.01)
-        std::cout << "Change antigenic_maps.width from " << antigenic_maps_width << " to " << suggested_surface_width << std::endl;
-    else
-        std::cout << "antigenic_maps.width is OK: " << antigenic_maps_width << " vs. suggested " << suggested_surface_width << std::endl;
+//     const double antigenic_maps_width = mAntigenicMapsDraw.signature_page_settings().antigenic_maps_width;
+//     const size_t rows = row + (column ? 1 : 0);
+//     const double maps_height = map_width * rows + (rows - 1) * settings.gap;
+//     const double suggested_surface_width = antigenic_maps_width * surface.viewport().size.height / maps_height;
+//     std::cout << "Map area height: " << maps_height << std::endl;
+//     if (std::abs((antigenic_maps_width - suggested_surface_width) / antigenic_maps_width) > 0.01)
+//         std::cout << "Change antigenic_maps.width from " << antigenic_maps_width << " to " << suggested_surface_width << std::endl;
+//     else
+//         std::cout << "antigenic_maps.width is OK: " << antigenic_maps_width << " vs. suggested " << suggested_surface_width << std::endl;
 
-} // sdb::LabelledGrid::draw
+// } // sdb::LabelledGrid::draw
 
 // ----------------------------------------------------------------------
 
@@ -432,18 +393,18 @@ void sdb::LabelledGrid::draw(Surface& aMappedAntigensDrawSurface)
 
 // ----------------------------------------------------------------------
 
-void sdb::LabelledGrid::draw_mapped_antigens_section(size_t aSectionIndex, Surface& aMappedAntigensDrawSurface)
-{
-    const AntigenicMapsDrawSettings& settings = mAntigenicMapsDraw.settings();
-    const auto& section = mAntigenicMapsDraw.hz_sections().sections[aSectionIndex];
+// void sdb::LabelledGrid::draw_mapped_antigens_section(size_t aSectionIndex, Surface& aMappedAntigensDrawSurface)
+// {
+//     const AntigenicMapsDrawSettings& settings = mAntigenicMapsDraw.settings();
+//     const auto& section = mAntigenicMapsDraw.hz_sections().sections[aSectionIndex];
 
-    const double left = 0, right = aMappedAntigensDrawSurface.viewport().size.width;
-    const double top = section.first->draw.vertical_pos, bottom = section.last->draw.vertical_pos;
-    aMappedAntigensDrawSurface.line({left, top}, {right, top}, settings.mapped_antigens_section_line_color, Pixels{settings.mapped_antigens_section_line_width}, Surface::LineCap::Square);
-    aMappedAntigensDrawSurface.line({left, bottom}, {right, bottom}, settings.mapped_antigens_section_line_color, Pixels{settings.mapped_antigens_section_line_width}, Surface::LineCap::Square);
-    aMappedAntigensDrawSurface.line({right, top}, {right, bottom}, settings.mapped_antigens_section_line_color, Pixels{settings.mapped_antigens_section_line_width}, Surface::LineCap::Square);
+//     const double left = 0, right = aMappedAntigensDrawSurface.viewport().size.width;
+//     const double top = section.first->draw.vertical_pos, bottom = section.last->draw.vertical_pos;
+//     aMappedAntigensDrawSurface.line({left, top}, {right, top}, settings.mapped_antigens_section_line_color, Pixels{settings.mapped_antigens_section_line_width}, Surface::LineCap::Square);
+//     aMappedAntigensDrawSurface.line({left, bottom}, {right, bottom}, settings.mapped_antigens_section_line_color, Pixels{settings.mapped_antigens_section_line_width}, Surface::LineCap::Square);
+//     aMappedAntigensDrawSurface.line({right, top}, {right, bottom}, settings.mapped_antigens_section_line_color, Pixels{settings.mapped_antigens_section_line_width}, Surface::LineCap::Square);
 
-} // sdb::LabelledGrid::draw_mapped_antigens_section
+// } // sdb::LabelledGrid::draw_mapped_antigens_section
 
 // ----------------------------------------------------------------------
 /// Local Variables:

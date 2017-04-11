@@ -7,14 +7,13 @@
 
 // ----------------------------------------------------------------------
 
-class AntigenicMapsLayout
+class AntigenicMapsLayoutDraw
 {
  public:
-    inline AntigenicMapsLayout(AntigenicMapsDrawBase& aAntigenicMapsDraw) : mAntigenicMapsDraw(aAntigenicMapsDraw) {}
-    virtual ~AntigenicMapsLayout();
+    inline AntigenicMapsLayoutDraw(AntigenicMapsDrawBase& aAntigenicMapsDraw) : mAntigenicMapsDraw(aAntigenicMapsDraw) {}
+    virtual ~AntigenicMapsLayoutDraw();
 
     virtual void prepare();
-    virtual void draw(Surface& aMappedAntigensDrawSurface) = 0;
     virtual void draw_chart(Surface& aSurface, size_t aSectionIndex) = 0;
 
     inline const AntigenicMapsDrawSettings& settings() const { return mAntigenicMapsDraw.settings(); }
@@ -33,31 +32,32 @@ class AntigenicMapsLayout
 
     virtual void find_sequenced_antigens();
 
-    // virtual void mark_tracked_sera(size_t aSectionIndex) = 0;
-    // virtual void draw_map_title(Surface& aSurface, size_t aSectionIndex) = 0;
-    // virtual void mark_tracked_antigens(size_t aSectionIndex) = 0;
-    // virtual void mark_marked_antigens() = 0;
+}; // class AntigenicMapsLayoutDraw
+
+// ----------------------------------------------------------------------
+
+class AntigenicMapsLayout
+{
+ public:
+    virtual ~AntigenicMapsLayout();
+
+    virtual AntigenicMapsLayoutDraw& layout_draw() = 0;
+    inline void prepare() { layout_draw().prepare(); }
+    virtual void draw(Surface& aMappedAntigensDrawSurface) = 0;
 
 }; // class AntigenicMapsLayout
 
 // ----------------------------------------------------------------------
 
-class LabelledGrid
+class LabelledGridBase : public AntigenicMapsLayout
 {
  public:
-    inline LabelledGrid(AntigenicMapsLayout& aLayout) : mLayout(aLayout) {}
-
-    inline AntigenicMapsLayout& layout() { return mLayout; }
-    void prepare();
-    void draw(Surface& aMappedAntigensDrawSurface);
+    virtual void draw(Surface& aMappedAntigensDrawSurface);
 
  private:
-    AntigenicMapsLayout& mLayout;
-
-      // virtual void draw_chart(Surface& aSurface, size_t aSectionIndex);
     void draw_mapped_antigens_section(size_t aSectionIndex, Surface& aMappedAntigensDrawSurface);
 
-}; // class LabelledGrid
+}; // class LabelledGridBase
 
 // ----------------------------------------------------------------------
 /// Local Variables:

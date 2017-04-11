@@ -112,23 +112,15 @@ namespace sdb
 
 // ----------------------------------------------------------------------
 
-    // class AntigenicMapsDraw;
-
-    class AntigenicMapsLayout : public ::AntigenicMapsLayout
+    class AntigenicMapsLayoutDraw : public ::AntigenicMapsLayoutDraw
     {
      public:
-        inline AntigenicMapsLayout(AntigenicMapsDrawBase& aAntigenicMapsDraw) : ::AntigenicMapsLayout(aAntigenicMapsDraw) {}
+        inline AntigenicMapsLayoutDraw(AntigenicMapsDrawBase& aAntigenicMapsDraw) : ::AntigenicMapsLayoutDraw(aAntigenicMapsDraw) {}
 
-        // virtual void prepare();
-        // virtual void draw(Surface& aMappedAntigensDrawSurface) = 0;
         virtual void draw_chart(Surface& aSurface, size_t aSectionIndex);
 
      protected:
-        // AntigenicMapsDraw& mAntigenicMapsDraw;
-        // Viewport mMapViewport;
-
         std::vector<const DrawPoint*> mDrawPoints;
-        // std::map<size_t, size_t> mSequencedAntigens; // antigen_no to section_no
 
         DrawSerum mDrawSerum;
         DrawReferenceAntigen mDrawReferenceAntigen;
@@ -150,7 +142,7 @@ namespace sdb
           // tracked_antigens_colored_by_clade
           // tracked_sera
 
-    }; // class AntigenicMapsLayout
+    }; // class AntigenicMapsLayoutDraw
 
 // ----------------------------------------------------------------------
 
@@ -175,17 +167,15 @@ namespace sdb
 
 // ----------------------------------------------------------------------
 
-    class LabelledGrid : public AntigenicMapsLayout
+    class LabelledGrid : public LabelledGridBase
     {
      public:
-        inline LabelledGrid(AntigenicMapsDraw& aAntigenicMapsDraw) : AntigenicMapsLayout(aAntigenicMapsDraw) {}
+        inline LabelledGrid(AntigenicMapsDrawBase& aAntigenicMapsDraw) : mLayoutDraw(aAntigenicMapsDraw) {}
 
-        // virtual void prepare();
-        virtual void draw(Surface& aMappedAntigensDrawSurface);
+        virtual inline AntigenicMapsLayoutDraw& layout_draw() { return mLayoutDraw; }
 
-     protected:
-        // virtual void draw_chart(Surface& aSurface, size_t aSectionIndex);
-        virtual void draw_mapped_antigens_section(size_t aSectionIndex, Surface& aMappedAntigensDrawSurface);
+     private:
+        AntigenicMapsLayoutDraw mLayoutDraw;
 
     }; // class LabelledGrid
 
