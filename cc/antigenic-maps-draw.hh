@@ -14,15 +14,14 @@ class SignaturePageDrawSettings;
 class AntigenicMapsDrawSettings;
 class MappedAntigensDraw;
 class ChartDrawBase;
+class AntigenicMapsLayout;
 
 // ----------------------------------------------------------------------
 
 class AntigenicMapsDrawBase
 {
  public:
-    inline AntigenicMapsDrawBase(Surface& aSurface, Tree& aTree, HzSections& aHzSections, SignaturePageDrawSettings& aSignaturePageDrawSettings, AntigenicMapsDrawSettings& aSettings)
-        : mSurface(aSurface), mTree(aTree), mHzSections(aHzSections),
-          mSignaturePageDrawSettings(aSignaturePageDrawSettings), mSettings(aSettings) {}
+    AntigenicMapsDrawBase(Surface& aSurface, Tree& aTree, HzSections& aHzSections, SignaturePageDrawSettings& aSignaturePageDrawSettings, AntigenicMapsDrawSettings& aSettings);
     virtual ~AntigenicMapsDrawBase();
 
     virtual void init_settings() = 0;
@@ -38,6 +37,10 @@ class AntigenicMapsDrawBase
     inline AntigenicMapsDrawSettings& settings() { return mSettings; }
     inline const AntigenicMapsDrawSettings& settings() const { return mSettings; }
 
+    void layout(AntigenicMapsLayout* aLayout);
+    AntigenicMapsLayout& layout() { return *mLayout; }
+      // const AntigenicMapsLayout& layout() const { return *mLayout; }
+
  private:
     Surface& mSurface;
     Tree& mTree;
@@ -45,6 +48,7 @@ class AntigenicMapsDrawBase
     // MappedAntigensDraw& mMappedAntigensDraw;
     SignaturePageDrawSettings& mSignaturePageDrawSettings;
     AntigenicMapsDrawSettings& mSettings;
+    std::unique_ptr<AntigenicMapsLayout> mLayout;
 
 }; // class AntigenicMapsDrawBase
 

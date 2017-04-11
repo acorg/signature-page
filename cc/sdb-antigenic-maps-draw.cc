@@ -46,12 +46,12 @@ void sdb::AntigenicMapsDraw::prepare()
 {
     chart().prepare(settings());
     if (settings().layout == "labelled_grid") {
-        mLayout = std::make_unique<LabelledGrid>(*this);
+        layout(new LabelledGrid(*this));
     }
     else {
         throw std::runtime_error("Unrecognized antigenic maps layout: " + settings().layout);
     }
-    mLayout->prepare();
+    layout().prepare();
 
 } // sdb::AntigenicMapsDraw::prepare
 
@@ -59,7 +59,7 @@ void sdb::AntigenicMapsDraw::prepare()
 
 void sdb::AntigenicMapsDraw::draw(Surface& aMappedAntigensDrawSurface)
 {
-    mLayout->draw(aMappedAntigensDrawSurface);
+    layout().draw(aMappedAntigensDrawSurface);
 
 } // sdb::AntigenicMapsDraw::draw
 

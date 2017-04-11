@@ -170,7 +170,6 @@ namespace sdb
 
      private:
         std::unique_ptr<ChartDrawBase> mChart;
-        std::unique_ptr<AntigenicMapsLayout> mLayout;
 
     }; // class AntigenicMapsDraw
 

@@ -1,14 +1,32 @@
 #include <typeinfo>
 
 #include "acmacs-chart/ace.hh"
+#include "antigenic-maps-layout.hh"
 #include "ace-antigenic-maps-draw.hh"
 #include "sdb-antigenic-maps-draw.hh"
+
+// ----------------------------------------------------------------------
+
+AntigenicMapsDrawBase::AntigenicMapsDrawBase(Surface& aSurface, Tree& aTree, HzSections& aHzSections, SignaturePageDrawSettings& aSignaturePageDrawSettings, AntigenicMapsDrawSettings& aSettings)
+    : mSurface(aSurface), mTree(aTree), mHzSections(aHzSections),
+      mSignaturePageDrawSettings(aSignaturePageDrawSettings), mSettings(aSettings)
+{
+
+} // AntigenicMapsDrawBase::AntigenicMapsDrawBase
 
 // ----------------------------------------------------------------------
 
 AntigenicMapsDrawBase::~AntigenicMapsDrawBase()
 {
 }
+
+// ----------------------------------------------------------------------
+
+void AntigenicMapsDrawBase::layout(AntigenicMapsLayout* aLayout)
+{
+    mLayout.reset(aLayout);
+
+} // AntigenicMapsDrawBase::layout
 
 // ----------------------------------------------------------------------
 
