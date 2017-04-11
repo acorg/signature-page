@@ -50,14 +50,6 @@ void sdb::AntigenicMapsDraw::make_layout()
 
 // ----------------------------------------------------------------------
 
-void sdb::AntigenicMapsDraw::draw(Surface& aMappedAntigensDrawSurface)
-{
-    layout().draw(aMappedAntigensDrawSurface);
-
-} // sdb::AntigenicMapsDraw::draw
-
-// ----------------------------------------------------------------------
-
 void sdb::DrawSerum::draw(Surface& aSurface, const sdb::Point& aPoint, const sdb::PointStyle& aStyle, const AntigenicMapsDrawSettings& aSettings) const
 {
     if (!aPoint.coordinates.isnan()) {

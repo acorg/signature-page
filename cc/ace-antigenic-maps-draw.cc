@@ -38,13 +38,6 @@ void AntigenicMapsDraw::make_layout()
 
 // ----------------------------------------------------------------------
 
-void AntigenicMapsDraw::draw(Surface& aMappedAntigensDrawSurface)
-{
-
-} // AntigenicMapsDraw::draw
-
-// ----------------------------------------------------------------------
-
 void AntigenicMapsLayoutDrawAce::draw_chart(Surface& aSurface, size_t aSectionIndex)
 {
 

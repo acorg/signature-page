@@ -30,6 +30,14 @@ void AntigenicMapsDrawBase::layout(AntigenicMapsLayout* aLayout)
 
 // ----------------------------------------------------------------------
 
+void AntigenicMapsDrawBase::draw(Surface& aMappedAntigensDrawSurface)
+{
+    layout().draw(aMappedAntigensDrawSurface);
+
+} // AntigenicMapsDrawBase::draw
+
+// ----------------------------------------------------------------------
+
 void AntigenicMapsDrawBase::prepare()
 {
     chart().prepare(settings());

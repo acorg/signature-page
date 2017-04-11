@@ -153,7 +153,6 @@ namespace sdb
             : AntigenicMapsDrawBase(aSurface, aTree, aHzSections, aSignaturePageDrawSettings, aSettings), mChart(aChart) {}
 
         virtual void init_settings();
-        virtual void draw(Surface& aMappedAntigensDrawSurface);
         virtual void make_layout();
         virtual inline const ChartDrawBase& chart() const { return *mChart; }
         virtual inline ChartDrawBase& chart() { return *mChart; }

@@ -26,7 +26,7 @@ class AntigenicMapsDrawBase
 
     virtual void init_settings() = 0;
     virtual void prepare();
-    virtual void draw(Surface& aMappedAntigensDrawSurface) = 0;
+    virtual void draw(Surface& aMappedAntigensDrawSurface);
     virtual ChartDrawBase& chart() = 0;
     virtual const ChartDrawBase& chart() const = 0;
     virtual void make_layout() = 0;
