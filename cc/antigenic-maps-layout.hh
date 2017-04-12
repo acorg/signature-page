@@ -27,6 +27,9 @@ class AntigenicMapsLayoutDraw
 
  protected:
     virtual void reset() = 0;
+    virtual void apply_mods(const std::vector<AntigenicMapMod>& aMods);
+    virtual void apply_mods_before(const std::vector<AntigenicMapMod>& aMods, Surface& aSurface);
+    virtual void apply_mods_after(const std::vector<AntigenicMapMod>& aMods, Surface& aSurface);
 
     virtual void find_sequenced_antigens();
 

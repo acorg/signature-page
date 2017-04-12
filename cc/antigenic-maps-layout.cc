@@ -15,19 +15,65 @@ AntigenicMapsLayoutDraw::~AntigenicMapsLayoutDraw()
 
 void AntigenicMapsLayoutDraw::prepare()
 {
-    if (false /* !mAntigenicMapsDraw.settings().viewport.empty() */) {
-          // mMapViewport = mAntigenicMapsDraw.settings().viewport;
-    }
-    else {
-        Transformation transformation;
-        mMapViewport = mAntigenicMapsDraw.chart().viewport(&transformation /* mAntigenicMapsDraw.settings().transformation */);
-    }
+    Transformation transformation;
+    mMapViewport = mAntigenicMapsDraw.chart().viewport(&transformation);
+    apply_mods(mAntigenicMapsDraw.settings().mods);
+
+    // if (false /* !mAntigenicMapsDraw.settings().viewport.empty() */) {
+    //       // mMapViewport = mAntigenicMapsDraw.settings().viewport;
+    // }
+    // else {
+    //     Transformation transformation;
+    //     mMapViewport = mAntigenicMapsDraw.chart().viewport(&transformation /* mAntigenicMapsDraw.settings().transformation */);
+    // }
     std::cout << "Using viewport: " << mMapViewport << std::endl;
 
     find_sequenced_antigens();
     reset();
 
 } // AntigenicMapsLayoutDraw::prepare
+
+// ----------------------------------------------------------------------
+
+void AntigenicMapsLayoutDraw::apply_mods(const std::vector<AntigenicMapMod>& aMods)
+{
+    for (const auto& mod: aMods) {
+        const std::string name = mod.name();
+        // else {
+        //     std::cerr << "WARNING: unrecognized antigenic map mod: " << name << std::endl;
+        // }
+    }
+
+} // AntigenicMapsLayoutDraw::apply_mods
+
+// ----------------------------------------------------------------------
+
+void AntigenicMapsLayoutDraw::apply_mods_before(const std::vector<AntigenicMapMod>& aMods, Surface& aSurface)
+{
+    for (const auto& mod: aMods) {
+        const std::string name = mod.name();
+        if (name == "background") {
+            aSurface.background(mod.get("color", "black"));
+        }
+        else if (name == "grid") {
+            aSurface.grid(Scaled{1}, mod.get("color", "grey80"), Pixels{mod.get("line_width", 1.0)});
+        }
+    }
+
+} // AntigenicMapsLayoutDraw::apply_mods_before
+
+// ----------------------------------------------------------------------
+
+void AntigenicMapsLayoutDraw::apply_mods_after(const std::vector<AntigenicMapMod>& aMods, Surface& aSurface)
+{
+    for (const auto& mod: aMods) {
+        const std::string name = mod.name();
+        if (name == "border") {
+            aSurface.border(mod.get("color", "black"), Pixels{mod.get("line_width", 1.0)});
+        }
+    }
+
+} // AntigenicMapsLayoutDraw::apply_mods_after
 
 // ----------------------------------------------------------------------
 

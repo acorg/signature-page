@@ -72,14 +72,22 @@ class SettingDict;
 class SettingList;
 using SettingValue = boost::variant<std::string, double, int, SettingDict, SettingList>;
 
+class SettingList : public std::vector<SettingValue>
+{
+};
+
 class SettingDict : public std::map<std::string, SettingValue>
 {
  public:
     using std::map<std::string, SettingValue>::map;
-};
 
-class SettingList : public std::vector<SettingValue>
-{
+    template <typename Value> inline Value get(std::string aName, Value aDefault) const
+        {
+            const auto found = find(aName);
+            return found == end() ? aDefault : *boost::get<Value>(&found->second);
+        }
+
+    inline std::string get(std::string aName, const char* aDefault) const { return get(aName, std::string{aDefault}); }
 };
 
 class AntigenicMapMod : public SettingDict
@@ -88,6 +96,8 @@ class AntigenicMapMod : public SettingDict
     // AntigenicMapMod();
     using SettingDict::SettingDict;
     // ~AntigenicMapMod();
+
+    inline std::string name() const { return get("N", std::string{}); }
 
 }; // class AntigenicMapMod
 
