@@ -35,14 +35,14 @@ void AntigenicMapsDraw::make_layout()
 void AntigenicMapsLayoutDrawAce::draw_chart(Surface& aSurface, size_t aSectionIndex)
 {
     const AntigenicMapsDrawSettings& sett = settings();
-    aSurface.background(sett.background_color);
-    aSurface.grid(Scaled{1}, sett.grid_line_color, Pixels{sett.grid_line_width});
+    aSurface.background("yellow" /*sett.background_color*/);
+    aSurface.grid(Scaled{1}, "grey63" /* sett.grid_line_color */, Pixels{0.5 /* sett.grid_line_width */});
       // aSurface.viewport(viewport());
 
     std::cout << "\nMAP: " << aSectionIndex << " " << aSurface.viewport() << std::endl;
     chart().draw(aSurface);
 
-    aSurface.border(sett.border_color, Pixels{sett.border_width});
+    aSurface.border("black" /* sett.border_color */, Pixels{1.0 /* sett.border_width */});
 
 } // AntigenicMapsLayoutDrawAce::draw_chart
 

@@ -128,31 +128,47 @@ MappedAntigensDrawSettings::~MappedAntigensDrawSettings()
 {
 }
 
-MarkAntigenSettings::MarkAntigenSettings(bool aShow, std::string aName)
-    : show(aShow), name(aName), label(aName), scale(15), aspect(1), rotation(0), outline_width(1), label_line_width(0.1),
-    fill_color("red"), outline_color("white"),
-    label_color("black"), label_line_color("transparent"), label_offset{-0.5, 0.5}, label_size(9)
+// MarkAntigenSettings::MarkAntigenSettings(bool aShow, std::string aName)
+//     : show(aShow), name(aName), label(aName), scale(15), aspect(1), rotation(0), outline_width(1), label_line_width(0.1),
+//     fill_color("red"), outline_color("white"),
+//     label_color("black"), label_line_color("transparent"), label_offset{-0.5, 0.5}, label_size(9)
+// {
+// }
+
+// ----------------------------------------------------------------------
+
+AntigenicMapMod::AntigenicMapMod()
 {
-}
+} // AntigenicMapMod::AntigenicMapMod
+
+AntigenicMapMod::~AntigenicMapMod()
+{
+} // AntigenicMapMod::~AntigenicMapMod
 
 AntigenicMapsDrawSettings::AntigenicMapsDrawSettings()
     : layout("labelled_grid"), columns(3), gap(20),
-      border_width(1), grid_line_width(0.5),
-      border_color("black"), grid_line_color("grey63"), background_color("white"), // 0xFFFFF8
-      point_scale(1), serum_scale(5), reference_antigen_scale(5), test_antigen_scale(3), vaccine_antigen_scale(15), tracked_antigen_scale(5),
-      serum_outline_width(0.5), reference_antigen_outline_width(0.5), test_antigen_outline_width(0.5), vaccine_antigen_outline_width(0.5),
-      sequenced_antigen_outline_width(0.5), tracked_antigen_outline_width(0.5),
-      serum_outline_color("grey88"), reference_antigen_outline_color("grey88"), test_antigen_outline_color("grey88"),
-      test_antigen_fill_color("grey88"), vaccine_antigen_outline_color("white"), sequenced_antigen_outline_color("white"), sequenced_antigen_fill_color("grey63"),
-      tracked_antigen_outline_color("white"), tracked_antigen_colored_by_clade(false), tracked_antigen_color("green3"),
-      reassortant_rotation(0.5 /* M_PI / 6.0 */), egg_antigen_aspect(0.75),
-      show_tracked_sera(false), serum_circle_color("grey50"), tracked_serum_outline_color("black"), serum_circle_thickness(0.1), tracked_serum_outline_width(0.1),
-      map_title_color("black"), map_title_offset{0.3, 0.4}, map_title_size(11),
-      mapped_antigens_section_line_color("black"), mapped_antigens_section_line_width(1),
-      mark_antigens{{true, "? VT 14-002966-VIR SIAT1 (2014-06-29)"}},
-      _width(0)
+      mapped_antigens_section_line_color("black"), mapped_antigens_section_line_width(1)
 {
 }
+
+// AntigenicMapsDrawSettings::AntigenicMapsDrawSettings()
+//     : layout("labelled_grid"), columns(3), gap(20),
+//       border_width(1), grid_line_width(0.5),
+//       border_color("black"), grid_line_color("grey63"), background_color("white"), // 0xFFFFF8
+//       point_scale(1), serum_scale(5), reference_antigen_scale(5), test_antigen_scale(3), vaccine_antigen_scale(15), tracked_antigen_scale(5),
+//       serum_outline_width(0.5), reference_antigen_outline_width(0.5), test_antigen_outline_width(0.5), vaccine_antigen_outline_width(0.5),
+//       sequenced_antigen_outline_width(0.5), tracked_antigen_outline_width(0.5),
+//       serum_outline_color("grey88"), reference_antigen_outline_color("grey88"), test_antigen_outline_color("grey88"),
+//       test_antigen_fill_color("grey88"), vaccine_antigen_outline_color("white"), sequenced_antigen_outline_color("white"), sequenced_antigen_fill_color("grey63"),
+//       tracked_antigen_outline_color("white"), tracked_antigen_colored_by_clade(false), tracked_antigen_color("green3"),
+//       reassortant_rotation(0.5 /* M_PI / 6.0 */), egg_antigen_aspect(0.75),
+//       show_tracked_sera(false), serum_circle_color("grey50"), tracked_serum_outline_color("black"), serum_circle_thickness(0.1), tracked_serum_outline_width(0.1),
+//       map_title_color("black"), map_title_offset{0.3, 0.4}, map_title_size(11),
+//       mapped_antigens_section_line_color("black"), mapped_antigens_section_line_width(1),
+//       mark_antigens{{true, "? VT 14-002966-VIR SIAT1 (2014-06-29)"}},
+//       _width(0)
+// {
+// }
 
 AntigenicMapsDrawSettings::~AntigenicMapsDrawSettings()
 {
@@ -179,7 +195,7 @@ SignaturePageDrawSettings::SignaturePageDrawSettings()
 void Settings::set_version(const char* str, size_t length)
 {
     version.assign(str, length);
-    if (version != SETTINGS_VERSION_4 && version != SETTINGS_VERSION_3 && version != SETTINGS_VERSION_2)
+    if (version != SETTINGS_VERSION_4) // && version != SETTINGS_VERSION_3 && version != SETTINGS_VERSION_2)
         throw std::runtime_error("Unsupported sigp settings version: \"" + version + "\"");
 }
 
@@ -187,30 +203,30 @@ void Settings::set_version(const char* str, size_t length)
 
 void Settings::upgrade()             // upgrade to the new version in case old version data provided
 {
-    if (version == SETTINGS_VERSION_2) {
-        signature_page.antigenic_maps_width = antigenic_maps._width;
-        if (!tree_draw._root.empty())
-            tree_draw.mods.emplace_back("root", tree_draw._root);
-        if (!tree_draw._hide_isolated_before.empty())
-            tree_draw.mods.emplace_back("hide-isolated-before", tree_draw._hide_isolated_before);
-        if (tree_draw._hide_if_cumulative_edge_length_bigger_than > 0.0)
-            tree_draw.mods.emplace_back("hide-if-cumulative-edge-length-bigger-than", tree_draw._hide_if_cumulative_edge_length_bigger_than);
-        if (!tree_draw._hide_if.empty())
-            tree_draw.mods.emplace_back(tree_draw._hide_if);
-    }
-    else if (version == SETTINGS_VERSION_3) {
-          // fail, if old version data provided
-        if (!float_zero(antigenic_maps._width))
-            throw std::runtime_error("antigenic_maps.width provided, must be signature_page.antigenic_maps_width");
-        if (!tree_draw._hide_isolated_before.empty())
-            throw std::runtime_error("tree_draw.hide_isolated_before provided, must be in tree_draw.mods");
-        if (tree_draw._hide_if_cumulative_edge_length_bigger_than > 0.0)
-            throw std::runtime_error("tree_draw.hide_if_cumulative_edge_length_bigger_than provided, must be in tree_draw.mods");
-        if (!tree_draw._hide_if.empty())
-            throw std::runtime_error("tree_draw.hide_if provided, must be in tree_draw.mods");
-        if (!tree_draw._root.empty())
-            throw std::runtime_error("tree_draw.root provided, must be in tree_draw.mods");
-    }
+    // if (version == SETTINGS_VERSION_2) {
+    //     signature_page.antigenic_maps_width = antigenic_maps._width;
+    //     if (!tree_draw._root.empty())
+    //         tree_draw.mods.emplace_back("root", tree_draw._root);
+    //     if (!tree_draw._hide_isolated_before.empty())
+    //         tree_draw.mods.emplace_back("hide-isolated-before", tree_draw._hide_isolated_before);
+    //     if (tree_draw._hide_if_cumulative_edge_length_bigger_than > 0.0)
+    //         tree_draw.mods.emplace_back("hide-if-cumulative-edge-length-bigger-than", tree_draw._hide_if_cumulative_edge_length_bigger_than);
+    //     if (!tree_draw._hide_if.empty())
+    //         tree_draw.mods.emplace_back(tree_draw._hide_if);
+    // }
+    // else if (version == SETTINGS_VERSION_3) {
+    //       // fail, if old version data provided
+    //     if (!float_zero(antigenic_maps._width))
+    //         throw std::runtime_error("antigenic_maps.width provided, must be signature_page.antigenic_maps_width");
+    //     if (!tree_draw._hide_isolated_before.empty())
+    //         throw std::runtime_error("tree_draw.hide_isolated_before provided, must be in tree_draw.mods");
+    //     if (tree_draw._hide_if_cumulative_edge_length_bigger_than > 0.0)
+    //         throw std::runtime_error("tree_draw.hide_if_cumulative_edge_length_bigger_than provided, must be in tree_draw.mods");
+    //     if (!tree_draw._hide_if.empty())
+    //         throw std::runtime_error("tree_draw.hide_if provided, must be in tree_draw.mods");
+    //     if (!tree_draw._root.empty())
+    //         throw std::runtime_error("tree_draw.root provided, must be in tree_draw.mods");
+    // }
 
 } // Settings::upgrade
 
@@ -493,71 +509,74 @@ void read_settings(Settings& aSettings, std::string aFilename)
         {"line_length", jsi::field(&MappedAntigensDrawSettings::line_length)},
     };
 
-    jsi::data<MarkAntigenSettings> mark_antigens_data = {
-        {"show", jsi::field(&MarkAntigenSettings::show)},
-        {"name", jsi::field(&MarkAntigenSettings::name)},
-        {"label", jsi::field(&MarkAntigenSettings::label)},
-        {"scale", jsi::field(&MarkAntigenSettings::scale)},
-        {"aspect", jsi::field(&MarkAntigenSettings::aspect)},
-        {"rotation", jsi::field(&MarkAntigenSettings::rotation)},
-        {"outline_width", jsi::field(&MarkAntigenSettings::outline_width)},
-        {"label_line_width", jsi::field(&MarkAntigenSettings::label_line_width)},
-        {"fill_color", jsi::field<ColorStorer>(&MarkAntigenSettings::fill_color)},
-        {"outline_color", jsi::field<ColorStorer>(&MarkAntigenSettings::outline_color)},
-        {"label_color", jsi::field<ColorStorer>(&MarkAntigenSettings::label_color)},
-        {"label_line_color", jsi::field<ColorStorer>(&MarkAntigenSettings::label_line_color)},
-        {"label_offset", jsi::field<SizeStorer>(&MarkAntigenSettings::label_offset)},
-        {"label_size", jsi::field(&MarkAntigenSettings::label_size)},
+    jsi::data<AntigenicMapsDrawSettings> antigenic_maps_data = {
     };
 
-    jsi::data<AntigenicMapsDrawSettings> antigenic_maps_data = {
-        {"layout", jsi::field(&AntigenicMapsDrawSettings::layout)},
-        {"width", jsi::field(&AntigenicMapsDrawSettings::_width)}, // v2
-        {"columns", jsi::field(&AntigenicMapsDrawSettings::columns)},
-        {"gap", jsi::field(&AntigenicMapsDrawSettings::gap)},
-        {"transformation", jsi::field(&AntigenicMapsDrawSettings::get_transformation)},
-        {"viewport", jsi::field<ViewportStorer>(&AntigenicMapsDrawSettings::viewport)},
-        {"border_width", jsi::field(&AntigenicMapsDrawSettings::border_width)},
-        {"grid_line_width", jsi::field(&AntigenicMapsDrawSettings::grid_line_width)},
-        {"border_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::border_color)},
-        {"grid_line_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::grid_line_color)},
-        {"background_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::background_color)},
-        {"point_scale", jsi::field(&AntigenicMapsDrawSettings::point_scale)},
-        {"serum_scale", jsi::field(&AntigenicMapsDrawSettings::serum_scale)},
-        {"reference_antigen_scale", jsi::field(&AntigenicMapsDrawSettings::reference_antigen_scale)},
-        {"test_antigen_scale", jsi::field(&AntigenicMapsDrawSettings::test_antigen_scale)},
-        {"vaccine_antigen_scale", jsi::field(&AntigenicMapsDrawSettings::vaccine_antigen_scale)},
-        {"tracked_antigen_scale", jsi::field(&AntigenicMapsDrawSettings::tracked_antigen_scale)},
-        {"serum_outline_width", jsi::field(&AntigenicMapsDrawSettings::serum_outline_width)},
-        {"reference_antigen_outline_width", jsi::field(&AntigenicMapsDrawSettings::reference_antigen_outline_width)},
-        {"test_antigen_outline_width", jsi::field(&AntigenicMapsDrawSettings::test_antigen_outline_width)},
-        {"vaccine_antigen_outline_width", jsi::field(&AntigenicMapsDrawSettings::vaccine_antigen_outline_width)},
-        {"sequenced_antigen_outline_width", jsi::field(&AntigenicMapsDrawSettings::sequenced_antigen_outline_width)},
-        {"tracked_antigen_outline_width", jsi::field(&AntigenicMapsDrawSettings::tracked_antigen_outline_width)},
-        {"serum_outline_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::serum_outline_color)},
-        {"reference_antigen_outline_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::reference_antigen_outline_color)},
-        {"test_antigen_outline_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::test_antigen_outline_color)},
-        {"test_antigen_fill_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::test_antigen_fill_color)},
-        {"vaccine_antigen_outline_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::vaccine_antigen_outline_color)},
-        {"sequenced_antigen_outline_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::sequenced_antigen_outline_color)},
-        {"sequenced_antigen_fill_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::sequenced_antigen_fill_color)},
-        {"tracked_antigen_outline_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::tracked_antigen_outline_color)},
-        {"tracked_antigen_colored_by_clade", jsi::field(&AntigenicMapsDrawSettings::tracked_antigen_colored_by_clade)},
-        {"tracked_antigen_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::tracked_antigen_color)},
-        {"reassortant_rotation", jsi::field(&AntigenicMapsDrawSettings::reassortant_rotation)},
-        {"egg_antigen_aspect", jsi::field(&AntigenicMapsDrawSettings::egg_antigen_aspect)},
-        {"show_tracked_sera", jsi::field(&AntigenicMapsDrawSettings::show_tracked_sera)},
-        {"serum_circle_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::serum_circle_color)},
-        {"tracked_serum_outline_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::tracked_serum_outline_color)},
-        {"serum_circle_thickness", jsi::field(&AntigenicMapsDrawSettings::serum_circle_thickness)},
-        {"tracked_serum_outline_width", jsi::field(&AntigenicMapsDrawSettings::tracked_serum_outline_width)},
-        {"map_title_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::map_title_color)},
-        {"map_title_offset", jsi::field<SizeStorer>(&AntigenicMapsDrawSettings::map_title_offset)},
-        {"map_title_size", jsi::field(&AntigenicMapsDrawSettings::map_title_size)},
-        {"mapped_antigens_section_line_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::mapped_antigens_section_line_color)},
-        {"mapped_antigens_section_line_width", jsi::field(&AntigenicMapsDrawSettings::mapped_antigens_section_line_width)},
-        {"mark_antigens", jsi::field(&AntigenicMapsDrawSettings::get_mark_antigens, mark_antigens_data)},
-    };
+    // jsi::data<MarkAntigenSettings> mark_antigens_data = {
+    //     {"show", jsi::field(&MarkAntigenSettings::show)},
+    //     {"name", jsi::field(&MarkAntigenSettings::name)},
+    //     {"label", jsi::field(&MarkAntigenSettings::label)},
+    //     {"scale", jsi::field(&MarkAntigenSettings::scale)},
+    //     {"aspect", jsi::field(&MarkAntigenSettings::aspect)},
+    //     {"rotation", jsi::field(&MarkAntigenSettings::rotation)},
+    //     {"outline_width", jsi::field(&MarkAntigenSettings::outline_width)},
+    //     {"label_line_width", jsi::field(&MarkAntigenSettings::label_line_width)},
+    //     {"fill_color", jsi::field<ColorStorer>(&MarkAntigenSettings::fill_color)},
+    //     {"outline_color", jsi::field<ColorStorer>(&MarkAntigenSettings::outline_color)},
+    //     {"label_color", jsi::field<ColorStorer>(&MarkAntigenSettings::label_color)},
+    //     {"label_line_color", jsi::field<ColorStorer>(&MarkAntigenSettings::label_line_color)},
+    //     {"label_offset", jsi::field<SizeStorer>(&MarkAntigenSettings::label_offset)},
+    //     {"label_size", jsi::field(&MarkAntigenSettings::label_size)},
+    // };
+
+    // jsi::data<AntigenicMapsDrawSettings> antigenic_maps_data = {
+    //     {"layout", jsi::field(&AntigenicMapsDrawSettings::layout)},
+    //     {"width", jsi::field(&AntigenicMapsDrawSettings::_width)}, // v2
+    //     {"columns", jsi::field(&AntigenicMapsDrawSettings::columns)},
+    //     {"gap", jsi::field(&AntigenicMapsDrawSettings::gap)},
+    //     {"transformation", jsi::field(&AntigenicMapsDrawSettings::get_transformation)},
+    //     {"viewport", jsi::field<ViewportStorer>(&AntigenicMapsDrawSettings::viewport)},
+    //     {"border_width", jsi::field(&AntigenicMapsDrawSettings::border_width)},
+    //     {"grid_line_width", jsi::field(&AntigenicMapsDrawSettings::grid_line_width)},
+    //     {"border_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::border_color)},
+    //     {"grid_line_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::grid_line_color)},
+    //     {"background_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::background_color)},
+    //     {"point_scale", jsi::field(&AntigenicMapsDrawSettings::point_scale)},
+    //     {"serum_scale", jsi::field(&AntigenicMapsDrawSettings::serum_scale)},
+    //     {"reference_antigen_scale", jsi::field(&AntigenicMapsDrawSettings::reference_antigen_scale)},
+    //     {"test_antigen_scale", jsi::field(&AntigenicMapsDrawSettings::test_antigen_scale)},
+    //     {"vaccine_antigen_scale", jsi::field(&AntigenicMapsDrawSettings::vaccine_antigen_scale)},
+    //     {"tracked_antigen_scale", jsi::field(&AntigenicMapsDrawSettings::tracked_antigen_scale)},
+    //     {"serum_outline_width", jsi::field(&AntigenicMapsDrawSettings::serum_outline_width)},
+    //     {"reference_antigen_outline_width", jsi::field(&AntigenicMapsDrawSettings::reference_antigen_outline_width)},
+    //     {"test_antigen_outline_width", jsi::field(&AntigenicMapsDrawSettings::test_antigen_outline_width)},
+    //     {"vaccine_antigen_outline_width", jsi::field(&AntigenicMapsDrawSettings::vaccine_antigen_outline_width)},
+    //     {"sequenced_antigen_outline_width", jsi::field(&AntigenicMapsDrawSettings::sequenced_antigen_outline_width)},
+    //     {"tracked_antigen_outline_width", jsi::field(&AntigenicMapsDrawSettings::tracked_antigen_outline_width)},
+    //     {"serum_outline_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::serum_outline_color)},
+    //     {"reference_antigen_outline_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::reference_antigen_outline_color)},
+    //     {"test_antigen_outline_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::test_antigen_outline_color)},
+    //     {"test_antigen_fill_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::test_antigen_fill_color)},
+    //     {"vaccine_antigen_outline_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::vaccine_antigen_outline_color)},
+    //     {"sequenced_antigen_outline_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::sequenced_antigen_outline_color)},
+    //     {"sequenced_antigen_fill_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::sequenced_antigen_fill_color)},
+    //     {"tracked_antigen_outline_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::tracked_antigen_outline_color)},
+    //     {"tracked_antigen_colored_by_clade", jsi::field(&AntigenicMapsDrawSettings::tracked_antigen_colored_by_clade)},
+    //     {"tracked_antigen_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::tracked_antigen_color)},
+    //     {"reassortant_rotation", jsi::field(&AntigenicMapsDrawSettings::reassortant_rotation)},
+    //     {"egg_antigen_aspect", jsi::field(&AntigenicMapsDrawSettings::egg_antigen_aspect)},
+    //     {"show_tracked_sera", jsi::field(&AntigenicMapsDrawSettings::show_tracked_sera)},
+    //     {"serum_circle_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::serum_circle_color)},
+    //     {"tracked_serum_outline_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::tracked_serum_outline_color)},
+    //     {"serum_circle_thickness", jsi::field(&AntigenicMapsDrawSettings::serum_circle_thickness)},
+    //     {"tracked_serum_outline_width", jsi::field(&AntigenicMapsDrawSettings::tracked_serum_outline_width)},
+    //     {"map_title_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::map_title_color)},
+    //     {"map_title_offset", jsi::field<SizeStorer>(&AntigenicMapsDrawSettings::map_title_offset)},
+    //     {"map_title_size", jsi::field(&AntigenicMapsDrawSettings::map_title_size)},
+    //     {"mapped_antigens_section_line_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::mapped_antigens_section_line_color)},
+    //     {"mapped_antigens_section_line_width", jsi::field(&AntigenicMapsDrawSettings::mapped_antigens_section_line_width)},
+    //     {"mark_antigens", jsi::field(&AntigenicMapsDrawSettings::get_mark_antigens, mark_antigens_data)},
+    // };
 
     jsi::data<TitleDrawSettings> title_data = {
         {"title", jsi::field(&TitleDrawSettings::title)},
@@ -839,79 +858,85 @@ template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writ
 
 // ----------------------------------------------------------------------
 
-template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const MarkAntigenSettings& aSettings)
-{
-    return writer << jsw::start_object
-                  << jsw::key("show") << aSettings.show
-                  << jsw::key("name") << aSettings.name
-                  << jsw::key("scale") << aSettings.scale
-                  << jsw::key("aspect") << aSettings.aspect
-                  << jsw::key("rotation") << aSettings.rotation
-                  << jsw::key("fill_color") << aSettings.fill_color
-                  << jsw::key("outline_color") << aSettings.outline_color
-                  << jsw::key("outline_width") << aSettings.outline_width
-                  << jsw::key("label") << aSettings.label
-                  << jsw::key("label_color") << aSettings.label_color
-                  << jsw::key("label_offset") << aSettings.label_offset
-                  << jsw::key("label_size") << aSettings.label_size
-                  << jsw::key("label_line_color") << aSettings.label_line_color
-                  << jsw::key("label_line_width") << aSettings.label_line_width
-                  << jsw::end_object;
-}
+// template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const MarkAntigenSettings& aSettings)
+// {
+//     return writer << jsw::start_object
+//                   << jsw::key("show") << aSettings.show
+//                   << jsw::key("name") << aSettings.name
+//                   << jsw::key("scale") << aSettings.scale
+//                   << jsw::key("aspect") << aSettings.aspect
+//                   << jsw::key("rotation") << aSettings.rotation
+//                   << jsw::key("fill_color") << aSettings.fill_color
+//                   << jsw::key("outline_color") << aSettings.outline_color
+//                   << jsw::key("outline_width") << aSettings.outline_width
+//                   << jsw::key("label") << aSettings.label
+//                   << jsw::key("label_color") << aSettings.label_color
+//                   << jsw::key("label_offset") << aSettings.label_offset
+//                   << jsw::key("label_size") << aSettings.label_size
+//                   << jsw::key("label_line_color") << aSettings.label_line_color
+//                   << jsw::key("label_line_width") << aSettings.label_line_width
+//                   << jsw::end_object;
+// }
 
-// ----------------------------------------------------------------------
+// // ----------------------------------------------------------------------
 
 template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const AntigenicMapsDrawSettings& aSettings)
 {
     return writer << jsw::start_object
-                  << jsw::key("layout") << aSettings.layout
-              // v2 << jsw::key("width") << aSettings.width
-                  << jsw::key("columns") << aSettings.columns
-                  << jsw::key("gap") << aSettings.gap
-                  << jsw::key("transformation") << aSettings.transformation
-                  << jsw::key("viewport") << aSettings.viewport
-                  << jsw::key("show_tracked_sera") << aSettings.show_tracked_sera
-                  << jsw::key("background_color") << aSettings.background_color
-                  << jsw::key("border_color") << aSettings.border_color
-                  << jsw::key("border_width") << aSettings.border_width
-                  << jsw::key("grid_line_width") << aSettings.grid_line_width
-                  << jsw::key("grid_line_color") << aSettings.grid_line_color
-                  << jsw::key("point_scale") << aSettings.point_scale
-                  << jsw::key("serum_scale") << aSettings.serum_scale
-                  << jsw::key("reference_antigen_scale") << aSettings.reference_antigen_scale
-                  << jsw::key("test_antigen_scale") << aSettings.test_antigen_scale
-                  << jsw::key("vaccine_antigen_scale") << aSettings.vaccine_antigen_scale
-                  << jsw::key("tracked_antigen_scale") << aSettings.tracked_antigen_scale
-                  << jsw::key("serum_outline_width") << aSettings.serum_outline_width
-                  << jsw::key("reference_antigen_outline_width") << aSettings.reference_antigen_outline_width
-                  << jsw::key("test_antigen_outline_width") << aSettings.test_antigen_outline_width
-                  << jsw::key("vaccine_antigen_outline_width") << aSettings.vaccine_antigen_outline_width
-                  << jsw::key("sequenced_antigen_outline_width") << aSettings.sequenced_antigen_outline_width
-                  << jsw::key("serum_outline_color") << aSettings.serum_outline_color
-                  << jsw::key("reference_antigen_outline_color") << aSettings.reference_antigen_outline_color
-                  << jsw::key("test_antigen_outline_color") << aSettings.test_antigen_outline_color
-                  << jsw::key("test_antigen_fill_color") << aSettings.test_antigen_fill_color
-                  << jsw::key("vaccine_antigen_outline_color") << aSettings.vaccine_antigen_outline_color
-                  << jsw::key("sequenced_antigen_outline_color") << aSettings.sequenced_antigen_outline_color
-                  << jsw::key("sequenced_antigen_fill_color") << aSettings.sequenced_antigen_fill_color
-                  << jsw::key("tracked_antigen_outline_width") << aSettings.tracked_antigen_outline_width
-                  << jsw::key("tracked_antigen_outline_color") << aSettings.tracked_antigen_outline_color
-                  << jsw::key("tracked_antigen_colored_by_clade") << aSettings.tracked_antigen_colored_by_clade
-                  << jsw::key("tracked_antigen_color") << aSettings.tracked_antigen_color
-                  << jsw::key("reassortant_rotation") << aSettings.reassortant_rotation
-                  << jsw::key("egg_antigen_aspect") << aSettings.egg_antigen_aspect
-                  << jsw::key("serum_circle_color") << aSettings.serum_circle_color
-                  << jsw::key("tracked_serum_outline_color") << aSettings.tracked_serum_outline_color
-                  << jsw::key("serum_circle_thickness") << aSettings.serum_circle_thickness
-                  << jsw::key("tracked_serum_outline_width") << aSettings.tracked_serum_outline_width
-                  << jsw::key("map_title_color") << aSettings.map_title_color
-                  << jsw::key("map_title_offset") << aSettings.map_title_offset
-                  << jsw::key("map_title_size") << aSettings.map_title_size
-                  << jsw::key("mapped_antigens_section_line_color") << aSettings.mapped_antigens_section_line_color
-                  << jsw::key("mapped_antigens_section_line_width") << aSettings.mapped_antigens_section_line_width
-                  << jsw::key("mark_antigens") << aSettings.mark_antigens
                   << jsw::end_object;
 }
+
+// template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const AntigenicMapsDrawSettings& aSettings)
+// {
+//     return writer << jsw::start_object
+//                   << jsw::key("layout") << aSettings.layout
+//               // v2 << jsw::key("width") << aSettings.width
+//                   << jsw::key("columns") << aSettings.columns
+//                   << jsw::key("gap") << aSettings.gap
+//                   << jsw::key("transformation") << aSettings.transformation
+//                   << jsw::key("viewport") << aSettings.viewport
+//                   << jsw::key("show_tracked_sera") << aSettings.show_tracked_sera
+//                   << jsw::key("background_color") << aSettings.background_color
+//                   << jsw::key("border_color") << aSettings.border_color
+//                   << jsw::key("border_width") << aSettings.border_width
+//                   << jsw::key("grid_line_width") << aSettings.grid_line_width
+//                   << jsw::key("grid_line_color") << aSettings.grid_line_color
+//                   << jsw::key("point_scale") << aSettings.point_scale
+//                   << jsw::key("serum_scale") << aSettings.serum_scale
+//                   << jsw::key("reference_antigen_scale") << aSettings.reference_antigen_scale
+//                   << jsw::key("test_antigen_scale") << aSettings.test_antigen_scale
+//                   << jsw::key("vaccine_antigen_scale") << aSettings.vaccine_antigen_scale
+//                   << jsw::key("tracked_antigen_scale") << aSettings.tracked_antigen_scale
+//                   << jsw::key("serum_outline_width") << aSettings.serum_outline_width
+//                   << jsw::key("reference_antigen_outline_width") << aSettings.reference_antigen_outline_width
+//                   << jsw::key("test_antigen_outline_width") << aSettings.test_antigen_outline_width
+//                   << jsw::key("vaccine_antigen_outline_width") << aSettings.vaccine_antigen_outline_width
+//                   << jsw::key("sequenced_antigen_outline_width") << aSettings.sequenced_antigen_outline_width
+//                   << jsw::key("serum_outline_color") << aSettings.serum_outline_color
+//                   << jsw::key("reference_antigen_outline_color") << aSettings.reference_antigen_outline_color
+//                   << jsw::key("test_antigen_outline_color") << aSettings.test_antigen_outline_color
+//                   << jsw::key("test_antigen_fill_color") << aSettings.test_antigen_fill_color
+//                   << jsw::key("vaccine_antigen_outline_color") << aSettings.vaccine_antigen_outline_color
+//                   << jsw::key("sequenced_antigen_outline_color") << aSettings.sequenced_antigen_outline_color
+//                   << jsw::key("sequenced_antigen_fill_color") << aSettings.sequenced_antigen_fill_color
+//                   << jsw::key("tracked_antigen_outline_width") << aSettings.tracked_antigen_outline_width
+//                   << jsw::key("tracked_antigen_outline_color") << aSettings.tracked_antigen_outline_color
+//                   << jsw::key("tracked_antigen_colored_by_clade") << aSettings.tracked_antigen_colored_by_clade
+//                   << jsw::key("tracked_antigen_color") << aSettings.tracked_antigen_color
+//                   << jsw::key("reassortant_rotation") << aSettings.reassortant_rotation
+//                   << jsw::key("egg_antigen_aspect") << aSettings.egg_antigen_aspect
+//                   << jsw::key("serum_circle_color") << aSettings.serum_circle_color
+//                   << jsw::key("tracked_serum_outline_color") << aSettings.tracked_serum_outline_color
+//                   << jsw::key("serum_circle_thickness") << aSettings.serum_circle_thickness
+//                   << jsw::key("tracked_serum_outline_width") << aSettings.tracked_serum_outline_width
+//                   << jsw::key("map_title_color") << aSettings.map_title_color
+//                   << jsw::key("map_title_offset") << aSettings.map_title_offset
+//                   << jsw::key("map_title_size") << aSettings.map_title_size
+//                   << jsw::key("mapped_antigens_section_line_color") << aSettings.mapped_antigens_section_line_color
+//                   << jsw::key("mapped_antigens_section_line_width") << aSettings.mapped_antigens_section_line_width
+//                   << jsw::key("mark_antigens") << aSettings.mark_antigens
+//                   << jsw::end_object;
+// }
 
 // ----------------------------------------------------------------------
 

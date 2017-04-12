@@ -17,9 +17,9 @@ void sdb::AntigenicMapsDraw::make_layout()
 void sdb::DrawSerum::draw(Surface& aSurface, const sdb::Point& aPoint, const sdb::PointStyle& aStyle, const AntigenicMapsDrawSettings& aSettings) const
 {
     if (!aPoint.coordinates.isnan()) {
-        aSurface.square_filled(aPoint.coordinates, Pixels{aSettings.serum_scale * aSettings.point_scale},
+        aSurface.square_filled(aPoint.coordinates, Pixels{5}, // Pixels{aSettings.serum_scale * aSettings.point_scale},
                                aspect(aPoint, aStyle, aSettings), NoRotation, outline_color(aPoint, aStyle, aSettings),
-                               Pixels{outline_width(aPoint, aStyle, aSettings) * aSettings.point_scale}, "transparent");
+                               Pixels{outline_width(aPoint, aStyle, aSettings) /* * aSettings.point_scale */}, "transparent");
     }
 
 } // sdb::DrawSerum::draw
@@ -29,10 +29,10 @@ void sdb::DrawSerum::draw(Surface& aSurface, const sdb::Point& aPoint, const sdb
 void sdb::DrawReferenceAntigen::draw(Surface& aSurface, const sdb::Point& aPoint, const sdb::PointStyle& aStyle, const AntigenicMapsDrawSettings& aSettings) const
 {
     if (!aPoint.coordinates.isnan()) {
-        aSurface.circle_filled(aPoint.coordinates, Pixels{aSettings.reference_antigen_scale * aSettings.point_scale},
+        aSurface.circle_filled(aPoint.coordinates, Pixels{5}, // Pixels{aSettings.reference_antigen_scale * aSettings.point_scale},
                                aspect(aPoint, aStyle, aSettings), rotation(aPoint, aStyle, aSettings),
-                               aSettings.reference_antigen_outline_color,
-                               Pixels{aSettings.reference_antigen_outline_width * aSettings.point_scale}, "transparent");
+                               "grey88", // aSettings.reference_antigen_outline_color,
+                               Pixels{0.5} /* Pixels{aSettings.reference_antigen_outline_width * aSettings.point_scale} */, "transparent");
     }
 
 } // sdb::DrawReferenceAntigen::draw
@@ -42,10 +42,10 @@ void sdb::DrawReferenceAntigen::draw(Surface& aSurface, const sdb::Point& aPoint
 void sdb::DrawTestAntigen::draw(Surface& aSurface, const sdb::Point& aPoint, const sdb::PointStyle& aStyle, const AntigenicMapsDrawSettings& aSettings) const
 {
     if (!aPoint.coordinates.isnan()) {
-        aSurface.circle_filled(aPoint.coordinates, Pixels{aSettings.test_antigen_scale * aSettings.point_scale},
+        aSurface.circle_filled(aPoint.coordinates, Pixels{3}, // Pixels{aSettings.test_antigen_scale * aSettings.point_scale},
                                aspect(aPoint, aStyle, aSettings), rotation(aPoint, aStyle, aSettings),
-                               aSettings.test_antigen_outline_color,
-                               Pixels{aSettings.test_antigen_outline_width * aSettings.point_scale}, aSettings.test_antigen_fill_color);
+                               "grey88", // aSettings.test_antigen_outline_color,
+                               Pixels{0.5} /* Pixels{aSettings.test_antigen_outline_width * aSettings.point_scale} */, "grey88" /* aSettings.test_antigen_fill_color */);
     }
 
 } // sdb::DrawTestAntigen::draw
@@ -55,10 +55,10 @@ void sdb::DrawTestAntigen::draw(Surface& aSurface, const sdb::Point& aPoint, con
 void sdb::DrawSequencedAntigen::draw(Surface& aSurface, const sdb::Point& aPoint, const sdb::PointStyle& aStyle, const AntigenicMapsDrawSettings& aSettings) const
 {
     if (!aPoint.coordinates.isnan()) {
-        aSurface.circle_filled(aPoint.coordinates, Pixels{aSettings.test_antigen_scale * aSettings.point_scale},
+        aSurface.circle_filled(aPoint.coordinates, Pixels{3}, // Pixels{aSettings.test_antigen_scale * aSettings.point_scale},
                                aspect(aPoint, aStyle, aSettings), rotation(aPoint, aStyle, aSettings),
-                               aSettings.sequenced_antigen_outline_color,
-                               Pixels{aSettings.sequenced_antigen_outline_width * aSettings.point_scale}, aSettings.sequenced_antigen_fill_color);
+                               "white", // aSettings.sequenced_antigen_outline_color,
+                               Pixels{0.5} /* Pixels{aSettings.sequenced_antigen_outline_width * aSettings.point_scale} */, "grey63" /* aSettings.sequenced_antigen_fill_color */);
     }
 
 } // sdb::DrawSequencedAntigen::draw
@@ -68,10 +68,10 @@ void sdb::DrawSequencedAntigen::draw(Surface& aSurface, const sdb::Point& aPoint
 void sdb::DrawTrackedAntigen::draw(Surface& aSurface, const sdb::Point& aPoint, const sdb::PointStyle& aStyle, const AntigenicMapsDrawSettings& aSettings) const
 {
     if (!aPoint.coordinates.isnan()) {
-        aSurface.circle_filled(aPoint.coordinates, Pixels{aSettings.tracked_antigen_scale * aSettings.point_scale},
+        aSurface.circle_filled(aPoint.coordinates, Pixels{5}, // Pixels{aSettings.tracked_antigen_scale * aSettings.point_scale},
                                aspect(aPoint, aStyle, aSettings), rotation(aPoint, aStyle, aSettings),
-                               aSettings.tracked_antigen_outline_color,
-                               Pixels{aSettings.tracked_antigen_outline_width * aSettings.point_scale}, mColor);
+                               "white", // aSettings.tracked_antigen_outline_color,
+                               Pixels{0.5} /* Pixels{aSettings.tracked_antigen_outline_width * aSettings.point_scale} */, mColor);
     }
 
 } // sdb::DrawTrackedAntigen::draw
@@ -84,7 +84,7 @@ void sdb::DrawTrackedSerum::draw(Surface& aSurface, const sdb::Point& aPoint, co
     // std::cout << "    Tracked serum " << aPoint.name << " radius:" << aPoint.attributes.serum_circle_radius << std::endl;
     aSurface.circle(aPoint.coordinates, Scaled{aPoint.attributes.serum_circle_radius * 2}, AspectNormal, NoRotation,
                     outline_color(aPoint, aStyle, aSettings), // aSettings.serum_circle_color,
-                    Pixels{aSettings.serum_circle_thickness * aSettings.point_scale});
+                    Pixels{0.1} /* Pixels{aSettings.serum_circle_thickness * aSettings.point_scale} */);
 
 } // sdb::DrawTrackedSerum::draw
 
@@ -94,10 +94,10 @@ void sdb::DrawVaccineAntigen::draw(Surface& aSurface, const sdb::Point& aPoint, 
 {
     if (!aPoint.coordinates.isnan()) {
         std::cout << "    Vaccine " << aPoint.name << " " << fill_color(aPoint, aStyle, aSettings) << std::endl;
-        aSurface.circle_filled(aPoint.coordinates, Pixels{aSettings.vaccine_antigen_scale * aSettings.point_scale},
+        aSurface.circle_filled(aPoint.coordinates, Pixels{15}, // Pixels{aSettings.vaccine_antigen_scale * aSettings.point_scale},
                                aspect(aPoint, aStyle, aSettings), rotation(aPoint, aStyle, aSettings),
-                               aSettings.vaccine_antigen_outline_color, // aPoint.attributes.vaccine.outline_color,
-                               Pixels{aSettings.vaccine_antigen_outline_width * aSettings.point_scale},
+                               "white", // aSettings.vaccine_antigen_outline_color, // aPoint.attributes.vaccine.outline_color,
+                               Pixels{0.5}, // Pixels{aSettings.vaccine_antigen_outline_width * aSettings.point_scale},
                                fill_color(aPoint, aStyle, aSettings) /*aPoint.attributes.vaccine.fill_color*/);
     }
 
@@ -107,20 +107,20 @@ void sdb::DrawVaccineAntigen::draw(Surface& aSurface, const sdb::Point& aPoint, 
 
 void sdb::DrawMarkedAntigen::draw(Surface& aSurface, const sdb::Point& aPoint, const sdb::PointStyle& /*aStyle*/, const AntigenicMapsDrawSettings& aSettings) const
 {
-    if (!aPoint.coordinates.isnan()) {
-        aSurface.circle_filled(aPoint.coordinates, Pixels{mData.scale * aSettings.point_scale},
-                               Aspect{mData.aspect}, Rotation{mData.rotation}, mData.outline_color,
-                               Pixels{mData.outline_width * aSettings.point_scale}, mData.fill_color);
-        if (!mData.label.empty()) {
-            const TextStyle style; //(mData.label_font);
-            const auto text_size = aSurface.text_size(mData.label, Pixels{mData.label_size}, style);
-            const Location text_origin = aPoint.coordinates + mData.label_offset;
-            aSurface.text(text_origin, mData.label, mData.label_color, Pixels{mData.label_size}, style);
-            const Location text_middle = text_origin + Size(text_size.width / 2, text_origin.y > aPoint.coordinates.y ? - text_size.height * 1.2 : text_size.height * 0.2);
-            std::cerr << "    Mark antigen " << aPoint.name << " " << aPoint.coordinates << " " << text_middle << std::endl;
-            aSurface.line(aPoint.coordinates, text_middle, mData.label_line_color, Pixels{mData.label_line_width});
-        }
-    }
+    // if (!aPoint.coordinates.isnan()) {
+    //     aSurface.circle_filled(aPoint.coordinates, Pixels{mData.scale * 1.0 /* aSettings.point_scale */},
+    //                            Aspect{mData.aspect}, Rotation{mData.rotation}, mData.outline_color,
+    //                            Pixels{mData.outline_width * 1.0 /* aSettings.point_scale */}, mData.fill_color);
+    //     if (!mData.label.empty()) {
+    //         const TextStyle style; //(mData.label_font);
+    //         const auto text_size = aSurface.text_size(mData.label, Pixels{mData.label_size}, style);
+    //         const Location text_origin = aPoint.coordinates + mData.label_offset;
+    //         aSurface.text(text_origin, mData.label, mData.label_color, Pixels{mData.label_size}, style);
+    //         const Location text_middle = text_origin + Size(text_size.width / 2, text_origin.y > aPoint.coordinates.y ? - text_size.height * 1.2 : text_size.height * 0.2);
+    //         std::cerr << "    Mark antigen " << aPoint.name << " " << aPoint.coordinates << " " << text_middle << std::endl;
+    //         aSurface.line(aPoint.coordinates, text_middle, mData.label_line_color, Pixels{mData.label_line_width});
+    //     }
+    // }
 
 } // sdb::DrawMarkedAntigen::draw
 
@@ -128,7 +128,7 @@ void sdb::DrawMarkedAntigen::draw(Surface& aSurface, const sdb::Point& aPoint, c
 
 void sdb::AntigenicMapsLayoutDraw::reset()
 {
-    mDrawTrackedAntigen.color(settings().tracked_antigen_color);
+    mDrawTrackedAntigen.color("green3" /* settings().tracked_antigen_color */);
     auto& chart = dynamic_cast<sdb::AntigenicMapsDraw&>(antigenic_maps_draw()).chart_sdb();
 
     mDrawPoints.resize(chart.points().size(), nullptr);
@@ -161,19 +161,19 @@ void sdb::AntigenicMapsLayoutDraw::reset()
 
 void sdb::AntigenicMapsLayoutDraw::mark_marked_antigens()
 {
-    const auto& mark_antigens = settings().mark_antigens;
-    mDrawMarkedAntigens.clear();
-    mDrawMarkedAntigens.reserve(mark_antigens.size()); // to avoid copying entries during emplace_back and loosing pointer for mDrawPoints
+    // const auto& mark_antigens = settings().mark_antigens;
+    // mDrawMarkedAntigens.clear();
+    // mDrawMarkedAntigens.reserve(mark_antigens.size()); // to avoid copying entries during emplace_back and loosing pointer for mDrawPoints
 
-    for (const auto& to_mark: mark_antigens) {
-        if (to_mark.show) {
-            const size_t point_no = chart().find_antigen(to_mark.name);
-            if (point_no != sdb::Chart::AntigenNotFound) {
-                mDrawMarkedAntigens.emplace_back(to_mark);
-                mDrawPoints[point_no] = &mDrawMarkedAntigens.back();
-            }
-        }
-    }
+    // for (const auto& to_mark: mark_antigens) {
+    //     if (to_mark.show) {
+    //         const size_t point_no = chart().find_antigen(to_mark.name);
+    //         if (point_no != sdb::Chart::AntigenNotFound) {
+    //             mDrawMarkedAntigens.emplace_back(to_mark);
+    //             mDrawPoints[point_no] = &mDrawMarkedAntigens.back();
+    //         }
+    //     }
+    // }
 
 } // sdb::AntigenicMapsLayoutDraw::mark_marked_antigens
 
@@ -186,8 +186,8 @@ void sdb::AntigenicMapsLayoutDraw::draw_chart(Surface& aSurface, size_t aSection
     const AntigenicMapsDrawSettings& sett = settings();
     auto& chart = dynamic_cast<sdb::AntigenicMapsDraw&>(antigenic_maps_draw()).chart_sdb();
 
-    aSurface.background(sett.background_color);
-    aSurface.grid(Scaled{1}, sett.grid_line_color, Pixels{sett.grid_line_width});
+    aSurface.background("white" /* sett.background_color */);
+    aSurface.grid(Scaled{1}, "grey63" /* sett.grid_line_color */, Pixels{0.5 /* sett.grid_line_width */});
     aSurface.viewport(viewport());
 
     mark_tracked_antigens(aSectionIndex);
@@ -206,7 +206,7 @@ void sdb::AntigenicMapsLayoutDraw::draw_chart(Surface& aSurface, size_t aSection
         std::cerr << "AntigenicMapsLayoutDraw:0: warning: " << drawn << " points of " << mDrawPoints.size() << " were drawn" << std::endl;
 
     draw_map_title(aSurface, aSectionIndex);
-    aSurface.border(sett.border_color, Pixels{sett.border_width});
+    aSurface.border("black" /* sett.border_color */, Pixels{1.0 /* sett.border_width */});
 
 } // sdb::AntigenicMapsLayoutDraw::draw_chart
 
@@ -214,37 +214,37 @@ void sdb::AntigenicMapsLayoutDraw::draw_chart(Surface& aSurface, size_t aSection
 
 void sdb::AntigenicMapsLayoutDraw::mark_tracked_sera(size_t aSectionIndex)
 {
-    const AntigenicMapsDrawSettings& sett = settings();
-    if (sett.show_tracked_sera) {
-        auto& chart = dynamic_cast<sdb::AntigenicMapsDraw&>(antigenic_maps_draw()).chart_sdb();
-        const std::vector<sdb::Point>& points = chart.points();
-        mDrawTrackedSera.clear();
-        mDrawTrackedSera.reserve(mDrawPoints.size()); // to avoid copying entries during emplace_back and loosing pointer for mDrawPoints
-        for (size_t point_no = 0; point_no < mDrawPoints.size(); ++point_no) {
-            const auto& point = points[point_no];
-            if (!point.attributes.antigen && point.attributes.homologous_antigen >= 0) {
-                const auto sequenced = sequenced_antigens().find(static_cast<size_t>(point.attributes.homologous_antigen));
-                if (sequenced != sequenced_antigens().end() && sequenced->second == aSectionIndex) {
+    // const AntigenicMapsDrawSettings& sett = settings();
+    // if (sett.show_tracked_sera) {
+    //     auto& chart = dynamic_cast<sdb::AntigenicMapsDraw&>(antigenic_maps_draw()).chart_sdb();
+    //     const std::vector<sdb::Point>& points = chart.points();
+    //     mDrawTrackedSera.clear();
+    //     mDrawTrackedSera.reserve(mDrawPoints.size()); // to avoid copying entries during emplace_back and loosing pointer for mDrawPoints
+    //     for (size_t point_no = 0; point_no < mDrawPoints.size(); ++point_no) {
+    //         const auto& point = points[point_no];
+    //         if (!point.attributes.antigen && point.attributes.homologous_antigen >= 0) {
+    //             const auto sequenced = sequenced_antigens().find(static_cast<size_t>(point.attributes.homologous_antigen));
+    //             if (sequenced != sequenced_antigens().end() && sequenced->second == aSectionIndex) {
 
-                      // std::cout << "tracked serum " << point.name << std::endl;
-                    Color color = sett.tracked_serum_outline_color;
-                    double outline_width = sett.tracked_serum_outline_width;
-                      // for (const auto& entry: infix_colors) {
-                      //     if (mDrawPoints[point_no].name.find(entry.first) != std::string::npos) {
-                      //         color = entry.second;
-                      //         break;
-                      //     }
-                      // }
-                    mDrawTrackedSera.emplace_back(color, outline_width);
-                    mDrawPoints[point_no] = &mDrawTrackedSera.back();
-                    std::cout << "    Tracked serum " << point.name << " radius:" << point.attributes.serum_circle_radius << std::endl;
-                }
-                else {
-                    mDrawPoints[point_no] = &mDrawSerum;
-                }
-            }
-        }
-    }
+    //                   // std::cout << "tracked serum " << point.name << std::endl;
+    //                 Color color = sett.tracked_serum_outline_color;
+    //                 double outline_width = sett.tracked_serum_outline_width;
+    //                   // for (const auto& entry: infix_colors) {
+    //                   //     if (mDrawPoints[point_no].name.find(entry.first) != std::string::npos) {
+    //                   //         color = entry.second;
+    //                   //         break;
+    //                   //     }
+    //                   // }
+    //                 mDrawTrackedSera.emplace_back(color, outline_width);
+    //                 mDrawPoints[point_no] = &mDrawTrackedSera.back();
+    //                 std::cout << "    Tracked serum " << point.name << " radius:" << point.attributes.serum_circle_radius << std::endl;
+    //             }
+    //             else {
+    //                 mDrawPoints[point_no] = &mDrawSerum;
+    //             }
+    //         }
+    //     }
+    // }
 
 } // sdb::AntigenicMapsLayoutDraw::mark_tracked_sera
 
@@ -252,16 +252,18 @@ void sdb::AntigenicMapsLayoutDraw::mark_tracked_sera(size_t aSectionIndex)
 
 void sdb::AntigenicMapsLayoutDraw::draw_map_title(Surface& aSurface, size_t aSectionIndex)
 {
-    const AntigenicMapsDrawSettings& sett = settings();
+      // const AntigenicMapsDrawSettings& sett = settings();
+    const Pixels map_title_size{11 /* sett.map_title_size */};
+    const Size map_title_offset = {0.3, 0.4}; // sett.map_title_offset
     const HzSection& section = hz_sections().sections[aSectionIndex];
     std::string title = section.index + "."; // std::string(1, 'A' + static_cast<char>(aSectionNo)) + ".";
     if (!section.label.empty())
         title += " " + section.label;
-    const Size wsize = aSurface.text_size("W", Pixels{sett.map_title_size});
-    const Size tsize = aSurface.text_size(title, Pixels{sett.map_title_size});
-    aSurface.text({sett.map_title_offset.width * wsize.width + aSurface.viewport().origin.x,
-                    sett.map_title_offset.height * wsize.height + tsize.height + aSurface.viewport().origin.y},
-        title, sett.map_title_color, Pixels{sett.map_title_size});
+    const Size wsize = aSurface.text_size("W", map_title_size);
+    const Size tsize = aSurface.text_size(title, map_title_size);
+    aSurface.text({map_title_offset.width * wsize.width + aSurface.viewport().origin.x,
+                    map_title_offset.height * wsize.height + tsize.height + aSurface.viewport().origin.y},
+        title, "black" /* sett.map_title_color */, map_title_size);
 
 } // sdb::AntigenicMapsLayoutDraw::draw_map_title
 

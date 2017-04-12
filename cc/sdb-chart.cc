@@ -44,7 +44,10 @@ void Chart::bounding_rectangle(Viewport& aViewport) const
 
 void Chart::prepare(const AntigenicMapsDrawSettings& aSettings)
 {
-    calculate_viewport(&aSettings.transformation);
+    Transformation transformation;
+    calculate_viewport(&transformation);
+
+      // calculate_viewport(&aSettings.transformation);
 
 } // Chart::prepare
 

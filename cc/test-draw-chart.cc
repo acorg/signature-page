@@ -58,11 +58,11 @@ int main(int argc, const char *argv[])
             }
 
             AntigenicMapsDrawSettings settings;
-            settings.test_antigen_outline_color.from_string("black");
-            settings.test_antigen_fill_color.from_string("green");
-            settings.reference_antigen_outline_color.from_string("black");
-            settings.vaccine_antigen_outline_color.from_string("black");
-            settings.serum_outline_color.from_string("black");
+            // settings.test_antigen_outline_color.from_string("black");
+            // settings.test_antigen_fill_color.from_string("green");
+            // settings.reference_antigen_outline_color.from_string("black");
+            // settings.vaccine_antigen_outline_color.from_string("black");
+            // settings.serum_outline_color.from_string("black");
 
             double width = 600;
             auto surface = std::make_unique<PdfCairo>(options.output_filename, width, width);

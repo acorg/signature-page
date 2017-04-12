@@ -15,11 +15,12 @@ AntigenicMapsLayoutDraw::~AntigenicMapsLayoutDraw()
 
 void AntigenicMapsLayoutDraw::prepare()
 {
-    if (!mAntigenicMapsDraw.settings().viewport.empty()) {
-        mMapViewport = mAntigenicMapsDraw.settings().viewport;
+    if (false /* !mAntigenicMapsDraw.settings().viewport.empty() */) {
+          // mMapViewport = mAntigenicMapsDraw.settings().viewport;
     }
     else {
-        mMapViewport = mAntigenicMapsDraw.chart().viewport(&mAntigenicMapsDraw.settings().transformation);
+        Transformation transformation;
+        mMapViewport = mAntigenicMapsDraw.chart().viewport(&transformation /* mAntigenicMapsDraw.settings().transformation */);
     }
     std::cout << "Using viewport: " << mMapViewport << std::endl;
 

@@ -22,7 +22,7 @@ namespace sdb
         virtual void draw(Surface& aSurface, const sdb::Point& aPoint, const sdb::PointStyle& aStyle, const AntigenicMapsDrawSettings& aSettings) const = 0;
         virtual size_t level() const = 0;
         virtual inline Aspect aspect(const sdb::Point&, const sdb::PointStyle& aStyle, const AntigenicMapsDrawSettings&) const { return Aspect{aStyle.aspect}; }
-        virtual inline Rotation rotation(const sdb::Point& aPoint, const sdb::PointStyle& aStyle, const AntigenicMapsDrawSettings& aSettings) const { return Rotation{aPoint.attributes.reassortant ? aSettings.reassortant_rotation : aStyle.rotation}; }
+        virtual inline Rotation rotation(const sdb::Point& aPoint, const sdb::PointStyle& aStyle, const AntigenicMapsDrawSettings& aSettings) const { return Rotation{aPoint.attributes.reassortant ? 0.5 /* aSettings.reassortant_rotation */ : aStyle.rotation}; }
         virtual inline Color fill_color(const sdb::Point&, const sdb::PointStyle& aStyle, const AntigenicMapsDrawSettings&) const { return aStyle.fill_color; }
         virtual inline Color outline_color(const sdb::Point&, const sdb::PointStyle& aStyle, const AntigenicMapsDrawSettings&) const { return aStyle.outline_color; }
     };
@@ -32,14 +32,14 @@ namespace sdb
      public:
         virtual void draw(Surface& aSurface, const sdb::Point& aPoint, const sdb::PointStyle& aStyle, const AntigenicMapsDrawSettings& aSettings) const;
         virtual inline size_t level() const { return 1; }
-        virtual inline Color outline_color(const sdb::Point&, const sdb::PointStyle&, const AntigenicMapsDrawSettings& aSettings) const { return aSettings.serum_outline_color; }
-        virtual inline double outline_width(const sdb::Point&, const sdb::PointStyle&, const AntigenicMapsDrawSettings& aSettings) const { return aSettings.serum_outline_width; }
+        virtual inline Color outline_color(const sdb::Point&, const sdb::PointStyle&, const AntigenicMapsDrawSettings& aSettings) const { return "black"; /* aSettings.serum_outline_color; */ }
+        virtual inline double outline_width(const sdb::Point&, const sdb::PointStyle&, const AntigenicMapsDrawSettings& aSettings) const { return 1.0; /* aSettings.serum_outline_width; */ }
     };
 
     class DrawAntigen : public DrawPoint
     {
      public:
-        virtual inline Aspect aspect(const sdb::Point& aPoint, const sdb::PointStyle& aStyle, const AntigenicMapsDrawSettings& aSettings) const { return Aspect{aPoint.attributes.egg ? aSettings.egg_antigen_aspect : aStyle.aspect}; }
+        virtual inline Aspect aspect(const sdb::Point& aPoint, const sdb::PointStyle& aStyle, const AntigenicMapsDrawSettings& aSettings) const { return Aspect{aPoint.attributes.egg ? 0.75 /* aSettings.egg_antigen_aspect */ : aStyle.aspect}; }
     };
 
     class DrawReferenceAntigen : public DrawAntigen
