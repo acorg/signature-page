@@ -14,28 +14,28 @@ class AntigenicMapsLayoutDraw
     virtual ~AntigenicMapsLayoutDraw();
 
     virtual void prepare();
+    virtual void prepare_apply_mods() = 0;
+    virtual void prepare_drawing_char() = 0;
     virtual void draw_chart(Surface& aSurface, size_t aSectionIndex) = 0;
 
     inline AntigenicMapsDrawBase& antigenic_maps_draw() { return mAntigenicMapsDraw; }
     inline const AntigenicMapsDrawSettings& settings() const { return mAntigenicMapsDraw.settings(); }
+    inline auto& chart() { return mAntigenicMapsDraw.chart(); }
     inline const auto& chart() const { return mAntigenicMapsDraw.chart(); }
     inline Surface& surface() const { return mAntigenicMapsDraw.surface(); }
     inline const auto& hz_sections() const { return mAntigenicMapsDraw.hz_sections(); }
     inline const auto& signature_page_settings() const { return mAntigenicMapsDraw.signature_page_settings(); }
-    inline const Viewport& viewport() const { return mMapViewport; }
+    const Viewport& viewport() const;
     inline const auto& sequenced_antigens() const { return mSequencedAntigens; }
 
  protected:
-    virtual void reset() = 0;
-    virtual void apply_mods(const std::vector<AntigenicMapMod>& aMods);
-    virtual void apply_mods_before(const std::vector<AntigenicMapMod>& aMods, Surface& aSurface);
-    virtual void apply_mods_after(const std::vector<AntigenicMapMod>& aMods, Surface& aSurface);
+    virtual void apply_mods_before(Surface& aSurface);
+    virtual void apply_mods_after(Surface& aSurface);
 
     virtual void find_sequenced_antigens();
 
  private:
     AntigenicMapsDrawBase& mAntigenicMapsDraw;
-    Viewport mMapViewport;
     std::map<size_t, size_t> mSequencedAntigens; // antigen_no to section_no
 
 }; // class AntigenicMapsLayoutDraw

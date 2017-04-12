@@ -14,13 +14,15 @@ class ChartDrawInterface : public ChartDrawBase
     inline ChartDrawInterface(Chart* aChart) : mChart(aChart), mChartDraw(*aChart, 0) {}
 
     virtual void init_settings();
-    virtual void prepare(const AntigenicMapsDrawSettings& aSettings);
-    virtual const Viewport& viewport(const Transformation* aSettingsTransformation);
+    virtual const Viewport& viewport() const;
     virtual inline std::string lab() const { return mChart->chart_info().lab(); }
-    virtual inline void draw(Surface& aSurface) const { /* mChartDraw.draw(aSurface); */ }
+    virtual inline void draw(Surface& aSurface) const { mChartDraw.draw(aSurface); }
 
       // returns ChartDrawBase::AntigenNotFound if not found
     virtual inline size_t find_antigen(std::string aName) const { return mChart->antigens().find_by_name_for_exact_matching(aName); }
+
+    void apply_mods(const std::vector<AntigenicMapMod>& aMods);
+    inline void calculate_viewport() { mChartDraw.calculate_viewport(); }
 
  private:
     std::unique_ptr<Chart> mChart;
@@ -53,9 +55,8 @@ class AntigenicMapsLayoutDrawAce : public AntigenicMapsLayoutDraw
     inline AntigenicMapsLayoutDrawAce(AntigenicMapsDrawBase& aAntigenicMapsDraw) : AntigenicMapsLayoutDraw(aAntigenicMapsDraw) {}
 
     virtual void draw_chart(Surface& aSurface, size_t aSectionIndex);
-
- protected:
-    virtual void reset();
+    virtual void prepare_apply_mods();
+    virtual void prepare_drawing_char();
 
 }; // class AntigenicMapsLayoutDrawAce
 

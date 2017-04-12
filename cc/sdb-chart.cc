@@ -1,5 +1,6 @@
 #include "sdb-chart.hh"
 #include "antigenic-maps-draw.hh"
+#include "sdb-antigenic-maps-draw.hh"
 
 using namespace sdb;
 
@@ -7,20 +8,20 @@ using namespace sdb;
 
 void Chart::init_settings()
 {
-    calculate_viewport(nullptr);
+    calculate_viewport();
 
 } // Chart::init_settings
 
 // ----------------------------------------------------------------------
 
-void Chart::calculate_viewport(const Transformation* aSettingsTransformation)
+void Chart::calculate_viewport()
 {
     if (mViewport.empty()) {
-        apply_transformation(aSettingsTransformation);
+        apply_transformation();
         bounding_rectangle(mViewport);
         mViewport.square();
         mViewport.whole_width();
-        std::cout << "Calculated viewport: " << mViewport << std::endl;
+        std::cout << "INFO: Calculated viewport: " << mViewport << std::endl;
     }
 
 } // Chart::calculate_viewport
@@ -42,28 +43,22 @@ void Chart::bounding_rectangle(Viewport& aViewport) const
 
 // ----------------------------------------------------------------------
 
-void Chart::prepare(const AntigenicMapsDrawSettings& aSettings)
-{
-    Transformation transformation;
-    calculate_viewport(&transformation);
+// void Chart::prepare(const DrawPointSettings& aSettings)
+// {
+//     std::cerr << "INFO: sdb::Chart prepare" << std::endl;
+//       // calculate_viewport(&aSettings.transformation);
 
-      // calculate_viewport(&aSettings.transformation);
-
-} // Chart::prepare
+// } // Chart::prepare
 
 // ----------------------------------------------------------------------
 
-void Chart::apply_transformation(const Transformation* aSettingsTransformation)
+void Chart::apply_transformation()
 {
-    Transformation t;
-    t.multiply_by(mTransformation);
-    if (aSettingsTransformation)
-        t.multiply_by(*aSettingsTransformation);
-    std::cout << "transformation: " << t << std::endl;
+      // std::cout << "INFO: Chart::apply_transformation transformation: " << mTransformation << std::endl;
     for (auto& p: mPoints) {
         if (!p.coordinates.isnan()) {
-            const auto x = p.coordinates.x * t[0] + p.coordinates.y * t[2];
-            p.coordinates.y = p.coordinates.x * t[1] + p.coordinates.y * t[3];
+            const auto x = p.coordinates.x * mTransformation[0] + p.coordinates.y * mTransformation[2];
+            p.coordinates.y = p.coordinates.x * mTransformation[1] + p.coordinates.y * mTransformation[3];
             p.coordinates.x = x;
         }
     }

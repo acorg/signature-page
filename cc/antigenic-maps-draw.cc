@@ -78,7 +78,6 @@ void AntigenicMapsDrawBase::draw(Surface& aMappedAntigensDrawSurface)
 
 void AntigenicMapsDrawBase::prepare()
 {
-    chart().prepare(settings());
     if (settings().layout == "labelled_grid") {
         make_layout();
     }

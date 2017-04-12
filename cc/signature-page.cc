@@ -277,7 +277,7 @@ void SignaturePageDraw::make_layout_tree_clades_ts_maps()
 
 void SignaturePageDraw::draw()
 {
-    std::cout << std::endl << "DRAW:" << std::endl;
+    std::cout << std::endl << "INFO: DRAW signature page" << std::endl;
     mSurface->background("white");
 
     if (mTreeDraw)

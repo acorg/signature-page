@@ -150,10 +150,13 @@ AntigenicMapsDrawSettings::AntigenicMapsDrawSettings()
       mapped_antigens_section_line_color("black"), mapped_antigens_section_line_width(1)
 {
     mods.push_back(AntigenicMapMod{{"N", "point_scale"}, {"scale", 1.0}, {"outline_scale", 1.0}});
+    mods.push_back(AntigenicMapMod{{"N", "rotate_degrees"}, {"angle", 0.0}});
+    mods.push_back(AntigenicMapMod{{"N", "tracked_antigen"}, {"color", "green3"}});
+      // mods.push_back(AntigenicMapMod{{"N", "viewport"}, {"viewport", }});
+
     mods.push_back(AntigenicMapMod{{"N", "background"}, {"color", "white"}});
     mods.push_back(AntigenicMapMod{{"N", "grid"}, {"color", "grey80"}, {"line_width", 1.0}});
     mods.push_back(AntigenicMapMod{{"N", "border"}, {"color", "black"}, {"line_width", 1.0}});
-    mods.push_back(AntigenicMapMod{{"N", "rotate_degrees"}, {"angle", 30.0}});
 }
 
 //       serum_scale(5), reference_antigen_scale(5), test_antigen_scale(3), vaccine_antigen_scale(15), tracked_antigen_scale(5),

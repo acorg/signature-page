@@ -9,16 +9,9 @@ void ChartDrawInterface::init_settings()
 
 // ----------------------------------------------------------------------
 
-void ChartDrawInterface::prepare(const AntigenicMapsDrawSettings& aSettings)
+const Viewport& ChartDrawInterface::viewport() const
 {
-    mChartDraw.prepare();
-
-} // ChartDrawInterface::prepare
-
-// ----------------------------------------------------------------------
-
-const Viewport& ChartDrawInterface::viewport(const Transformation* aSettingsTransformation)
-{
+    return mChartDraw.viewport();
 
 } // ChartDrawInterface::viewport
 
@@ -32,26 +25,41 @@ void AntigenicMapsDraw::make_layout()
 
 // ----------------------------------------------------------------------
 
+void AntigenicMapsLayoutDrawAce::prepare_apply_mods()
+{
+    std::cerr << "INFO: AntigenicMapsLayoutDrawAce::prepare_apply_mods" << std::endl;
+    dynamic_cast<ChartDrawInterface&>(chart()).calculate_viewport();
+
+    for (const auto& mod: settings().mods) {
+        const std::string name = mod.name();
+        if (name == "point_scale") {
+              // aSettings.point_scale = mod.get("scale", 1.0);
+        }
+    }
+
+} // AntigenicMapsLayoutDrawAce::prepare_apply_mods
+
+// ----------------------------------------------------------------------
+
 void AntigenicMapsLayoutDrawAce::draw_chart(Surface& aSurface, size_t aSectionIndex)
 {
-    const AntigenicMapsDrawSettings& sett = settings();
-    apply_mods_before(sett.mods, aSurface);
+    apply_mods_before(aSurface);
 
       // aSurface.viewport(viewport());
 
     std::cout << "\nMAP: " << aSectionIndex << " " << aSurface.viewport() << std::endl;
     chart().draw(aSurface);
 
-    apply_mods_after(sett.mods, aSurface);
+    apply_mods_after(aSurface);
 
 } // AntigenicMapsLayoutDrawAce::draw_chart
 
 // ----------------------------------------------------------------------
 
-void AntigenicMapsLayoutDrawAce::reset()
+void AntigenicMapsLayoutDrawAce::prepare_drawing_char()
 {
 
-} // AntigenicMapsLayoutDrawAce::reset
+} // AntigenicMapsLayoutDrawAce::prepare_drawing_char
 
 // ----------------------------------------------------------------------
 /// Local Variables:

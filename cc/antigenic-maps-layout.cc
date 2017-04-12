@@ -15,42 +15,24 @@ AntigenicMapsLayoutDraw::~AntigenicMapsLayoutDraw()
 
 void AntigenicMapsLayoutDraw::prepare()
 {
-    Transformation transformation;
-    mMapViewport = mAntigenicMapsDraw.chart().viewport(&transformation);
-    apply_mods(mAntigenicMapsDraw.settings().mods);
-
-    // if (false /* !mAntigenicMapsDraw.settings().viewport.empty() */) {
-    //       // mMapViewport = mAntigenicMapsDraw.settings().viewport;
-    // }
-    // else {
-    //     Transformation transformation;
-    //     mMapViewport = mAntigenicMapsDraw.chart().viewport(&transformation /* mAntigenicMapsDraw.settings().transformation */);
-    // }
-    std::cout << "Using viewport: " << mMapViewport << std::endl;
-
     find_sequenced_antigens();
-    reset();
+    prepare_apply_mods();
+    std::cout << "INFO: AntigenicMapsLayoutDraw::prepare Using viewport: " << mAntigenicMapsDraw.chart().viewport() << std::endl;
 
 } // AntigenicMapsLayoutDraw::prepare
 
 // ----------------------------------------------------------------------
 
-void AntigenicMapsLayoutDraw::apply_mods(const std::vector<AntigenicMapMod>& aMods)
+const Viewport& AntigenicMapsLayoutDraw::viewport() const
 {
-    for (const auto& mod: aMods) {
-        const std::string name = mod.name();
-        // else {
-        //     std::cerr << "WARNING: unrecognized antigenic map mod: " << name << std::endl;
-        // }
-    }
-
-} // AntigenicMapsLayoutDraw::apply_mods
+    return mAntigenicMapsDraw.chart().viewport();
+}
 
 // ----------------------------------------------------------------------
 
-void AntigenicMapsLayoutDraw::apply_mods_before(const std::vector<AntigenicMapMod>& aMods, Surface& aSurface)
+void AntigenicMapsLayoutDraw::apply_mods_before(Surface& aSurface)
 {
-    for (const auto& mod: aMods) {
+    for (const auto& mod: settings().mods) {
         const std::string name = mod.name();
         if (name == "background") {
             aSurface.background(mod.get("color", "black"));
@@ -64,9 +46,9 @@ void AntigenicMapsLayoutDraw::apply_mods_before(const std::vector<AntigenicMapMo
 
 // ----------------------------------------------------------------------
 
-void AntigenicMapsLayoutDraw::apply_mods_after(const std::vector<AntigenicMapMod>& aMods, Surface& aSurface)
+void AntigenicMapsLayoutDraw::apply_mods_after(Surface& aSurface)
 {
-    for (const auto& mod: aMods) {
+    for (const auto& mod: settings().mods) {
         const std::string name = mod.name();
         if (name == "border") {
             aSurface.border(mod.get("color", "black"), Pixels{mod.get("line_width", 1.0)});
@@ -101,6 +83,7 @@ AntigenicMapsLayout::~AntigenicMapsLayout()
 
 void LabelledGridBase::draw(Surface& aMappedAntigensDrawSurface)
 {
+    std::cerr << "INFO: AntigenicMapsLayoutDraw::draw" << std::endl;
     const AntigenicMapsDrawSettings& settings = layout_draw().settings();
     Surface& surface = layout_draw().surface();
     // std::cerr << "Maps " << surface << std::endl;
@@ -114,6 +97,7 @@ void LabelledGridBase::draw(Surface& aMappedAntigensDrawSurface)
                                                       Scaled{map_width}, layout_draw().viewport(), true);
             // std::cerr << "Map " << map_surface << std::endl;
             // std::cerr << "origin_offset: " << map_surface.origin_offset() << "  scale: " << map_surface.scale() << std::endl;
+            layout_draw().prepare_drawing_char();
             layout_draw().draw_chart(map_surface, section_index);
             draw_mapped_antigens_section(section_index, aMappedAntigensDrawSurface);
             ++column;

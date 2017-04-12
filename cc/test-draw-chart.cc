@@ -31,7 +31,7 @@ int main(int argc, const char *argv[])
     if (exit_code == 0) {
         try {
             auto chart = std::unique_ptr<sdb::Chart>{dynamic_cast<sdb::Chart*>(sdb::read_chart_from_sdb(options.chart_filename))};
-            auto viewport = chart->viewport(nullptr);
+            auto viewport = chart->viewport();
             std::cout << viewport << std::endl;
 
             sdb::DrawSerum draw_serum;

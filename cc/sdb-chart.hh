@@ -10,12 +10,10 @@
 
 // ----------------------------------------------------------------------
 
-class AntigenicMapsDrawSettings;
-
-// ----------------------------------------------------------------------
-
 namespace sdb
 {
+
+    class DrawPointSettings;
 
 // class VaccineData
 // {
@@ -116,7 +114,7 @@ namespace sdb
         inline Chart() : mStress(-1) {}
 
         virtual void init_settings();
-        virtual void prepare(const AntigenicMapsDrawSettings& aSettings);
+        // virtual void prepare(const DrawPointSettings& aSettings);
         virtual inline void draw(Surface& /*aSurface*/) const {}
 
         virtual inline std::string lab() const { return chart_info().lab; }
@@ -161,8 +159,8 @@ namespace sdb
         inline const std::vector<double>& column_bases() const { return mColumnBases; }
         inline std::vector<double>& column_bases() { return mColumnBases; }
 
-        inline const Viewport& viewport(const Transformation* aSettingsTransformation) { calculate_viewport(aSettingsTransformation); return mViewport; }
-        using ChartDrawBase::viewport;
+        void calculate_viewport();
+        inline const Viewport& viewport() const { return mViewport; }
 
      private:
         double mStress;
@@ -178,8 +176,7 @@ namespace sdb
         Viewport mViewport;
 
         void make_point_by_name() const;
-        void apply_transformation(const Transformation* aSettingsTransformation);
-        void calculate_viewport(const Transformation* aSettingsTransformation);
+        void apply_transformation();
         void bounding_rectangle(Viewport& aViewport) const;
 
           //std::set<size_t> mSequencedAntigens;

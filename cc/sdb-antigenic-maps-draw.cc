@@ -126,9 +126,33 @@ void sdb::DrawMarkedAntigen::draw(Surface& aSurface, const sdb::Point& aPoint, c
 
 // ----------------------------------------------------------------------
 
-void sdb::AntigenicMapsLayoutDraw::reset()
+void sdb::AntigenicMapsLayoutDraw::prepare_apply_mods()
 {
-    mDrawTrackedAntigen.color("green3" /* settings().tracked_antigen_color */);
+    auto& chart = dynamic_cast<sdb::AntigenicMapsDraw&>(antigenic_maps_draw()).chart_sdb();
+      // std::cerr << "INFO: prepare_apply_mods 1 transformation " << chart.transformation() << std::endl;
+    for (const auto& mod: settings().mods) {
+        const std::string name = mod.name();
+        if (name == "rotate_degrees") {
+            chart.transformation().rotate(mod.get("angle", 0.0) * M_PI / 180.0);
+        }
+        else if (name == "rotate_radians") {
+            chart.transformation().rotate(mod.get("angle", 0.0));
+        }
+        else if (name == "viewport") {
+        }
+        else if (name == "tracked_antigen") {
+            mDrawTrackedAntigen.color(mod.get("color", "green3"));
+        }
+    }
+    chart.calculate_viewport();
+      // std::cerr << "INFO: prepare_apply_mods 2 transformation " << chart.transformation() << std::endl;
+
+} // sdb::AntigenicMapsLayoutDraw::prepare_apply_mods
+
+// ----------------------------------------------------------------------
+
+void sdb::AntigenicMapsLayoutDraw::prepare_drawing_char()
+{
     auto& chart = dynamic_cast<sdb::AntigenicMapsDraw&>(antigenic_maps_draw()).chart_sdb();
 
     mDrawPoints.resize(chart.points().size(), nullptr);
@@ -155,7 +179,7 @@ void sdb::AntigenicMapsLayoutDraw::reset()
 
     mark_marked_antigens();
 
-} // sdb::AntigenicMapsLayoutDraw::reset
+} // sdb::AntigenicMapsLayoutDraw::prepare_drawing_char
 
 // ----------------------------------------------------------------------
 
@@ -194,9 +218,9 @@ sdb::DrawPointSettings::DrawPointSettings()
 
 // ----------------------------------------------------------------------
 
-void sdb::AntigenicMapsLayoutDraw::apply_mods_to_settings(const std::vector<AntigenicMapMod>& aMods, DrawPointSettings& aSettings)
+void sdb::AntigenicMapsLayoutDraw::apply_mods_to_settings(DrawPointSettings& aSettings)
 {
-    for (const auto& mod: aMods) {
+    for (const auto& mod: settings().mods) {
         const std::string name = mod.name();
         if (name == "point_scale") {
             aSettings.point_scale = mod.get("scale", 1.0);
@@ -211,9 +235,9 @@ void sdb::AntigenicMapsLayoutDraw::draw_chart(Surface& aSurface, size_t aSection
 {
     std::cout << "\nMAP: " << aSectionIndex << std::endl;
 
-    apply_mods_before(settings().mods, aSurface);
+    apply_mods_before(aSurface);
     DrawPointSettings draw_point_settings;
-    apply_mods_to_settings(settings().mods, draw_point_settings);
+    apply_mods_to_settings(draw_point_settings);
 
     auto& chart = dynamic_cast<sdb::AntigenicMapsDraw&>(antigenic_maps_draw()).chart_sdb();
 
@@ -232,10 +256,10 @@ void sdb::AntigenicMapsLayoutDraw::draw_chart(Surface& aSurface, size_t aSection
         }
     }
     if (drawn != mDrawPoints.size())
-        std::cerr << "AntigenicMapsLayoutDraw:0: warning: " << drawn << " points of " << mDrawPoints.size() << " were drawn" << std::endl;
+        std::cerr << "WARNING: AntigenicMapsLayoutDraw:0: " << drawn << " points of " << mDrawPoints.size() << " were drawn" << std::endl;
 
     draw_map_title(aSurface, aSectionIndex, draw_point_settings);
-    apply_mods_after(settings().mods, aSurface);
+    apply_mods_after(aSurface);
 
 } // sdb::AntigenicMapsLayoutDraw::draw_chart
 

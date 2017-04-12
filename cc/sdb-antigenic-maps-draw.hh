@@ -86,7 +86,7 @@ namespace sdb
     class DrawTrackedAntigen : public DrawAntigen
     {
      public:
-        inline DrawTrackedAntigen(Color aFillColor = "pink") : mColor(aFillColor) {}
+        inline DrawTrackedAntigen(Color aFillColor = "green3") : mColor(aFillColor) {}
 
         virtual void draw(Surface& aSurface, const sdb::Point& aPoint, const sdb::PointStyle& aStyle, const DrawPointSettings& aSettings) const;
         virtual inline size_t level() const { return 5; }
@@ -139,6 +139,8 @@ namespace sdb
             : ::AntigenicMapsLayoutDraw(aAntigenicMapsDraw) {}
 
         virtual void draw_chart(Surface& aSurface, size_t aSectionIndex);
+        virtual void prepare_apply_mods();
+        void prepare_drawing_char();
 
      protected:
         std::vector<const DrawPoint*> mDrawPoints;
@@ -154,13 +156,12 @@ namespace sdb
         std::vector<DrawTrackedSerum> mDrawTrackedSera;
 
         // virtual void find_sequenced_antigens();
-        virtual void reset();
 
           // tracked_antigens_colored_by_clade
           // tracked_sera
 
      private:
-        void apply_mods_to_settings(const std::vector<AntigenicMapMod>& aMods, DrawPointSettings& aSettings);
+        void apply_mods_to_settings(DrawPointSettings& aSettings);
         void mark_tracked_antigens(size_t aSectionIndex, const DrawPointSettings& aSettings);
         void mark_tracked_sera(size_t aSectionIndex, const DrawPointSettings& aSettings);
         void draw_map_title(Surface& aSurface, size_t aSectionIndex, const DrawPointSettings& aSettings);
@@ -180,7 +181,7 @@ namespace sdb
         virtual inline const ChartDrawBase& chart() const { return *mChart; }
         virtual inline ChartDrawBase& chart() { return *mChart; }
 
-        inline const sdb::Chart& chart_sdb() const { return dynamic_cast<const sdb::Chart&>(*mChart); }
+        inline sdb::Chart& chart_sdb() { return dynamic_cast<sdb::Chart&>(*mChart); }
 
      private:
         std::unique_ptr<ChartDrawBase> mChart;
