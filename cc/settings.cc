@@ -10,8 +10,8 @@ namespace jsw = json_writer;
 // ----------------------------------------------------------------------
 
 static constexpr const char* SETTINGS_VERSION_4 = "signature-page-settings-v4";
-static constexpr const char* SETTINGS_VERSION_3 = "signature-page-settings-v3";
-static constexpr const char* SETTINGS_VERSION_2 = "signature-page-settings-v2";
+// static constexpr const char* SETTINGS_VERSION_3 = "signature-page-settings-v3";
+// static constexpr const char* SETTINGS_VERSION_2 = "signature-page-settings-v2";
 
 // ----------------------------------------------------------------------
 
@@ -137,18 +137,20 @@ MappedAntigensDrawSettings::~MappedAntigensDrawSettings()
 
 // ----------------------------------------------------------------------
 
-AntigenicMapMod::AntigenicMapMod()
-{
-} // AntigenicMapMod::AntigenicMapMod
+// AntigenicMapMod::AntigenicMapMod()
+// {
+// } // AntigenicMapMod::AntigenicMapMod
 
-AntigenicMapMod::~AntigenicMapMod()
-{
-} // AntigenicMapMod::~AntigenicMapMod
+// AntigenicMapMod::~AntigenicMapMod()
+// {
+// } // AntigenicMapMod::~AntigenicMapMod
 
 AntigenicMapsDrawSettings::AntigenicMapsDrawSettings()
     : layout("labelled_grid"), columns(3), gap(20),
       mapped_antigens_section_line_color("black"), mapped_antigens_section_line_width(1)
 {
+    mods.push_back(AntigenicMapMod{{"N", "background"}, {"color", "yellow"}});
+    mods.push_back(AntigenicMapMod{{"N", "rotate_degrees"}, {"angle", 30.0}});
 }
 
 // AntigenicMapsDrawSettings::AntigenicMapsDrawSettings()
@@ -357,6 +359,70 @@ class ViewportStorer : public jsi::StorerBase
     size_t mPos;
 };
 
+// ----------------------------------------------------------------------
+
+class SettingValueStorer : public jsi::StorerBase
+{
+ public:
+    inline SettingValueStorer(SettingValue& aTarget) : mTarget(aTarget) {}
+    inline virtual Base* String(const char* str, rapidjson::SizeType length) { mTarget = std::string(str, length); throw Pop(); }
+    inline virtual Base* Int(int i) { mTarget = i; throw Pop(); }
+    inline virtual Base* Uint(unsigned u) { mTarget = static_cast<int>(u); throw Pop(); }
+    inline virtual Base* Double(double d) { mTarget = d; throw Pop(); }
+    virtual Base* StartArray();
+    virtual Base* StartObject();
+
+ private:
+    SettingValue& mTarget;
+};
+
+class SettingDictStorer : public jsi::StorerBase
+{
+ public:
+    inline SettingDictStorer(SettingDict& aTarget) : mTarget(aTarget) {}
+    inline virtual Base* EndObject() { throw Base::Pop(); }
+    inline virtual Base* Key(const char* str, rapidjson::SizeType length) { std::string key(str, length); auto p = mTarget.emplace(key, SettingValue{}); return new SettingValueStorer(p.first->second); }
+
+ private:
+    SettingDict& mTarget;
+};
+
+class SettingListStorer : public jsi::StorerBase
+{
+ public:
+    inline SettingListStorer(SettingList& aTarget) : mTarget(aTarget) {}
+    inline virtual Base* EndArray() { throw Base::Pop(); }
+
+ private:
+    SettingList& mTarget;
+};
+
+SettingValueStorer::Base* SettingValueStorer::StartArray()
+{
+    mTarget = SettingList{};
+    return new SettingListStorer(*boost::get<SettingList>(&mTarget));
+}
+
+SettingValueStorer::Base* SettingValueStorer::StartObject()
+{
+    mTarget = SettingDict{};
+    return new SettingDictStorer(*boost::get<SettingDict>(&mTarget));
+}
+
+class AntigenicMapModsStorer : public jsi::StorerBase
+{
+ public:
+    inline AntigenicMapModsStorer(std::vector<AntigenicMapMod>& aTarget) : mTarget(aTarget) {}
+    inline virtual Base* StartArray() { mTarget.clear(); return nullptr; }
+    inline virtual Base* EndArray() { throw Base::Pop(); }
+    inline virtual Base* StartObject() { mTarget.emplace_back(); return new SettingDictStorer(mTarget.back()); }
+
+ private:
+    std::vector<AntigenicMapMod>& mTarget;
+};
+
+// ----------------------------------------------------------------------
+
 void read_settings(Settings& aSettings, std::string aFilename)
 {
     jsi::data<TextStyle> style_data = {
@@ -510,6 +576,12 @@ void read_settings(Settings& aSettings, std::string aFilename)
     };
 
     jsi::data<AntigenicMapsDrawSettings> antigenic_maps_data = {
+        {"layout", jsi::field(&AntigenicMapsDrawSettings::layout)},
+        {"columns", jsi::field(&AntigenicMapsDrawSettings::columns)},
+        {"gap", jsi::field(&AntigenicMapsDrawSettings::gap)},
+        {"mapped_antigens_section_line_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::mapped_antigens_section_line_color)},
+        {"mapped_antigens_section_line_width", jsi::field(&AntigenicMapsDrawSettings::mapped_antigens_section_line_width)},
+        {"mods", jsi::field<AntigenicMapModsStorer>(&AntigenicMapsDrawSettings::get_mods)},
     };
 
     // jsi::data<MarkAntigenSettings> mark_antigens_data = {
@@ -622,6 +694,13 @@ template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writ
 template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const Size& aSize)
 {
     return writer << jsw::start_array << aSize.width << aSize.height << jsw::end_array;
+}
+
+// ----------------------------------------------------------------------
+
+template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, Color aColor)
+{
+    return writer << aColor.to_string();
 }
 
 // ----------------------------------------------------------------------
@@ -880,9 +959,55 @@ template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writ
 
 // // ----------------------------------------------------------------------
 
+template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const SettingValue& aSettingValue)
+{
+    switch (aSettingValue.which()) {
+      case 0:
+          writer << *boost::get<std::string>(&aSettingValue);
+          break;
+      case 1:
+          writer << *boost::get<double>(&aSettingValue);
+          break;
+      case 2:
+          writer << *boost::get<int>(&aSettingValue);
+          break;
+      case 3:
+          writer << *boost::get<SettingDict>(&aSettingValue);
+          break;
+      case 4:
+          writer << *boost::get<SettingList>(&aSettingValue);
+          break;
+    }
+    return writer;
+}
+
+// template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const SettingList& aSettings)
+// {
+//     writer << jsw::start_array;
+//     for (const auto& value: aSettings)
+//         writer << value;
+//     writer << jsw::end_array;
+//     return writer;
+// }
+
+template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const SettingDict& aSettings)
+{
+    writer << jsw::start_object;
+    for (const auto& value: aSettings)
+        writer << jsw::key(value.first) << value.second;
+    writer << jsw::end_object;
+    return writer;
+}
+
 template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const AntigenicMapsDrawSettings& aSettings)
 {
     return writer << jsw::start_object
+                  << jsw::key("layout") << aSettings.layout
+                  << jsw::key("columns") << aSettings.columns
+                  << jsw::key("gap") << aSettings.gap
+                  << jsw::key("mapped_antigens_section_line_color") << aSettings.mapped_antigens_section_line_color
+                  << jsw::key("mapped_antigens_section_line_width") << aSettings.mapped_antigens_section_line_width
+                  << jsw::key("mods") << aSettings.mods
                   << jsw::end_object;
 }
 

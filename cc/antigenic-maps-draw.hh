@@ -74,6 +74,8 @@ using SettingValue = boost::variant<std::string, double, int, SettingDict, Setti
 
 class SettingDict : public std::map<std::string, SettingValue>
 {
+ public:
+    using std::map<std::string, SettingValue>::map;
 };
 
 class SettingList : public std::vector<SettingValue>
@@ -83,8 +85,9 @@ class SettingList : public std::vector<SettingValue>
 class AntigenicMapMod : public SettingDict
 {
  public:
-    AntigenicMapMod();
-    ~AntigenicMapMod();
+    // AntigenicMapMod();
+    using SettingDict::SettingDict;
+    // ~AntigenicMapMod();
 
 }; // class AntigenicMapMod
 
@@ -100,6 +103,8 @@ class AntigenicMapsDrawSettings
     Color mapped_antigens_section_line_color;
     double mapped_antigens_section_line_width;
     std::vector<AntigenicMapMod> mods;
+
+    inline std::vector<AntigenicMapMod>& get_mods() { return mods; }
 
 }; // class AntigenicMapsDrawSettings
 
