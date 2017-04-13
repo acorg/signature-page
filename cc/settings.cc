@@ -203,7 +203,7 @@ void AntigenicMapsDrawSettings::viewport(const Viewport& aViewport)
             return SettingList{aViewport.origin.x, aViewport.origin.y, aViewport.size.width, aViewport.size.height};
     };
     AntigenicMapMod viewport_mod{{"N", "viewport"}, {"viewport", make_setting_list()}};
-    std::cerr << "DEBUG: AntigenicMapsDrawSettings::viewport" << std::endl;
+      // std::cerr << "DEBUG: AntigenicMapsDrawSettings::viewport" << std::endl;
     const auto vpmod = std::find_if(mods.begin(), mods.end(), [](const auto& mod) -> bool { return mod.name() == "viewport"; });
     if (vpmod == mods.end())
         mods.push_back(viewport_mod);
@@ -417,34 +417,40 @@ class SettingValueStorer : public jsi::StorerBase
 class SettingDictStorer : public jsi::StorerBase
 {
  public:
-    inline SettingDictStorer(SettingDict& aTarget) : mTarget(aTarget) {}
-    inline virtual Base* EndObject() { throw Base::Pop(); }
+    inline SettingDictStorer(SettingDict& aTarget, bool aPop2 = false) : mTarget(aTarget), mPop2(aPop2) {}
+    inline virtual Base* EndObject() { if (mPop2) throw Base::Pop2(); else throw Base::Pop(); }
     inline virtual Base* Key(const char* str, rapidjson::SizeType length) { std::string key(str, length); auto p = mTarget.emplace(key, SettingValue{}); return new SettingValueStorer(p.first->second); }
 
  private:
     SettingDict& mTarget;
+    bool mPop2;
 };
 
 class SettingListStorer : public jsi::StorerBase
 {
  public:
-    inline SettingListStorer(SettingList& aTarget) : mTarget(aTarget) {}
-    inline virtual Base* EndArray() { throw Base::Pop(); }
+    inline SettingListStorer(SettingList& aTarget, bool aPop2 = false) : mTarget(aTarget), mPop2(aPop2) {}
+    inline virtual Base* EndArray() { if (mPop2) throw Base::Pop2(); else throw Base::Pop(); }
+    // inline virtual Base* String(const char* str, rapidjson::SizeType length) { mTarget = std::string(str, length); throw Pop(); }
+    // inline virtual Base* Int(int i) { mTarget = i; throw Pop(); }
+    // inline virtual Base* Uint(unsigned u) { mTarget = static_cast<int>(u); throw Pop(); }
+    inline virtual Base* Double(double d) { mTarget.emplace_back(d); return nullptr; }
 
  private:
     SettingList& mTarget;
+    bool mPop2;
 };
 
 SettingValueStorer::Base* SettingValueStorer::StartArray()
 {
     mTarget = SettingList{};
-    return new SettingListStorer(*boost::get<SettingList>(&mTarget));
+    return new SettingListStorer(*boost::get<SettingList>(&mTarget), true);
 }
 
 SettingValueStorer::Base* SettingValueStorer::StartObject()
 {
     mTarget = SettingDict{};
-    return new SettingDictStorer(*boost::get<SettingDict>(&mTarget));
+    return new SettingDictStorer(*boost::get<SettingDict>(&mTarget), true);
 }
 
 class AntigenicMapModsStorer : public jsi::StorerBase

@@ -160,7 +160,8 @@ namespace sdb
         inline std::vector<double>& column_bases() { return mColumnBases; }
 
         void calculate_viewport();
-        inline const Viewport& viewport() const { return mViewport; }
+        virtual inline const Viewport& viewport() const { return mViewport; }
+        virtual inline void viewport(const Viewport& aViewport) { mViewport = aViewport; }
 
      private:
         double mStress;

@@ -19,7 +19,7 @@ void AntigenicMapsLayoutDraw::prepare()
     prepare_apply_mods();
     const Viewport& viewport = mAntigenicMapsDraw.chart().viewport();
     settings().viewport(viewport);
-    std::cerr << "DEBUG: AntigenicMapsLayoutDraw::prepare Using viewport: " << viewport << std::endl;
+    std::cout << "INFO: Using viewport: " << viewport << std::endl;
 
 } // AntigenicMapsLayoutDraw::prepare
 

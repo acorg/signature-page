@@ -14,7 +14,8 @@ class ChartDrawInterface : public ChartDrawBase
     inline ChartDrawInterface(Chart* aChart) : mChart(aChart), mChartDraw(*aChart, 0) {}
 
     virtual void init_settings();
-    virtual const Viewport& viewport() const;
+    virtual inline const Viewport& viewport() const { return mChartDraw.viewport(); }
+    virtual inline void viewport(const Viewport& aViewport) { mChartDraw.viewport(aViewport); }
     virtual inline std::string lab() const { return mChart->chart_info().lab(); }
     virtual inline void draw(Surface& aSurface) const { mChartDraw.draw(aSurface); }
 

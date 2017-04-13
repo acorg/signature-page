@@ -79,7 +79,7 @@ void AntigenicMapsDrawBase::draw(Surface& aMappedAntigensDrawSurface)
 
 void AntigenicMapsDrawBase::prepare()
 {
-    std::cerr << "DEBUG: AntigenicMapsDrawBase::prepare" << std::endl;
+      // std::cerr << "DEBUG: AntigenicMapsDrawBase::prepare" << std::endl;
     if (settings().layout == "labelled_grid") {
         make_layout();
     }

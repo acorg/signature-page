@@ -21,7 +21,7 @@ void Chart::calculate_viewport()
         bounding_rectangle(mViewport);
         mViewport.square();
         mViewport.whole_width();
-        std::cout << "INFO: Calculated viewport: " << mViewport << std::endl;
+        std::cout << "INFO: [sdb] Calculated viewport: " << mViewport << std::endl;
     }
 
 } // Chart::calculate_viewport
@@ -45,7 +45,7 @@ void Chart::bounding_rectangle(Viewport& aViewport) const
 
 // void Chart::prepare(const DrawPointSettings& aSettings)
 // {
-//     std::cerr << "INFO: sdb::Chart prepare" << std::endl;
+//     std::cerr << "INFO: [sdb] sdb::Chart prepare" << std::endl;
 //       // calculate_viewport(&aSettings.transformation);
 
 // } // Chart::prepare
@@ -54,7 +54,7 @@ void Chart::bounding_rectangle(Viewport& aViewport) const
 
 void Chart::apply_transformation()
 {
-      // std::cout << "INFO: Chart::apply_transformation transformation: " << mTransformation << std::endl;
+      // std::cout << "INFO: [sdb] Chart::apply_transformation transformation: " << mTransformation << std::endl;
     for (auto& p: mPoints) {
         if (!p.coordinates.isnan()) {
             const auto x = p.coordinates.x * mTransformation[0] + p.coordinates.y * mTransformation[2];

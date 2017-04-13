@@ -9,14 +9,6 @@ void ChartDrawInterface::init_settings()
 
 // ----------------------------------------------------------------------
 
-const Viewport& ChartDrawInterface::viewport() const
-{
-    return mChartDraw.viewport();
-
-} // ChartDrawInterface::viewport
-
-// ----------------------------------------------------------------------
-
 void AntigenicMapsDraw::make_layout()
 {
     layout(new LabelledGrid(*this));

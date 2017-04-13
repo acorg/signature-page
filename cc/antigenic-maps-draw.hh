@@ -92,6 +92,21 @@ class SettingDict : public SettingDictBase
         }
 
     inline std::string get(std::string aName, const char* aDefault) const { return get(aName, std::string{aDefault}); }
+
+    inline Viewport get_viewport() const
+        {
+            const auto found = find("viewport");
+            if (found == end())
+                return {};
+            const auto& list = *boost::get<SettingList>(&found->second);
+            switch (list.size()) {
+              case 3:
+                  return {*boost::get<double>(&list[0]), *boost::get<double>(&list[1]), *boost::get<double>(&list[2])};
+              case 4:
+                  return {*boost::get<double>(&list[0]), *boost::get<double>(&list[1]), *boost::get<double>(&list[2]), *boost::get<double>(&list[3])};
+            }
+            return {};
+        }
 };
 
 class AntigenicMapMod : public SettingDict
