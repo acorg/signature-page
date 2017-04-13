@@ -70,7 +70,7 @@ class SignaturePageDraw
 
     void load_settings(std::string aFilename);
     void load_settings(const std::vector<std::string>& aFilenames);
-    void make_surface(std::string aFilename);
+    void make_surface(std::string aFilename, bool init_settings, bool draw_map);
     void init_layout();
     void init_settings();
     inline Settings& settings() { return *mSettings; }
@@ -95,7 +95,7 @@ class SignaturePageDraw
     std::unique_ptr<AntigenicMapsDrawBase> mAntigenicMapsDraw;
     std::unique_ptr<TitleDraw> mTitleDraw;
 
-    SignaturePageDrawSettings::Layout detect_layout() const;
+    SignaturePageDrawSettings::Layout detect_layout(bool init_settings) const;
     void make_layout_tree_ts_clades();
     void make_layout_tree_clades_ts_maps();
 

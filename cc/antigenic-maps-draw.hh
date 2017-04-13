@@ -71,15 +71,19 @@ AntigenicMapsDrawBase* make_antigenic_maps_draw(std::string aChartFilename, Surf
 class SettingDict;
 class SettingList;
 using SettingValue = boost::variant<std::string, double, int, SettingDict, SettingList>;
+using SettingListBase = std::vector<SettingValue>;
+using SettingDictBase = std::map<std::string, SettingValue>;
 
-class SettingList : public std::vector<SettingValue>
-{
-};
-
-class SettingDict : public std::map<std::string, SettingValue>
+class SettingList : public SettingListBase
 {
  public:
-    using std::map<std::string, SettingValue>::map;
+    using SettingListBase::SettingListBase;
+};
+
+class SettingDict : public SettingDictBase
+{
+ public:
+    using SettingDictBase::SettingDictBase;
 
     template <typename Value> inline Value get(std::string aName, Value aDefault) const
         {
@@ -115,6 +119,7 @@ class AntigenicMapsDrawSettings
     std::vector<AntigenicMapMod> mods;
 
     inline std::vector<AntigenicMapMod>& get_mods() { return mods; }
+    void viewport(const Viewport& aViewport);
 
 }; // class AntigenicMapsDrawSettings
 

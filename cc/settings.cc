@@ -1,3 +1,5 @@
+#include <cmath>
+
 #include "settings.hh"
 #include "acmacs-base/float.hh"
 
@@ -152,7 +154,7 @@ AntigenicMapsDrawSettings::AntigenicMapsDrawSettings()
     mods.push_back(AntigenicMapMod{{"N", "point_scale"}, {"scale", 1.0}, {"outline_scale", 1.0}});
     mods.push_back(AntigenicMapMod{{"N", "rotate_degrees"}, {"angle", 0.0}});
     mods.push_back(AntigenicMapMod{{"N", "tracked_antigen"}, {"color", "green3"}});
-      // mods.push_back(AntigenicMapMod{{"N", "viewport"}, {"viewport", }});
+    mods.push_back(AntigenicMapMod{{"N", "viewport"}, {"viewport", SettingList{0.0, 0.0, 0.0}}});
 
     mods.push_back(AntigenicMapMod{{"N", "background"}, {"color", "white"}});
     mods.push_back(AntigenicMapMod{{"N", "grid"}, {"color", "grey80"}, {"line_width", 1.0}});
@@ -191,6 +193,26 @@ AntigenicMapsDrawSettings::AntigenicMapsDrawSettings()
 AntigenicMapsDrawSettings::~AntigenicMapsDrawSettings()
 {
 }
+
+void AntigenicMapsDrawSettings::viewport(const Viewport& aViewport)
+{
+    auto make_setting_list = [&aViewport]() -> SettingList {
+        if (float_equal(aViewport.size.width, aViewport.size.height))
+            return SettingList{aViewport.origin.x, aViewport.origin.y, aViewport.size.width};
+        else
+            return SettingList{aViewport.origin.x, aViewport.origin.y, aViewport.size.width, aViewport.size.height};
+    };
+    AntigenicMapMod viewport_mod{{"N", "viewport"}, {"viewport", make_setting_list()}};
+    std::cerr << "DEBUG: AntigenicMapsDrawSettings::viewport" << std::endl;
+    const auto vpmod = std::find_if(mods.begin(), mods.end(), [](const auto& mod) -> bool { return mod.name() == "viewport"; });
+    if (vpmod == mods.end())
+        mods.push_back(viewport_mod);
+    else
+        *vpmod = viewport_mod;
+
+} // AntigenicMapsDrawSettings::viewport
+
+// ----------------------------------------------------------------------
 
 TitleDrawSettings::TitleDrawSettings()
     : color("black"), size(12), offset{10, 30}
@@ -982,7 +1004,7 @@ template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writ
           writer << *boost::get<std::string>(&aSettingValue);
           break;
       case 1:
-          writer << *boost::get<double>(&aSettingValue);
+          writer << std::round(*boost::get<double>(&aSettingValue) * 100.0) / 100.0;
           break;
       case 2:
           writer << *boost::get<int>(&aSettingValue);
@@ -1113,6 +1135,7 @@ template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writ
 
 void write_settings(const Settings& aSettings, std::string aFilename, size_t aIndent)
 {
+    std::cerr << "INFO: writing settings to " << aFilename << std::endl;
     jsw::export_to_json(aSettings, SETTINGS_VERSION_4, aFilename, aIndent);
 
 } // write_settings

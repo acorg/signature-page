@@ -42,14 +42,14 @@ int main(int argc, const char *argv[])
             signature_page.tree(options.tree_filename, options.seqdb_filename);
             if (!options.chart_filename.empty())
                 signature_page.chart(options.chart_filename); // before make_surface!
-            signature_page.make_surface(options.output_filename); // before init_layout!
+            signature_page.make_surface(options.output_filename, !options.init_settings_filename.empty(), !options.no_draw); // before init_layout!
             if (!options.init_settings_filename.empty())
                 signature_page.init_layout();
-            if (!options.init_settings_filename.empty()) {
+            if (!options.init_settings_filename.empty())
                 signature_page.init_settings();
-                write_settings(signature_page.settings(), options.init_settings_filename);
-            }
             signature_page.prepare();
+            if (!options.init_settings_filename.empty())
+                write_settings(signature_page.settings(), options.init_settings_filename);
             if (options.report_cumulative)
                 signature_page.tree().report_cumulative_edge_length(std::cout);
             if (options.list_ladderized)

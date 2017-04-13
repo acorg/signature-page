@@ -17,7 +17,9 @@ void AntigenicMapsLayoutDraw::prepare()
 {
     find_sequenced_antigens();
     prepare_apply_mods();
-    std::cout << "INFO: AntigenicMapsLayoutDraw::prepare Using viewport: " << mAntigenicMapsDraw.chart().viewport() << std::endl;
+    const Viewport& viewport = mAntigenicMapsDraw.chart().viewport();
+    settings().viewport(viewport);
+    std::cerr << "DEBUG: AntigenicMapsLayoutDraw::prepare Using viewport: " << viewport << std::endl;
 
 } // AntigenicMapsLayoutDraw::prepare
 

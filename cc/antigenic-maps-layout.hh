@@ -19,6 +19,7 @@ class AntigenicMapsLayoutDraw
     virtual void draw_chart(Surface& aSurface, size_t aSectionIndex) = 0;
 
     inline AntigenicMapsDrawBase& antigenic_maps_draw() { return mAntigenicMapsDraw; }
+    inline AntigenicMapsDrawSettings& settings() { return mAntigenicMapsDraw.settings(); }
     inline const AntigenicMapsDrawSettings& settings() const { return mAntigenicMapsDraw.settings(); }
     inline auto& chart() { return mAntigenicMapsDraw.chart(); }
     inline const auto& chart() const { return mAntigenicMapsDraw.chart(); }
@@ -48,7 +49,7 @@ class AntigenicMapsLayout
     virtual ~AntigenicMapsLayout();
 
     virtual AntigenicMapsLayoutDraw& layout_draw() = 0;
-    inline void prepare() { layout_draw().prepare(); }
+    virtual inline void prepare() { layout_draw().prepare(); }
     virtual void draw(Surface& aMappedAntigensDrawSurface) = 0;
 
 }; // class AntigenicMapsLayout

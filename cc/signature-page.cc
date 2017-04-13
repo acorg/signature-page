@@ -52,18 +52,18 @@ void SignaturePageDraw::load_settings(std::string aFilename)
 
 // ----------------------------------------------------------------------
 
-SignaturePageDrawSettings::Layout SignaturePageDraw::detect_layout() const
+SignaturePageDrawSettings::Layout SignaturePageDraw::detect_layout(bool init_settings) const
 {
-    return mSettings->signature_page.layout == SignaturePageDrawSettings::Layout::Auto ? (mChartFilename.empty() ? SignaturePageDrawSettings::Layout::TreeTSClades : SignaturePageDrawSettings::Layout::TreeCladesTSMaps) : mSettings->signature_page.layout;
+    return (mSettings->signature_page.layout == SignaturePageDrawSettings::Layout::Auto || init_settings) ? (mChartFilename.empty() ? SignaturePageDrawSettings::Layout::TreeTSClades : SignaturePageDrawSettings::Layout::TreeCladesTSMaps) : mSettings->signature_page.layout;
 
 } // SignaturePageDraw::detect_layout
 
 // ----------------------------------------------------------------------
 
-void SignaturePageDraw::make_surface(std::string aFilename)
+void SignaturePageDraw::make_surface(std::string aFilename, bool init_settings, bool draw_map)
 {
     double width = 300, height = 300;
-    switch (detect_layout()) {
+    switch (detect_layout(init_settings)) {
       case SignaturePageDrawSettings::Layout::TreeCladesTSMaps:
           width = 1360;         // ratio 1.6
           height = 850;
@@ -74,7 +74,8 @@ void SignaturePageDraw::make_surface(std::string aFilename)
           width = std::floor(height * (210.0 / 297.0));
           break;
     }
-    mSurface = std::make_unique<PdfCairo>(aFilename, width, height);
+    mSurface = std::make_unique<PdfCairo>(draw_map ? aFilename : std::string{}, width, height);
+    std::cerr << "INFO: Surface: " << width << " x " << height << std::endl;
 
     mTreeDraw = std::make_unique<TreeDraw>(mSurface->subsurface(false), *mTree, mSettings->tree_draw, mSettings->hz_sections);
     mTimeSeriesDraw = std::make_unique<TimeSeriesDraw>(mSurface->subsurface(false), *mTree, *mTreeDraw, mSettings->hz_sections, mSettings->time_series);
@@ -122,7 +123,7 @@ void SignaturePageDraw::init_layout()
 
 void SignaturePageDraw::init_settings()
 {
-    std::cout << std::endl << "INIT:" << std::endl;
+    std::cerr << std::endl << "INFO: INIT:" << std::endl;
     mSettings->signature_page.bottom = mSettings->signature_page.top;
 
     if (mTitleDraw)
@@ -181,7 +182,7 @@ void SignaturePageDraw::tree(std::string aTreeFilename, std::string aSeqdbFilena
 void SignaturePageDraw::prepare()
 {
     std::cout << std::endl << "PREPARE:" << std::endl;
-    switch (detect_layout()) {
+    switch (detect_layout(false)) {
       case SignaturePageDrawSettings::Layout::TreeTSClades:
       case SignaturePageDrawSettings::Layout::Auto:
           make_layout_tree_ts_clades();

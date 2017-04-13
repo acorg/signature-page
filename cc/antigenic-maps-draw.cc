@@ -34,6 +34,7 @@ void AntigenicMapsDrawBase::layout(AntigenicMapsLayout* aLayout)
 
 void AntigenicMapsDrawBase::init_settings()
 {
+    std::cerr << "DEBUG: AntigenicMapsDrawBase::init_settings" << std::endl;
     const size_t number_sections = hz_sections().shown_maps();
     switch (number_sections) {
       case 0:
@@ -60,7 +61,7 @@ void AntigenicMapsDrawBase::init_settings()
     const double map_width = 150; // height is not available at this moment mSurface.viewport().size.height / (maps_per_column + settings().gap * (maps_per_column - 1));
     signature_page_settings().antigenic_maps_width = map_width * settings().columns + (settings().columns - 1) * settings().gap;
 
-    std::cerr << "columns:" << settings().columns << " maps_per_column:" << maps_per_column << " map_width:" << map_width << " width:" << signature_page_settings().antigenic_maps_width << std::endl;
+    std::cerr << "INFO: antigenic maps: columns:" << settings().columns << " maps_per_column:" << maps_per_column << " map_width:" << map_width << " width:" << signature_page_settings().antigenic_maps_width << std::endl;
 
     chart().init_settings();
 
@@ -78,6 +79,7 @@ void AntigenicMapsDrawBase::draw(Surface& aMappedAntigensDrawSurface)
 
 void AntigenicMapsDrawBase::prepare()
 {
+    std::cerr << "DEBUG: AntigenicMapsDrawBase::prepare" << std::endl;
     if (settings().layout == "labelled_grid") {
         make_layout();
     }
