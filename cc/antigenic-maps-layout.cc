@@ -86,6 +86,8 @@ AntigenicMapsLayout::~AntigenicMapsLayout()
 void LabelledGridBase::draw(Surface& aMappedAntigensDrawSurface)
 {
     std::cerr << "INFO: AntigenicMapsLayoutDraw::draw" << std::endl;
+
+    layout_draw().prepare_chart_for_all_sections();
     const AntigenicMapsDrawSettings& settings = layout_draw().settings();
     Surface& surface = layout_draw().surface();
     // std::cerr << "Maps " << surface << std::endl;
@@ -99,7 +101,7 @@ void LabelledGridBase::draw(Surface& aMappedAntigensDrawSurface)
                                                       Scaled{map_width}, layout_draw().viewport(), true);
             // std::cerr << "Map " << map_surface << std::endl;
             // std::cerr << "origin_offset: " << map_surface.origin_offset() << "  scale: " << map_surface.scale() << std::endl;
-            layout_draw().prepare_drawing_char();
+            layout_draw().prepare_drawing_chart(section_index);
             layout_draw().draw_chart(map_surface, section_index);
             draw_mapped_antigens_section(section_index, aMappedAntigensDrawSurface);
             ++column;

@@ -15,7 +15,8 @@ class AntigenicMapsLayoutDraw
 
     virtual void prepare();
     virtual void prepare_apply_mods() = 0;
-    virtual void prepare_drawing_char() = 0;
+    virtual void prepare_chart_for_all_sections() = 0;
+    virtual void prepare_drawing_chart(size_t aSectionIndex) = 0;
     virtual void draw_chart(Surface& aSurface, size_t aSectionIndex) = 0;
 
     inline AntigenicMapsDrawBase& antigenic_maps_draw() { return mAntigenicMapsDraw; }

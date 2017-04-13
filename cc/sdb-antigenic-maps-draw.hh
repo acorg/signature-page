@@ -140,10 +140,12 @@ namespace sdb
 
         virtual void draw_chart(Surface& aSurface, size_t aSectionIndex);
         virtual void prepare_apply_mods();
-        void prepare_drawing_char();
+        virtual void prepare_chart_for_all_sections();
+        virtual void prepare_drawing_chart(size_t aSectionIndex);
 
      protected:
         std::vector<const DrawPoint*> mDrawPoints;
+        DrawPointSettings mDrawPointSettings;
 
         DrawSerum mDrawSerum;
         DrawReferenceAntigen mDrawReferenceAntigen;
@@ -161,7 +163,7 @@ namespace sdb
           // tracked_sera
 
      private:
-        void apply_mods_to_settings(DrawPointSettings& aSettings);
+        void apply_mods_to_settings();
         void mark_tracked_antigens(size_t aSectionIndex, const DrawPointSettings& aSettings);
         void mark_tracked_sera(size_t aSectionIndex, const DrawPointSettings& aSettings);
         void draw_map_title(Surface& aSurface, size_t aSectionIndex, const DrawPointSettings& aSettings);

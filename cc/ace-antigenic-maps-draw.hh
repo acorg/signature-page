@@ -24,6 +24,7 @@ class ChartDrawInterface : public ChartDrawBase
 
     void apply_mods(const std::vector<AntigenicMapMod>& aMods);
     inline void calculate_viewport() { mChartDraw.calculate_viewport(); }
+    inline ChartDraw& chart_draw() { return mChartDraw; }
 
  private:
     std::unique_ptr<Chart> mChart;
@@ -57,7 +58,8 @@ class AntigenicMapsLayoutDrawAce : public AntigenicMapsLayoutDraw
 
     virtual void draw_chart(Surface& aSurface, size_t aSectionIndex);
     virtual void prepare_apply_mods();
-    virtual void prepare_drawing_char();
+    virtual void prepare_chart_for_all_sections();
+    virtual void prepare_drawing_chart(size_t aSectionIndex);
 
 }; // class AntigenicMapsLayoutDrawAce
 
