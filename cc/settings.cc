@@ -151,10 +151,13 @@ AntigenicMapsDrawSettings::AntigenicMapsDrawSettings()
     : layout("labelled_grid"), columns(3), gap(20),
       mapped_antigens_section_line_color("black"), mapped_antigens_section_line_width(1)
 {
-    mods.push_back(AntigenicMapMod{{"N", "point_scale"}, {"scale", 1.0}, {"outline_scale", 1.0}});
-    mods.push_back(AntigenicMapMod{{"N", "rotate_degrees"}, {"angle", 0.0}});
-    mods.push_back(AntigenicMapMod{{"N", "tracked_antigen"}, {"color", "green3"}});
+    mods.push_back(AntigenicMapMod{{"N", "point_scale"}, {"scale", 0.65}, {"outline_scale", 1.0}});
     mods.push_back(AntigenicMapMod{{"N", "viewport"}, {"viewport", SettingList{0.0, 0.0, 0.0}}});
+    mods.push_back(AntigenicMapMod{{"N", "rotate_degrees"}, {"angle", 0.0}});
+    mods.push_back(AntigenicMapMod{{"N", "sera"}, {"outline", "grey88"}, {"outline_width", 0.5}});
+    mods.push_back(AntigenicMapMod{{"N", "reference_antigens"}, {"fill", "transparent"}, {"outline", "grey88"}, {"outline_width", 0.5}});
+    mods.push_back(AntigenicMapMod{{"N", "test_antigens"}, {"fill", "grey88"}, {"outline", "grey88"}, {"outline_width", 0.5}});
+    mods.push_back(AntigenicMapMod{{"N", "tracked_antigen"}, {"color", "green3"}});
 
     mods.push_back(AntigenicMapMod{{"N", "background"}, {"color", "white"}});
     mods.push_back(AntigenicMapMod{{"N", "grid"}, {"color", "grey80"}, {"line_width", 1.0}});
