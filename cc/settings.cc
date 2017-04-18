@@ -151,26 +151,26 @@ AntigenicMapsDrawSettings::AntigenicMapsDrawSettings()
     : layout("labelled_grid"), columns(3), gap(20),
       mapped_antigens_section_line_color("black"), mapped_antigens_section_line_width(1)
 {
-    mods.push_back(AntigenicMapMod{{"N", "point_scale"}, {"scale", 0.65}, {"outline_scale", 1.0}});
+    mods.push_back(AntigenicMapMod{{"N", "point_scale"}, {"scale", 1.0}, {"outline_scale", 1.0}});
     mods.push_back(AntigenicMapMod{{"N", "viewport"}, {"viewport", SettingList{0.0, 0.0, 0.0}}});
     mods.push_back(AntigenicMapMod{{"N", "rotate_degrees"}, {"angle", 0.0}});
-    mods.push_back(AntigenicMapMod{{"N", "sera"}, {"outline", "grey88"}, {"outline_width", 0.5}});
-    mods.push_back(AntigenicMapMod{{"N", "reference_antigens"}, {"fill", "transparent"}, {"outline", "grey88"}, {"outline_width", 0.5}});
-    mods.push_back(AntigenicMapMod{{"N", "test_antigens"}, {"fill", "grey88"}, {"outline", "grey88"}, {"outline_width", 0.5}});
-    mods.push_back(AntigenicMapMod{{"N", "tracked_antigen"}, {"color", "green3"}});
+    mods.push_back(AntigenicMapMod{{"N", "sera"}, {"outline", "grey88"}, {"outline_width", 0.5}, {"size", 5.0}});
+    mods.push_back(AntigenicMapMod{{"N", "reference_antigens"}, {"fill", "transparent"}, {"outline", "grey88"}, {"outline_width", 0.5}, {"size", 5.0}});
+    mods.push_back(AntigenicMapMod{{"N", "test_antigens"}, {"fill", "grey88"}, {"outline", "grey88"}, {"outline_width", 0.5}, {"size", 3.0}});
+    mods.push_back(AntigenicMapMod{{"N", "sequenced_antigens"}, {"fill", "grey63"}, {"outline", "white"}, {"outline_width", 0.5}, {"size", 3.0}});
+    mods.push_back(AntigenicMapMod{{"N", "tracked_antigens"}, {"fill", "green3"}, {"outline", "white"}, {"outline_width", 0.5}, {"size", 5.0}});
 
     mods.push_back(AntigenicMapMod{{"N", "background"}, {"color", "white"}});
     mods.push_back(AntigenicMapMod{{"N", "grid"}, {"color", "grey80"}, {"line_width", 1.0}});
     mods.push_back(AntigenicMapMod{{"N", "border"}, {"color", "black"}, {"line_width", 1.0}});
 }
 
-//       serum_scale(5), reference_antigen_scale(5), test_antigen_scale(3), vaccine_antigen_scale(15), tracked_antigen_scale(5),
-//       serum_outline_width(0.5), reference_antigen_outline_width(0.5), test_antigen_outline_width(0.5), vaccine_antigen_outline_width(0.5),
+//       serum_scale(5), vaccine_antigen_scale(15), tracked_antigen_scale(5),
+//       serum_outline_width(0.5), vaccine_antigen_outline_width(0.5),
 //       sequenced_antigen_outline_width(0.5), tracked_antigen_outline_width(0.5),
-//       serum_outline_color("grey88"), reference_antigen_outline_color("grey88"), test_antigen_outline_color("grey88"),
-//       test_antigen_fill_color("grey88"), vaccine_antigen_outline_color("white"), sequenced_antigen_outline_color("white"), sequenced_antigen_fill_color("grey63"),
+//       serum_outline_color("grey88"),
+//       vaccine_antigen_outline_color("white"), sequenced_antigen_outline_color("white"), sequenced_antigen_fill_color("grey63"),
 //       tracked_antigen_outline_color("white"), tracked_antigen_colored_by_clade(false), tracked_antigen_color("green3"),
-//       reassortant_rotation(0.5 /* M_PI / 6.0 */), egg_antigen_aspect(0.75),
 //       show_tracked_sera(false), serum_circle_color("grey50"), tracked_serum_outline_color("black"), serum_circle_thickness(0.1), tracked_serum_outline_width(0.1),
 //       map_title_color("black"), map_title_offset{0.3, 0.4}, map_title_size(11),
 
