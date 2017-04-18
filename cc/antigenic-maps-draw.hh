@@ -93,6 +93,15 @@ class SettingDict : public SettingDictBase
 
     inline std::string get(std::string aName, const char* aDefault) const { return get(aName, std::string{aDefault}); }
 
+    inline Location get(std::string aName, const Location& aDefault) const
+        {
+            const auto found = find(aName);
+            if (found == end())
+                return aDefault;
+            const auto& list = *boost::get<SettingList>(&found->second);
+            return {*boost::get<double>(&list[0]), *boost::get<double>(&list[1])};
+        }
+
     inline Viewport get_viewport() const
         {
             const auto found = find("viewport");

@@ -35,7 +35,17 @@ void AntigenicMapsLayoutDrawAce::prepare_apply_mods()
             chart_draw.viewport(mod.get_viewport());
         }
         else if (name == "title") {
-            chart_draw.title().text_size(mod.get("text_size", 12.0)).text_color(mod.get("text_color", "black")).background("transparent").border_width(0).padding(3).offset(0, 0).remove_all_lines();
+            chart_draw.title()
+                    .text_size(mod.get("text_size", 12.0))
+                    .text_color(mod.get("text_color", "black"))
+                    .weight(mod.get("weight", "normal"))
+                    .slant(mod.get("slant", "normal"))
+                    .font_family(mod.get("font_family", "san serif"))
+                    .background("transparent")
+                    .border_width(0)
+                    .padding(mod.get("padding", 3.0))
+                    .offset(mod.get("offset", Location{}))
+                    .remove_all_lines();
         }
         // else if (name == "tracked_antigen") {
         //     mDrawTrackedAntigen.color(mod.get("color", "green3"));
@@ -106,11 +116,11 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex)
             chart_draw.modify(tracked_indices, PointStyleDraw(PointStyle::Empty).fill(mod.get("fill", "grey63")).outline(mod.get("outline", "white")).outline_width(Pixels{mod.get("outline_width", 0.5)}), true);
         }
     }
-      // tracked_antigen_colored_by_clade
       // vaccines
       // marked sera
       // marked antigens
       // serum circles
+      // tracked_antigen_colored_by_clade
 
     const HzSection& section = hz_sections().sections[aSectionIndex];
     std::string title = section.index + "."; // std::string(1, 'A' + static_cast<char>(aSectionNo)) + ".";
