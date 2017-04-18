@@ -160,6 +160,7 @@ AntigenicMapsDrawSettings::AntigenicMapsDrawSettings()
     mods.push_back(AntigenicMapMod{{"N", "sequenced_antigens"}, {"fill", "grey63"}, {"outline", "white"}, {"outline_width", 0.5}, {"size", 3.0}});
     mods.push_back(AntigenicMapMod{{"N", "tracked_antigens"}, {"fill", "green3"}, {"outline", "white"}, {"outline_width", 0.5}, {"size", 5.0}});
 
+    mods.push_back(AntigenicMapMod{{"N", "title"}, {"text_color", "black"}, {"text_size", 12.0}, {"offset", SettingList{5.0, 5.0}}}); // weight, slant, font_family
     mods.push_back(AntigenicMapMod{{"N", "background"}, {"color", "white"}});
     mods.push_back(AntigenicMapMod{{"N", "grid"}, {"color", "grey80"}, {"line_width", 1.0}});
     mods.push_back(AntigenicMapMod{{"N", "border"}, {"color", "black"}, {"line_width", 1.0}});

@@ -33,6 +33,9 @@ void AntigenicMapsLayoutDrawAce::prepare_apply_mods()
         else if (name == "viewport") {
             chart_draw.viewport(mod.get_viewport());
         }
+        else if (name == "title") {
+            chart_draw.title().text_size(mod.get("text_size", 12.0)).text_color(mod.get("text_color", "black")).background("transparent").border_width(0).padding(3).offset(0, 0).remove_all_lines();
+        }
         // else if (name == "tracked_antigen") {
         //     mDrawTrackedAntigen.color(mod.get("color", "green3"));
         // }
@@ -106,6 +109,8 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex)
     }
       // vaccines
       // marked antigens
+
+    chart_draw.title().remove_all_lines().add_line(std::string(1, 'A' + static_cast<char>(aSectionIndex)) + ".");
 
 } // AntigenicMapsLayoutDrawAce::prepare_drawing_chart
 
