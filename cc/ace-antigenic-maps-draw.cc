@@ -1,4 +1,5 @@
 #include "ace-antigenic-maps-draw.hh"
+#include "tree-draw.hh"
 
 // ----------------------------------------------------------------------
 
@@ -69,8 +70,6 @@ void AntigenicMapsLayoutDrawAce::prepare_chart_for_all_sections()
             chart_draw.modify(chart.test_antigen_indices(), PointStyleDraw(PointStyle::Empty).fill(mod.get("fill", "grey88")).outline(mod.get("outline", "grey88")).outline_width(Pixels{mod.get("outline_width", 0.5)}));
         }
     }
-      // ref antigens grey and lower
-      // test antigens grey
 
 } // AntigenicMapsLayoutDrawAce::prepare_chart_for_all_sections
 
@@ -107,10 +106,17 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex)
             chart_draw.modify(tracked_indices, PointStyleDraw(PointStyle::Empty).fill(mod.get("fill", "grey63")).outline(mod.get("outline", "white")).outline_width(Pixels{mod.get("outline_width", 0.5)}), true);
         }
     }
+      // tracked_antigen_colored_by_clade
       // vaccines
+      // marked sera
       // marked antigens
+      // serum circles
 
-    chart_draw.title().remove_all_lines().add_line(std::string(1, 'A' + static_cast<char>(aSectionIndex)) + ".");
+    const HzSection& section = hz_sections().sections[aSectionIndex];
+    std::string title = section.index + "."; // std::string(1, 'A' + static_cast<char>(aSectionNo)) + ".";
+    if (!section.label.empty())
+        title += " " + section.label;
+    chart_draw.title().remove_all_lines().add_line(title);
 
 } // AntigenicMapsLayoutDrawAce::prepare_drawing_chart
 

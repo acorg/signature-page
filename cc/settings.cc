@@ -166,14 +166,11 @@ AntigenicMapsDrawSettings::AntigenicMapsDrawSettings()
     mods.push_back(AntigenicMapMod{{"N", "border"}, {"color", "black"}, {"line_width", 1.0}});
 }
 
-//       serum_scale(5), vaccine_antigen_scale(15), tracked_antigen_scale(5),
-//       serum_outline_width(0.5), vaccine_antigen_outline_width(0.5),
-//       sequenced_antigen_outline_width(0.5), tracked_antigen_outline_width(0.5),
-//       serum_outline_color("grey88"),
-//       vaccine_antigen_outline_color("white"), sequenced_antigen_outline_color("white"), sequenced_antigen_fill_color("grey63"),
-//       tracked_antigen_outline_color("white"), tracked_antigen_colored_by_clade(false), tracked_antigen_color("green3"),
+//       vaccine_antigen_scale(15),
+//       vaccine_antigen_outline_width(0.5),
+//       vaccine_antigen_outline_color("white"),
+//       tracked_antigen_colored_by_clade(false),
 //       show_tracked_sera(false), serum_circle_color("grey50"), tracked_serum_outline_color("black"), serum_circle_thickness(0.1), tracked_serum_outline_width(0.1),
-//       map_title_color("black"), map_title_offset{0.3, 0.4}, map_title_size(11),
 
 // AntigenicMapsDrawSettings::AntigenicMapsDrawSettings()
 //     : layout("labelled_grid"), columns(3), gap(20),
