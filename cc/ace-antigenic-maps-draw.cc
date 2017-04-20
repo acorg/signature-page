@@ -181,6 +181,24 @@ void AntigenicMapsLayoutDrawAce::mark_vaccines(ChartDraw& chart_draw, const Anti
 
 void AntigenicMapsLayoutDrawAce::add_label(std::shared_ptr<VaccineMatcherLabel> label, const SettingDict& data)
 {
+    for (const auto& item: data) {
+        if (item.first == "size")
+            label->size(SettingValue_get(item.second, 0.0));
+        else if (item.first == "color")
+            label->color(SettingValue_get(item.second, std::string{}));
+        else if (item.first == "font_family")
+            label->font_family(SettingValue_get(item.second, std::string{}));
+        else if (item.first == "name_type")
+            label->name_type(SettingValue_get(item.second, std::string{}));
+        else if (item.first == "slant")
+            label->slant(SettingValue_get(item.second, std::string{}));
+        else if (item.first == "weight")
+            label->weight(SettingValue_get(item.second, std::string{}));
+        // else if (item.first == "offset")
+        //     label->offset(SettingValue_get(item.second, std::string{}));
+        else if (item.first.empty() || (item.first.front() != '?' && item.first.back() != '?'))
+            std::cerr << "WARNING: mark_vaccines label: unrecognized key \"" << item.first << '"' << std::endl;
+    }
 
 } // AntigenicMapsLayoutDrawAce::add_label
 
