@@ -152,8 +152,8 @@ AntigenicMapsDrawSettings::AntigenicMapsDrawSettings()
       mapped_antigens_section_line_color("black"), mapped_antigens_section_line_width(1)
 {
     using namespace std::string_literals;
-    mods.push_back(AntigenicMapMod{{"N", "point_scale"s}, {"scale", 1.0}, {"outline_scale", 1.0}});
-    mods.push_back(AntigenicMapMod{{"N", "viewport"s}, {"viewport", SettingList{0.0, 0.0, 0.0}}});
+    mods.push_back(AntigenicMapMod{{"N", "point_scale"s}, {"scale"s, 1.0}, {"outline_scale"s, 1.0}});
+    mods.push_back(AntigenicMapMod{{"N", "viewport"s}, {"viewport"s, SettingList{0.0, 0.0, 0.0}}});
     mods.push_back(AntigenicMapMod{{"N", "rotate_degrees"s}, {"angle", 0.0}});
     mods.push_back(AntigenicMapMod{{"N", "sera"s}, {"outline", "grey88"s}, {"outline_width", 0.5}, {"size", 5.0}});
     mods.push_back(AntigenicMapMod{{"N", "reference_antigens"s}, {"fill", "transparent"s}, {"outline", "grey88"s}, {"outline_width", 0.5}, {"size", 5.0}});
@@ -1017,6 +1017,7 @@ template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writ
 
 template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const SettingValue& aSettingValue)
 {
+    std::cerr << "DEBUG: SettingValue " << aSettingValue.which() << " " << aSettingValue << std::endl;
     switch (aSettingValue.which()) {
       case 0:
           writer << *boost::get<std::string>(&aSettingValue);

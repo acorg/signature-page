@@ -120,7 +120,7 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex)
             mark_vaccines(chart_draw, mod);
         }
     }
-      // vaccines
+
       // marked sera
       // marked antigens
       // serum circles
