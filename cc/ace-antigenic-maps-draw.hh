@@ -1,6 +1,9 @@
 #pragma once
 
+#include <cstdlib>
+
 #include "acmacs-chart/chart.hh"
+#include "hidb/hidb.hh"
 #include "acmacs-map-draw/draw.hh"
 #include "antigenic-maps-draw.hh"
 #include "chart-draw.hh"
@@ -55,12 +58,18 @@ class AntigenicMapsDraw : public AntigenicMapsDrawBase
 class AntigenicMapsLayoutDrawAce : public AntigenicMapsLayoutDraw
 {
  public:
-    inline AntigenicMapsLayoutDrawAce(AntigenicMapsDrawBase& aAntigenicMapsDraw) : AntigenicMapsLayoutDraw(aAntigenicMapsDraw) {}
+    inline AntigenicMapsLayoutDrawAce(AntigenicMapsDrawBase& aAntigenicMapsDraw)
+        : AntigenicMapsLayoutDraw(aAntigenicMapsDraw), mHiDbSet(std::string{std::getenv("HOME")} + "/AD/data") {}
 
     virtual void draw_chart(Surface& aSurface, size_t aSectionIndex);
     virtual void prepare_apply_mods();
     virtual void prepare_chart_for_all_sections();
     virtual void prepare_drawing_chart(size_t aSectionIndex);
+
+ private:
+    hidb::HiDbSet mHiDbSet;
+
+    void mark_vaccines(ChartDraw& chart_draw, const AntigenicMapMod& mod);
 
 }; // class AntigenicMapsLayoutDrawAce
 

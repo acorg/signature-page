@@ -159,6 +159,14 @@ AntigenicMapsDrawSettings::AntigenicMapsDrawSettings()
     mods.push_back(AntigenicMapMod{{"N", "test_antigens"}, {"fill", "grey88"}, {"outline", "grey88"}, {"outline_width", 0.5}, {"size", 3.0}});
     mods.push_back(AntigenicMapMod{{"N", "sequenced_antigens"}, {"fill", "grey63"}, {"outline", "white"}, {"outline_width", 0.5}, {"size", 3.0}});
     mods.push_back(AntigenicMapMod{{"N", "tracked_antigens"}, {"fill", "green3"}, {"outline", "white"}, {"outline_width", 0.5}, {"size", 5.0}});
+    mods.push_back(AntigenicMapMod{{"N", "vaccines"}, {"mods", SettingList{
+        SettingDict{
+            {"size", 15}, {"outline", "black"}, {"fill", "blue"},
+            {"label", SettingDict{{"offset", SettingList{0, 1}}, {"color", "black"}, {"weight", "normal"}, {"slant", "normal"}, {"font_family", "helvetica neu"}, {"size", 12}, {"name_type", "abbreviated_with_passage_type"}}}},
+        SettingDict{{"type", "current"}, {"fill", "red"}},
+        SettingDict{{"type", "current"}, {"passage", "reassortant"}, {"fill", "green"}},
+        SettingDict{{"type", "surrogate"}, {"fill", "pink"}},
+    }}});
 
     mods.push_back(AntigenicMapMod{{"N", "title"}, {"text_color", "black"}, {"text_size", 12.0}, {"padding", 3.0}, {"offset", SettingList{0.0, 0.0}}, {"weight", "normal"}, {"slant", "normal"}, {"font_family", "san serif"}});
     mods.push_back(AntigenicMapMod{{"N", "background"}, {"color", "white"}});

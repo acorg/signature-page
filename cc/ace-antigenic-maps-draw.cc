@@ -1,3 +1,4 @@
+#include "acmacs-map-draw/vaccines.hh"
 #include "ace-antigenic-maps-draw.hh"
 #include "tree-draw.hh"
 
@@ -115,6 +116,9 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex)
             }
             chart_draw.modify(tracked_indices, PointStyleDraw(PointStyle::Empty).fill(mod.get("fill", "grey63")).outline(mod.get("outline", "white")).outline_width(Pixels{mod.get("outline_width", 0.5)}), true);
         }
+        else if (name == "vaccines") {
+            mark_vaccines(chart_draw, mod);
+        }
     }
       // vaccines
       // marked sera
@@ -129,6 +133,32 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex)
     chart_draw.title().remove_all_lines().add_line(title);
 
 } // AntigenicMapsLayoutDrawAce::prepare_drawing_chart
+
+// ----------------------------------------------------------------------
+
+void AntigenicMapsLayoutDrawAce::mark_vaccines(ChartDraw& chart_draw, const AntigenicMapMod& vaccine_mod)
+{
+    std::cerr << "DEBUG: mark_vaccines" << std::endl;
+    try {
+        Vaccines vaccs{chart_draw.chart(), mHiDbSet.get(chart_draw.chart().chart_info().virus_type())};
+        for (const SettingValue& mod_v: vaccine_mod.get_mods()) {
+            std::cerr << "DEBUG: mark_vaccines mod" << std::endl;
+            const SettingDict& mod = boost::get<SettingDict>(mod_v);
+            const std::string type = mod.get("type", ""), passage = mod.get("passage", ""), name = mod.get("name", "");
+            std::unique_ptr<VaccineMatcher> matcher{vaccs.match(name, type, passage)};
+            for (const auto& item: mod) {
+                if (item.first == "size")
+                    matcher->size(boost::get<double>(item.second));
+            }
+        }
+        std::cerr << "DEBUG: Vaccines:" << std::endl << vaccs.report(2) << std::endl;
+        vaccs.plot(chart_draw);
+    }
+    catch (hidb::NoHiDb&) {
+        std::cerr << "WARNING: cannot mark vaccines: no hidb for \"" << chart_draw.chart().chart_info().virus_type() << "\"" << std::endl;
+    }
+
+} // AntigenicMapsLayoutDrawAce::mark_vaccines
 
 // ----------------------------------------------------------------------
 
