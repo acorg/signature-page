@@ -151,27 +151,30 @@ AntigenicMapsDrawSettings::AntigenicMapsDrawSettings()
     : layout("labelled_grid"), columns(3), gap(20),
       mapped_antigens_section_line_color("black"), mapped_antigens_section_line_width(1)
 {
-    mods.push_back(AntigenicMapMod{{"N", "point_scale"}, {"scale", 1.0}, {"outline_scale", 1.0}});
-    mods.push_back(AntigenicMapMod{{"N", "viewport"}, {"viewport", SettingList{0.0, 0.0, 0.0}}});
-    mods.push_back(AntigenicMapMod{{"N", "rotate_degrees"}, {"angle", 0.0}});
-    mods.push_back(AntigenicMapMod{{"N", "sera"}, {"outline", "grey88"}, {"outline_width", 0.5}, {"size", 5.0}});
-    mods.push_back(AntigenicMapMod{{"N", "reference_antigens"}, {"fill", "transparent"}, {"outline", "grey88"}, {"outline_width", 0.5}, {"size", 5.0}});
-    mods.push_back(AntigenicMapMod{{"N", "test_antigens"}, {"fill", "grey88"}, {"outline", "grey88"}, {"outline_width", 0.5}, {"size", 3.0}});
-    mods.push_back(AntigenicMapMod{{"N", "sequenced_antigens"}, {"fill", "grey63"}, {"outline", "white"}, {"outline_width", 0.5}, {"size", 3.0}});
-    mods.push_back(AntigenicMapMod{{"N", "tracked_antigens"}, {"fill", "green3"}, {"outline", "white"}, {"outline_width", 0.5}, {"size", 5.0}});
-    mods.push_back(AntigenicMapMod{{"N", "vaccines"}, {"mods", SettingList{
+    using namespace std::string_literals;
+    mods.push_back(AntigenicMapMod{{"N", "point_scale"s}, {"scale", 1.0}, {"outline_scale", 1.0}});
+    mods.push_back(AntigenicMapMod{{"N", "viewport"s}, {"viewport", SettingList{0.0, 0.0, 0.0}}});
+    mods.push_back(AntigenicMapMod{{"N", "rotate_degrees"s}, {"angle", 0.0}});
+    mods.push_back(AntigenicMapMod{{"N", "sera"s}, {"outline", "grey88"s}, {"outline_width", 0.5}, {"size", 5.0}});
+    mods.push_back(AntigenicMapMod{{"N", "reference_antigens"s}, {"fill", "transparent"s}, {"outline", "grey88"s}, {"outline_width", 0.5}, {"size", 5.0}});
+    mods.push_back(AntigenicMapMod{{"N", "test_antigens"s}, {"fill", "grey88"s}, {"outline", "grey88"s}, {"outline_width", 0.5}, {"size", 3.0}});
+    mods.push_back(AntigenicMapMod{{"N", "sequenced_antigenss"}, {"fill", "grey63"s}, {"outline", "white"s}, {"outline_width", 0.5}, {"size", 3.0}});
+    mods.push_back(AntigenicMapMod{{"N", "tracked_antigens"s}, {"fill", "green3"s}, {"outline", "white"s}, {"outline_width", 0.5}, {"size", 5.0}});
+    mods.push_back(AntigenicMapMod{{"N", "vaccines"s}, {"mods", SettingList{
         SettingDict{
-            {"size", 15}, {"outline", "black"}, {"fill", "blue"},
-            {"label", SettingDict{{"offset", SettingList{0, 1}}, {"color", "black"}, {"weight", "normal"}, {"slant", "normal"}, {"font_family", "helvetica neu"}, {"size", 12}, {"name_type", "abbreviated_with_passage_type"}}}},
-        SettingDict{{"type", "current"}, {"fill", "red"}},
-        SettingDict{{"type", "current"}, {"passage", "reassortant"}, {"fill", "green"}},
-        SettingDict{{"type", "surrogate"}, {"fill", "pink"}},
+            {"size", 15}, {"outline", "black"s}, {"fill", "blue"s},
+            {"label", SettingDict{{"offset", SettingList{0, 1}}, {"color", "black"s}, {"weight", "normal"s}, {"slant", "normal"s}, {"font_family", "helvetica neu"s}, {"size", 12}, {"name_type", "abbreviated_with_passage_type"s}}}
+        },
+        SettingDict{{"type", "current"s}, {"fill", "red"s}},
+        SettingDict{{"type", "current"s}, {"passage", "reassortant"s}, {"fill", "green"s}},
+        SettingDict{{"type", "surrogate"s}, {"fill", "pink"s}},
+        // SettingDict{{"?name", "TEXAS"s}, {"show", false}},
     }}});
 
-    mods.push_back(AntigenicMapMod{{"N", "title"}, {"text_color", "black"}, {"text_size", 12.0}, {"padding", 3.0}, {"offset", SettingList{0.0, 0.0}}, {"weight", "normal"}, {"slant", "normal"}, {"font_family", "san serif"}});
-    mods.push_back(AntigenicMapMod{{"N", "background"}, {"color", "white"}});
-    mods.push_back(AntigenicMapMod{{"N", "grid"}, {"color", "grey80"}, {"line_width", 1.0}});
-    mods.push_back(AntigenicMapMod{{"N", "border"}, {"color", "black"}, {"line_width", 1.0}});
+    mods.push_back(AntigenicMapMod{{"N", "title"s}, {"text_color", "black"s}, {"text_size", 12.0}, {"padding", 3.0}, {"offset", SettingList{0.0, 0.0}}, {"weight", "normal"s}, {"slant", "normal"s}, {"font_family", "san serif"s}});
+    mods.push_back(AntigenicMapMod{{"N", "background"s}, {"color", "white"s}});
+    mods.push_back(AntigenicMapMod{{"N", "grid"s}, {"color", "grey80"s}, {"line_width", 1.0}});
+    mods.push_back(AntigenicMapMod{{"N", "border"s}, {"color", "black"s}, {"line_width", 1.0}});
 }
 
 //       vaccine_antigen_scale(15),
@@ -1025,9 +1028,12 @@ template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writ
           writer << *boost::get<int>(&aSettingValue);
           break;
       case 3:
-          writer << *boost::get<SettingDict>(&aSettingValue);
+          writer << *boost::get<bool>(&aSettingValue);
           break;
       case 4:
+          writer << *boost::get<SettingDict>(&aSettingValue);
+          break;
+      case 5:
           writer << *boost::get<SettingList>(&aSettingValue);
           break;
     }

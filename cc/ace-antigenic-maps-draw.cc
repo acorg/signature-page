@@ -139,7 +139,8 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex)
 void AntigenicMapsLayoutDrawAce::mark_vaccines(ChartDraw& chart_draw, const AntigenicMapMod& vaccine_mod)
 {
     try {
-        Vaccines vaccs{chart_draw.chart(), mHiDbSet.get(chart_draw.chart().chart_info().virus_type())};
+        const hidb::HiDb& hidb = mHiDbSet.get(chart_draw.chart().chart_info().virus_type());
+        Vaccines vaccs{chart_draw.chart(), hidb};
         for (const SettingValue& mod_v: vaccine_mod.get_mods()) {
             const SettingDict& mod = boost::get<SettingDict>(mod_v);
             const std::string type = mod.get("type", ""), passage = mod.get("passage", ""), name = mod.get("name", "");
@@ -151,7 +152,19 @@ void AntigenicMapsLayoutDrawAce::mark_vaccines(ChartDraw& chart_draw, const Anti
                     matcher->fill(SettingValue_get(item.second, std::string{}));
                 else if (item.first == "outline")
                     matcher->outline(SettingValue_get(item.second, std::string{}));
-                else if (item.first != "type" && item.first != "passage" && item.first != "name")
+                else if (item.first == "outline_width")
+                    matcher->outline_width(SettingValue_get(item.second, 0.0));
+                else if (item.first == "aspect")
+                    matcher->aspect(SettingValue_get(item.second, 0.0));
+                else if (item.first == "rotation")
+                    matcher->rotation(SettingValue_get(item.second, 0.0));
+                else if (item.first == "no")
+                    matcher->no(SettingValue_get(item.second, static_cast<size_t>(0)));
+                else if (item.first == "show")
+                    matcher->show(SettingValue_get(item.second, true));
+                // else if (item.first == "label")
+                //     add_label(std::shared_ptr<VaccineMatcherLabel>{matcher->label(chart_draw, hidb.locdb())}, SettingValue_get(item.second, SettingDict{}));
+                else if (item.first != "type" && item.first != "passage" && item.first != "name") // && (item.first.empty() || item.first[0] != '?'))
                     std::cerr << "WARNING: mark_vaccines: unrecognized key \"" << item.first << '"' << std::endl;
             }
         }
@@ -163,6 +176,13 @@ void AntigenicMapsLayoutDrawAce::mark_vaccines(ChartDraw& chart_draw, const Anti
     }
 
 } // AntigenicMapsLayoutDrawAce::mark_vaccines
+
+// ----------------------------------------------------------------------
+
+void AntigenicMapsLayoutDrawAce::add_label(std::shared_ptr<VaccineMatcherLabel> label, const SettingDict& data)
+{
+
+} // AntigenicMapsLayoutDrawAce::add_label
 
 // ----------------------------------------------------------------------
 

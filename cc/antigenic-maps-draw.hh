@@ -71,7 +71,7 @@ AntigenicMapsDrawBase* make_antigenic_maps_draw(std::string aChartFilename, Surf
 class SettingDict;
 class SettingList;
 
-using SettingValue = boost::variant<std::string, double, int, SettingDict, SettingList>;
+using SettingValue = boost::variant<std::string, double, int, bool, SettingDict, SettingList>;
 
 using SettingListBase = std::vector<SettingValue>;
 using SettingDictBase = std::map<std::string, SettingValue>;
@@ -115,6 +115,30 @@ inline double SettingValue_get(const SettingValue& aValue, double aDefault)
         const int* ivalue = boost::get<int>(&aValue);
         if (ivalue)
             result = static_cast<double>(*ivalue);
+    }
+    return result;
+}
+
+inline size_t SettingValue_get(const SettingValue& aValue, size_t aDefault)
+{
+    const int* ivalue = boost::get<int>(&aValue);
+    if (ivalue)
+        return static_cast<size_t>(*ivalue);
+    else
+        return aDefault;
+}
+
+inline bool SettingValue_get(const SettingValue& aValue, bool aDefault)
+{
+    bool result = aDefault;
+    const bool* bvalue = boost::get<bool>(&aValue);
+    if (bvalue) {
+        result = *bvalue;
+    }
+    else {
+        const int* ivalue = boost::get<int>(&aValue);
+        if (ivalue)
+            result = *ivalue;
     }
     return result;
 }

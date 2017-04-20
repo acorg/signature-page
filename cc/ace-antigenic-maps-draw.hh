@@ -55,6 +55,8 @@ class AntigenicMapsDraw : public AntigenicMapsDrawBase
 
 // ----------------------------------------------------------------------
 
+class VaccineMatcherLabel;
+
 class AntigenicMapsLayoutDrawAce : public AntigenicMapsLayoutDraw
 {
  public:
@@ -70,6 +72,7 @@ class AntigenicMapsLayoutDrawAce : public AntigenicMapsLayoutDraw
     hidb::HiDbSet mHiDbSet;
 
     void mark_vaccines(ChartDraw& chart_draw, const AntigenicMapMod& mod);
+    void add_label(std::shared_ptr<VaccineMatcherLabel> label, const SettingDict& data);
 
 }; // class AntigenicMapsLayoutDrawAce
 
