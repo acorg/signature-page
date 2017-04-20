@@ -162,8 +162,8 @@ AntigenicMapsDrawSettings::AntigenicMapsDrawSettings()
     mods.push_back(AntigenicMapMod{{"N", "tracked_antigens"s}, {"fill", "green3"s}, {"outline", "white"s}, {"outline_width", 0.5}, {"size", 5.0}});
     mods.push_back(AntigenicMapMod{{"N", "vaccines"s}, {"mods", SettingList{
         SettingDict{
-            {"size", 15}, {"outline", "black"s}, {"fill", "blue"s},
-            {"label", SettingDict{{"offset", SettingList{0, 1}}, {"color", "black"s}, {"weight", "normal"s}, {"slant", "normal"s}, {"font_family", "helvetica neu"s}, {"size", 12}, {"name_type", "abbreviated_with_passage_type"s}}}
+            {"size", 15}, {"outline", "white"s}, {"fill", "blue"s},
+            {"label", SettingDict{{"offset", SettingList{0, 1}}, {"color", "black"s}, {"weight", "normal"s}, {"slant", "normal"s}, {"font_family", "helvetica neu"s}, {"size", 9}, {"name_type", "abbreviated_location_with_passage_type"s}}}
         },
         SettingDict{{"type", "current"s}, {"fill", "red"s}},
         SettingDict{{"type", "current"s}, {"passage", "reassortant"s}, {"fill", "green"s}},
