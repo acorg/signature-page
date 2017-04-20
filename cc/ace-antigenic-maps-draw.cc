@@ -138,20 +138,24 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex)
 
 void AntigenicMapsLayoutDrawAce::mark_vaccines(ChartDraw& chart_draw, const AntigenicMapMod& vaccine_mod)
 {
-    std::cerr << "DEBUG: mark_vaccines" << std::endl;
     try {
         Vaccines vaccs{chart_draw.chart(), mHiDbSet.get(chart_draw.chart().chart_info().virus_type())};
         for (const SettingValue& mod_v: vaccine_mod.get_mods()) {
-            std::cerr << "DEBUG: mark_vaccines mod" << std::endl;
             const SettingDict& mod = boost::get<SettingDict>(mod_v);
             const std::string type = mod.get("type", ""), passage = mod.get("passage", ""), name = mod.get("name", "");
             std::unique_ptr<VaccineMatcher> matcher{vaccs.match(name, type, passage)};
             for (const auto& item: mod) {
                 if (item.first == "size")
-                    matcher->size(boost::get<double>(item.second));
+                    matcher->size(get_double(item.second));
+                else if (item.first == "fill")
+                    matcher->fill(get_string(item.second));
+                else if (item.first == "outline")
+                    matcher->outline(get_string(item.second));
+                else if (item.first != "type" && item.first != "passage" && item.first != "name")
+                    std::cerr << "WARNING: mark_vaccines: unrecognized key \"" << item.first << '"' << std::endl;
             }
         }
-        std::cerr << "DEBUG: Vaccines:" << std::endl << vaccs.report(2) << std::endl;
+          // std::cerr << "DEBUG: Vaccines:" << std::endl << vaccs.report(2) << std::endl;
         vaccs.plot(chart_draw);
     }
     catch (hidb::NoHiDb&) {

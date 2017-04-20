@@ -70,7 +70,9 @@ AntigenicMapsDrawBase* make_antigenic_maps_draw(std::string aChartFilename, Surf
 
 class SettingDict;
 class SettingList;
+
 using SettingValue = boost::variant<std::string, double, int, SettingDict, SettingList>;
+
 using SettingListBase = std::vector<SettingValue>;
 using SettingDictBase = std::map<std::string, SettingValue>;
 
@@ -87,66 +89,101 @@ class SettingDict : public SettingDictBase
     inline SettingDict() {}
     using SettingDictBase::SettingDictBase;
 
-    template <typename Value> inline Value get(std::string aName, Value aDefault) const
-        {
-            const auto found = find(aName);
-            if (found != end()) {
-                const auto* value = boost::get<Value>(&found->second);
-                if (value)
-                    return *value;
-            }
-            return aDefault;
+    template <typename Value> Value get(std::string aName, Value aDefault) const;
+    std::string get(std::string aName, const char* aDefault) const;
+    Location get(std::string aName, const Location& aDefault) const;
+    Viewport get_viewport() const;
+    const SettingList& get_mods() const;
+};
+
+template <typename Value> inline Value SettingDict::get(std::string aName, Value aDefault) const
+{
+    const auto found = find(aName);
+    if (found != end()) {
+        const auto* value = boost::get<Value>(&found->second);
+        if (value)
+            return *value;
+    }
+    return aDefault;
+}
+
+inline std::string SettingDict::get(std::string aName, const char* aDefault) const
+{
+    return get(aName, std::string{aDefault});
+}
+
+inline Location SettingDict::get(std::string aName, const Location& aDefault) const
+{
+    const auto found = find(aName);
+    if (found == end())
+        return aDefault;
+    const auto* list = boost::get<SettingList>(&found->second);
+    if (list && list->size() == 2 && std::all_of(list->begin(), list->end(), [](const auto& e) -> bool { return boost::get<double>(&e); }))
+        return {*boost::get<double>(&(*list)[0]), *boost::get<double>(&(*list)[1])};
+    else
+        return {};
+}
+
+inline Viewport SettingDict::get_viewport() const
+{
+    const auto found = find("viewport");
+    if (found == end())
+        return {};
+    const auto* list = boost::get<SettingList>(&found->second);
+    if (list && std::all_of(list->begin(), list->end(), [](const auto& e) -> bool { return boost::get<double>(&e); })) {
+        switch (list->size()) {
+          case 3:
+              return {*boost::get<double>(&(*list)[0]), *boost::get<double>(&(*list)[1]), *boost::get<double>(&(*list)[2])};
+          case 4:
+              return {*boost::get<double>(&(*list)[0]), *boost::get<double>(&(*list)[1]), *boost::get<double>(&(*list)[2]), *boost::get<double>(&(*list)[3])};
         }
+    }
+    return {};
+}
 
-    inline std::string get(std::string aName, const char* aDefault) const { return get(aName, std::string{aDefault}); }
-
-    inline Location get(std::string aName, const Location& aDefault) const
-        {
-            const auto found = find(aName);
-            if (found == end())
-                return aDefault;
-            const auto* list = boost::get<SettingList>(&found->second);
-            if (list && list->size() == 2 && std::all_of(list->begin(), list->end(), [](const auto& e) -> bool { return boost::get<double>(&e); }))
-                return {*boost::get<double>(&(*list)[0]), *boost::get<double>(&(*list)[1])};
-            else
-                return {};
-        }
-
-    inline Viewport get_viewport() const
-        {
-            const auto found = find("viewport");
-            if (found == end())
-                return {};
-            const auto* list = boost::get<SettingList>(&found->second);
-            if (list && std::all_of(list->begin(), list->end(), [](const auto& e) -> bool { return boost::get<double>(&e); })) {
-                switch (list->size()) {
-                  case 3:
-                      return {*boost::get<double>(&(*list)[0]), *boost::get<double>(&(*list)[1]), *boost::get<double>(&(*list)[2])};
-                  case 4:
-                      return {*boost::get<double>(&(*list)[0]), *boost::get<double>(&(*list)[1]), *boost::get<double>(&(*list)[2]), *boost::get<double>(&(*list)[3])};
-                }
-            }
-            return {};
-        }
-
-    inline const SettingList& get_mods() const
-        {
-            const auto found = find("mods");
-            if (found != end()) {
-                const auto* list = boost::get<SettingList>(&found->second);
-                if (list)
-                    return *list;
-            }
+inline const SettingList& SettingDict::get_mods() const
+{
+    const auto found = find("mods");
+    if (found != end()) {
+        const auto* list = boost::get<SettingList>(&found->second);
+        if (list)
+            return *list;
+    }
 #pragma GCC diagnostic push
 #ifdef __clang__
 #pragma GCC diagnostic ignored "-Wexit-time-destructors"
 #endif
-            static const SettingList empty;
+    static const SettingList empty;
 #pragma GCC diagnostic pop
-            return empty;
-        }
+    return empty;
+}
 
-};
+inline double get_double(const SettingValue& aValue, double aDefault = 0.0)
+{
+    double result = aDefault;
+    const double* dvalue = boost::get<double>(&aValue);
+    if (dvalue) {
+        result = *dvalue;
+    }
+    else {
+        const int* ivalue = boost::get<int>(&aValue);
+        if (ivalue)
+            result = static_cast<double>(*ivalue);
+    }
+    return result;
+}
+
+inline std::string get_string(const SettingValue& aValue, std::string aDefault = std::string{})
+{
+    std::string result = aDefault;
+    const std::string* svalue = boost::get<std::string>(&aValue);
+    if (svalue) {
+        result = *svalue;
+    }
+    return result;
+}
+
+// ----------------------------------------------------------------------
 
 class AntigenicMapMod : public SettingDict
 {
