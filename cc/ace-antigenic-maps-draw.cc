@@ -146,11 +146,11 @@ void AntigenicMapsLayoutDrawAce::mark_vaccines(ChartDraw& chart_draw, const Anti
             std::unique_ptr<VaccineMatcher> matcher{vaccs.match(name, type, passage)};
             for (const auto& item: mod) {
                 if (item.first == "size")
-                    matcher->size(get_double(item.second));
+                    matcher->size(SettingValue_get(item.second, 0.0));
                 else if (item.first == "fill")
-                    matcher->fill(get_string(item.second));
+                    matcher->fill(SettingValue_get(item.second, std::string{}));
                 else if (item.first == "outline")
-                    matcher->outline(get_string(item.second));
+                    matcher->outline(SettingValue_get(item.second, std::string{}));
                 else if (item.first != "type" && item.first != "passage" && item.first != "name")
                     std::cerr << "WARNING: mark_vaccines: unrecognized key \"" << item.first << '"' << std::endl;
             }

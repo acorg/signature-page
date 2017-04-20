@@ -96,6 +96,29 @@ class SettingDict : public SettingDictBase
     const SettingList& get_mods() const;
 };
 
+template <typename Value> inline const Value& SettingValue_get(const SettingValue& aValue, const Value& aDefault)
+{
+    const Value* value = boost::get<Value>(&aValue);
+    if (value)
+        return *value;
+    return aDefault;
+}
+
+inline double SettingValue_get(const SettingValue& aValue, double aDefault)
+{
+    double result = aDefault;
+    const double* dvalue = boost::get<double>(&aValue);
+    if (dvalue) {
+        result = *dvalue;
+    }
+    else {
+        const int* ivalue = boost::get<int>(&aValue);
+        if (ivalue)
+            result = static_cast<double>(*ivalue);
+    }
+    return result;
+}
+
 template <typename Value> inline Value SettingDict::get(std::string aName, Value aDefault) const
 {
     const auto found = find(aName);
@@ -156,31 +179,6 @@ inline const SettingList& SettingDict::get_mods() const
     static const SettingList empty;
 #pragma GCC diagnostic pop
     return empty;
-}
-
-inline double get_double(const SettingValue& aValue, double aDefault = 0.0)
-{
-    double result = aDefault;
-    const double* dvalue = boost::get<double>(&aValue);
-    if (dvalue) {
-        result = *dvalue;
-    }
-    else {
-        const int* ivalue = boost::get<int>(&aValue);
-        if (ivalue)
-            result = static_cast<double>(*ivalue);
-    }
-    return result;
-}
-
-inline std::string get_string(const SettingValue& aValue, std::string aDefault = std::string{})
-{
-    std::string result = aDefault;
-    const std::string* svalue = boost::get<std::string>(&aValue);
-    if (svalue) {
-        result = *svalue;
-    }
-    return result;
 }
 
 // ----------------------------------------------------------------------
