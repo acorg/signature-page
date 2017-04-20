@@ -168,7 +168,7 @@ AntigenicMapsDrawSettings::AntigenicMapsDrawSettings()
         SettingDict{{"type", "current"s}, {"fill", "red"s}},
         SettingDict{{"type", "current"s}, {"passage", "reassortant"s}, {"fill", "green"s}},
         SettingDict{{"type", "surrogate"s}, {"fill", "pink"s}},
-        // SettingDict{{"?name", "TEXAS"s}, {"show", false}},
+        SettingDict{{"name", "TEXAS"s}, {"?show", false}},
     }}});
 
     mods.push_back(AntigenicMapMod{{"N", "title"s}, {"text_color", "black"s}, {"text_size", 12.0}, {"padding", 3.0}, {"offset", SettingList{0.0, 0.0}}, {"weight", "normal"s}, {"slant", "normal"s}, {"font_family", "san serif"s}});

@@ -162,9 +162,9 @@ void AntigenicMapsLayoutDrawAce::mark_vaccines(ChartDraw& chart_draw, const Anti
                     matcher->no(SettingValue_get(item.second, static_cast<size_t>(0)));
                 else if (item.first == "show")
                     matcher->show(SettingValue_get(item.second, true));
-                // else if (item.first == "label")
-                //     add_label(std::shared_ptr<VaccineMatcherLabel>{matcher->label(chart_draw, hidb.locdb())}, SettingValue_get(item.second, SettingDict{}));
-                else if (item.first != "type" && item.first != "passage" && item.first != "name") // && (item.first.empty() || item.first[0] != '?'))
+                else if (item.first == "label")
+                    add_label(std::shared_ptr<VaccineMatcherLabel>{matcher->label(chart_draw, hidb.locdb())}, SettingValue_get(item.second, SettingDict{}));
+                else if (item.first != "type" && item.first != "passage" && item.first != "name" && (item.first.empty() || (item.first.front() != '?' && item.first.back() != '?')))
                     std::cerr << "WARNING: mark_vaccines: unrecognized key \"" << item.first << '"' << std::endl;
             }
         }
