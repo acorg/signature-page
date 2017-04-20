@@ -194,8 +194,10 @@ void AntigenicMapsLayoutDrawAce::add_label(std::shared_ptr<VaccineMatcherLabel> 
             label->slant(SettingValue_get(item.second, std::string{}));
         else if (item.first == "weight")
             label->weight(SettingValue_get(item.second, std::string{}));
-        // else if (item.first == "offset")
-        //     label->offset(SettingValue_get(item.second, std::string{}));
+        else if (item.first == "offset") {
+            const SettingList& offset = SettingValue_get(item.second, SettingList{0.0, 1.0});
+            label->offset(SettingValue_get(offset[0], 0.0), SettingValue_get(offset[1], 1.0));
+        }
         else if (item.first.empty() || (item.first.front() != '?' && item.first.back() != '?'))
             std::cerr << "WARNING: mark_vaccines label: unrecognized key \"" << item.first << '"' << std::endl;
     }
