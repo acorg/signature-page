@@ -75,10 +75,20 @@ void AntigenicMapsLayoutDrawAce::prepare_chart_for_all_sections()
         //     chart_draw.modify_all_sera(PointStyleDraw(PointStyle::Empty).outline(mod.get("outline", "black")).outline_width(Pixels{mod.get("outline_width", 1)}), false, true); // lower sera
         // }
         if (name == "reference_antigens") {
-            chart_draw.modify(chart.reference_antigen_indices(), PointStyleDraw(PointStyle::Empty).fill(mod.get("fill", "transparent")).outline(mod.get("outline", "grey88")).outline_width(Pixels{mod.get("outline_width", 0.5)}));
+            chart_draw.modify(chart.reference_antigen_indices(),
+                              PointStyleDraw(PointStyle::Empty)
+                              .size(Pixels{mod.get("size", 5.0)})
+                              .fill(mod.get("fill", "transparent"))
+                              .outline(mod.get("outline", "grey88"))
+                              .outline_width(Pixels{mod.get("outline_width", 0.5)}));
         }
         else if (name == "test_antigens") {
-            chart_draw.modify(chart.test_antigen_indices(), PointStyleDraw(PointStyle::Empty).fill(mod.get("fill", "grey88")).outline(mod.get("outline", "grey88")).outline_width(Pixels{mod.get("outline_width", 0.5)}));
+            chart_draw.modify(chart.test_antigen_indices(),
+                              PointStyleDraw(PointStyle::Empty)
+                              .size(Pixels{mod.get("size", 3.0)})
+                              .fill(mod.get("fill", "grey88"))
+                              .outline(mod.get("outline", "grey88"))
+                              .outline_width(Pixels{mod.get("outline_width", 0.5)}));
         }
     }
 
@@ -99,14 +109,19 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex)
         else if (name == "sequenced_antigens") {      // mark sequenced antigens (removes old tracked antigens marking)
             std::vector<size_t> sequenced_indices(sequenced_antigens().size());
             std::transform(sequenced_antigens().begin(), sequenced_antigens().end(), sequenced_indices.begin(), [](const auto& src) -> size_t { return src.first; });
-            chart_draw.modify(sequenced_indices, PointStyleDraw(PointStyle::Empty).fill(mod.get("fill", "grey63")).outline(mod.get("outline", "white")).outline_width(Pixels{mod.get("outline_width", 0.5)}));
+            chart_draw.modify(sequenced_indices,
+                              PointStyleDraw(PointStyle::Empty)
+                              .size(Pixels{mod.get("size", 3.0)})
+                              .fill(mod.get("fill", "grey63"))
+                              .outline(mod.get("outline", "white"))
+                              .outline_width(Pixels{mod.get("outline_width", 0.5)}));
         }
     }
 
     for (const auto& mod: settings().mods) {
         const std::string name = mod.name();
         if (name == "tracked_sera") {
-              // chart_draw.modify_all_sera(PointStyleDraw(PointStyle::Empty).outline(mod.get("outline", "black")).outline_width(Pixels{mod.get("outline_width", 0.5)}), false, true); // reset, lower sera
+              // chart_draw.modify_all_sera(PointStyleDraw(PointStyle::Empty).size(Pixels{mod.get("size", 5.0)}).outline(mod.get("outline", "black")).outline_width(Pixels{mod.get("outline_width", 0.5)}), false, true); // reset, lower sera
         }
         else if (name == "tracked_antigens") {
             std::vector<size_t> tracked_indices;
@@ -114,7 +129,12 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex)
                 if (sequenced_section.second == aSectionIndex)
                     tracked_indices.push_back(sequenced_section.first);
             }
-            chart_draw.modify(tracked_indices, PointStyleDraw(PointStyle::Empty).fill(mod.get("fill", "grey63")).outline(mod.get("outline", "white")).outline_width(Pixels{mod.get("outline_width", 0.5)}), true);
+            chart_draw.modify(tracked_indices,
+                              PointStyleDraw(PointStyle::Empty)
+                              .size(Pixels{mod.get("size", 5.0)})
+                              .fill(mod.get("fill", "grey63"))
+                              .outline(mod.get("outline", "white"))
+                              .outline_width(Pixels{mod.get("outline_width", 0.5)}), true);
         }
         else if (name == "vaccines") {
             mark_vaccines(chart_draw, mod);
