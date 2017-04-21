@@ -29,6 +29,7 @@ class ChartDrawInterface : public ChartDrawBase
     // inline void calculate_viewport() { mChartDraw.calculate_viewport(); }
     inline const Chart& chart() const { return *mChart; }
     inline ChartDraw& chart_draw() { return mChartDraw; }
+    inline const ChartDraw& chart_draw() const { return mChartDraw; }
 
  private:
     std::unique_ptr<Chart> mChart;
@@ -61,7 +62,7 @@ class AntigenicMapsLayoutDrawAce : public AntigenicMapsLayoutDraw
 {
  public:
     inline AntigenicMapsLayoutDrawAce(AntigenicMapsDrawBase& aAntigenicMapsDraw)
-        : AntigenicMapsLayoutDraw(aAntigenicMapsDraw), mHiDbSet(std::string{std::getenv("HOME")} + "/AD/data") {}
+        : AntigenicMapsLayoutDraw(aAntigenicMapsDraw), mHiDbSet(std::string{std::getenv("HOME")} + "/AD/data"), mHomologousAntigenForSeraFound(false) {}
 
     virtual void draw_chart(Surface& aSurface, size_t aSectionIndex);
     virtual void prepare_apply_mods();
@@ -70,10 +71,17 @@ class AntigenicMapsLayoutDrawAce : public AntigenicMapsLayoutDraw
 
  private:
     hidb::HiDbSet mHiDbSet;
+    bool mHomologousAntigenForSeraFound;
+
+    inline const ChartDrawInterface& chart_draw_interface() const { return dynamic_cast<const ChartDrawInterface&>(antigenic_maps_draw().chart()); }
+    inline ChartDrawInterface& chart_draw_interface() { return dynamic_cast<ChartDrawInterface&>(antigenic_maps_draw().chart()); }
+    inline const Chart& chart() const { return chart_draw_interface().chart(); }
+    inline const ChartDraw& chart_draw() const { return chart_draw_interface().chart_draw(); }
+    inline ChartDraw& chart_draw() { return chart_draw_interface().chart_draw(); }
 
     void tracked_antigens(std::vector<size_t>& tracked_indices, size_t aSectionIndex) const;
     void tracked_sera(std::vector<size_t>& tracked_indices, size_t aSectionIndex) const;
-    void mark_vaccines(ChartDraw& chart_draw, const AntigenicMapMod& mod);
+    void mark_vaccines(const AntigenicMapMod& mod);
     void add_label(std::shared_ptr<VaccineMatcherLabel> label, const SettingDict& data);
 
 }; // class AntigenicMapsLayoutDrawAce

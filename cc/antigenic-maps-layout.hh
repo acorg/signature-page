@@ -20,6 +20,7 @@ class AntigenicMapsLayoutDraw
     virtual void draw_chart(Surface& aSurface, size_t aSectionIndex) = 0;
 
     inline AntigenicMapsDrawBase& antigenic_maps_draw() { return mAntigenicMapsDraw; }
+    inline const AntigenicMapsDrawBase& antigenic_maps_draw() const { return mAntigenicMapsDraw; }
     inline AntigenicMapsDrawSettings& settings() { return mAntigenicMapsDraw.settings(); }
     inline const AntigenicMapsDrawSettings& settings() const { return mAntigenicMapsDraw.settings(); }
     inline auto& chart() { return mAntigenicMapsDraw.chart(); }

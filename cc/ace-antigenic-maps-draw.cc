@@ -98,15 +98,15 @@ void AntigenicMapsLayoutDrawAce::prepare_chart_for_all_sections()
 
 void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex)
 {
-    auto& chart_draw_interface = dynamic_cast<ChartDrawInterface&>(antigenic_maps_draw().chart());
-    auto& chart_draw = chart_draw_interface.chart_draw();
+    // auto& chart_draw_interface = dynamic_cast<ChartDrawInterface&>(antigenic_maps_draw().chart());
+    // auto& chart_draw = chart_draw_interface.chart_draw();
     // const auto& chart = chart_draw_interface.chart();
 
     // reset tracked antigens and sera shown on the previous map
     for (const auto& mod: settings().mods) {
         const std::string name = mod.name();
         if (name == "sera") {
-            chart_draw.modify_all_sera(PointStyleDraw(PointStyle::Empty)
+            chart_draw().modify_all_sera(PointStyleDraw(PointStyle::Empty)
                                        .size(Pixels{mod.get("size", 5.0)})
                                        .outline(mod.get("outline", "grey88"))
                                        .outline_width(Pixels{mod.get("outline_width", 0.5)}), false, true); // reset, lower sera
@@ -114,7 +114,7 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex)
         else if (name == "sequenced_antigens") {      // mark sequenced antigens (removes old tracked antigens marking)
             std::vector<size_t> sequenced_indices(sequenced_antigens().size());
             std::transform(sequenced_antigens().begin(), sequenced_antigens().end(), sequenced_indices.begin(), [](const auto& src) -> size_t { return src.first; });
-            chart_draw.modify(sequenced_indices,
+            chart_draw().modify(sequenced_indices,
                               PointStyleDraw(PointStyle::Empty)
                               .size(Pixels{mod.get("size", 3.0)})
                               .fill(mod.get("fill", "grey63"))
@@ -128,7 +128,7 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex)
         if (name == "tracked_sera") {
             std::vector<size_t> tracked_indices;
             tracked_sera(tracked_indices, aSectionIndex);
-            chart_draw.modify(tracked_indices,
+            chart_draw().modify(tracked_indices,
                               PointStyleDraw(PointStyle::Empty)
                               .size(Pixels{mod.get("size", 5.0)})
                               .outline(mod.get("outline", "black"))
@@ -137,7 +137,7 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex)
         else if (name == "tracked_antigens") {
             std::vector<size_t> tracked_indices;
             tracked_antigens(tracked_indices, aSectionIndex);
-            chart_draw.modify(tracked_indices,
+            chart_draw().modify(tracked_indices,
                               PointStyleDraw(PointStyle::Empty)
                               .size(Pixels{mod.get("size", 5.0)})
                               .fill(mod.get("fill", "grey63"))
@@ -145,7 +145,7 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex)
                               .outline_width(Pixels{mod.get("outline_width", 0.5)}), true);
         }
         else if (name == "vaccines") {
-            mark_vaccines(chart_draw, mod);
+            mark_vaccines(mod);
         }
     }
 
@@ -158,7 +158,7 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex)
     std::string title = section.index + "."; // std::string(1, 'A' + static_cast<char>(aSectionNo)) + ".";
     if (!section.label.empty())
         title += " " + section.label;
-    chart_draw.title().remove_all_lines().add_line(title);
+    chart_draw().title().remove_all_lines().add_line(title);
 
 } // AntigenicMapsLayoutDrawAce::prepare_drawing_chart
 
@@ -177,16 +177,20 @@ void AntigenicMapsLayoutDrawAce::tracked_antigens(std::vector<size_t>& tracked_i
 
 void AntigenicMapsLayoutDrawAce::tracked_sera(std::vector<size_t>& tracked_indices, size_t aSectionIndex) const
 {
+    const auto& chrt = chart();
+    if (!mHomologousAntigenForSeraFound) {
+        chrt.find_homologous_antigen_for_sera_const();
+    }
 
 } // AntigenicMapsLayoutDrawAce::tracked_sera
 
 // ----------------------------------------------------------------------
 
-void AntigenicMapsLayoutDrawAce::mark_vaccines(ChartDraw& chart_draw, const AntigenicMapMod& vaccine_mod)
+void AntigenicMapsLayoutDrawAce::mark_vaccines(const AntigenicMapMod& vaccine_mod)
 {
     try {
-        const hidb::HiDb& hidb = mHiDbSet.get(chart_draw.chart().chart_info().virus_type());
-        Vaccines vaccs{chart_draw.chart(), hidb};
+        const hidb::HiDb& hidb = mHiDbSet.get(chart_draw().chart().chart_info().virus_type());
+        Vaccines vaccs{chart_draw().chart(), hidb};
         for (const SettingValue& mod_v: vaccine_mod.get_mods()) {
             const SettingDict& mod = boost::get<SettingDict>(mod_v);
             const std::string type = mod.get("type", ""), passage = mod.get("passage", ""), name = mod.get("name", "");
@@ -209,16 +213,16 @@ void AntigenicMapsLayoutDrawAce::mark_vaccines(ChartDraw& chart_draw, const Anti
                 else if (item.first == "show")
                     matcher->show(SettingValue_get(item.second, true));
                 else if (item.first == "label")
-                    add_label(std::shared_ptr<VaccineMatcherLabel>{matcher->label(chart_draw, hidb.locdb())}, SettingValue_get(item.second, SettingDict{}));
+                    add_label(std::shared_ptr<VaccineMatcherLabel>{matcher->label(chart_draw(), hidb.locdb())}, SettingValue_get(item.second, SettingDict{}));
                 else if (item.first != "type" && item.first != "passage" && item.first != "name" && (item.first.empty() || (item.first.front() != '?' && item.first.back() != '?')))
                     std::cerr << "WARNING: mark_vaccines: unrecognized key \"" << item.first << '"' << std::endl;
             }
         }
           // std::cerr << "DEBUG: Vaccines:" << std::endl << vaccs.report(2) << std::endl;
-        vaccs.plot(chart_draw);
+        vaccs.plot(chart_draw());
     }
     catch (hidb::NoHiDb&) {
-        std::cerr << "WARNING: cannot mark vaccines: no hidb for \"" << chart_draw.chart().chart_info().virus_type() << "\"" << std::endl;
+        std::cerr << "WARNING: cannot mark vaccines: no hidb for \"" << chart_draw().chart().chart_info().virus_type() << "\"" << std::endl;
     }
 
 } // AntigenicMapsLayoutDrawAce::mark_vaccines
@@ -259,7 +263,7 @@ void AntigenicMapsLayoutDrawAce::draw_chart(Surface& aSurface, size_t aSectionIn
       // aSurface.viewport(viewport());
 
     std::cout << "\nMAP: " << aSectionIndex << " " << aSurface.viewport() << std::endl;
-    chart().draw(aSurface);
+    chart_draw().draw(aSurface);
 
     apply_mods_after(aSurface);
 
