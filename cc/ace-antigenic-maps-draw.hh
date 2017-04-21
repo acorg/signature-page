@@ -71,7 +71,7 @@ class AntigenicMapsLayoutDrawAce : public AntigenicMapsLayoutDraw
 
  private:
     hidb::HiDbSet mHiDbSet;
-    bool mHomologousAntigenForSeraFound;
+    mutable bool mHomologousAntigenForSeraFound;
 
     inline const ChartDrawInterface& chart_draw_interface() const { return dynamic_cast<const ChartDrawInterface&>(antigenic_maps_draw().chart()); }
     inline ChartDrawInterface& chart_draw_interface() { return dynamic_cast<ChartDrawInterface&>(antigenic_maps_draw().chart()); }

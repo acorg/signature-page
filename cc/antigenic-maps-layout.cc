@@ -99,6 +99,7 @@ void LabelledGridBase::draw(Surface& aMappedAntigensDrawSurface)
         if (section.show && section.show_map) {
             Surface& map_surface = surface.subsurface({column * (map_width + settings.gap), row * (map_width + settings.gap)},
                                                       Scaled{map_width}, layout_draw().viewport(), true);
+            std::cout << "===============================\nINFO: MAP " << section_index << ": " << map_surface << std::endl;
             // std::cerr << "Map " << map_surface << std::endl;
             // std::cerr << "origin_offset: " << map_surface.origin_offset() << "  scale: " << map_surface.scale() << std::endl;
             layout_draw().prepare_drawing_chart(section_index);
@@ -109,6 +110,9 @@ void LabelledGridBase::draw(Surface& aMappedAntigensDrawSurface)
                 ++row;
                 column = 0;
             }
+        }
+        else {
+            std::cout << "===============================\nINFO: MAP " << section_index << ": not shown" << std::endl;
         }
         ++section_index;
     }

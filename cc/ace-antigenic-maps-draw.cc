@@ -168,6 +168,7 @@ void AntigenicMapsLayoutDrawAce::tracked_sera(std::vector<size_t>& tracked_indic
     const auto& chrt = chart();
     if (!mHomologousAntigenForSeraFound) {
         chrt.find_homologous_antigen_for_sera_const();
+        mHomologousAntigenForSeraFound = true;
     }
 
     std::vector<size_t> tracked_antigen_indices;
@@ -182,7 +183,7 @@ void AntigenicMapsLayoutDrawAce::tracked_sera(std::vector<size_t>& tracked_indic
             }
         }
     }
-    std::cerr << "DEBUG: tracked_sera: " << tracked_indices << std::endl;
+    std::cerr << "INFO: tracked_sera: " << tracked_indices << std::endl;
 
 } // AntigenicMapsLayoutDrawAce::tracked_sera
 
@@ -264,7 +265,6 @@ void AntigenicMapsLayoutDrawAce::draw_chart(Surface& aSurface, size_t aSectionIn
 
       // aSurface.viewport(viewport());
 
-    std::cout << "\nMAP: " << aSectionIndex << " " << aSurface.viewport() << std::endl;
     chart_draw().draw(aSurface);
 
     apply_mods_after(aSurface);
