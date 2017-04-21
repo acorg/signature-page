@@ -60,22 +60,16 @@ void AntigenicMapsLayoutDrawAce::prepare_apply_mods()
 
 void AntigenicMapsLayoutDrawAce::prepare_chart_for_all_sections()
 {
-    auto& chart_draw_interface = dynamic_cast<ChartDrawInterface&>(antigenic_maps_draw().chart());
-    auto& chart_draw = chart_draw_interface.chart_draw();
-    const auto& chart = chart_draw_interface.chart();
-    chart_draw.prepare();
-    chart_draw.mark_egg_antigens();
-    chart_draw.mark_reassortant_antigens();
+    chart_draw().prepare();
+    chart_draw().mark_egg_antigens();
+    chart_draw().mark_reassortant_antigens();
     for (const auto& mod: settings().mods) {
         const std::string name = mod.name();
         if (name == "point_scale") {
-            chart_draw.scale_points(mod.get("scale", 1.0), mod.get("outline_scale", 1.0));
+            chart_draw().scale_points(mod.get("scale", 1.0), mod.get("outline_scale", 1.0));
         }
-        // else if (name == "sera") {
-        //     chart_draw.modify_all_sera(PointStyleDraw(PointStyle::Empty).outline(mod.get("outline", "black")).outline_width(Pixels{mod.get("outline_width", 1)}), false, true); // lower sera
-        // }
         if (name == "reference_antigens") {
-            chart_draw.modify(chart.reference_antigen_indices(),
+            chart_draw().modify(chart().reference_antigen_indices(),
                               PointStyleDraw(PointStyle::Empty)
                               .size(Pixels{mod.get("size", 5.0)})
                               .fill(mod.get("fill", "transparent"))
@@ -83,7 +77,7 @@ void AntigenicMapsLayoutDrawAce::prepare_chart_for_all_sections()
                               .outline_width(Pixels{mod.get("outline_width", 0.5)}));
         }
         else if (name == "test_antigens") {
-            chart_draw.modify(chart.test_antigen_indices(),
+            chart_draw().modify(chart().test_antigen_indices(),
                               PointStyleDraw(PointStyle::Empty)
                               .size(Pixels{mod.get("size", 3.0)})
                               .fill(mod.get("fill", "grey88"))
@@ -98,10 +92,6 @@ void AntigenicMapsLayoutDrawAce::prepare_chart_for_all_sections()
 
 void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex)
 {
-    // auto& chart_draw_interface = dynamic_cast<ChartDrawInterface&>(antigenic_maps_draw().chart());
-    // auto& chart_draw = chart_draw_interface.chart_draw();
-    // const auto& chart = chart_draw_interface.chart();
-
     // reset tracked antigens and sera shown on the previous map
     for (const auto& mod: settings().mods) {
         const std::string name = mod.name();
