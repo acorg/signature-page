@@ -21,22 +21,20 @@ void AntigenicMapsDraw::make_layout()
 
 void AntigenicMapsLayoutDrawAce::prepare_apply_mods()
 {
-    std::cerr << "INFO: [ace] AntigenicMapsLayoutDrawAce::prepare_apply_mods" << std::endl;
-    auto& chart_draw = dynamic_cast<ChartDrawInterface&>(antigenic_maps_draw().chart()).chart_draw();
-      // std::cerr << "INFO: [sdb] prepare_apply_mods 1 transformation " << chart.transformation() << std::endl;
+    // std::cerr << "DEBUG: [ace] AntigenicMapsLayoutDrawAce::prepare_apply_mods" << std::endl;
     for (const auto& mod: settings().mods) {
         const std::string name = mod.name();
         if (name == "rotate_degrees") {
-            chart_draw.rotate(mod.get("angle", 0.0) * M_PI / 180.0);
+            chart_draw().rotate(mod.get("angle", 0.0) * M_PI / 180.0);
         }
         else if (name == "rotate_radians") {
-            chart_draw.rotate(mod.get("angle", 0.0));
+            chart_draw().rotate(mod.get("angle", 0.0));
         }
         else if (name == "viewport") {
-            chart_draw.viewport(mod.get_viewport());
+            chart_draw().viewport(mod.get_viewport());
         }
         else if (name == "title") {
-            chart_draw.title()
+            chart_draw().title()
                     .text_size(mod.get("text_size", 12.0))
                     .text_color(mod.get("text_color", "black"))
                     .weight(mod.get("weight", "normal"))
@@ -52,7 +50,7 @@ void AntigenicMapsLayoutDrawAce::prepare_apply_mods()
         //     mDrawTrackedAntigen.color(mod.get("color", "green3"));
         // }
     }
-    chart_draw.calculate_viewport();
+    chart_draw().calculate_viewport();
 
 } // AntigenicMapsLayoutDrawAce::prepare_apply_mods
 
@@ -171,6 +169,20 @@ void AntigenicMapsLayoutDrawAce::tracked_sera(std::vector<size_t>& tracked_indic
     if (!mHomologousAntigenForSeraFound) {
         chrt.find_homologous_antigen_for_sera_const();
     }
+
+    std::vector<size_t> tracked_antigen_indices;
+    tracked_antigens(tracked_antigen_indices, aSectionIndex);
+
+    for (size_t serum_no = 0; serum_no < chrt.number_of_sera(); ++serum_no) {
+        const std::vector<size_t>& homologous_antigens_for_serum = chrt.serum(serum_no).homologous();
+        for (size_t antigen_no: homologous_antigens_for_serum) {
+            if (std::find(tracked_antigen_indices.begin(), tracked_antigen_indices.end(), antigen_no) != tracked_antigen_indices.end()) {
+                tracked_indices.push_back(serum_no + chrt.number_of_antigens());
+                break;
+            }
+        }
+    }
+    std::cerr << "DEBUG: tracked_sera: " << tracked_indices << std::endl;
 
 } // AntigenicMapsLayoutDrawAce::tracked_sera
 
