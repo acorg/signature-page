@@ -444,10 +444,11 @@ class SettingListStorer : public jsi::StorerBase
  public:
     inline SettingListStorer(SettingList& aTarget, bool aPop2 = false) : mTarget(aTarget), mPop2(aPop2) {}
     inline virtual Base* EndArray() { if (mPop2) throw Base::Pop2(); else throw Base::Pop(); }
-    // inline virtual Base* String(const char* str, rapidjson::SizeType length) { mTarget = std::string(str, length); throw Pop(); }
-    // inline virtual Base* Int(int i) { mTarget = i; throw Pop(); }
-    // inline virtual Base* Uint(unsigned u) { mTarget = static_cast<int>(u); throw Pop(); }
+    inline virtual Base* String(const char* str, rapidjson::SizeType length) { mTarget.emplace_back(std::string(str, length)); return nullptr; }
+    inline virtual Base* Int(int i) { mTarget.emplace_back(i); return nullptr; }
+    inline virtual Base* Uint(unsigned u) { mTarget.emplace_back(static_cast<int>(u)); return nullptr; }
     inline virtual Base* Double(double d) { mTarget.emplace_back(d); return nullptr; }
+    inline virtual Base* StartObject() { mTarget.emplace_back(SettingDict{}); return new SettingDictStorer(*boost::get<SettingDict>(&mTarget.back()), false); }
 
  private:
     SettingList& mTarget;
