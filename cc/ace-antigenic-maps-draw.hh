@@ -80,7 +80,7 @@ class AntigenicMapsLayoutDrawAce : public AntigenicMapsLayoutDraw
     inline ChartDraw& chart_draw() { return chart_draw_interface().chart_draw(); }
 
     void tracked_antigens(std::vector<size_t>& tracked_indices, size_t aSectionIndex) const;
-    void tracked_sera(std::vector<size_t>& tracked_indices, size_t aSectionIndex) const;
+    void tracked_sera(std::map<size_t, std::vector<size_t>>& tracked_indices, size_t aSectionIndex) const;
     void mark_vaccines(const AntigenicMapMod& mod);
     void add_label(std::shared_ptr<VaccineMatcherLabel> label, const SettingDict& data);
 

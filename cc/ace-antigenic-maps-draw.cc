@@ -113,33 +113,37 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex)
 
     for (const auto& mod: settings().mods) {
         const std::string name = mod.name();
-        if (name == "tracked_sera") {
-            std::vector<size_t> tracked_indices;
-            tracked_sera(tracked_indices, aSectionIndex);
-            chart_draw().modify(tracked_indices,
-                              PointStyleDraw(PointStyle::Empty)
-                              .size(Pixels{mod.get("size", 5.0)})
-                              .outline(mod.get("outline", "black"))
-                              .outline_width(Pixels{mod.get("outline_width", 0.5)}), true);
-        }
-        else if (name == "tracked_antigens") {
+        if (name == "tracked_antigens") {
             std::vector<size_t> tracked_indices;
             tracked_antigens(tracked_indices, aSectionIndex);
             chart_draw().modify(tracked_indices,
-                              PointStyleDraw(PointStyle::Empty)
-                              .size(Pixels{mod.get("size", 5.0)})
-                              .fill(mod.get("fill", "grey63"))
-                              .outline(mod.get("outline", "white"))
-                              .outline_width(Pixels{mod.get("outline_width", 0.5)}), true);
+                                PointStyleDraw(PointStyle::Empty)
+                                .size(Pixels{mod.get("size", 5.0)})
+                                .fill(mod.get("fill", "grey63"))
+                                .outline(mod.get("outline", "white"))
+                                .outline_width(Pixels{mod.get("outline_width", 0.5)}), true);
+        }
+        else if (name == "tracked_sera") {
+            std::map<size_t, std::vector<size_t>> tracked_indices;
+            tracked_sera(tracked_indices, aSectionIndex);
+            std::cerr << "INFO: tracked_sera: " << tracked_indices << std::endl;
+            chart_draw().modify(tracked_indices.begin(), tracked_indices.end(),
+                                PointStyleDraw(PointStyle::Empty)
+                                .size(Pixels{mod.get("size", 5.0)})
+                                .outline(mod.get("outline", "black"))
+                                .outline_width(Pixels{mod.get("outline_width", 0.5)}), true);
+        }
+        else if (name == "tracked_serum_circles") {
+            std::map<size_t, std::vector<size_t>> tracked_indices;
+            tracked_sera(tracked_indices, aSectionIndex);
         }
         else if (name == "vaccines") {
             mark_vaccines(mod);
         }
     }
 
-      // marked sera
-      // marked antigens
       // serum circles
+      // marked antigens
       // tracked_antigen_colored_by_clade
 
     const HzSection& section = hz_sections().sections[aSectionIndex];
@@ -163,7 +167,7 @@ void AntigenicMapsLayoutDrawAce::tracked_antigens(std::vector<size_t>& tracked_i
 
 // ----------------------------------------------------------------------
 
-void AntigenicMapsLayoutDrawAce::tracked_sera(std::vector<size_t>& tracked_indices, size_t aSectionIndex) const
+void AntigenicMapsLayoutDrawAce::tracked_sera(std::map<size_t, std::vector<size_t>>& tracked_indices, size_t aSectionIndex) const
 {
     const auto& chrt = chart();
     if (!mHomologousAntigenForSeraFound) {
@@ -178,12 +182,11 @@ void AntigenicMapsLayoutDrawAce::tracked_sera(std::vector<size_t>& tracked_indic
         const std::vector<size_t>& homologous_antigens_for_serum = chrt.serum(serum_no).homologous();
         for (size_t antigen_no: homologous_antigens_for_serum) {
             if (std::find(tracked_antigen_indices.begin(), tracked_antigen_indices.end(), antigen_no) != tracked_antigen_indices.end()) {
-                tracked_indices.push_back(serum_no + chrt.number_of_antigens());
+                tracked_indices[serum_no] = homologous_antigens_for_serum;
                 break;
             }
         }
     }
-    std::cerr << "INFO: tracked_sera: " << tracked_indices << std::endl;
 
 } // AntigenicMapsLayoutDrawAce::tracked_sera
 
