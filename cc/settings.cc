@@ -420,6 +420,7 @@ class SettingValueStorer : public jsi::StorerBase
     inline virtual Base* Int(int i) { mTarget = i; throw Pop(); }
     inline virtual Base* Uint(unsigned u) { mTarget = static_cast<int>(u); throw Pop(); }
     inline virtual Base* Double(double d) { mTarget = d; throw Pop(); }
+    inline virtual Base* Bool(bool b) { mTarget = b; throw Pop(); }
     virtual Base* StartArray();
     virtual Base* StartObject();
 
