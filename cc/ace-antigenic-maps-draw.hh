@@ -71,6 +71,8 @@ class AntigenicMapsLayoutDrawAce : public AntigenicMapsLayoutDraw
  private:
     hidb::HiDbSet mHiDbSet;
 
+    void tracked_antigens(std::vector<size_t>& tracked_indices, size_t aSectionIndex) const;
+    void tracked_sera(std::vector<size_t>& tracked_indices, size_t aSectionIndex) const;
     void mark_vaccines(ChartDraw& chart_draw, const AntigenicMapMod& mod);
     void add_label(std::shared_ptr<VaccineMatcherLabel> label, const SettingDict& data);
 

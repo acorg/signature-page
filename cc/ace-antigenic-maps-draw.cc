@@ -101,10 +101,15 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex)
     auto& chart_draw_interface = dynamic_cast<ChartDrawInterface&>(antigenic_maps_draw().chart());
     auto& chart_draw = chart_draw_interface.chart_draw();
     // const auto& chart = chart_draw_interface.chart();
+
+    // reset tracked antigens and sera shown on the previous map
     for (const auto& mod: settings().mods) {
         const std::string name = mod.name();
         if (name == "sera") {
-            chart_draw.modify_all_sera(PointStyleDraw(PointStyle::Empty).outline(mod.get("outline", "grey88")).outline_width(Pixels{mod.get("outline_width", 0.5)}), false, true); // reset, lower sera
+            chart_draw.modify_all_sera(PointStyleDraw(PointStyle::Empty)
+                                       .size(Pixels{mod.get("size", 5.0)})
+                                       .outline(mod.get("outline", "grey88"))
+                                       .outline_width(Pixels{mod.get("outline_width", 0.5)}), false, true); // reset, lower sera
         }
         else if (name == "sequenced_antigens") {      // mark sequenced antigens (removes old tracked antigens marking)
             std::vector<size_t> sequenced_indices(sequenced_antigens().size());
@@ -121,14 +126,17 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex)
     for (const auto& mod: settings().mods) {
         const std::string name = mod.name();
         if (name == "tracked_sera") {
-              // chart_draw.modify_all_sera(PointStyleDraw(PointStyle::Empty).size(Pixels{mod.get("size", 5.0)}).outline(mod.get("outline", "black")).outline_width(Pixels{mod.get("outline_width", 0.5)}), false, true); // reset, lower sera
+            std::vector<size_t> tracked_indices;
+            tracked_sera(tracked_indices, aSectionIndex);
+            chart_draw.modify(tracked_indices,
+                              PointStyleDraw(PointStyle::Empty)
+                              .size(Pixels{mod.get("size", 5.0)})
+                              .outline(mod.get("outline", "black"))
+                              .outline_width(Pixels{mod.get("outline_width", 0.5)}), true);
         }
         else if (name == "tracked_antigens") {
             std::vector<size_t> tracked_indices;
-            for (const auto& sequenced_section: sequenced_antigens()) {
-                if (sequenced_section.second == aSectionIndex)
-                    tracked_indices.push_back(sequenced_section.first);
-            }
+            tracked_antigens(tracked_indices, aSectionIndex);
             chart_draw.modify(tracked_indices,
                               PointStyleDraw(PointStyle::Empty)
                               .size(Pixels{mod.get("size", 5.0)})
@@ -153,6 +161,24 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex)
     chart_draw.title().remove_all_lines().add_line(title);
 
 } // AntigenicMapsLayoutDrawAce::prepare_drawing_chart
+
+// ----------------------------------------------------------------------
+
+void AntigenicMapsLayoutDrawAce::tracked_antigens(std::vector<size_t>& tracked_indices, size_t aSectionIndex) const
+{
+    for (const auto& sequenced_section: sequenced_antigens()) {
+        if (sequenced_section.second == aSectionIndex)
+            tracked_indices.push_back(sequenced_section.first);
+    }
+
+} // AntigenicMapsLayoutDrawAce::tracked_antigens
+
+// ----------------------------------------------------------------------
+
+void AntigenicMapsLayoutDrawAce::tracked_sera(std::vector<size_t>& tracked_indices, size_t aSectionIndex) const
+{
+
+} // AntigenicMapsLayoutDrawAce::tracked_sera
 
 // ----------------------------------------------------------------------
 
