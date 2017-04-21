@@ -152,13 +152,13 @@ AntigenicMapsDrawSettings::AntigenicMapsDrawSettings()
       mapped_antigens_section_line_color("black"), mapped_antigens_section_line_width(1)
 {
     using namespace std::string_literals;
-    mods.push_back(AntigenicMapMod{{"N", "point_scale"s}, {"scale"s, 1.0}, {"outline_scale"s, 1.0}});
-    mods.push_back(AntigenicMapMod{{"N", "viewport"s}, {"viewport"s, SettingList{0.0, 0.0, 0.0}}});
+    mods.push_back(AntigenicMapMod{{"N", "viewport"s}, {"viewport", SettingList{0.0, 0.0, 0.0}}});
+    mods.push_back(AntigenicMapMod{{"N", "point_scale"s}, {"scale", 1.0}, {"outline_scale"s, 1.0}});
     mods.push_back(AntigenicMapMod{{"N", "rotate_degrees"s}, {"angle", 0.0}});
     mods.push_back(AntigenicMapMod{{"N", "sera"s}, {"outline", "grey88"s}, {"outline_width", 0.5}, {"size", 5.0}});
     mods.push_back(AntigenicMapMod{{"N", "reference_antigens"s}, {"fill", "transparent"s}, {"outline", "grey88"s}, {"outline_width", 0.5}, {"size", 5.0}});
     mods.push_back(AntigenicMapMod{{"N", "test_antigens"s}, {"fill", "grey88"s}, {"outline", "grey88"s}, {"outline_width", 0.5}, {"size", 3.0}});
-    mods.push_back(AntigenicMapMod{{"N", "sequenced_antigenss"}, {"fill", "grey63"s}, {"outline", "white"s}, {"outline_width", 0.5}, {"size", 3.0}});
+    mods.push_back(AntigenicMapMod{{"N", "sequenced_antigens"s}, {"fill", "grey63"s}, {"outline", "white"s}, {"outline_width", 0.5}, {"size", 3.0}});
     mods.push_back(AntigenicMapMod{{"N", "tracked_antigens"s}, {"fill", "green3"s}, {"outline", "white"s}, {"outline_width", 0.5}, {"size", 5.0}});
     mods.push_back(AntigenicMapMod{{"N", "vaccines"s}, {"mods", SettingList{
         SettingDict{
@@ -214,7 +214,8 @@ void AntigenicMapsDrawSettings::viewport(const Viewport& aViewport)
         else
             return SettingList{aViewport.origin.x, aViewport.origin.y, aViewport.size.width, aViewport.size.height};
     };
-    AntigenicMapMod viewport_mod{{"N", "viewport"}, {"viewport", make_setting_list()}};
+    using namespace std::string_literals;
+    AntigenicMapMod viewport_mod{{"N", "viewport"s}, {"viewport", make_setting_list()}};
       // std::cerr << "DEBUG: AntigenicMapsDrawSettings::viewport" << std::endl;
     const auto vpmod = std::find_if(mods.begin(), mods.end(), [](const auto& mod) -> bool { return mod.name() == "viewport"; });
     if (vpmod == mods.end())
@@ -1017,7 +1018,7 @@ template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writ
 
 template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const SettingValue& aSettingValue)
 {
-    std::cerr << "DEBUG: SettingValue " << aSettingValue.which() << " " << aSettingValue << std::endl;
+    // std::cerr << "DEBUG: SettingValue " << aSettingValue.which() << " " << aSettingValue << std::endl;
     switch (aSettingValue.which()) {
       case 0:
           writer << *boost::get<std::string>(&aSettingValue);
