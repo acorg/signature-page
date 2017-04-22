@@ -127,11 +127,11 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex)
             std::map<size_t, std::vector<size_t>> tracked_indices;
             tracked_sera(tracked_indices, aSectionIndex);
             std::cerr << "INFO: tracked_sera: " << tracked_indices << std::endl;
-            chart_draw().modify(tracked_indices.begin(), tracked_indices.end(),
-                                PointStyleDraw(PointStyle::Empty)
-                                .size(Pixels{mod.get("size", 5.0)})
-                                .outline(mod.get("outline", "black"))
-                                .outline_width(Pixels{mod.get("outline_width", 0.5)}), true);
+            chart_draw().modify_sera(tracked_indices.begin(), tracked_indices.end(),
+                PointStyleDraw(PointStyle::Empty)
+                .size(Pixels{mod.get("size", 5.0)})
+                .outline(mod.get("outline", "black"))
+                .outline_width(Pixels{mod.get("outline_width", 0.5)}), true);
         }
         else if (name == "tracked_serum_circles") {
             std::map<size_t, std::vector<size_t>> tracked_indices;
