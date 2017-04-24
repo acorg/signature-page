@@ -161,7 +161,7 @@ AntigenicMapsDrawSettings::AntigenicMapsDrawSettings()
     mods.push_back(AntigenicMapMod{{"N", "sequenced_antigens"s}, {"fill", "grey63"s}, {"outline", "white"s}, {"outline_width", 0.5}, {"size", 3.0}});
     mods.push_back(AntigenicMapMod{{"N", "tracked_antigens"s}, {"fill", "green3"s}, {"outline", "white"s}, {"outline_width", 0.5}, {"size", 5.0}});
     mods.push_back(AntigenicMapMod{{"N", "tracked_sera"s}, {"fill", "transparent"s}, {"outline", "black"s}, {"outline_width", 0.5}, {"size", 5.0}}); // tracked sera above tracked antigens!
-    mods.push_back(AntigenicMapMod{{"N", "tracked_serum_circles"s}, {"outline", "#e0e0e0"s}, {"outline_width", 0.06}}); // tracked serum circles above tracked antigens!
+    mods.push_back(AntigenicMapMod{{"N", "tracked_serum_circles"s}, {"outline", "black"s}, {"outline_width", 0.5}}); // tracked serum circles above tracked antigens!
     mods.push_back(AntigenicMapMod{{"N", "vaccines"s}, {"mods", SettingList{
         SettingDict{
             {"size", 15}, {"outline", "white"s}, {"fill", "blue"s},

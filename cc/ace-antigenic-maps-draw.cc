@@ -109,6 +109,9 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex)
                               .outline(mod.get("outline", "white"))
                               .outline_width(Pixels{mod.get("outline_width", 0.5)}));
         }
+        else if (name == "tracked_serum_circles") {
+            chart_draw().remove_serum_circles();
+        }
     }
 
     for (const auto& mod: settings().mods) {
@@ -141,7 +144,6 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex)
         }
     }
 
-      // serum circles
       // marked antigens
       // tracked_antigen_colored_by_clade
 
@@ -191,14 +193,31 @@ void AntigenicMapsLayoutDrawAce::tracked_sera(std::map<size_t, std::vector<size_
 
 // ----------------------------------------------------------------------
 
-void AntigenicMapsLayoutDrawAce::tracked_serum_circles(const AntigenicMapMod& mod, size_t aSectionIndex) const
+void AntigenicMapsLayoutDrawAce::tracked_serum_circles(const AntigenicMapMod& mod, size_t aSectionIndex)
 {
     std::map<size_t, std::vector<size_t>> tracked_indices;
     tracked_sera(tracked_indices, aSectionIndex);
     for (auto serum_antigens: tracked_indices) {
         std::vector<double> radii(serum_antigens.second.size());
         std::transform(serum_antigens.second.begin(), serum_antigens.second.end(), radii.begin(), [&](size_t ag_no) -> double { return chart().serum_circle_radius(ag_no, serum_antigens.first, 0, false); });
-        std::cerr << "DEBUG: " << serum_antigens.first << " " << radii << std::endl;
+        std::sort(radii.begin(), radii.end());
+        const auto radius_p = std::find_if(radii.begin(), radii.end(), [](double r) -> bool { return r >= 0.0; });
+        if (radius_p != radii.end()) {
+            std::cerr << "INFO: serum_circle for " << serum_antigens.first << ' ' << chart().serum(serum_antigens.first).full_name() << " radius: " << *radius_p << std::endl;
+            auto& serum_circle = chart_draw().serum_circle(serum_antigens.first, Scaled{*radius_p});
+            serum_circle
+                    .fill(mod.get("fill", "transparent"))
+                    .outline(mod.get("outline", "black"), mod.get("outline_width", 1.0))
+                    .radius_line(mod.get("radius_line", "transparent"), mod.get("radius_line_width", 1.0));
+                      //.angles(mod.get["angle_degrees"][0] * math.pi / 180.0, mod.get["angle_degrees"][1] * math.pi / 180.0);
+            const std::string radius_line_dash = mod.get("radius_line_dash", std::string{});
+            if (radius_line_dash.empty() || radius_line_dash == "nodash")
+                serum_circle.radius_line_no_dash();
+            else if (radius_line_dash == "dash1")
+                serum_circle.radius_line_dash1();
+            else if (radius_line_dash == "dash2")
+                serum_circle.radius_line_dash2();
+        }
     }
 
 } // AntigenicMapsLayoutDrawAce::tracked_serum_circles
@@ -275,7 +294,7 @@ void AntigenicMapsLayoutDrawAce::add_label(std::shared_ptr<VaccineMatcherLabel> 
 
 // ----------------------------------------------------------------------
 
-void AntigenicMapsLayoutDrawAce::draw_chart(Surface& aSurface, size_t aSectionIndex)
+void AntigenicMapsLayoutDrawAce::draw_chart(Surface& aSurface, size_t /*aSectionIndex*/)
 {
     apply_mods_before(aSurface);
 
