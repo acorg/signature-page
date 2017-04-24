@@ -102,7 +102,7 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex)
         else if (name == "sequenced_antigens") {      // mark sequenced antigens (removes old tracked antigens marking)
             std::vector<size_t> sequenced_indices(sequenced_antigens().size());
             std::transform(sequenced_antigens().begin(), sequenced_antigens().end(), sequenced_indices.begin(), [](const auto& src) -> size_t { return src.first; });
-            chart_draw().modify(sequenced_indices,
+            chart_draw().modify(sequenced_indices.begin(), sequenced_indices.end(),
                               PointStyleDraw(PointStyle::Empty)
                               .size(Pixels{mod.get("size", 3.0)})
                               .fill(mod.get("fill", "grey63"))
@@ -119,7 +119,7 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex)
         if (name == "tracked_antigens") {
             std::vector<size_t> tracked_indices;
             tracked_antigens(tracked_indices, aSectionIndex);
-            chart_draw().modify(tracked_indices,
+            chart_draw().modify(tracked_indices.begin(), tracked_indices.end(),
                                 PointStyleDraw(PointStyle::Empty)
                                 .size(Pixels{mod.get("size", 5.0)})
                                 .fill(mod.get("fill", "grey63"))
@@ -130,11 +130,13 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex)
             std::map<size_t, std::vector<size_t>> tracked_indices;
             tracked_sera(tracked_indices, aSectionIndex);
             std::cerr << "INFO: tracked_sera: " << tracked_indices << std::endl;
-            chart_draw().modify_sera(tracked_indices.begin(), tracked_indices.end(),
-                PointStyleDraw(PointStyle::Empty)
-                .size(Pixels{mod.get("size", 5.0)})
-                .outline(mod.get("outline", "black"))
-                .outline_width(Pixels{mod.get("outline_width", 0.5)}), true);
+            for (auto iter = tracked_indices.begin(); iter != tracked_indices.end(); ++iter)
+                chart_draw().modify_serum(
+                    iter->first,
+                    PointStyleDraw(PointStyle::Empty)
+                    .size(Pixels{mod.get("size", 5.0)})
+                    .outline(mod.get("outline", "black"))
+                    .outline_width(Pixels{mod.get("outline_width", 0.5)}), true);
         }
         else if (name == "tracked_serum_circles") {
             tracked_serum_circles(mod, aSectionIndex);
