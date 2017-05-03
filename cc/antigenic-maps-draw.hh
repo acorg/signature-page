@@ -80,14 +80,14 @@ class SettingList : public SettingListBase
 {
  public:
     SettingList();
-    using SettingListBase::SettingListBase;
+    SettingList(std::initializer_list<SettingValue> init);
 };
 
 class SettingDict : public SettingDictBase
 {
  public:
     SettingDict();
-    using SettingDictBase::SettingDictBase;
+    SettingDict(std::initializer_list<SettingDictBase::value_type> init);
 
     template <typename Value> Value get(std::string aName, Value aDefault) const;
     std::string get(std::string aName, const char* aDefault) const;
@@ -97,7 +97,9 @@ class SettingDict : public SettingDictBase
 };
 
 inline SettingList::SettingList() {}
+inline SettingList::SettingList(std::initializer_list<SettingValue> init) : SettingListBase(init) {}
 inline SettingDict::SettingDict() {}
+inline SettingDict::SettingDict(std::initializer_list<SettingDictBase::value_type> init) : SettingDictBase(init) {}
 
 template <typename Value> inline const Value& SettingValue_get(const SettingValue& aValue, const Value& aDefault)
 {
