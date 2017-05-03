@@ -79,14 +79,14 @@ using SettingDictBase = std::map<std::string, SettingValue>;
 class SettingList : public SettingListBase
 {
  public:
-    inline SettingList() {}
+    SettingList();
     using SettingListBase::SettingListBase;
 };
 
 class SettingDict : public SettingDictBase
 {
  public:
-    inline SettingDict() {}
+    SettingDict();
     using SettingDictBase::SettingDictBase;
 
     template <typename Value> Value get(std::string aName, Value aDefault) const;
@@ -95,6 +95,9 @@ class SettingDict : public SettingDictBase
     Viewport get_viewport() const;
     const SettingList& get_mods() const;
 };
+
+inline SettingList::SettingList() {}
+inline SettingDict::SettingDict() {}
 
 template <typename Value> inline const Value& SettingValue_get(const SettingValue& aValue, const Value& aDefault)
 {
