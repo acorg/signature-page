@@ -17,9 +17,9 @@ inline Tree::LadderizeMethod ladderize_type_decode(std::string ladderize_type)
 
 // ----------------------------------------------------------------------
 
-PYBIND11_PLUGIN(signature_page_backend)
+PYBIND11_MODULE(signature_page_backend, m)
 {
-    py::module m("signature_page_backend", "Tree and signature page generator plugin");
+    m.doc() = "Tree and signature page generator plugin";
 
     py::class_<Node>(m, "Node")
             .def(py::init<>())
@@ -37,8 +37,6 @@ PYBIND11_PLUGIN(signature_page_backend)
 
     m.def("tree_import", &tree_import, py::arg("filename"), py::arg("tree"), py::doc("Imports tree from json file."));
     m.def("tree_export", &tree_export, py::arg("filename"), py::arg("tree"), py::arg("indent") = 1, py::doc("Exports tree into json file."));
-
-    return m.ptr();
 }
 
 // ----------------------------------------------------------------------
