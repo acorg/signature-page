@@ -3,7 +3,7 @@
   - visit [http://gisaid.org](http://gisaid.org) and login (at right)
   - Click EpiFlu (top middle)
   - Hold Cmd and click A and B in the Type.
-  - Set collection date From to 2016-01-01 (or later depending on the number of isolates upon search, see below)
+  - Set collection date From to 2017-01-01 (or later depending on the number of isolates upon search, see below)
   - _Leave originating lab empty!_
 
   - Select **Submitting lab** them all using Cmd
