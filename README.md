@@ -5,9 +5,9 @@ Programs to import phylogenetic tree and draw it on a tree or signature page
 
   - download sequences from gisaid (see GISAID.md) in put it into ~/ac/tables-store/sequences/gisaid-all-20160101-$(date +%Y%m%d).fas.bz2
 
-  - make ~/AD/data/seqdb.json.xz (make sure hidb in ~/AD/data/ are up to date)
+  - make ~/AD/data/seqdb.json.xz (make sure hidb in ~/AD/data/ are up to date), approximate running time: 5 minutes
 
-        env LD_LIBRARY_PATH=$HOME/AD/lib ~/AD/bin/seqdb-create --db ~/AD/data/seqdb.json.xz --match-hidb --clades ~/ac/tables-store/sequences/*.fas.bz2
+        ~/AD/bin/seqdb-update-whocc
 
   - mkdir $(date +%Y-%m%d-%H%M), copy seqdb
 
