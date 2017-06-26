@@ -289,7 +289,7 @@ class ColorStorer : public jsi::StorerBase
 {
  public:
     inline ColorStorer(Color& aTarget) : mTarget(aTarget) {}
-    inline virtual Base* String(const char* str, rapidjson::SizeType length) { mTarget.from_string(str, length); throw jsi::storers::Base::Pop(); }
+    inline virtual Base* String(const char* str, rapidjson::SizeType length) { mTarget.from_string(str, length); return jsi::storers::_i::pop(); }
 
  private:
     Color& mTarget;
@@ -303,7 +303,7 @@ template <typename SZ> class SZStorer : public jsi::StorerBase
     inline virtual Base* StartArray()
         {
             if (mPos)
-                throw Base::Failure(typeid(*this).name() + std::string(": unexpected StartArray event"));
+                return jsi::storers::_i::failure(typeid(*this).name() + std::string(": unexpected StartArray event"));
             ++mPos;
             return nullptr;
         }
@@ -311,8 +311,8 @@ template <typename SZ> class SZStorer : public jsi::StorerBase
     inline virtual Base* EndArray()
         {
             if (mPos != 3)
-                throw Base::Failure(typeid(*this).name() + std::string(": unexpected EndArray event"));
-            throw Base::Pop();
+                return jsi::storers::_i::failure(typeid(*this).name() + std::string(": unexpected EndArray event"));
+            return jsi::storers::_i::pop();
         }
 
     virtual Base* Double(double d);
@@ -335,7 +335,7 @@ template <> jsi::StorerBase* SZStorer<Size>::Double(double d)
           mTarget.height = d;
           break;
       default:
-          throw Base::Failure(typeid(*this).name() + std::string(": unexpected Double event"));
+          return jsi::storers::_i::failure(typeid(*this).name() + std::string(": unexpected Double event"));
     }
     ++mPos;
     return nullptr;
@@ -351,7 +351,7 @@ template <> jsi::StorerBase* SZStorer<Location>::Double(double d)
           mTarget.y = d;
           break;
       default:
-          throw Base::Failure(typeid(*this).name() + std::string(": unexpected Double event"));
+          return jsi::storers::_i::failure(typeid(*this).name() + std::string(": unexpected Double event"));
     }
     ++mPos;
     return nullptr;
@@ -368,7 +368,7 @@ class ViewportStorer : public jsi::StorerBase
     inline virtual Base* StartArray()
         {
             if (mPos)
-                throw Base::Failure(typeid(*this).name() + std::string(": unexpected StartArray event"));
+                return jsi::storers::_i::failure(typeid(*this).name() + std::string(": unexpected StartArray event"));
             ++mPos;
             return nullptr;
         }
@@ -376,8 +376,8 @@ class ViewportStorer : public jsi::StorerBase
     inline virtual Base* EndArray()
         {
             if (mPos != 4 && mPos != 5)
-                throw Base::Failure(typeid(*this).name() + std::string(": unexpected EndArray event"));
-            throw Base::Pop();
+                return jsi::storers::_i::failure(typeid(*this).name() + std::string(": unexpected EndArray event"));
+            return jsi::storers::_i::pop();
         }
 
     virtual inline Base* Double(double d)
@@ -396,7 +396,7 @@ class ViewportStorer : public jsi::StorerBase
                   mTarget.size.height = d;
                   break;
               default:
-                  throw Base::Failure(typeid(*this).name() + std::string(": unexpected Double event"));
+                  return jsi::storers::_i::failure(typeid(*this).name() + std::string(": unexpected Double event"));
             }
             ++mPos;
             return nullptr;
@@ -416,11 +416,11 @@ class SettingValueStorer : public jsi::StorerBase
 {
  public:
     inline SettingValueStorer(SettingValue& aTarget) : mTarget(aTarget) {}
-    inline virtual Base* String(const char* str, rapidjson::SizeType length) { mTarget = std::string(str, length); throw Pop(); }
-    inline virtual Base* Int(int i) { mTarget = i; throw Pop(); }
-    inline virtual Base* Uint(unsigned u) { mTarget = static_cast<int>(u); throw Pop(); }
-    inline virtual Base* Double(double d) { mTarget = d; throw Pop(); }
-    inline virtual Base* Bool(bool b) { mTarget = b; throw Pop(); }
+    inline virtual Base* String(const char* str, rapidjson::SizeType length) { mTarget = std::string(str, length); return jsi::storers::_i::pop(); }
+    inline virtual Base* Int(int i) { mTarget = i; return jsi::storers::_i::pop(); }
+    inline virtual Base* Uint(unsigned u) { mTarget = static_cast<int>(u); return jsi::storers::_i::pop(); }
+    inline virtual Base* Double(double d) { mTarget = d; return jsi::storers::_i::pop(); }
+    inline virtual Base* Bool(bool b) { mTarget = b; return jsi::storers::_i::pop(); }
     virtual Base* StartArray();
     virtual Base* StartObject();
 
@@ -432,7 +432,7 @@ class SettingDictStorer : public jsi::StorerBase
 {
  public:
     inline SettingDictStorer(SettingDict& aTarget, bool aPop2 = false) : mTarget(aTarget), mPop2(aPop2) {}
-    inline virtual Base* EndObject() { if (mPop2) throw Base::Pop2(); else throw Base::Pop(); }
+    inline virtual Base* EndObject() { if (mPop2) return jsi::storers::_i::pop2(); else return jsi::storers::_i::pop(); }
     inline virtual Base* Key(const char* str, rapidjson::SizeType length) { std::string key(str, length); auto p = mTarget.emplace(key, SettingValue{}); return new SettingValueStorer(p.first->second); }
 
  private:
@@ -444,7 +444,7 @@ class SettingListStorer : public jsi::StorerBase
 {
  public:
     inline SettingListStorer(SettingList& aTarget, bool aPop2 = false) : mTarget(aTarget), mPop2(aPop2) {}
-    inline virtual Base* EndArray() { if (mPop2) throw Base::Pop2(); else throw Base::Pop(); }
+    inline virtual Base* EndArray() { if (mPop2) return jsi::storers::_i::pop2(); else return jsi::storers::_i::pop(); }
     inline virtual Base* String(const char* str, rapidjson::SizeType length) { mTarget.emplace_back(std::string(str, length)); return nullptr; }
     inline virtual Base* Int(int i) { mTarget.emplace_back(i); return nullptr; }
     inline virtual Base* Uint(unsigned u) { mTarget.emplace_back(static_cast<int>(u)); return nullptr; }
@@ -473,7 +473,7 @@ class AntigenicMapModsStorer : public jsi::StorerBase
  public:
     inline AntigenicMapModsStorer(std::vector<AntigenicMapMod>& aTarget) : mTarget(aTarget) {}
     inline virtual Base* StartArray() { mTarget.clear(); return nullptr; }
-    inline virtual Base* EndArray() { throw Base::Pop(); }
+    inline virtual Base* EndArray() { return jsi::storers::_i::pop(); }
     inline virtual Base* StartObject() { mTarget.emplace_back(); return new SettingDictStorer(mTarget.back()); }
 
  private:
