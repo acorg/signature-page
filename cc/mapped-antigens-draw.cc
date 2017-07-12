@@ -29,7 +29,7 @@ void MappedAntigensDraw::prepare()
     std::cout << "Tree sequences found in the chart: " << matched_names.size() << std::endl;
 
     // std::cerr << "Matched names:" << std::endl << "  ";
-    // std::copy(matched_names.begin(), matched_names.end(), std::ostream_iterator<std::string>(std::cerr, "\n  "));
+    // std::copy(matched_names.begin(), matched_names.end(), polyfill::make_ostream_joiner(std::cerr, "\n  "));
     // std::cerr << std::endl << std::endl;
 
     // std::cerr << "Not matched names:" << std::endl;
