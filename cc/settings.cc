@@ -1161,7 +1161,7 @@ template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writ
 void write_settings(const Settings& aSettings, std::string aFilename, size_t aIndent)
 {
     std::cerr << "INFO: writing settings to " << aFilename << std::endl;
-    jsw::export_to_json(aSettings, SETTINGS_VERSION_4, aFilename, aIndent);
+    jsw::export_to_json(aSettings, aFilename, aIndent);
 
 } // write_settings
 

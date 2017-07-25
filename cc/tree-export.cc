@@ -44,7 +44,7 @@ template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writ
 
 void tree_export(std::string aFilename, const Tree& aTree, size_t aIndent)
 {
-    jsw::export_to_json(aTree, TREE_PHYLOGENETIC_VERSION, aFilename, aIndent);
+    jsw::export_to_json(aTree, aFilename, aIndent);
 
 } // tree_export
 
