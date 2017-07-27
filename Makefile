@@ -20,16 +20,7 @@ TEST_DRAW_CHART_SOURCES = test-draw-chart.cc $(SIGNATURE_PAGE_SOURCES)
 
 # ----------------------------------------------------------------------
 
-CLANG = $(shell if g++ --version 2>&1 | grep -i llvm >/dev/null; then echo Y; else echo N; fi)
-ifeq ($(CLANG),Y)
-  WEVERYTHING = -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-padded
-  WARNINGS = -Wno-weak-vtables # -Wno-padded
-  STD = c++14
-else
-  WEVERYTHING = -Wall -Wextra
-  WARNINGS =
-  STD = c++14
-endif
+include $(ACMACSD_ROOT)/share/Makefile.g++
 
 # -fvisibility=hidden and -flto make resulting lib smaller (pybind11) but linking is much slower
 OPTIMIZATION = -O3 #-fvisibility=hidden -flto
@@ -61,22 +52,22 @@ all: check-python $(DIST)/signature_page_backend$(PYTHON_MODULE_SUFFIX) $(DIST)/
 # ----------------------------------------------------------------------
 
 # $(DIST)/: $(patsubst %.cc,$(BUILD)/%.o,$(_SOURCES)) | $(DIST) check-acmacsd-root
-#	g++ $(LDFLAGS) -o $@ $^
+#	$(GXX) $(LDFLAGS) -o $@ $^
 
 $(DIST)/signature_page_backend$(PYTHON_MODULE_SUFFIX):  $(patsubst %.cc,$(BUILD)/%.o,$(SIGNATURE_PAGE_PY_SOURCES)) | $(DIST) check-acmacsd-root
-	g++ -shared $(LDFLAGS) -o $@ $^ $(SIGP_LDLIBS) $(PYTHON_LD_LIB)
+	$(GXX) -shared $(LDFLAGS) -o $@ $^ $(SIGP_LDLIBS) $(PYTHON_LD_LIB)
 
 $(DIST)/sigp-settings-create: $(patsubst %.cc,$(BUILD)/%.o,$(SETTINGS_CREATE_SOURCES)) | $(DIST)
-	g++ $(LDFLAGS) -o $@ $^ $(SETTINGS_CREATE_LDLIBS)
+	$(GXX) $(LDFLAGS) -o $@ $^ $(SETTINGS_CREATE_LDLIBS)
 
 $(DIST)/test-settings-copy: $(patsubst %.cc,$(BUILD)/%.o,$(TEST_SETTINGS_COPY_SOURCES)) | $(DIST)
-	g++ $(LDFLAGS) -o $@ $^ $(SETTINGS_CREATE_LDLIBS)
+	$(GXX) $(LDFLAGS) -o $@ $^ $(SETTINGS_CREATE_LDLIBS)
 
 $(DIST)/test-draw-chart: $(patsubst %.cc,$(BUILD)/%.o,$(TEST_DRAW_CHART_SOURCES)) | $(DIST)
-	g++ $(LDFLAGS) -o $@ $^ $(SIGP_LDLIBS)
+	$(GXX) $(LDFLAGS) -o $@ $^ $(SIGP_LDLIBS)
 
 $(DIST)/sigp: $(patsubst %.cc,$(BUILD)/%.o,$(SIGP_SOURCES)) | $(DIST)
-	g++ $(LDFLAGS) -o $@ $^ $(SIGP_LDLIBS)
+	$(GXX) $(LDFLAGS) -o $@ $^ $(SIGP_LDLIBS)
 
 # ----------------------------------------------------------------------
 
@@ -103,7 +94,7 @@ test: install $(DIST)/sigp
 
 $(BUILD)/%.o: cc/%.cc | $(BUILD)
 	@echo $<
-	@g++ $(CXXFLAGS) -c -o $@ $<
+	@$(GXX) $(CXXFLAGS) -c -o $@ $<
 
 # ----------------------------------------------------------------------
 
