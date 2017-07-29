@@ -1,13 +1,14 @@
 #include <cmath>
 
-#include "settings.hh"
 #include "acmacs-base/float.hh"
 
 #include "acmacs-base/read-file.hh"
+#include "acmacs-base/json-writer.hh"
 #include "acmacs-base/json-importer.hh"
 namespace jsi = json_importer;
-#include "acmacs-base/json-writer.hh"
 namespace jsw = json_writer;
+
+#include "settings.hh"
 
 // ----------------------------------------------------------------------
 

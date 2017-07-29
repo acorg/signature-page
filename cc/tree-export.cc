@@ -1,9 +1,9 @@
+#include "acmacs-base/json-writer.hh"
+#include "acmacs-base/json-reader.hh"
+namespace jsw = json_writer;
+
 #include "tree-export.hh"
 #include "tree.hh"
-
-#include "acmacs-base/json-reader.hh"
-#include "acmacs-base/json-writer.hh"
-namespace jsw = json_writer;
 
 // ----------------------------------------------------------------------
 
