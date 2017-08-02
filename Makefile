@@ -52,22 +52,22 @@ all: check-python $(DIST)/signature_page_backend$(PYTHON_MODULE_SUFFIX) $(DIST)/
 # ----------------------------------------------------------------------
 
 # $(DIST)/: $(patsubst %.cc,$(BUILD)/%.o,$(_SOURCES)) | $(DIST) check-acmacsd-root
-#	$(GXX) $(LDFLAGS) -o $@ $^
+#	$(CXX) $(LDFLAGS) -o $@ $^
 
 $(DIST)/signature_page_backend$(PYTHON_MODULE_SUFFIX):  $(patsubst %.cc,$(BUILD)/%.o,$(SIGNATURE_PAGE_PY_SOURCES)) | $(DIST) check-acmacsd-root
-	$(GXX) -shared $(LDFLAGS) -o $@ $^ $(SIGP_LDLIBS) $(PYTHON_LD_LIB)
+	$(CXX) -shared $(LDFLAGS) -o $@ $^ $(SIGP_LDLIBS) $(PYTHON_LD_LIB)
 
 $(DIST)/sigp-settings-create: $(patsubst %.cc,$(BUILD)/%.o,$(SETTINGS_CREATE_SOURCES)) | $(DIST)
-	$(GXX) $(LDFLAGS) -o $@ $^ $(SETTINGS_CREATE_LDLIBS)
+	$(CXX) $(LDFLAGS) -o $@ $^ $(SETTINGS_CREATE_LDLIBS)
 
 $(DIST)/test-settings-copy: $(patsubst %.cc,$(BUILD)/%.o,$(TEST_SETTINGS_COPY_SOURCES)) | $(DIST)
-	$(GXX) $(LDFLAGS) -o $@ $^ $(SETTINGS_CREATE_LDLIBS)
+	$(CXX) $(LDFLAGS) -o $@ $^ $(SETTINGS_CREATE_LDLIBS)
 
 $(DIST)/test-draw-chart: $(patsubst %.cc,$(BUILD)/%.o,$(TEST_DRAW_CHART_SOURCES)) | $(DIST)
-	$(GXX) $(LDFLAGS) -o $@ $^ $(SIGP_LDLIBS)
+	$(CXX) $(LDFLAGS) -o $@ $^ $(SIGP_LDLIBS)
 
 $(DIST)/sigp: $(patsubst %.cc,$(BUILD)/%.o,$(SIGP_SOURCES)) | $(DIST)
-	$(GXX) $(LDFLAGS) -o $@ $^ $(SIGP_LDLIBS)
+	$(CXX) $(LDFLAGS) -o $@ $^ $(SIGP_LDLIBS)
 
 # ----------------------------------------------------------------------
 
@@ -94,7 +94,7 @@ test: install $(DIST)/sigp
 
 $(BUILD)/%.o: cc/%.cc | $(BUILD)
 	@echo $<
-	@$(GXX) $(CXXFLAGS) -c -o $@ $<
+	@$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 # ----------------------------------------------------------------------
 
