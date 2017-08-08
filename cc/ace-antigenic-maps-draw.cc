@@ -182,7 +182,7 @@ void AntigenicMapsLayoutDrawAce::tracked_sera(std::map<size_t, std::vector<size_
     tracked_antigens(tracked_antigen_indices, aSectionIndex);
 
     for (size_t serum_no = 0; serum_no < chrt.number_of_sera(); ++serum_no) {
-        const std::vector<size_t>& homologous_antigens_for_serum = chrt.serum(serum_no).homologous();
+        const auto& homologous_antigens_for_serum = chrt.serum(serum_no).homologous();
         for (size_t antigen_no: homologous_antigens_for_serum) {
             if (std::find(tracked_antigen_indices.begin(), tracked_antigen_indices.end(), antigen_no) != tracked_antigen_indices.end()) {
                 tracked_indices[serum_no] = homologous_antigens_for_serum;
@@ -229,8 +229,9 @@ void AntigenicMapsLayoutDrawAce::tracked_serum_circles(const AntigenicMapMod& mo
 void AntigenicMapsLayoutDrawAce::mark_vaccines(const AntigenicMapMod& vaccine_mod)
 {
     try {
-        const hidb::HiDb& hidb = mHiDbSet.get(chart_draw().chart().chart_info().virus_type());
-        Vaccines vaccs{chart_draw().chart(), hidb};
+        const auto& chart = static_cast<const Chart&>(chart_draw().chart());
+        const auto& hidb = mHiDbSet.get(chart.chart_info().virus_type());
+        Vaccines vaccs{chart, hidb};
         for (const SettingValue& mod_v: vaccine_mod.get_mods()) {
             const SettingDict& mod = boost::get<SettingDict>(mod_v);
             const std::string type = mod.get("type", ""), passage = mod.get("passage", ""), name = mod.get("name", "");

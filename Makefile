@@ -31,14 +31,14 @@ LDFLAGS = $(OPTIMIZATION) $(PROFILE)
 PYTHON_VERSION = $(shell python3 -c 'import sys; print("{0.major}.{0.minor}".format(sys.version_info))')
 PYTHON_CONFIG = python$(PYTHON_VERSION)-config
 PYTHON_MODULE_SUFFIX = $(shell $(PYTHON_CONFIG) --extension-suffix)
-PYTHON_LD_LIB = $$($(PYTHON_CONFIG) --ldflags | sed -E 's/-Wl,-stack_size,[0-9]+//')
+PYTHON_LD_LIB = $(shell $(PYTHON_CONFIG) --ldflags | sed -E 's/-Wl,-stack_size,[0-9]+//')
 
-PKG_INCLUDES = $$(pkg-config --cflags cairo) $$(pkg-config --cflags liblzma) $$($(PYTHON_CONFIG) --includes)
+PKG_INCLUDES = $(shell pkg-config --cflags cairo) $(shell pkg-config --cflags liblzma) $(shell $(PYTHON_CONFIG) --includes)
 
 LIB_DIR = $(ACMACSD_ROOT)/lib
 ACMACSD_LIBS = -L$(LIB_DIR) -lacmacsbase -lacmacschart -lacmacsdraw -lacmacsmapdraw -lseqdb -lhidb -llocationdb -lboost_date_time -lboost_program_options -lboost_filesystem -lboost_system
-SETTINGS_CREATE_LDLIBS = $(ACMACSD_LIBS) $$(pkg-config --libs liblzma)
-SIGP_LDLIBS = $(ACMACSD_LIBS) $$(pkg-config --libs cairo) $$(pkg-config --libs liblzma)
+SETTINGS_CREATE_LDLIBS = $(ACMACSD_LIBS) $(shell pkg-config --libs liblzma)
+SIGP_LDLIBS = $(ACMACSD_LIBS) $(shell pkg-config --libs cairo) $(shell pkg-config --libs liblzma)
 
 # ----------------------------------------------------------------------
 
@@ -85,6 +85,9 @@ distclean: clean
 
 test: install $(DIST)/sigp
 	test/test
+
+rtags:
+	make -nkB | /usr/local/bin/rc --compile - || true
 
 # ----------------------------------------------------------------------
 
