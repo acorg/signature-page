@@ -21,6 +21,7 @@ TEST_DRAW_CHART_SOURCES = test-draw-chart.cc $(SIGNATURE_PAGE_SOURCES)
 # ----------------------------------------------------------------------
 
 include $(ACMACSD_ROOT)/share/Makefile.g++
+include $(ACMACSD_ROOT)/share/Makefile.dist-build.vars
 
 # -fvisibility=hidden and -flto make resulting lib smaller (pybind11) but linking is much slower
 OPTIMIZATION = -O3 #-fvisibility=hidden -flto
@@ -39,11 +40,6 @@ LIB_DIR = $(ACMACSD_ROOT)/lib
 ACMACSD_LIBS = -L$(LIB_DIR) -lacmacsbase -lacmacschart -lacmacsdraw -lacmacsmapdraw -lseqdb -lhidb -llocationdb -lboost_date_time -lboost_program_options -lboost_filesystem -lboost_system
 SETTINGS_CREATE_LDLIBS = $(ACMACSD_LIBS) $(shell pkg-config --libs liblzma)
 SIGP_LDLIBS = $(ACMACSD_LIBS) $(shell pkg-config --libs cairo) $(shell pkg-config --libs liblzma)
-
-# ----------------------------------------------------------------------
-
-BUILD = build
-DIST = $(abspath dist)
 
 # ----------------------------------------------------------------------
 
@@ -77,12 +73,6 @@ install: $(DIST)/signature_page_backend$(PYTHON_MODULE_SUFFIX) $(DIST)/sigp | ch
 	ln -sf $(abspath py)/* $(ACMACSD_ROOT)/py
 	ln -sf $(DIST)/signature_page_backend$(PYTHON_MODULE_SUFFIX) $(ACMACSD_ROOT)/py
 
-clean:
-	rm -rf $(DIST) $(BUILD)/*.o $(BUILD)/*.d
-
-distclean: clean
-	rm -rf $(BUILD)
-
 test: install $(DIST)/sigp
 	test/test
 
@@ -108,11 +98,7 @@ endif
 check-python:
 	@printf 'import sys\nif sys.version_info < (3, 5):\n print("Python 3.5 is required")\n exit(1)' | python3
 
-$(DIST):
-	mkdir -p $(DIST)
-
-$(BUILD):
-	mkdir -p $(BUILD)
+include $(ACMACSD_ROOT)/share/Makefile.dist-build.rules
 
 .PHONY: check-acmacsd-root check-python
 
