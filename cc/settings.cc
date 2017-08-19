@@ -164,12 +164,14 @@ AntigenicMapsDrawSettings::AntigenicMapsDrawSettings()
     mods.push_back(AntigenicMapMod{{"N", "tracked_sera"s}, {"fill", "transparent"s}, {"outline", "black"s}, {"outline_width", 0.5}, {"size", 5.0}}); // tracked sera above tracked antigens!
     mods.push_back(AntigenicMapMod{{"N", "tracked_serum_circles"s}, {"outline", "black"s}, {"outline_width", 0.5}}); // tracked serum circles above tracked antigens!
     mods.push_back(AntigenicMapMod{{"N", "vaccines"s}, {"mods", SettingList{
-        SettingDict{{"size", 15}, {"outline", "white"s}, {"fill", "blue"s}},
+        SettingDict{{"size", 15}},
+        SettingDict{{"outline", "white"s}, {"fill", "blue"s}},
         SettingDict{{"type", "current"s}, {"fill", "red"s}},
         SettingDict{{"type", "current"s}, {"passage", "reassortant"s}, {"fill", "green"s}},
         SettingDict{{"type", "surrogate"s}, {"fill", "pink"s}},
         SettingDict{{"name", "TEXAS"s}, {"?show", false}},
-        SettingDict{{"label", SettingDict{{"offset", SettingList{0, 1}}, {"color", "black"s}, {"weight", "normal"s}, {"slant", "normal"s}, {"font_family", "helvetica neu"s}, {"size", 9}, {"name_type", "abbreviated_location_with_passage_type"s}}}},
+        SettingDict{{"label", SettingDict{{"offset", SettingList{0, 1}}, {"color", "black"s}, {"weight", "normal"s}, {"slant", "normal"s},
+                                          {"font_family", "helvetica neu"s}, {"size", 9}, {"name_type", "abbreviated_location_with_passage_type"s}}}},
     }}});
 
     mods.push_back(AntigenicMapMod{{"N", "title"s}, {"text_color", "black"s}, {"text_size", 12.0}, {"padding", 3.0}, {"offset", SettingList{0.0, 0.0}}, {"weight", "normal"s}, {"slant", "normal"s}, {"font_family", "san serif"s}});
