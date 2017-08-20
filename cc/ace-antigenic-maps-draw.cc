@@ -251,8 +251,12 @@ void AntigenicMapsLayoutDrawAce::mark_vaccines(const AntigenicMapMod& vaccine_mo
                     matcher->rotation(SettingValue_get(item.second, 0.0));
                 else if (item.first == "no")
                     matcher->no(SettingValue_get(item.second, static_cast<size_t>(0)));
-                else if (item.first == "show")
-                    matcher->show(SettingValue_get(item.second, true));
+                else if (item.first == "show") {
+                    const bool show = SettingValue_get(item.second, true);
+                    matcher->show(show);
+                    if (!show)
+                        matcher->hide_label(chart_draw(), hidb.locdb());
+                }
                 else if (item.first == "label")
                     add_label(std::shared_ptr<VaccineMatcherLabel>{matcher->label(chart_draw(), hidb.locdb())}, SettingValue_get(item.second, SettingDict{}));
                 else if (item.first != "type" && item.first != "passage" && item.first != "name" && (item.first.empty() || (item.first.front() != '?' && item.first.back() != '?')))
