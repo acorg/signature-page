@@ -253,6 +253,7 @@ class TreeDraw
     void hide_before2015_58P_or_146I_or_559I();
     void hide_between(std::string aFirst, std::string aLast);
     void hide_one(std::string aName);
+    void mark_with_line(std::string aName, Color aColor, Pixels aLineWidth);
     static void hide_branch(Node& aNode);
 
 }; // class TreeDraw

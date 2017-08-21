@@ -105,6 +105,10 @@ bool TreeDraw::apply_mods()
             std::cout << "TREE-mod: " << mod.mod << " \"" << mod.s1 << "\"" << std::endl;
             hide_one(mod.s1);
         }
+        else if (mod.mod == "mark-with-line") {
+            std::cout << "TREE-mod: " << mod.mod << " \"" << mod.s1 << "\" \"" << mod.s2 << "\" " << mod.d1 << std::endl;
+            mark_with_line(mod.s1, mod.s2, Pixels{mod.d1});
+        }
         else if (mod.mod.empty() || mod.mod[0] == '?') {
               // commented out mod
         }
@@ -228,6 +232,26 @@ void TreeDraw::hide_one(std::string aName)
     std::cout << "leaf nodes hidden: " << hidden << std::endl;
 
 } // TreeDraw::hide_one
+
+// ----------------------------------------------------------------------
+
+void TreeDraw::mark_with_line(std::string aName, Color aColor, Pixels aLineWidth)
+{
+    size_t marked = 0;
+    auto mark_leaf = [aName,&aColor,&aLineWidth,&marked](Node& aNode) {
+        if (aNode.seq_id == aName) {
+            aNode.draw.mark_with_line = aColor;
+            aNode.draw.mark_with_line_width = aLineWidth;
+            ++marked;
+        }
+    };
+    tree::iterate_leaf(mTree, mark_leaf);
+    if (marked == 0)
+        std::cerr << "WARNING: not found to mark with line: " << aName << '\n';
+    else
+        std::cout << "leaf nodes marked: " << marked << std::endl;
+
+} // TreeDraw::mark_with_line
 
 // ----------------------------------------------------------------------
 
@@ -423,6 +447,9 @@ void TreeDraw::draw_node(const Node& aNode, double aOriginX, double& aVerticalGa
                 const auto vlsize = mSurface.text_size(aNode.draw.vaccine_label, Pixels{settings.label_size}, settings.label_style);
                 const auto line_origin = label_origin + Size(vlsize.width / 2, label_offset.height > 0 ? - vlsize.height : 0);
                 mSurface.line(line_origin, text_origin, settings.line_color, Pixels{settings.line_width});
+            }
+            if (!aNode.draw.mark_with_line.empty()) {
+                mSurface.line({text_origin.x + tsize.width, text_origin.y}, {mSurface.viewport().size.width, text_origin.y}, aNode.draw.mark_with_line, aNode.draw.mark_with_line_width);
             }
         }
         else {

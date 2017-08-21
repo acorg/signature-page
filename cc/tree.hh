@@ -7,6 +7,8 @@
 #include <map>
 
 #include "acmacs-base/date.hh"
+#include "acmacs-base/color.hh"
+#include "acmacs-base/size-scale.hh"
 #include "seqdb/seqdb.hh"
 #include "aa_transitions.hh"
 
@@ -57,13 +59,15 @@ class NodeDrawData
     constexpr static const size_t HzSectionNoIndex = static_cast<size_t>(-1);
 
     inline NodeDrawData()
-        : shown(true), line_no(0), hz_section_index(HzSectionNoIndex), vertical_pos(-1) {}
+        : shown(true), line_no(0), hz_section_index(HzSectionNoIndex), vertical_pos(-1), mark_with_line{Color::NoChange}, mark_with_line_width{0} {}
 
     bool shown;
     size_t line_no;
     size_t hz_section_index;
     double vertical_pos;
     std::string vaccine_label;
+    Color mark_with_line;
+    Pixels mark_with_line_width;
     size_t chart_antigen_index;
 };
 
