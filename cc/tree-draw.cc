@@ -101,6 +101,10 @@ bool TreeDraw::apply_mods()
             std::cout << "TREE-mod: " << mod.mod << " \"" << mod.s1 << "\" \"" << mod.s2 << "\"" << std::endl;
             hide_between(mod.s1, mod.s2);
         }
+        else if (mod.mod == "hide-one") {
+            std::cout << "TREE-mod: " << mod.mod << " \"" << mod.s1 << "\"" << std::endl;
+            hide_one(mod.s1);
+        }
         else if (mod.mod.empty() || mod.mod[0] == '?') {
               // commented out mod
         }
@@ -205,6 +209,25 @@ void TreeDraw::hide_between(std::string aFirst, std::string aLast)
     std::cout << "leaf nodes hidden: " << hidden << std::endl;
 
 } // TreeDraw::hide_between
+
+// ----------------------------------------------------------------------
+
+void TreeDraw::hide_one(std::string aName)
+{
+    size_t hidden = 0;
+    auto hide_show_leaf = [aName,&hidden](Node& aNode) {
+        if (aNode.seq_id == aName) {
+            aNode.draw.shown = false;
+            ++hidden;
+        }
+    };
+
+    tree::iterate_leaf_post(mTree, hide_show_leaf, hide_branch);
+    if (hidden == 0)
+        throw std::runtime_error("tree hide_between: no nodes hidden");
+    std::cout << "leaf nodes hidden: " << hidden << std::endl;
+
+} // TreeDraw::hide_one
 
 // ----------------------------------------------------------------------
 

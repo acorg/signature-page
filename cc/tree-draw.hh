@@ -252,6 +252,7 @@ class TreeDraw
     void hide_if_cumulative_edge_length_bigger_than(double aThreshold);
     void hide_before2015_58P_or_146I_or_559I();
     void hide_between(std::string aFirst, std::string aLast);
+    void hide_one(std::string aName);
     static void hide_branch(Node& aNode);
 
 }; // class TreeDraw

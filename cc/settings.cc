@@ -853,6 +853,7 @@ template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writ
                   << jsw::key("mods 4?") << "{mod: hide-if-cumulative-edge-length-bigger-than, d1: cumulative-length-threshold}"
                   << jsw::key("mods 5?") << "{mod: before2015-58P-or-146I-or-559I}"
                   << jsw::key("mods 6?") << "{mod: hide-between, s1: first-name-to-hide, s2: last-name-to-hide} - after ladderizing"
+                  << jsw::key("mods 7?") << "{mod: hide-one, s1: name-to-hide} - after ladderizing"
                   << jsw::key("mods") << aSettings.mods
               // v2 << jsw::key("root") << aSettings.root
               // v2 << jsw::key("hide_isolated_before") << aSettings.hide_isolated_before
