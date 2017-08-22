@@ -449,7 +449,8 @@ void TreeDraw::draw_node(const Node& aNode, double aOriginX, double& aVerticalGa
                 mSurface.line(line_origin, text_origin, settings.line_color, Pixels{settings.line_width});
             }
             if (!aNode.draw.mark_with_line.empty()) {
-                mSurface.line({text_origin.x + tsize.width, text_origin.y}, {mSurface.viewport().size.width, text_origin.y}, aNode.draw.mark_with_line, aNode.draw.mark_with_line_width);
+                // mSurface.line({text_origin.x + tsize.width, text_origin.y}, {mSurface.viewport().size.width, text_origin.y}, aNode.draw.mark_with_line, aNode.draw.mark_with_line_width);
+                mSurface.line({mSurface.viewport().size.width - 10, text_origin.y}, {mSurface.viewport().size.width, text_origin.y}, aNode.draw.mark_with_line, aNode.draw.mark_with_line_width);
             }
         }
         else {
