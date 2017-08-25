@@ -20,13 +20,14 @@ TEST_DRAW_CHART_SOURCES = test-draw-chart.cc $(SIGNATURE_PAGE_SOURCES)
 
 # ----------------------------------------------------------------------
 
-include $(ACMACSD_ROOT)/share/Makefile.g++
-include $(ACMACSD_ROOT)/share/Makefile.dist-build.vars
+TARGET_ROOT=$(shell if [ -f /Volumes/rdisk/ramdisk-id ]; then echo /Volumes/rdisk/AD; else echo $(ACMACSD_ROOT); fi)
+include $(TARGET_ROOT)/share/Makefile.g++
+include $(TARGET_ROOT)/share/Makefile.dist-build.vars
 
 # -fvisibility=hidden and -flto make resulting lib smaller (pybind11) but linking is much slower
 OPTIMIZATION = -O3 #-fvisibility=hidden -flto
 PROFILE = # -pg
-CXXFLAGS = -MMD -g $(OPTIMIZATION) $(PROFILE) -fPIC -std=$(STD) $(WEVERYTHING) $(WARNINGS) -Icc -I$(BUILD)/include -I$(ACMACSD_ROOT)/include $(PKG_INCLUDES)
+CXXFLAGS = -MMD -g $(OPTIMIZATION) $(PROFILE) -fPIC -std=$(STD) $(WEVERYTHING) $(WARNINGS) -Icc -I$(AD_INCLUDE) $(PKG_INCLUDES)
 LDFLAGS = $(OPTIMIZATION) $(PROFILE)
 
 PYTHON_VERSION = $(shell python3 -c 'import sys; print("{0.major}.{0.minor}".format(sys.version_info))')
@@ -36,8 +37,7 @@ PYTHON_LD_LIB = $(shell $(PYTHON_CONFIG) --ldflags | sed -E 's/-Wl,-stack_size,[
 
 PKG_INCLUDES = $(shell pkg-config --cflags cairo) $(shell pkg-config --cflags liblzma) $(shell $(PYTHON_CONFIG) --includes)
 
-LIB_DIR = $(ACMACSD_ROOT)/lib
-ACMACSD_LIBS = -L$(LIB_DIR) -lacmacsbase -lacmacschart -lacmacsdraw -lacmacsmapdraw -lseqdb -lhidb -llocationdb -lboost_date_time -lboost_program_options -lboost_filesystem -lboost_system
+ACMACSD_LIBS = -L$(AD_LIB) -lacmacsbase -lacmacschart -lacmacsdraw -lacmacsmapdraw -lseqdb -lhidb -llocationdb -lboost_date_time -lboost_program_options -lboost_filesystem -lboost_system
 SETTINGS_CREATE_LDLIBS = $(ACMACSD_LIBS) $(shell pkg-config --libs liblzma)
 SIGP_LDLIBS = $(ACMACSD_LIBS) $(shell pkg-config --libs cairo) $(shell pkg-config --libs liblzma)
 
@@ -68,15 +68,15 @@ $(DIST)/sigp: $(patsubst %.cc,$(BUILD)/%.o,$(SIGP_SOURCES)) | $(DIST)
 # ----------------------------------------------------------------------
 
 install: $(DIST)/signature_page_backend$(PYTHON_MODULE_SUFFIX) $(DIST)/sigp | check-acmacsd-root
-	@#ln -sf $(abspath bin)/sigp-* $(ACMACSD_ROOT)/bin
-	ln -sf $(DIST)/sigp $(ACMACSD_ROOT)/bin
-	ln -sf $(abspath py)/* $(ACMACSD_ROOT)/py
-	ln -sf $(DIST)/signature_page_backend$(PYTHON_MODULE_SUFFIX) $(ACMACSD_ROOT)/py
+	@#ln -sf $(abspath bin)/sigp-* $(AD_BIN)
+	ln -sf $(DIST)/sigp $(AD_BIN)
+	ln -sf $(abspath py)/* $(AD_PY)
+	ln -sf $(DIST)/signature_page_backend$(PYTHON_MODULE_SUFFIX) $(AD_PY)
 
 test: install $(DIST)/sigp
 	test/test
 
-include $(ACMACSD_ROOT)/share/Makefile.rtags
+include $(AD_SHARE)/Makefile.rtags
 
 # ----------------------------------------------------------------------
 
@@ -90,17 +90,7 @@ $(BUILD)/%.o: cc/%.cc | $(BUILD)
 
 # ----------------------------------------------------------------------
 
-check-acmacsd-root:
-ifndef ACMACSD_ROOT
-	$(error ACMACSD_ROOT is not set)
-endif
-
-check-python:
-	@printf 'import sys\nif sys.version_info < (3, 5):\n print("Python 3.5 is required")\n exit(1)' | python3
-
-include $(ACMACSD_ROOT)/share/Makefile.dist-build.rules
-
-.PHONY: check-acmacsd-root check-python
+include $(AD_SHARE)/Makefile.dist-build.rules
 
 # ======================================================================
 ### Local Variables:
