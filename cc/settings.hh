@@ -15,7 +15,7 @@
 class Settings
 {
  public:
-    inline Settings() : data{rjson::object{}} { distribute_parsed_value(); }
+    inline Settings() : mData{rjson::object{}} { distribute_parsed_value(); }
 
     SignaturePageDrawSettings signature_page;
     TreeDrawSettings tree_draw;
@@ -26,7 +26,7 @@ class Settings
     AntigenicMapsDrawSettings antigenic_maps;
     TitleDrawSettings title;
 
-    void use_json(rjson::value_parsed&& aValue);
+    void use_json(rjson::value&& aValue);
     void upgrade();             // upgrade to the new version in case old version data provided
 
     // inline void indentation(const char* /*str*/, size_t /*length*/) {}
@@ -34,7 +34,7 @@ class Settings
     // std::string version;
 
  private:
-    rjson::value_parsed data;
+    rjson::value mData;
 
     void distribute_parsed_value();
 
