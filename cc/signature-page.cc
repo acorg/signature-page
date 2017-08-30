@@ -54,7 +54,7 @@ void SignaturePageDraw::load_settings(std::string aFilename)
 
 SignaturePageDrawSettings::Layout SignaturePageDraw::detect_layout(bool init_settings) const
 {
-    return (mSettings->signature_page.layout == SignaturePageDrawSettings::Layout::Auto || init_settings) ? (mChartFilename.empty() ? SignaturePageDrawSettings::Layout::TreeTSClades : SignaturePageDrawSettings::Layout::TreeCladesTSMaps) : mSettings->signature_page.layout;
+    return (mSettings->signature_page.layout() == SignaturePageDrawSettings::Layout::Auto || init_settings) ? (mChartFilename.empty() ? SignaturePageDrawSettings::Layout::TreeTSClades : SignaturePageDrawSettings::Layout::TreeCladesTSMaps) : mSettings->signature_page.layout();
 
 } // SignaturePageDraw::detect_layout
 

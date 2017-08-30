@@ -1,5 +1,7 @@
 #pragma once
 
+#include "acmacs-base/rjson.hh"
+
 #include "signature-page.hh"
 #include "tree-draw.hh"
 #include "time-series-draw.hh"
@@ -13,7 +15,7 @@
 class Settings
 {
  public:
-    inline Settings() = default;
+    inline Settings() { use_json(rjson::object{}); }
 
     SignaturePageDrawSettings signature_page;
     TreeDrawSettings tree_draw;
@@ -24,11 +26,15 @@ class Settings
     AntigenicMapsDrawSettings antigenic_maps;
     TitleDrawSettings title;
 
-    inline void indentation(const char* /*str*/, size_t /*length*/) {}
-    void set_version(const char* str, size_t length);
+    void use_json(rjson::value&& aValue);
     void upgrade();             // upgrade to the new version in case old version data provided
 
-    std::string version;
+    // inline void indentation(const char* /*str*/, size_t /*length*/) {}
+    // void set_version(const char* str, size_t length);
+    // std::string version;
+
+ private:
+    rjson::value data;
 
 }; // class Settings
 

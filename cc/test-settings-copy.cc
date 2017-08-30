@@ -8,14 +8,18 @@
 
 int main(int argc, const char *argv[])
 {
-    if (argc != 2) {
-        std::cerr << "Usage: " << argv[0] << " <settings.json>" << std::endl;
+    if (argc < 2 || argc > 3) {
+        std::cerr << "Usage: " << argv[0] << " <settings.json> [<output-settings.json>]" << std::endl;
         return 1;
     }
     try {
         Settings settings;
         read_settings(settings, argv[1]);
-        acmacs_base::TempFile output;
+        std::string output;
+        if (argc > 2)
+            output = argv[2];
+        else
+            output = static_cast<std::string>(acmacs_base::TempFile{});
         write_settings(settings, output);
           // std::cout << static_cast<std::string>(output) << std::endl;
         if (std::system(("/usr/bin/diff -b '" + static_cast<std::string>(output) + "' '" + argv[1] + "'").c_str()))

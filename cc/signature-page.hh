@@ -2,6 +2,7 @@
 
 #include <memory>
 
+#include "acmacs-base/rjson.hh"
 #include "antigenic-maps-draw.hh"
 #include "chart-draw.hh"
 
@@ -24,39 +25,61 @@ class SignaturePageDrawSettings
  public:
     enum class Layout { Auto, TreeTSClades, TreeCladesTSMaps };
 
-    SignaturePageDrawSettings();
+    SignaturePageDrawSettings() : mData{nullptr} {}
 
-    Layout layout;
+      //Layout layout;
     double top, bottom, left, right;
     double tree_margin_right, mapped_antigens_margin_right;
     double time_series_width;
     double clades_width;
     double antigenic_maps_width;
 
-    inline std::string layout_to_string() const
+    inline void use_json(rjson::value& aData) { mData = &aData; std::cerr << "SignaturePageDrawSettings::use_json " << aData << '\n'; }
+
+    inline Layout layout() const
         {
-            switch (layout) {
-              case Layout::Auto:
-                  return "auto";
-              case Layout::TreeTSClades:
-                  return "tree-ts-clades";
-              case Layout::TreeCladesTSMaps:
-                  return "tree-clades-ts-maps";
-            }
-            return "tree-ts-clades";
+            const auto layout_s = layout_to_string();
+            if (layout_s == "auto")
+                return Layout::Auto;
+            else if (layout_s == "tree-ts-clades")
+                return Layout::TreeTSClades;
+            else if (layout_s == "tree-clades-ts-maps")
+                return Layout::TreeCladesTSMaps;
+            else
+                throw std::runtime_error("Unrecognized layout: " + layout_s);
         }
 
-    inline void set_layot(std::string s)
-        {
-            if (s == "auto")
-                layout = Layout::Auto;
-            else if (s == "tree-ts-clades")
-                layout = Layout::TreeTSClades;
-            else if (s == "tree-clades-ts-maps")
-                layout = Layout::TreeCladesTSMaps;
-            else
-                throw std::runtime_error("Unrecognized layout: " + s);
-        }
+    inline rjson::value default_layout() const { using namespace std::literals; return rjson::string{"auto"s}; }
+    inline std::string layout_to_string() const { std::cerr << "SignaturePageDrawSettings::layout_to_string " << *mData << '\n'; return std::get<rjson::string>(mData->get_ref("layout", default_layout())); }
+    inline void set_layot(std::string s) { std::get<rjson::string>(mData->get_ref("layout", default_layout())) = s; }
+
+//     inline std::string layout_to_string() const
+//         {
+//             switch (layout) {
+//               case Layout::Auto:
+//                   return "auto";
+//               case Layout::TreeTSClades:
+//                   return "tree-ts-clades";
+//               case Layout::TreeCladesTSMaps:
+//                   return "tree-clades-ts-maps";
+//             }
+//             return "tree-ts-clades";
+//         }
+//
+//     inline void set_layot(std::string s)
+//         {
+//             if (s == "auto")
+//                 layout = Layout::Auto;
+//             else if (s == "tree-ts-clades")
+//                 layout = Layout::TreeTSClades;
+//             else if (s == "tree-clades-ts-maps")
+//                 layout = Layout::TreeCladesTSMaps;
+//             else
+//                 throw std::runtime_error("Unrecognized layout: " + s);
+//         }
+
+ private:
+    rjson::value* mData;
 
 }; // class SignaturePageDrawSettings
 

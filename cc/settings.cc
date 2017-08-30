@@ -2,8 +2,6 @@
 
 #include "acmacs-base/float.hh"
 
-#include "acmacs-base/rjson.hh"
-
 //#include "acmacs-base/read-file.hh"
 #include "acmacs-base/json-writer.hh"
 #include "acmacs-base/json-importer.hh"
@@ -241,21 +239,34 @@ TitleDrawSettings::~TitleDrawSettings()
 {
 }
 
-SignaturePageDrawSettings::SignaturePageDrawSettings()
-    : layout(Layout::Auto), top(60), bottom(60), left(50), right(20),
-      tree_margin_right(0), mapped_antigens_margin_right(30), time_series_width(400), clades_width(100),
-      antigenic_maps_width(500)
-{
-}
+// ----------------------------------------------------------------------
+
+// SignaturePageDrawSettings::SignaturePageDrawSettings()
+//     : layout(Layout::Auto), top(60), bottom(60), left(50), right(20),
+//       tree_margin_right(0), mapped_antigens_margin_right(30), time_series_width(400), clades_width(100),
+//       antigenic_maps_width(500)
+// {
+// }
 
 // **********************************************************************
 
-void Settings::set_version(const char* str, size_t length)
+// void Settings::set_version(const char* str, size_t length)
+// {
+//     version.assign(str, length);
+//     if (version != SETTINGS_VERSION_4) // && version != SETTINGS_VERSION_3 && version != SETTINGS_VERSION_2)
+//         throw std::runtime_error("Unsupported sigp settings version: \"" + version + "\"");
+// }
+
+// ----------------------------------------------------------------------
+
+void Settings::use_json(rjson::value&& aValue)
 {
-    version.assign(str, length);
-    if (version != SETTINGS_VERSION_4) // && version != SETTINGS_VERSION_3 && version != SETTINGS_VERSION_2)
-        throw std::runtime_error("Unsupported sigp settings version: \"" + version + "\"");
-}
+    data = std::move(aValue);
+    signature_page.use_json(data.get_ref("signature_page", rjson::object{}));
+    std::cerr << "settings.data " << data << '\n';
+    std::cerr << "signature_page.layout: " << signature_page.layout_to_string() << '\n';
+
+} // Settings::use_json
 
 // ----------------------------------------------------------------------
 
@@ -489,8 +500,8 @@ class AntigenicMapModsStorer : public jsi::StorerBase
 
 void read_settings(Settings& aSettings, std::string aFilename)
 {
-    std::cout << "Reading settings from " << aFilename << std::endl;
-    auto settings = rjson::parse_file(aFilename);
+    std::cout << "INFO: reading settings from " << aFilename << std::endl;
+    aSettings.use_json(rjson::parse_file(aFilename));
       // jsi::import(acmacs_base::read_file(aFilename), aSettings, settings_data);
     aSettings.upgrade();
 
