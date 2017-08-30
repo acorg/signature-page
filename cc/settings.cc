@@ -259,14 +259,23 @@ TitleDrawSettings::~TitleDrawSettings()
 
 // ----------------------------------------------------------------------
 
-void Settings::use_json(rjson::value&& aValue)
+void Settings::use_json(rjson::value_parsed&& aValue)
 {
     data = std::move(aValue);
-    signature_page.use_json(data.get_ref("signature_page", rjson::object{}));
-    std::cerr << "settings.data " << data << '\n';
-    std::cerr << "signature_page.layout: " << signature_page.layout_to_string() << '\n';
+    distribute_parsed_value();
 
 } // Settings::use_json
+
+// ----------------------------------------------------------------------
+
+void Settings::distribute_parsed_value()
+{
+    signature_page.use_json(data.get_ref("signature_page", rjson::object{}));
+    std::cerr << "DEBUG: settings.signature_page " << signature_page.json() << '\n';
+    std::cerr << "DEBUG: settings.data " << data << '\n';
+    std::cerr << "DEBUG: signature_page.layout: " << signature_page.layout_to_string() << '\n';
+
+} // Settings::distribute_parsed_value
 
 // ----------------------------------------------------------------------
 

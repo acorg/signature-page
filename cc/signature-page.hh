@@ -34,7 +34,8 @@ class SignaturePageDrawSettings
     double clades_width;
     double antigenic_maps_width;
 
-    inline void use_json(rjson::value& aData) { mData = &aData; std::cerr << "SignaturePageDrawSettings::use_json " << aData << '\n'; }
+    inline void use_json(rjson::value& aData) { mData = &aData; }
+    inline std::string json() const { return mData->to_json(); }
 
     inline Layout layout() const
         {
@@ -49,8 +50,8 @@ class SignaturePageDrawSettings
                 throw std::runtime_error("Unrecognized layout: " + layout_s);
         }
 
-    inline rjson::value default_layout() const { using namespace std::literals; return rjson::string{"auto"s}; }
-    inline std::string layout_to_string() const { std::cerr << "SignaturePageDrawSettings::layout_to_string " << *mData << '\n'; return std::get<rjson::string>(mData->get_ref("layout", default_layout())); }
+    inline rjson::value default_layout() const { return rjson::string{"auto"}; }
+    inline std::string layout_to_string() const { return std::get<rjson::string>(mData->get_ref("layout", default_layout())); }
     inline void set_layot(std::string s) { std::get<rjson::string>(mData->get_ref("layout", default_layout())) = s; }
 
 //     inline std::string layout_to_string() const
