@@ -2,7 +2,9 @@
 
 #include "acmacs-base/float.hh"
 
-#include "acmacs-base/read-file.hh"
+#include "acmacs-base/rjson.hh"
+
+//#include "acmacs-base/read-file.hh"
 #include "acmacs-base/json-writer.hh"
 #include "acmacs-base/json-importer.hh"
 namespace jsi = json_importer;
@@ -487,258 +489,269 @@ class AntigenicMapModsStorer : public jsi::StorerBase
 
 void read_settings(Settings& aSettings, std::string aFilename)
 {
-    jsi::data<TextStyle> style_data = {
-        {"family", jsi::field(static_cast<void (TextStyle::*)(const char*, size_t)>(&TextStyle::font_family))},
-        {"slant", jsi::field(static_cast<void (TextStyle::*)(const char*, size_t)>(&TextStyle::slant))},
-        {"weight", jsi::field(static_cast<void (TextStyle::*)(const char*, size_t)>(&TextStyle::weight))},
-    };
-
-    jsi::data<SignaturePageDrawSettings> signature_page_data = {
-        {"layout", jsi::field(&SignaturePageDrawSettings::set_layot)},
-        {"top", jsi::field(&SignaturePageDrawSettings::top)},
-        {"bottom", jsi::field(&SignaturePageDrawSettings::bottom)},
-        {"left", jsi::field(&SignaturePageDrawSettings::left)},
-        {"right", jsi::field(&SignaturePageDrawSettings::right)},
-        {"tree_margin_right", jsi::field(&SignaturePageDrawSettings::tree_margin_right)},
-        {"mapped_antigens_margin_right", jsi::field(&SignaturePageDrawSettings::mapped_antigens_margin_right)},
-        {"time_series_width", jsi::field(&SignaturePageDrawSettings::time_series_width)},
-        {"clades_width", jsi::field(&SignaturePageDrawSettings::clades_width)},
-        {"antigenic_maps_width", jsi::field(&SignaturePageDrawSettings::antigenic_maps_width)},
-    };
-
-    jsi::data<AATransitionPerBranchDrawSettings> per_branch_data = {
-        {"size", jsi::field(&AATransitionPerBranchDrawSettings::size)},
-        {"color", jsi::field<ColorStorer>(&AATransitionPerBranchDrawSettings::color)},
-        {"style", jsi::field(&AATransitionPerBranchDrawSettings::style, style_data)},
-        {"interline", jsi::field(&AATransitionPerBranchDrawSettings::interline)},
-        {"label_offset", jsi::field<SizeStorer>(&AATransitionPerBranchDrawSettings::label_offset)},
-        {"label_connection_line_width", jsi::field(&AATransitionPerBranchDrawSettings::label_connection_line_width)},
-        {"label_connection_line_color", jsi::field<ColorStorer>(&AATransitionPerBranchDrawSettings::label_connection_line_color)},
-    };
-
-    jsi::data<AATransitionDrawSettings> aa_transition_data = {
-        {"show", jsi::field(&AATransitionDrawSettings::show)},
-        {"number_strains_threshold", jsi::field(&AATransitionDrawSettings::number_strains_threshold)},
-        {"show_empty_left", jsi::field(&AATransitionDrawSettings::show_empty_left)},
-        {"per_branch", jsi::field(&AATransitionDrawSettings::per_branch, per_branch_data)},
-        {"show_node_for_left_line", jsi::field(&AATransitionDrawSettings::show_node_for_left_line)},
-        {"node_for_left_line_color", jsi::field<ColorStorer>(&AATransitionDrawSettings::node_for_left_line_color)},
-        {"node_for_left_line_width", jsi::field(&AATransitionDrawSettings::node_for_left_line_width)},
-    };
-
-    jsi::data<TreeDrawVaccineSettings> vaccine_data = {
-        {"name", jsi::field(&TreeDrawVaccineSettings::name)},
-        {"label_color", jsi::field<ColorStorer>(&TreeDrawVaccineSettings::label_color)},
-        {"label_size", jsi::field(&TreeDrawVaccineSettings::label_size)},
-        {"label_style", jsi::field(&TreeDrawVaccineSettings::label_style, style_data)},
-        {"line_color", jsi::field<ColorStorer>(&TreeDrawVaccineSettings::line_color)},
-        {"line_width", jsi::field(&TreeDrawVaccineSettings::line_width)},
-    };
-
-    jsi::data<LegendSettings> legend_data = {
-        {"offset", jsi::field<SizeStorer>(&LegendSettings::offset)},
-        {"width", jsi::field(&LegendSettings::width)},
-        {"title_style", jsi::field(&LegendSettings::title_style, style_data)},
-        {"title_size", jsi::field(&LegendSettings::title_size)},
-        {"text_style", jsi::field(&LegendSettings::text_style, style_data)},
-        {"text_size", jsi::field(&LegendSettings::text_size)},
-        {"interline", jsi::field(&LegendSettings::interline)},
-    };
-
-    jsi::data<TreeDrawMod> tree_draw_mod_data = {
-        {"mod", jsi::field(&TreeDrawMod::mod)},
-        {"d1", jsi::field(&TreeDrawMod::d1)},
-        {"s1", jsi::field(&TreeDrawMod::s1)},
-        {"s2", jsi::field(&TreeDrawMod::s2)},
-    };
-
-    jsi::data<TreeDrawSettings> tree_draw_data = {
-        {"ladderize", jsi::field(&TreeDrawSettings::ladderize_from_string)},
-        {"mods", jsi::field(&TreeDrawSettings::get_mods, tree_draw_mod_data)},
-        {"force_line_width", jsi::field(&TreeDrawSettings::force_line_width)},
-        {"line_width", jsi::field(&TreeDrawSettings::line_width)},
-        {"root_edge", jsi::field(&TreeDrawSettings::root_edge)},
-        {"line_color", jsi::field<ColorStorer>(&TreeDrawSettings::line_color)},
-        {"label_style", jsi::field<>(&TreeDrawSettings::label_style, style_data)},
-        {"name_offset", jsi::field(&TreeDrawSettings::name_offset)},
-        {"color_nodes", jsi::field(&TreeDrawSettings::color_nodes)},
-        {"aa_transition", jsi::field(&TreeDrawSettings::aa_transition, aa_transition_data)},
-        {"vaccines", jsi::field(&TreeDrawSettings::get_vaccines, vaccine_data)},
-        {"legend", jsi::field(&TreeDrawSettings::legend, legend_data)},
-          // v2
-        {"root", jsi::field(&TreeDrawSettings::_root)},
-        {"hide_isolated_before", jsi::field(&TreeDrawSettings::_hide_isolated_before)},
-        {"hide_if_cumulative_edge_length_bigger_than", jsi::field(&TreeDrawSettings::_hide_if_cumulative_edge_length_bigger_than)},
-        {"hide_if", jsi::field(&TreeDrawSettings::_hide_if)},
-    };
-
-    jsi::data<TimeSeriesDrawSettings> time_series_data = {
-        {"begin", jsi::field(&TimeSeriesDrawSettings::begin)},
-        {"end", jsi::field(&TimeSeriesDrawSettings::end)},
-        {"label_size", jsi::field(&TimeSeriesDrawSettings::label_size)},
-        {"label_style", jsi::field(&TimeSeriesDrawSettings::label_style, style_data)},
-        {"month_year_to_timeseries_gap", jsi::field(&TimeSeriesDrawSettings::month_year_to_timeseries_gap)},
-        {"month_separator_color", jsi::field<ColorStorer>(&TimeSeriesDrawSettings::month_separator_color)},
-        {"month_separator_width", jsi::field(&TimeSeriesDrawSettings::month_separator_width)},
-        {"dash_width", jsi::field(&TimeSeriesDrawSettings::dash_width)},
-        {"dash_line_width", jsi::field(&TimeSeriesDrawSettings::dash_line_width)},
-    };
-
-    jsi::data<CladeDrawSettings> clade_data = {
-        {"name", jsi::field(&CladeDrawSettings::name)},
-        {"display_name", jsi::field(&CladeDrawSettings::display_name)},
-        {"show", jsi::field(&CladeDrawSettings::show)},
-        {"section_inclusion_tolerance", jsi::field(&CladeDrawSettings::section_inclusion_tolerance)},
-        {"section_exclusion_tolerance", jsi::field(&CladeDrawSettings::section_exclusion_tolerance)},
-        {"show_section_size_in_label", jsi::field(&CladeDrawSettings::show_section_size_in_label)},
-        {"arrow_color", jsi::field<ColorStorer>(&CladeDrawSettings::arrow_color)},
-        {"line_width", jsi::field(&CladeDrawSettings::line_width)},
-        {"arrow_width", jsi::field(&CladeDrawSettings::arrow_width)},
-        {"separator_color", jsi::field<ColorStorer>(&CladeDrawSettings::separator_color)},
-        {"separator_width", jsi::field(&CladeDrawSettings::separator_width)},
-        {"label_position", jsi::field(&CladeDrawSettings::label_position)},
-        {"label_offset", jsi::field<SizeStorer>(&CladeDrawSettings::label_offset)},
-        {"label_color", jsi::field<ColorStorer>(&CladeDrawSettings::label_color)},
-        {"label_size", jsi::field(&CladeDrawSettings::label_size)},
-        {"label_style", jsi::field(&CladeDrawSettings::label_style, style_data)},
-        {"label_rotation", jsi::field(&CladeDrawSettings::label_rotation)},
-        {"slot", jsi::field(&CladeDrawSettings::slot)},
-    };
-
-    jsi::data<CladesDrawSettings> clades_data = {
-        {"clades", jsi::field(&CladesDrawSettings::get_clades, clade_data)},
-        {"slot_width", jsi::field(&CladesDrawSettings::slot_width)},
-    };
-
-    jsi::data<HzSection> hz_section_data = {
-        {"show", jsi::field(&HzSection::show)},
-        {"show_line", jsi::field(&HzSection::show_line)},
-        {"show_label_in_time_series", jsi::field(&HzSection::show_label_in_time_series)},
-        {"show_map", jsi::field(&HzSection::show_map)},
-        {"name", jsi::field(&HzSection::name)},
-        {"label", jsi::field(&HzSection::label)},
-    };
-
-    jsi::data<HzSections> hz_sections_data = {
-        {"vertical_gap", jsi::field(&HzSections::vertical_gap)},
-        {"line_color", jsi::field<ColorStorer>(&HzSections::line_color)},
-        {"line_width", jsi::field(&HzSections::line_width)},
-        {"ts_label_size", jsi::field(&HzSections::ts_label_size)},
-        {"ts_label_style", jsi::field(&HzSections::ts_label_style, style_data)},
-        {"ts_label_color", jsi::field<ColorStorer>(&HzSections::ts_label_color)},
-        {"show_labels_in_time_series_in_tree_mode", jsi::field(&HzSections::show_labels_in_time_series_in_tree_mode)},
-        {"sections", jsi::field(&HzSections::get_sections, hz_section_data)},
-    };
-
-    jsi::data<MappedAntigensDrawSettings> mapped_antigens_data = {
-        {"width", jsi::field(&MappedAntigensDrawSettings::width)},
-        {"line_width", jsi::field(&MappedAntigensDrawSettings::line_width)},
-        {"line_color", jsi::field<ColorStorer>(&MappedAntigensDrawSettings::line_color)},
-        {"line_length", jsi::field(&MappedAntigensDrawSettings::line_length)},
-    };
-
-    jsi::data<AntigenicMapsDrawSettings> antigenic_maps_data = {
-        {"layout", jsi::field(&AntigenicMapsDrawSettings::layout)},
-        {"columns", jsi::field(&AntigenicMapsDrawSettings::columns)},
-        {"gap", jsi::field(&AntigenicMapsDrawSettings::gap)},
-        {"mapped_antigens_section_line_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::mapped_antigens_section_line_color)},
-        {"mapped_antigens_section_line_width", jsi::field(&AntigenicMapsDrawSettings::mapped_antigens_section_line_width)},
-        {"mods", jsi::field<AntigenicMapModsStorer>(&AntigenicMapsDrawSettings::get_mods)},
-    };
-
-    // jsi::data<MarkAntigenSettings> mark_antigens_data = {
-    //     {"show", jsi::field(&MarkAntigenSettings::show)},
-    //     {"name", jsi::field(&MarkAntigenSettings::name)},
-    //     {"label", jsi::field(&MarkAntigenSettings::label)},
-    //     {"scale", jsi::field(&MarkAntigenSettings::scale)},
-    //     {"aspect", jsi::field(&MarkAntigenSettings::aspect)},
-    //     {"rotation", jsi::field(&MarkAntigenSettings::rotation)},
-    //     {"outline_width", jsi::field(&MarkAntigenSettings::outline_width)},
-    //     {"label_line_width", jsi::field(&MarkAntigenSettings::label_line_width)},
-    //     {"fill_color", jsi::field<ColorStorer>(&MarkAntigenSettings::fill_color)},
-    //     {"outline_color", jsi::field<ColorStorer>(&MarkAntigenSettings::outline_color)},
-    //     {"label_color", jsi::field<ColorStorer>(&MarkAntigenSettings::label_color)},
-    //     {"label_line_color", jsi::field<ColorStorer>(&MarkAntigenSettings::label_line_color)},
-    //     {"label_offset", jsi::field<SizeStorer>(&MarkAntigenSettings::label_offset)},
-    //     {"label_size", jsi::field(&MarkAntigenSettings::label_size)},
-    // };
-
-    // jsi::data<AntigenicMapsDrawSettings> antigenic_maps_data = {
-    //     {"layout", jsi::field(&AntigenicMapsDrawSettings::layout)},
-    //     {"width", jsi::field(&AntigenicMapsDrawSettings::_width)}, // v2
-    //     {"columns", jsi::field(&AntigenicMapsDrawSettings::columns)},
-    //     {"gap", jsi::field(&AntigenicMapsDrawSettings::gap)},
-    //     {"transformation", jsi::field(&AntigenicMapsDrawSettings::get_transformation)},
-    //     {"viewport", jsi::field<ViewportStorer>(&AntigenicMapsDrawSettings::viewport)},
-    //     {"border_width", jsi::field(&AntigenicMapsDrawSettings::border_width)},
-    //     {"grid_line_width", jsi::field(&AntigenicMapsDrawSettings::grid_line_width)},
-    //     {"border_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::border_color)},
-    //     {"grid_line_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::grid_line_color)},
-    //     {"background_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::background_color)},
-    //     {"point_scale", jsi::field(&AntigenicMapsDrawSettings::point_scale)},
-    //     {"serum_scale", jsi::field(&AntigenicMapsDrawSettings::serum_scale)},
-    //     {"reference_antigen_scale", jsi::field(&AntigenicMapsDrawSettings::reference_antigen_scale)},
-    //     {"test_antigen_scale", jsi::field(&AntigenicMapsDrawSettings::test_antigen_scale)},
-    //     {"vaccine_antigen_scale", jsi::field(&AntigenicMapsDrawSettings::vaccine_antigen_scale)},
-    //     {"tracked_antigen_scale", jsi::field(&AntigenicMapsDrawSettings::tracked_antigen_scale)},
-    //     {"serum_outline_width", jsi::field(&AntigenicMapsDrawSettings::serum_outline_width)},
-    //     {"reference_antigen_outline_width", jsi::field(&AntigenicMapsDrawSettings::reference_antigen_outline_width)},
-    //     {"test_antigen_outline_width", jsi::field(&AntigenicMapsDrawSettings::test_antigen_outline_width)},
-    //     {"vaccine_antigen_outline_width", jsi::field(&AntigenicMapsDrawSettings::vaccine_antigen_outline_width)},
-    //     {"sequenced_antigen_outline_width", jsi::field(&AntigenicMapsDrawSettings::sequenced_antigen_outline_width)},
-    //     {"tracked_antigen_outline_width", jsi::field(&AntigenicMapsDrawSettings::tracked_antigen_outline_width)},
-    //     {"serum_outline_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::serum_outline_color)},
-    //     {"reference_antigen_outline_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::reference_antigen_outline_color)},
-    //     {"test_antigen_outline_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::test_antigen_outline_color)},
-    //     {"test_antigen_fill_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::test_antigen_fill_color)},
-    //     {"vaccine_antigen_outline_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::vaccine_antigen_outline_color)},
-    //     {"sequenced_antigen_outline_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::sequenced_antigen_outline_color)},
-    //     {"sequenced_antigen_fill_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::sequenced_antigen_fill_color)},
-    //     {"tracked_antigen_outline_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::tracked_antigen_outline_color)},
-    //     {"tracked_antigen_colored_by_clade", jsi::field(&AntigenicMapsDrawSettings::tracked_antigen_colored_by_clade)},
-    //     {"tracked_antigen_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::tracked_antigen_color)},
-    //     {"reassortant_rotation", jsi::field(&AntigenicMapsDrawSettings::reassortant_rotation)},
-    //     {"egg_antigen_aspect", jsi::field(&AntigenicMapsDrawSettings::egg_antigen_aspect)},
-    //     {"show_tracked_sera", jsi::field(&AntigenicMapsDrawSettings::show_tracked_sera)},
-    //     {"serum_circle_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::serum_circle_color)},
-    //     {"tracked_serum_outline_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::tracked_serum_outline_color)},
-    //     {"serum_circle_thickness", jsi::field(&AntigenicMapsDrawSettings::serum_circle_thickness)},
-    //     {"tracked_serum_outline_width", jsi::field(&AntigenicMapsDrawSettings::tracked_serum_outline_width)},
-    //     {"map_title_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::map_title_color)},
-    //     {"map_title_offset", jsi::field<SizeStorer>(&AntigenicMapsDrawSettings::map_title_offset)},
-    //     {"map_title_size", jsi::field(&AntigenicMapsDrawSettings::map_title_size)},
-    //     {"mapped_antigens_section_line_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::mapped_antigens_section_line_color)},
-    //     {"mapped_antigens_section_line_width", jsi::field(&AntigenicMapsDrawSettings::mapped_antigens_section_line_width)},
-    //     {"mark_antigens", jsi::field(&AntigenicMapsDrawSettings::get_mark_antigens, mark_antigens_data)},
-    // };
-
-    jsi::data<TitleDrawSettings> title_data = {
-        {"title", jsi::field(&TitleDrawSettings::title)},
-        {"color", jsi::field<ColorStorer>(&TitleDrawSettings::color)},
-        {"size", jsi::field(&TitleDrawSettings::size)},
-        {"style", jsi::field(&TitleDrawSettings::style, style_data)},
-        {"offset", jsi::field<SizeStorer>(&TitleDrawSettings::offset)},
-    };
-
-
-    jsi::data<Settings> settings_data = {
-        {"_", jsi::field(&Settings::indentation)},
-        {"  version", jsi::field(&Settings::set_version)},
-        {"signature_page", jsi::field(&Settings::signature_page, signature_page_data)},
-        {"tree", jsi::field(&Settings::tree_draw, tree_draw_data)},
-        {"time_series", jsi::field(&Settings::time_series, time_series_data)},
-        {"clades", jsi::field(&Settings::clades, clades_data)},
-        {"hz_sections", jsi::field(&Settings::hz_sections, hz_sections_data)},
-        {"mapped_antigens", jsi::field(&Settings::mapped_antigens, mapped_antigens_data)},
-        {"antigenic_maps", jsi::field(&Settings::antigenic_maps, antigenic_maps_data)},
-        {"title", jsi::field(&Settings::title, title_data)},
-    };
-
     std::cout << "Reading settings from " << aFilename << std::endl;
-    jsi::import(acmacs_base::read_file(aFilename), aSettings, settings_data);
+    auto settings = rjson::parse_file(aFilename);
+      // jsi::import(acmacs_base::read_file(aFilename), aSettings, settings_data);
     aSettings.upgrade();
 
 } // read_settings
+
+// ----------------------------------------------------------------------
+
+// void read_settings(Settings& aSettings, std::string aFilename)
+// {
+//     jsi::data<TextStyle> style_data = {
+//         {"family", jsi::field(static_cast<void (TextStyle::*)(const char*, size_t)>(&TextStyle::font_family))},
+//         {"slant", jsi::field(static_cast<void (TextStyle::*)(const char*, size_t)>(&TextStyle::slant))},
+//         {"weight", jsi::field(static_cast<void (TextStyle::*)(const char*, size_t)>(&TextStyle::weight))},
+//     };
+
+//     jsi::data<SignaturePageDrawSettings> signature_page_data = {
+//         {"layout", jsi::field(&SignaturePageDrawSettings::set_layot)},
+//         {"top", jsi::field(&SignaturePageDrawSettings::top)},
+//         {"bottom", jsi::field(&SignaturePageDrawSettings::bottom)},
+//         {"left", jsi::field(&SignaturePageDrawSettings::left)},
+//         {"right", jsi::field(&SignaturePageDrawSettings::right)},
+//         {"tree_margin_right", jsi::field(&SignaturePageDrawSettings::tree_margin_right)},
+//         {"mapped_antigens_margin_right", jsi::field(&SignaturePageDrawSettings::mapped_antigens_margin_right)},
+//         {"time_series_width", jsi::field(&SignaturePageDrawSettings::time_series_width)},
+//         {"clades_width", jsi::field(&SignaturePageDrawSettings::clades_width)},
+//         {"antigenic_maps_width", jsi::field(&SignaturePageDrawSettings::antigenic_maps_width)},
+//     };
+
+//     jsi::data<AATransitionPerBranchDrawSettings> per_branch_data = {
+//         {"size", jsi::field(&AATransitionPerBranchDrawSettings::size)},
+//         {"color", jsi::field<ColorStorer>(&AATransitionPerBranchDrawSettings::color)},
+//         {"style", jsi::field(&AATransitionPerBranchDrawSettings::style, style_data)},
+//         {"interline", jsi::field(&AATransitionPerBranchDrawSettings::interline)},
+//         {"label_offset", jsi::field<SizeStorer>(&AATransitionPerBranchDrawSettings::label_offset)},
+//         {"label_connection_line_width", jsi::field(&AATransitionPerBranchDrawSettings::label_connection_line_width)},
+//         {"label_connection_line_color", jsi::field<ColorStorer>(&AATransitionPerBranchDrawSettings::label_connection_line_color)},
+//     };
+
+//     jsi::data<AATransitionDrawSettings> aa_transition_data = {
+//         {"show", jsi::field(&AATransitionDrawSettings::show)},
+//         {"number_strains_threshold", jsi::field(&AATransitionDrawSettings::number_strains_threshold)},
+//         {"show_empty_left", jsi::field(&AATransitionDrawSettings::show_empty_left)},
+//         {"per_branch", jsi::field(&AATransitionDrawSettings::per_branch, per_branch_data)},
+//         {"show_node_for_left_line", jsi::field(&AATransitionDrawSettings::show_node_for_left_line)},
+//         {"node_for_left_line_color", jsi::field<ColorStorer>(&AATransitionDrawSettings::node_for_left_line_color)},
+//         {"node_for_left_line_width", jsi::field(&AATransitionDrawSettings::node_for_left_line_width)},
+//     };
+
+//     jsi::data<TreeDrawVaccineSettings> vaccine_data = {
+//         {"name", jsi::field(&TreeDrawVaccineSettings::name)},
+//         {"label_color", jsi::field<ColorStorer>(&TreeDrawVaccineSettings::label_color)},
+//         {"label_size", jsi::field(&TreeDrawVaccineSettings::label_size)},
+//         {"label_style", jsi::field(&TreeDrawVaccineSettings::label_style, style_data)},
+//         {"line_color", jsi::field<ColorStorer>(&TreeDrawVaccineSettings::line_color)},
+//         {"line_width", jsi::field(&TreeDrawVaccineSettings::line_width)},
+//     };
+
+//     jsi::data<LegendSettings> legend_data = {
+//         {"offset", jsi::field<SizeStorer>(&LegendSettings::offset)},
+//         {"width", jsi::field(&LegendSettings::width)},
+//         {"title_style", jsi::field(&LegendSettings::title_style, style_data)},
+//         {"title_size", jsi::field(&LegendSettings::title_size)},
+//         {"text_style", jsi::field(&LegendSettings::text_style, style_data)},
+//         {"text_size", jsi::field(&LegendSettings::text_size)},
+//         {"interline", jsi::field(&LegendSettings::interline)},
+//     };
+
+//     jsi::data<TreeDrawMod> tree_draw_mod_data = {
+//         {"mod", jsi::field(&TreeDrawMod::mod)},
+//         {"d1", jsi::field(&TreeDrawMod::d1)},
+//         {"s1", jsi::field(&TreeDrawMod::s1)},
+//         {"s2", jsi::field(&TreeDrawMod::s2)},
+//     };
+
+//     jsi::data<TreeDrawSettings> tree_draw_data = {
+//         {"ladderize", jsi::field(&TreeDrawSettings::ladderize_from_string)},
+//         {"mods", jsi::field(&TreeDrawSettings::get_mods, tree_draw_mod_data)},
+//         {"force_line_width", jsi::field(&TreeDrawSettings::force_line_width)},
+//         {"line_width", jsi::field(&TreeDrawSettings::line_width)},
+//         {"root_edge", jsi::field(&TreeDrawSettings::root_edge)},
+//         {"line_color", jsi::field<ColorStorer>(&TreeDrawSettings::line_color)},
+//         {"label_style", jsi::field<>(&TreeDrawSettings::label_style, style_data)},
+//         {"name_offset", jsi::field(&TreeDrawSettings::name_offset)},
+//         {"color_nodes", jsi::field(&TreeDrawSettings::color_nodes)},
+//         {"aa_transition", jsi::field(&TreeDrawSettings::aa_transition, aa_transition_data)},
+//         {"vaccines", jsi::field(&TreeDrawSettings::get_vaccines, vaccine_data)},
+//         {"legend", jsi::field(&TreeDrawSettings::legend, legend_data)},
+//           // v2
+//         {"root", jsi::field(&TreeDrawSettings::_root)},
+//         {"hide_isolated_before", jsi::field(&TreeDrawSettings::_hide_isolated_before)},
+//         {"hide_if_cumulative_edge_length_bigger_than", jsi::field(&TreeDrawSettings::_hide_if_cumulative_edge_length_bigger_than)},
+//         {"hide_if", jsi::field(&TreeDrawSettings::_hide_if)},
+//     };
+
+//     jsi::data<TimeSeriesDrawSettings> time_series_data = {
+//         {"begin", jsi::field(&TimeSeriesDrawSettings::begin)},
+//         {"end", jsi::field(&TimeSeriesDrawSettings::end)},
+//         {"label_size", jsi::field(&TimeSeriesDrawSettings::label_size)},
+//         {"label_style", jsi::field(&TimeSeriesDrawSettings::label_style, style_data)},
+//         {"month_year_to_timeseries_gap", jsi::field(&TimeSeriesDrawSettings::month_year_to_timeseries_gap)},
+//         {"month_separator_color", jsi::field<ColorStorer>(&TimeSeriesDrawSettings::month_separator_color)},
+//         {"month_separator_width", jsi::field(&TimeSeriesDrawSettings::month_separator_width)},
+//         {"dash_width", jsi::field(&TimeSeriesDrawSettings::dash_width)},
+//         {"dash_line_width", jsi::field(&TimeSeriesDrawSettings::dash_line_width)},
+//     };
+
+//     jsi::data<CladeDrawSettings> clade_data = {
+//         {"name", jsi::field(&CladeDrawSettings::name)},
+//         {"display_name", jsi::field(&CladeDrawSettings::display_name)},
+//         {"show", jsi::field(&CladeDrawSettings::show)},
+//         {"section_inclusion_tolerance", jsi::field(&CladeDrawSettings::section_inclusion_tolerance)},
+//         {"section_exclusion_tolerance", jsi::field(&CladeDrawSettings::section_exclusion_tolerance)},
+//         {"show_section_size_in_label", jsi::field(&CladeDrawSettings::show_section_size_in_label)},
+//         {"arrow_color", jsi::field<ColorStorer>(&CladeDrawSettings::arrow_color)},
+//         {"line_width", jsi::field(&CladeDrawSettings::line_width)},
+//         {"arrow_width", jsi::field(&CladeDrawSettings::arrow_width)},
+//         {"separator_color", jsi::field<ColorStorer>(&CladeDrawSettings::separator_color)},
+//         {"separator_width", jsi::field(&CladeDrawSettings::separator_width)},
+//         {"label_position", jsi::field(&CladeDrawSettings::label_position)},
+//         {"label_offset", jsi::field<SizeStorer>(&CladeDrawSettings::label_offset)},
+//         {"label_color", jsi::field<ColorStorer>(&CladeDrawSettings::label_color)},
+//         {"label_size", jsi::field(&CladeDrawSettings::label_size)},
+//         {"label_style", jsi::field(&CladeDrawSettings::label_style, style_data)},
+//         {"label_rotation", jsi::field(&CladeDrawSettings::label_rotation)},
+//         {"slot", jsi::field(&CladeDrawSettings::slot)},
+//     };
+
+//     jsi::data<CladesDrawSettings> clades_data = {
+//         {"clades", jsi::field(&CladesDrawSettings::get_clades, clade_data)},
+//         {"slot_width", jsi::field(&CladesDrawSettings::slot_width)},
+//     };
+
+//     jsi::data<HzSection> hz_section_data = {
+//         {"show", jsi::field(&HzSection::show)},
+//         {"show_line", jsi::field(&HzSection::show_line)},
+//         {"show_label_in_time_series", jsi::field(&HzSection::show_label_in_time_series)},
+//         {"show_map", jsi::field(&HzSection::show_map)},
+//         {"name", jsi::field(&HzSection::name)},
+//         {"label", jsi::field(&HzSection::label)},
+//     };
+
+//     jsi::data<HzSections> hz_sections_data = {
+//         {"vertical_gap", jsi::field(&HzSections::vertical_gap)},
+//         {"line_color", jsi::field<ColorStorer>(&HzSections::line_color)},
+//         {"line_width", jsi::field(&HzSections::line_width)},
+//         {"ts_label_size", jsi::field(&HzSections::ts_label_size)},
+//         {"ts_label_style", jsi::field(&HzSections::ts_label_style, style_data)},
+//         {"ts_label_color", jsi::field<ColorStorer>(&HzSections::ts_label_color)},
+//         {"show_labels_in_time_series_in_tree_mode", jsi::field(&HzSections::show_labels_in_time_series_in_tree_mode)},
+//         {"sections", jsi::field(&HzSections::get_sections, hz_section_data)},
+//     };
+
+//     jsi::data<MappedAntigensDrawSettings> mapped_antigens_data = {
+//         {"width", jsi::field(&MappedAntigensDrawSettings::width)},
+//         {"line_width", jsi::field(&MappedAntigensDrawSettings::line_width)},
+//         {"line_color", jsi::field<ColorStorer>(&MappedAntigensDrawSettings::line_color)},
+//         {"line_length", jsi::field(&MappedAntigensDrawSettings::line_length)},
+//     };
+
+//     jsi::data<AntigenicMapsDrawSettings> antigenic_maps_data = {
+//         {"layout", jsi::field(&AntigenicMapsDrawSettings::layout)},
+//         {"columns", jsi::field(&AntigenicMapsDrawSettings::columns)},
+//         {"gap", jsi::field(&AntigenicMapsDrawSettings::gap)},
+//         {"mapped_antigens_section_line_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::mapped_antigens_section_line_color)},
+//         {"mapped_antigens_section_line_width", jsi::field(&AntigenicMapsDrawSettings::mapped_antigens_section_line_width)},
+//         {"mods", jsi::field<AntigenicMapModsStorer>(&AntigenicMapsDrawSettings::get_mods)},
+//     };
+
+//     // jsi::data<MarkAntigenSettings> mark_antigens_data = {
+//     //     {"show", jsi::field(&MarkAntigenSettings::show)},
+//     //     {"name", jsi::field(&MarkAntigenSettings::name)},
+//     //     {"label", jsi::field(&MarkAntigenSettings::label)},
+//     //     {"scale", jsi::field(&MarkAntigenSettings::scale)},
+//     //     {"aspect", jsi::field(&MarkAntigenSettings::aspect)},
+//     //     {"rotation", jsi::field(&MarkAntigenSettings::rotation)},
+//     //     {"outline_width", jsi::field(&MarkAntigenSettings::outline_width)},
+//     //     {"label_line_width", jsi::field(&MarkAntigenSettings::label_line_width)},
+//     //     {"fill_color", jsi::field<ColorStorer>(&MarkAntigenSettings::fill_color)},
+//     //     {"outline_color", jsi::field<ColorStorer>(&MarkAntigenSettings::outline_color)},
+//     //     {"label_color", jsi::field<ColorStorer>(&MarkAntigenSettings::label_color)},
+//     //     {"label_line_color", jsi::field<ColorStorer>(&MarkAntigenSettings::label_line_color)},
+//     //     {"label_offset", jsi::field<SizeStorer>(&MarkAntigenSettings::label_offset)},
+//     //     {"label_size", jsi::field(&MarkAntigenSettings::label_size)},
+//     // };
+
+//     // jsi::data<AntigenicMapsDrawSettings> antigenic_maps_data = {
+//     //     {"layout", jsi::field(&AntigenicMapsDrawSettings::layout)},
+//     //     {"width", jsi::field(&AntigenicMapsDrawSettings::_width)}, // v2
+//     //     {"columns", jsi::field(&AntigenicMapsDrawSettings::columns)},
+//     //     {"gap", jsi::field(&AntigenicMapsDrawSettings::gap)},
+//     //     {"transformation", jsi::field(&AntigenicMapsDrawSettings::get_transformation)},
+//     //     {"viewport", jsi::field<ViewportStorer>(&AntigenicMapsDrawSettings::viewport)},
+//     //     {"border_width", jsi::field(&AntigenicMapsDrawSettings::border_width)},
+//     //     {"grid_line_width", jsi::field(&AntigenicMapsDrawSettings::grid_line_width)},
+//     //     {"border_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::border_color)},
+//     //     {"grid_line_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::grid_line_color)},
+//     //     {"background_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::background_color)},
+//     //     {"point_scale", jsi::field(&AntigenicMapsDrawSettings::point_scale)},
+//     //     {"serum_scale", jsi::field(&AntigenicMapsDrawSettings::serum_scale)},
+//     //     {"reference_antigen_scale", jsi::field(&AntigenicMapsDrawSettings::reference_antigen_scale)},
+//     //     {"test_antigen_scale", jsi::field(&AntigenicMapsDrawSettings::test_antigen_scale)},
+//     //     {"vaccine_antigen_scale", jsi::field(&AntigenicMapsDrawSettings::vaccine_antigen_scale)},
+//     //     {"tracked_antigen_scale", jsi::field(&AntigenicMapsDrawSettings::tracked_antigen_scale)},
+//     //     {"serum_outline_width", jsi::field(&AntigenicMapsDrawSettings::serum_outline_width)},
+//     //     {"reference_antigen_outline_width", jsi::field(&AntigenicMapsDrawSettings::reference_antigen_outline_width)},
+//     //     {"test_antigen_outline_width", jsi::field(&AntigenicMapsDrawSettings::test_antigen_outline_width)},
+//     //     {"vaccine_antigen_outline_width", jsi::field(&AntigenicMapsDrawSettings::vaccine_antigen_outline_width)},
+//     //     {"sequenced_antigen_outline_width", jsi::field(&AntigenicMapsDrawSettings::sequenced_antigen_outline_width)},
+//     //     {"tracked_antigen_outline_width", jsi::field(&AntigenicMapsDrawSettings::tracked_antigen_outline_width)},
+//     //     {"serum_outline_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::serum_outline_color)},
+//     //     {"reference_antigen_outline_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::reference_antigen_outline_color)},
+//     //     {"test_antigen_outline_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::test_antigen_outline_color)},
+//     //     {"test_antigen_fill_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::test_antigen_fill_color)},
+//     //     {"vaccine_antigen_outline_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::vaccine_antigen_outline_color)},
+//     //     {"sequenced_antigen_outline_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::sequenced_antigen_outline_color)},
+//     //     {"sequenced_antigen_fill_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::sequenced_antigen_fill_color)},
+//     //     {"tracked_antigen_outline_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::tracked_antigen_outline_color)},
+//     //     {"tracked_antigen_colored_by_clade", jsi::field(&AntigenicMapsDrawSettings::tracked_antigen_colored_by_clade)},
+//     //     {"tracked_antigen_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::tracked_antigen_color)},
+//     //     {"reassortant_rotation", jsi::field(&AntigenicMapsDrawSettings::reassortant_rotation)},
+//     //     {"egg_antigen_aspect", jsi::field(&AntigenicMapsDrawSettings::egg_antigen_aspect)},
+//     //     {"show_tracked_sera", jsi::field(&AntigenicMapsDrawSettings::show_tracked_sera)},
+//     //     {"serum_circle_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::serum_circle_color)},
+//     //     {"tracked_serum_outline_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::tracked_serum_outline_color)},
+//     //     {"serum_circle_thickness", jsi::field(&AntigenicMapsDrawSettings::serum_circle_thickness)},
+//     //     {"tracked_serum_outline_width", jsi::field(&AntigenicMapsDrawSettings::tracked_serum_outline_width)},
+//     //     {"map_title_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::map_title_color)},
+//     //     {"map_title_offset", jsi::field<SizeStorer>(&AntigenicMapsDrawSettings::map_title_offset)},
+//     //     {"map_title_size", jsi::field(&AntigenicMapsDrawSettings::map_title_size)},
+//     //     {"mapped_antigens_section_line_color", jsi::field<ColorStorer>(&AntigenicMapsDrawSettings::mapped_antigens_section_line_color)},
+//     //     {"mapped_antigens_section_line_width", jsi::field(&AntigenicMapsDrawSettings::mapped_antigens_section_line_width)},
+//     //     {"mark_antigens", jsi::field(&AntigenicMapsDrawSettings::get_mark_antigens, mark_antigens_data)},
+//     // };
+
+//     jsi::data<TitleDrawSettings> title_data = {
+//         {"title", jsi::field(&TitleDrawSettings::title)},
+//         {"color", jsi::field<ColorStorer>(&TitleDrawSettings::color)},
+//         {"size", jsi::field(&TitleDrawSettings::size)},
+//         {"style", jsi::field(&TitleDrawSettings::style, style_data)},
+//         {"offset", jsi::field<SizeStorer>(&TitleDrawSettings::offset)},
+//     };
+
+
+//     jsi::data<Settings> settings_data = {
+//         {"_", jsi::field(&Settings::indentation)},
+//         {"  version", jsi::field(&Settings::set_version)},
+//         {"signature_page", jsi::field(&Settings::signature_page, signature_page_data)},
+//         {"tree", jsi::field(&Settings::tree_draw, tree_draw_data)},
+//         {"time_series", jsi::field(&Settings::time_series, time_series_data)},
+//         {"clades", jsi::field(&Settings::clades, clades_data)},
+//         {"hz_sections", jsi::field(&Settings::hz_sections, hz_sections_data)},
+//         {"mapped_antigens", jsi::field(&Settings::mapped_antigens, mapped_antigens_data)},
+//         {"antigenic_maps", jsi::field(&Settings::antigenic_maps, antigenic_maps_data)},
+//         {"title", jsi::field(&Settings::title, title_data)},
+//     };
+
+//     std::cout << "Reading settings from " << aFilename << std::endl;
+//     jsi::import(acmacs_base::read_file(aFilename), aSettings, settings_data);
+//     aSettings.upgrade();
+
+// } // read_settings
 
 // **********************************************************************
 

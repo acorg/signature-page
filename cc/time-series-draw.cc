@@ -75,11 +75,16 @@ void TimeSeriesDraw::draw_labels(double month_width)
 
 void TimeSeriesDraw::draw_labels_at_side(const Location& aOrigin, double month_width, double month_max_height)
 {
-    Date current_month = mBegin;
-    for (size_t month_no = 0; month_no < mNumberOfMonths; ++month_no, current_month.increment_month()) {
-        const double left = aOrigin.x + month_no * month_width;
-        mSurface.text({left, aOrigin.y}, current_month.month_3(), 0, Pixels{mSettings.label_size}, mSettings.label_style, Rotation{M_PI_2});
-        mSurface.text({left, aOrigin.y + month_max_height}, current_month.year_2(), 0, Pixels{mSettings.label_size}, mSettings.label_style, Rotation{M_PI_2});
+    try {
+        Date current_month = mBegin;
+        for (size_t month_no = 0; month_no < mNumberOfMonths; ++month_no, current_month.increment_month()) {
+            const double left = aOrigin.x + month_no * month_width;
+            mSurface.text({left, aOrigin.y}, current_month.month_3(), 0, Pixels{mSettings.label_size}, mSettings.label_style, Rotation{M_PI_2});
+            mSurface.text({left, aOrigin.y + month_max_height}, current_month.year_2(), 0, Pixels{mSettings.label_size}, mSettings.label_style, Rotation{M_PI_2});
+        }
+    }
+    catch (std::exception& err) {
+        std::cerr << "WARNING: " << err.what() << " (TimeSeriesDraw::draw_labels_at_side)\n";
     }
 
 } // TimeSeriesDraw::draw_labels_at_side
@@ -112,7 +117,13 @@ void TimeSeriesDraw::draw_dashes(double month_width)
             }
         }
     };
-    tree::iterate_leaf(mTree, draw_dash);
+
+    try {
+        tree::iterate_leaf(mTree, draw_dash);
+    }
+    catch (std::exception& err) {
+        std::cerr << "WARNING: " << err.what() << " (TimeSeriesDraw::draw_dashes)\n";
+    }
 
 } // TimeSeriesDraw::draw_dashes
 

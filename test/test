@@ -1,6 +1,10 @@
 #! /bin/bash
 
-TDIR=$(mktemp -d)
+if [ -f /Volumes/rdisk/ramdisk-id ]; then
+    TDIR=$(mktemp -d /Volumes/rdisk/ad-test.XXXXXX)
+else
+    TDIR=$(mktemp -d)
+fi
 TESTDIR=$(dirname $0)
 
 # ======================================================================
@@ -27,3 +31,7 @@ cd "$TESTDIR"
 ../bin/test-copy ./newick.json.xz "$TDIR"/tree.json.xz
 ../bin/test-copy "$TDIR"/tree.json.xz "$TDIR"/tree2.json.xz
 xzdiff "$TDIR"/tree.json.xz "$TDIR"/tree2.json.xz
+
+SETTINGS="$TDIR/tree.settings.json"
+../dist/sigp --tree ./newick.json.xz --init-settings "$SETTINGS" -o "$TDIR"/tree.pdf
+../dist/sigp --tree ./newick.json.xz -s "$SETTINGS" -o "$TDIR"/tree.pdf
