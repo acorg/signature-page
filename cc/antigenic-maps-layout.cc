@@ -117,7 +117,7 @@ void LabelledGridBase::draw(Surface& aMappedAntigensDrawSurface)
         ++section_index;
     }
 
-    const double antigenic_maps_width = layout_draw().signature_page_settings().antigenic_maps_width;
+    const double antigenic_maps_width = layout_draw().signature_page_settings().antigenic_maps_width();
     const size_t rows = row + (column ? 1 : 0);
     const double maps_height = map_width * rows + (rows - 1) * settings.gap;
     const double suggested_surface_width = antigenic_maps_width * surface.viewport().size.height / maps_height;

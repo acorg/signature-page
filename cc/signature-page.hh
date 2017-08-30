@@ -28,11 +28,11 @@ class SignaturePageDrawSettings
     SignaturePageDrawSettings() : mData{nullptr} {}
 
       //Layout layout;
-    double top, bottom, left, right;
-    double tree_margin_right, mapped_antigens_margin_right;
-    double time_series_width;
-    double clades_width;
-    double antigenic_maps_width;
+      // double top, bottom, left, right;
+    // double tree_margin_right, mapped_antigens_margin_right;
+    // double time_series_width;
+    // double clades_width;
+    // double antigenic_maps_width;
 
     inline void use_json(rjson::value& aData) { mData = &aData; }
     inline std::string json() const { return mData->to_json(); }
@@ -54,33 +54,27 @@ class SignaturePageDrawSettings
     inline std::string layout_to_string() const { return std::get<rjson::string>(mData->get_ref("layout", default_layout())); }
     inline void set_layot(std::string s) { std::get<rjson::string>(mData->get_ref("layout", default_layout())) = s; }
 
-//     inline std::string layout_to_string() const
-//         {
-//             switch (layout) {
-//               case Layout::Auto:
-//                   return "auto";
-//               case Layout::TreeTSClades:
-//                   return "tree-ts-clades";
-//               case Layout::TreeCladesTSMaps:
-//                   return "tree-clades-ts-maps";
-//             }
-//             return "tree-ts-clades";
-//         }
-//
-//     inline void set_layot(std::string s)
-//         {
-//             if (s == "auto")
-//                 layout = Layout::Auto;
-//             else if (s == "tree-ts-clades")
-//                 layout = Layout::TreeTSClades;
-//             else if (s == "tree-clades-ts-maps")
-//                 layout = Layout::TreeCladesTSMaps;
-//             else
-//                 throw std::runtime_error("Unrecognized layout: " + s);
-//         }
+    inline double top() const { return std::get<rjson::number>(mData->get_ref("top", 60.0)); }
+    inline void top(double aValue) { std::get<rjson::number>(mData->get_ref("top", aValue)) = aValue; }
+    inline double bottom() const { return std::get<rjson::number>(mData->get_ref("bottom", 60.0)); }
+    inline void bottom(double aValue) { std::get<rjson::number>(mData->get_ref("bottom", aValue)) = aValue; }
+    inline double left() const { return std::get<rjson::number>(mData->get_ref("left", 50.0)); }
+    inline void left(double aValue) { std::get<rjson::number>(mData->get_ref("left", aValue)) = aValue; }
+    inline double right() const { return std::get<rjson::number>(mData->get_ref("right", 20.0)); }
+    inline void right(double aValue) { std::get<rjson::number>(mData->get_ref("right", aValue)) = aValue; }
+    inline double tree_margin_right() const { return std::get<rjson::number>(mData->get_ref("tree_margin_right", 0.0)); }
+    inline void tree_margin_right(double aValue) { std::get<rjson::number>(mData->get_ref("tree_margin_right", aValue)) = aValue; }
+    inline double mapped_antigens_margin_right() const { return std::get<rjson::number>(mData->get_ref("mapped_antigens_margin_right", 30.0)); }
+    inline void mapped_antigens_margin_right(double aValue) { std::get<rjson::number>(mData->get_ref("mapped_antigens_margin_right", aValue)) = aValue; }
+    inline double time_series_width() const { return std::get<rjson::number>(mData->get_ref("time_series_width", 400.0)); }
+    inline void time_series_width(double aValue) { std::get<rjson::number>(mData->get_ref("time_series_width", aValue)) = aValue; }
+    inline double clades_width() const { return std::get<rjson::number>(mData->get_ref("clades_width", 100.0)); }
+    inline void clades_width(double aValue) { std::get<rjson::number>(mData->get_ref("clades_width", aValue)) = aValue; }
+    inline double antigenic_maps_width() const { return std::get<rjson::number>(mData->get_ref("antigenic_maps_width", 500.0)); }
+    inline void antigenic_maps_width(double aValue) { std::get<rjson::number>(mData->get_ref("antigenic_maps_width", aValue)) = aValue; }
 
  private:
-    rjson::value* mData;
+    mutable rjson::value* mData;
 
 }; // class SignaturePageDrawSettings
 

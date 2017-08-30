@@ -914,15 +914,15 @@ template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writ
 {
     return writer << jsw::start_object
                   << jsw::key("layout") << aSettings.layout_to_string()
-                  << jsw::key("top") << aSettings.top
-                  << jsw::key("bottom") << aSettings.bottom
-                  << jsw::key("left") << aSettings.left
-                  << jsw::key("right") << aSettings.right
-                  << jsw::key("tree_margin_right") << aSettings.tree_margin_right
-                  << jsw::key("mapped_antigens_margin_right") << aSettings.mapped_antigens_margin_right
-                  << jsw::key("time_series_width") << aSettings.time_series_width
-                  << jsw::key("clades_width") << aSettings.clades_width
-                  << jsw::key("antigenic_maps_width") << aSettings.antigenic_maps_width
+                  << jsw::key("top") << aSettings.top()
+                  << jsw::key("bottom") << aSettings.bottom()
+                  << jsw::key("left") << aSettings.left()
+                  << jsw::key("right") << aSettings.right()
+                  << jsw::key("tree_margin_right") << aSettings.tree_margin_right()
+                  << jsw::key("mapped_antigens_margin_right") << aSettings.mapped_antigens_margin_right()
+                  << jsw::key("time_series_width") << aSettings.time_series_width()
+                  << jsw::key("clades_width") << aSettings.clades_width()
+                  << jsw::key("antigenic_maps_width") << aSettings.antigenic_maps_width()
                   << jsw::end_object;
 }
 
