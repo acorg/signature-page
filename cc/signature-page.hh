@@ -28,6 +28,7 @@ class SignaturePageDrawSettings
     SignaturePageDrawSettings();
 
       //Layout layout;
+    rjson::field_get_set<std::string> layout;
     rjson::field_get_set<double>
         top,
         bottom,
@@ -42,9 +43,9 @@ class SignaturePageDrawSettings
     void use_json(rjson::value& aData);
     inline std::string json() const { return mData->to_json(); }
 
-    inline Layout layout() const
+    inline Layout get_layout() const
         {
-            const auto layout_s = layout_to_string();
+            const std::string layout_s = layout;
             if (layout_s == "auto")
                 return Layout::Auto;
             else if (layout_s == "tree-ts-clades")
@@ -55,9 +56,9 @@ class SignaturePageDrawSettings
                 throw std::runtime_error("Unrecognized layout: " + layout_s);
         }
 
-    inline rjson::value default_layout() const { return rjson::string{"auto"}; }
-    inline std::string layout_to_string() const { return std::get<rjson::string>(mData->get_ref("layout", default_layout())); }
-    inline void set_layot(std::string s) { std::get<rjson::string>(mData->get_ref("layout", default_layout())) = s; }
+    // inline rjson::value default_layout() const { return rjson::string{"auto"}; }
+    // inline std::string layout_to_string() const { return std::get<rjson::string>(mData->get_ref("layout", default_layout())); }
+    // inline void set_layot(std::string s) { std::get<rjson::string>(mData->get_ref("layout", default_layout())) = s; }
 
     // inline double top() const { return mData->get_field("top", 60.0); }
     // inline void top(double aValue) { mData->set_field("top", aValue); }

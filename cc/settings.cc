@@ -243,7 +243,7 @@ TitleDrawSettings::~TitleDrawSettings()
 
 SignaturePageDrawSettings::SignaturePageDrawSettings()
     :
-// layout(Layout::Auto),
+    layout("layout", "auto"),
     top("top", 60),
     bottom("bottom", 60),
     left("left", 50),
@@ -259,6 +259,7 @@ SignaturePageDrawSettings::SignaturePageDrawSettings()
 void SignaturePageDrawSettings::use_json(rjson::value& aData)
 {
     mData = &aData;
+    layout.container(&aData);
     top.container(&aData);
     bottom.container(&aData);
     left.container(&aData);
@@ -299,7 +300,7 @@ void Settings::distribute_parsed_value()
     signature_page.use_json(mData.get_ref("signature_page", rjson::object{}));
     std::cerr << "DEBUG: settings.signature_page " << signature_page.json() << '\n';
     std::cerr << "DEBUG: settings.data " << mData << '\n';
-    std::cerr << "DEBUG: signature_page.layout: " << signature_page.layout_to_string() << '\n';
+    std::cerr << "DEBUG: signature_page.layout: " << signature_page.layout << '\n';
 
 } // Settings::distribute_parsed_value
 
@@ -944,7 +945,7 @@ template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writ
 template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const SignaturePageDrawSettings& aSettings)
 {
     return writer << jsw::start_object
-                  << jsw::key("layout") << aSettings.layout_to_string()
+                  << jsw::key("layout") << aSettings.layout
                   << jsw::key("top") << aSettings.top
                   << jsw::key("bottom") << aSettings.bottom
                   << jsw::key("left") << aSettings.left

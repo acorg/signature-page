@@ -54,7 +54,8 @@ void SignaturePageDraw::load_settings(std::string aFilename)
 
 SignaturePageDrawSettings::Layout SignaturePageDraw::detect_layout(bool init_settings) const
 {
-    return (mSettings->signature_page.layout() == SignaturePageDrawSettings::Layout::Auto || init_settings) ? (mChartFilename.empty() ? SignaturePageDrawSettings::Layout::TreeTSClades : SignaturePageDrawSettings::Layout::TreeCladesTSMaps) : mSettings->signature_page.layout();
+    const auto layout = mSettings->signature_page.get_layout();
+    return (layout == SignaturePageDrawSettings::Layout::Auto || init_settings) ? (mChartFilename.empty() ? SignaturePageDrawSettings::Layout::TreeTSClades : SignaturePageDrawSettings::Layout::TreeCladesTSMaps) : layout;
 
 } // SignaturePageDraw::detect_layout
 
@@ -101,7 +102,7 @@ void SignaturePageDraw::init_layout()
         mSettings->signature_page.bottom = 60;
         mSettings->signature_page.left = 50;
         mSettings->signature_page.right = 0;
-        mSettings->signature_page.set_layot("tree-ts-clades");
+        mSettings->signature_page.layout = "tree-ts-clades";
         mSettings->signature_page.time_series_width = 300;
         mSettings->signature_page.clades_width = 100;
         mSettings->signature_page.tree_margin_right = 10;
@@ -110,7 +111,7 @@ void SignaturePageDraw::init_layout()
         mSettings->signature_page.top = 23;
         mSettings->signature_page.bottom = 23;
         mSettings->signature_page.left = 10;
-        mSettings->signature_page.set_layot("tree-clades-ts-maps");
+        mSettings->signature_page.layout = "tree-clades-ts-maps";
         mSettings->signature_page.time_series_width = 140;
         mSettings->signature_page.clades_width = 20;
         mSettings->signature_page.tree_margin_right = 10;
