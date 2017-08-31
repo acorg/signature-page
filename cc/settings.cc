@@ -280,7 +280,7 @@ void Settings::use_json(rjson::value&& aValue)
 void Settings::distribute_parsed_value()
 {
     signature_page.use_json(mData.get_ref("signature_page", rjson::object{}));
-    std::cerr << "DEBUG: settings.signature_page " << signature_page.json() << '\n';
+    std::cerr << "DEBUG: settings.signature_page " << signature_page.to_json() << '\n';
     std::cerr << "DEBUG: settings.data " << mData << '\n';
     std::cerr << "DEBUG: signature_page.layout: " << signature_page.layout << '\n';
 

@@ -118,6 +118,8 @@ void SignaturePageDraw::init_layout()
         mSettings->signature_page.mapped_antigens_margin_right = 10;
     }
 
+    std::cerr << "init_layout signature_page " << mSettings->signature_page.to_json() << '\n';
+
 } // SignaturePageDraw::init_layout
 
 // ----------------------------------------------------------------------
@@ -125,7 +127,9 @@ void SignaturePageDraw::init_layout()
 void SignaturePageDraw::init_settings()
 {
     std::cerr << std::endl << "INFO: INIT:" << std::endl;
+    std::cerr << "signature_page.top " << mSettings->signature_page.top << '\n';
     mSettings->signature_page.bottom = mSettings->signature_page.top;
+    std::cerr << "signature_page.bottom " << mSettings->signature_page.bottom << '\n';
 
     if (mTitleDraw)
         mTitleDraw->init_settings();

@@ -89,9 +89,10 @@ include $(AD_SHARE)/Makefile.rtags
 
 # ----------------------------------------------------------------------
 
+# abspath below is to show full file path by __FILE__ macro used in logging
 $(BUILD)/%.o: cc/%.cc | $(BUILD)
 	@echo $(CXX_NAME) $<
-	@$(CXX) $(CXXFLAGS) -c -o $@ $<
+	@$(CXX) $(CXXFLAGS) -c -o $@ $(abspath $<)
 
 # ----------------------------------------------------------------------
 

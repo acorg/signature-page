@@ -1,3 +1,5 @@
+#include "acmacs-base/debug.hh"
+
 #include "time-series-draw.hh"
 #include "tree.hh"
 #include "tree-iterate.hh"
@@ -12,25 +14,31 @@ void TimeSeriesDraw::prepare()
     mEnd = mSettings.end;
     std::map<Date, size_t> sequences_per_month;
     mTree.sequences_per_month(sequences_per_month);
-    if (mBegin.empty()) {
-        for (Date d = sequences_per_month.crbegin()->first; sequences_per_month.find(d) != sequences_per_month.end(); d.decrement_month()) {
-            mBegin = d;
+    if (!sequences_per_month.empty()) {
+        if (mBegin.empty()) {
+            for (Date d = sequences_per_month.crbegin()->first; sequences_per_month.find(d) != sequences_per_month.end(); d.decrement_month()) {
+                mBegin = d;
+            }
         }
-    }
-    if (mEnd.empty()) {
-        for (auto ms = sequences_per_month.crbegin(); mEnd.empty() && ms != sequences_per_month.crend(); ++ms) {
-            if (ms->second)
-                mEnd = ms->first;
+        if (mEnd.empty()) {
+            for (auto ms = sequences_per_month.crbegin(); mEnd.empty() && ms != sequences_per_month.crend(); ++ms) {
+                if (ms->second)
+                    mEnd = ms->first;
+            }
         }
-    }
 
-    std::cout << "Sequences per month:" << std::endl;
-    for (const auto& e: sequences_per_month) {
-        std::cout << "  " << e.first << " " << e.second << std::endl;
-    }
+        std::cout << "INFO: Sequences per month:" << '\n';
+        for (const auto& e: sequences_per_month) {
+            std::cout << "  " << e.first << " " << e.second << '\n';
+        }
 
-    mNumberOfMonths = static_cast<size_t>(months_between_dates(mBegin, mEnd)) + 2;
-    std::cout << "dates to show: " << mBegin << " .. " << mEnd << "  months: " << mNumberOfMonths << std::endl;
+        mNumberOfMonths = static_cast<size_t>(months_between_dates(mBegin, mEnd)) + 2;
+        std::cout << "INFO: dates to show: " << mBegin << " .. " << mEnd << "  months: " << mNumberOfMonths << DEBUG_LINE_FUNC << '\n';
+    }
+    else {
+        std::cout << "WARNING: no dates found for sequences" << DEBUG_LINE_FUNC << '\n';
+        mNumberOfMonths = 0;
+    }
 
 } // TimeSeriesDraw::prepare
 
@@ -45,13 +53,14 @@ void TimeSeriesDraw::init_settings()
 
 void TimeSeriesDraw::draw()
 {
-    // mSurface.border("green3", 1);
-
-    const double month_width = mSurface.viewport().size.width / mNumberOfMonths;
-    draw_labels(month_width);
-    draw_month_separators(month_width);
-    draw_dashes(month_width);
-    draw_hz_section_lines();
+    if (mNumberOfMonths) {
+          // mSurface.border("green3", 1);
+        const double month_width = mSurface.viewport().size.width / mNumberOfMonths;
+        draw_labels(month_width);
+        draw_month_separators(month_width);
+        draw_dashes(month_width);
+        draw_hz_section_lines();
+    }
 
 } // TimeSeriesDraw::draw
 
