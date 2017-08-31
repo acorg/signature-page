@@ -243,36 +243,18 @@ TitleDrawSettings::~TitleDrawSettings()
 
 SignaturePageDrawSettings::SignaturePageDrawSettings()
     :
-    layout("layout", "auto"),
-    top("top", 60),
-    bottom("bottom", 60),
-    left("left", 50),
-    right("right", 20),
-    tree_margin_right("tree_margin_right", 0),
-    mapped_antigens_margin_right("mapped_antigens_margin_right", 30),
-    time_series_width("time_series_width", 400),
-    clades_width("clades_width", 100),
-    antigenic_maps_width("antigenic_maps_width", 500)
+    layout(this, "layout", "auto"),
+    top(this, "top", 60),
+    bottom(this, "bottom", 60),
+    left(this, "left", 50),
+    right(this, "right", 20),
+    tree_margin_right(this, "tree_margin_right", 0),
+    mapped_antigens_margin_right(this, "mapped_antigens_margin_right", 30),
+    time_series_width(this, "time_series_width", 400),
+    clades_width(this, "clades_width", 100),
+    antigenic_maps_width(this, "antigenic_maps_width", 500)
 {
 }
-
-void SignaturePageDrawSettings::use_json(rjson::value& aData)
-{
-    mData = &aData;
-    layout.container(&aData);
-    top.container(&aData);
-    bottom.container(&aData);
-    left.container(&aData);
-    right.container(&aData);
-    tree_margin_right.container(&aData);
-    mapped_antigens_margin_right.container(&aData);
-    time_series_width.container(&aData);
-    clades_width.container(&aData);
-    antigenic_maps_width.container(&aData);
-
-} // SignaturePageDrawSettings::use_json
-
-// ----------------------------------------------------------------------
 
 
 // **********************************************************************

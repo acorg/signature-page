@@ -20,14 +20,13 @@ class TitleDraw;
 
 // ----------------------------------------------------------------------
 
-class SignaturePageDrawSettings
+class SignaturePageDrawSettings : public rjson::field_container
 {
  public:
     enum class Layout { Auto, TreeTSClades, TreeCladesTSMaps };
 
     SignaturePageDrawSettings();
 
-      //Layout layout;
     rjson::field_get_set<std::string> layout;
     rjson::field_get_set<double>
         top,
@@ -39,9 +38,6 @@ class SignaturePageDrawSettings
         time_series_width,
         clades_width,
         antigenic_maps_width;
-
-    void use_json(rjson::value& aData);
-    inline std::string json() const { return mData->to_json(); }
 
     inline Layout get_layout() const
         {
@@ -79,8 +75,8 @@ class SignaturePageDrawSettings
     // inline double antigenic_maps_width() const { return mData->get_field("antigenic_maps_width", 500.0); }
     // inline void antigenic_maps_width(double aValue) { mData->set_field("antigenic_maps_width", aValue); }
 
- private:
-    mutable rjson::value* mData = nullptr;
+ // private:
+ //    mutable rjson::value* mData = nullptr;
 
 }; // class SignaturePageDrawSettings
 
