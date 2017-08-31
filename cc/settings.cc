@@ -1,5 +1,6 @@
 #include <cmath>
 
+#include "acmacs-base/debug.hh"
 #include "acmacs-base/float.hh"
 
 //#include "acmacs-base/read-file.hh"
@@ -231,11 +232,11 @@ void AntigenicMapsDrawSettings::viewport(const Viewport& aViewport)
 // ----------------------------------------------------------------------
 
 TitleDrawSettings::TitleDrawSettings()
-    : color("black"), size(12), offset{10, 30}
-{
-}
-
-TitleDrawSettings::~TitleDrawSettings()
+    : title(this, "title", ""),
+      color(this, "color", "black"),
+      size(this, "size", 12),
+      style(),
+      offset(this, "offset", {10, 30})
 {
 }
 
@@ -280,9 +281,19 @@ void Settings::use_json(rjson::value&& aValue)
 void Settings::distribute_parsed_value()
 {
     signature_page.use_json(mData.get_ref("signature_page", rjson::object{}));
-    std::cerr << "DEBUG: settings.signature_page " << signature_page.to_json() << '\n';
-    std::cerr << "DEBUG: settings.data " << mData << '\n';
-    std::cerr << "DEBUG: signature_page.layout: " << signature_page.layout << '\n';
+    title.use_json(mData.get_ref("title", rjson::object{}));
+
+    // tree_draw.use_json(mData.get_ref("tree", rjson::object{}));
+    // time_series.use_json(mData.get_ref("time_series", rjson::object{}));
+    // clades.use_json(mData.get_ref("clades", rjson::object{}));
+    // hz_sections.use_json(mData.get_ref("hz_sections", rjson::object{}));
+    // mapped_antigens.use_json(mData.get_ref("mapped_antigens", rjson::object{}));
+    // antigenic_maps.use_json(mData.get_ref("antigenic_maps", rjson::object{}));
+
+
+    // std::cerr << "DEBUG: " << mData << DEBUG_LINE_FUNC << '\n';
+    // std::cerr << "DEBUG: " << signature_page.to_json() << DEBUG_LINE_FUNC << '\n';
+      // std::cerr << "DEBUG: signature_page.layout: " << signature_page.layout << '\n';
 
 } // Settings::distribute_parsed_value
 

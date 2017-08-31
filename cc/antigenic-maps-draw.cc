@@ -34,7 +34,7 @@ void AntigenicMapsDrawBase::layout(AntigenicMapsLayout* aLayout)
 
 void AntigenicMapsDrawBase::init_settings()
 {
-    std::cerr << "DEBUG: AntigenicMapsDrawBase::init_settings" << std::endl;
+    // std::cerr << "DEBUG: AntigenicMapsDrawBase::init_settings" << std::endl;
     const size_t number_sections = hz_sections().shown_maps();
     switch (number_sections) {
       case 0:

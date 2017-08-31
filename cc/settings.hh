@@ -15,19 +15,25 @@
 class Settings
 {
  public:
-    inline Settings() : mData{rjson::object{}} { distribute_parsed_value(); }
+    inline Settings()
+        : mData{rjson::object{}}
+        {
+            distribute_parsed_value();
+        }
 
     SignaturePageDrawSettings signature_page;
+    TitleDrawSettings title;
     TreeDrawSettings tree_draw;
     TimeSeriesDrawSettings time_series;
     CladesDrawSettings clades;
     HzSections hz_sections;
     MappedAntigensDrawSettings mapped_antigens;
     AntigenicMapsDrawSettings antigenic_maps;
-    TitleDrawSettings title;
 
     void use_json(rjson::value&& aValue);
     void upgrade();             // upgrade to the new version in case old version data provided
+
+    inline std::string to_json() const { return mData.to_json(); }
 
     // inline void indentation(const char* /*str*/, size_t /*length*/) {}
     // void set_version(const char* str, size_t length);

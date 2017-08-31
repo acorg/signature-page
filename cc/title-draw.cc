@@ -6,19 +6,18 @@
 
 void TitleDraw::init_settings()
 {
-    std::string virus_type = mTree.virus_type();
-    if (!virus_type.empty())
-        mSettings.title = virus_type;
-
+    std::string title = mTree.virus_type();
     if (mChart) {
-        if (!mSettings.title.empty())
-            mSettings.title += " ";
-        mSettings.title += mChart->lab();
-        mSettings.offset.set(10, 10);
+        if (!title.empty())
+            title += " ";
+        title += mChart->lab();
+        mSettings.offset = Size{10, 10};
     }
     else {
         // mSettings.offset.set(10, 10 + mSettings.size);
     }
+    if (!title.empty())
+        mSettings.title = title;
 
 } // TitleDraw::init_settings
 
@@ -33,7 +32,7 @@ void TitleDraw::prepare()
 
 void TitleDraw::draw()
 {
-    mSurface.text(mSettings.offset, mSettings.title, mSettings.color, Pixels{mSettings.size}, mSettings.style);
+    mSurface.text(static_cast<Size>(mSettings.offset), mSettings.title, mSettings.color, Pixels{mSettings.size}, mSettings.style);
 
 } // TitleDraw::draw
 

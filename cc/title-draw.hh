@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "acmacs-draw/surface.hh"
+#include "settings-rjson.hh"
 
 // ----------------------------------------------------------------------
 
@@ -11,17 +12,16 @@ class ChartDrawBase;
 
 // ----------------------------------------------------------------------
 
-class TitleDrawSettings
+class TitleDrawSettings : public rjson::field_container
 {
  public:
     TitleDrawSettings();
-    ~TitleDrawSettings();
 
-    std::string title;
-    Color color;
-    double size;
+    rjson::field_get_set<std::string> title;
+    rjson::field_get_set<Color> color; // Color
+    rjson::field_get_set<double> size;
     TextStyle style;
-    Size offset;
+    rjson::field_get_set<Size> offset;
 
 }; // class TitleDrawSettings
 
