@@ -25,16 +25,21 @@ class SignaturePageDrawSettings
  public:
     enum class Layout { Auto, TreeTSClades, TreeCladesTSMaps };
 
-    SignaturePageDrawSettings() : mData{nullptr} {}
+    SignaturePageDrawSettings();
 
       //Layout layout;
-      // double top, bottom, left, right;
-    // double tree_margin_right, mapped_antigens_margin_right;
-    // double time_series_width;
-    // double clades_width;
-    // double antigenic_maps_width;
+    rjson::field_get_set<double>
+        top,
+        bottom,
+        left,
+        right,
+        tree_margin_right,
+        mapped_antigens_margin_right,
+        time_series_width,
+        clades_width,
+        antigenic_maps_width;
 
-    inline void use_json(rjson::value& aData) { mData = &aData; }
+    void use_json(rjson::value& aData);
     inline std::string json() const { return mData->to_json(); }
 
     inline Layout layout() const
@@ -54,27 +59,27 @@ class SignaturePageDrawSettings
     inline std::string layout_to_string() const { return std::get<rjson::string>(mData->get_ref("layout", default_layout())); }
     inline void set_layot(std::string s) { std::get<rjson::string>(mData->get_ref("layout", default_layout())) = s; }
 
-    inline double top() const { return mData->get_field("top", 60.0); }
-    inline void top(double aValue) { mData->set_field("top", aValue); }
-    inline double bottom() const { return mData->get_field("bottom", 60.0); }
-    inline void bottom(double aValue) { mData->set_field("bottom", aValue); }
-    inline double left() const { return mData->get_field("left", 50.0); }
-    inline void left(double aValue) { mData->set_field("left", aValue); }
-    inline double right() const { return mData->get_field("right", 20.0); }
-    inline void right(double aValue) { mData->set_field("right", aValue); }
-    inline double tree_margin_right() const { return mData->get_field("tree_margin_right", 0.0); }
-    inline void tree_margin_right(double aValue) { mData->set_field("tree_margin_right", aValue); }
-    inline double mapped_antigens_margin_right() const { return mData->get_field("mapped_antigens_margin_right", 30.0); }
-    inline void mapped_antigens_margin_right(double aValue) { mData->set_field("mapped_antigens_margin_right", aValue); }
-    inline double time_series_width() const { return mData->get_field("time_series_width", 400.0); }
-    inline void time_series_width(double aValue) { mData->set_field("time_series_width", aValue); }
-    inline double clades_width() const { return mData->get_field("clades_width", 100.0); }
-    inline void clades_width(double aValue) { mData->set_field("clades_width", aValue); }
-    inline double antigenic_maps_width() const { return mData->get_field("antigenic_maps_width", 500.0); }
-    inline void antigenic_maps_width(double aValue) { mData->set_field("antigenic_maps_width", aValue); }
+    // inline double top() const { return mData->get_field("top", 60.0); }
+    // inline void top(double aValue) { mData->set_field("top", aValue); }
+    // inline double bottom() const { return mData->get_field("bottom", 60.0); }
+    // inline void bottom(double aValue) { mData->set_field("bottom", aValue); }
+    // inline double left() const { return mData->get_field("left", 50.0); }
+    // inline void left(double aValue) { mData->set_field("left", aValue); }
+    // inline double right() const { return mData->get_field("right", 20.0); }
+    // inline void right(double aValue) { mData->set_field("right", aValue); }
+    // inline double tree_margin_right() const { return mData->get_field("tree_margin_right", 0.0); }
+    // inline void tree_margin_right(double aValue) { mData->set_field("tree_margin_right", aValue); }
+    // inline double mapped_antigens_margin_right() const { return mData->get_field("mapped_antigens_margin_right", 30.0); }
+    // inline void mapped_antigens_margin_right(double aValue) { mData->set_field("mapped_antigens_margin_right", aValue); }
+    // inline double time_series_width() const { return mData->get_field("time_series_width", 400.0); }
+    // inline void time_series_width(double aValue) { mData->set_field("time_series_width", aValue); }
+    // inline double clades_width() const { return mData->get_field("clades_width", 100.0); }
+    // inline void clades_width(double aValue) { mData->set_field("clades_width", aValue); }
+    // inline double antigenic_maps_width() const { return mData->get_field("antigenic_maps_width", 500.0); }
+    // inline void antigenic_maps_width(double aValue) { mData->set_field("antigenic_maps_width", aValue); }
 
  private:
-    mutable rjson::value* mData;
+    mutable rjson::value* mData = nullptr;
 
 }; // class SignaturePageDrawSettings
 

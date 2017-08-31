@@ -241,12 +241,38 @@ TitleDrawSettings::~TitleDrawSettings()
 
 // ----------------------------------------------------------------------
 
-// SignaturePageDrawSettings::SignaturePageDrawSettings()
-//     : layout(Layout::Auto), top(60), bottom(60), left(50), right(20),
-//       tree_margin_right(0), mapped_antigens_margin_right(30), time_series_width(400), clades_width(100),
-//       antigenic_maps_width(500)
-// {
-// }
+SignaturePageDrawSettings::SignaturePageDrawSettings()
+    :
+// layout(Layout::Auto),
+    top("top", 60),
+    bottom("bottom", 60),
+    left("left", 50),
+    right("right", 20),
+    tree_margin_right("tree_margin_right", 0),
+    mapped_antigens_margin_right("mapped_antigens_margin_right", 30),
+    time_series_width("time_series_width", 400),
+    clades_width("clades_width", 100),
+    antigenic_maps_width("antigenic_maps_width", 500)
+{
+}
+
+void SignaturePageDrawSettings::use_json(rjson::value& aData)
+{
+    mData = &aData;
+    top.container(&aData);
+    bottom.container(&aData);
+    left.container(&aData);
+    right.container(&aData);
+    tree_margin_right.container(&aData);
+    mapped_antigens_margin_right.container(&aData);
+    time_series_width.container(&aData);
+    clades_width.container(&aData);
+    antigenic_maps_width.container(&aData);
+
+} // SignaturePageDrawSettings::use_json
+
+// ----------------------------------------------------------------------
+
 
 // **********************************************************************
 
@@ -775,6 +801,11 @@ void read_settings(Settings& aSettings, std::string aFilename)
 
 // **********************************************************************
 
+template <typename RW, typename FValue> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const rjson::field_get_set<FValue>& aValue)
+{
+    return writer << static_cast<FValue>(aValue);
+}
+
 template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const TextStyle& aStyle)
 {
     return writer << jsw::start_object
@@ -914,15 +945,15 @@ template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writ
 {
     return writer << jsw::start_object
                   << jsw::key("layout") << aSettings.layout_to_string()
-                  << jsw::key("top") << aSettings.top()
-                  << jsw::key("bottom") << aSettings.bottom()
-                  << jsw::key("left") << aSettings.left()
-                  << jsw::key("right") << aSettings.right()
-                  << jsw::key("tree_margin_right") << aSettings.tree_margin_right()
-                  << jsw::key("mapped_antigens_margin_right") << aSettings.mapped_antigens_margin_right()
-                  << jsw::key("time_series_width") << aSettings.time_series_width()
-                  << jsw::key("clades_width") << aSettings.clades_width()
-                  << jsw::key("antigenic_maps_width") << aSettings.antigenic_maps_width()
+                  << jsw::key("top") << aSettings.top
+                  << jsw::key("bottom") << aSettings.bottom
+                  << jsw::key("left") << aSettings.left
+                  << jsw::key("right") << aSettings.right
+                  << jsw::key("tree_margin_right") << aSettings.tree_margin_right
+                  << jsw::key("mapped_antigens_margin_right") << aSettings.mapped_antigens_margin_right
+                  << jsw::key("time_series_width") << aSettings.time_series_width
+                  << jsw::key("clades_width") << aSettings.clades_width
+                  << jsw::key("antigenic_maps_width") << aSettings.antigenic_maps_width
                   << jsw::end_object;
 }
 
