@@ -67,6 +67,26 @@ namespace rjson
 
       // ----------------------------------------------------------------------
 
+    template <typename Element> class array_field_container_child
+    {
+     public:
+        inline array_field_container_child(field_container_parent& aParent, std::string aFieldName)
+            : mParent{aParent}, mFieldName{aFieldName} {}
+
+        inline array& get_ref_to_array() { return std::get<array>(mParent.get_ref(mFieldName, array{})); }
+        inline const array& get_ref_to_array() const { return std::get<array>(mParent.get_ref(mFieldName, array{})); }
+        inline size_t size() const { return get_ref_to_array().size(); }
+        inline auto begin() const { return get_ref_to_array().begin(); }
+        inline auto end() const { return get_ref_to_array().end(); }
+
+     private:
+        field_container_parent& mParent;
+        std::string mFieldName;
+
+    }; // class array_field_container_child<>
+
+      // ----------------------------------------------------------------------
+
     template <typename FValue> class field_get_set
     {
      public:
