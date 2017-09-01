@@ -236,7 +236,7 @@ TitleDrawSettings::TitleDrawSettings(rjson::field_container_parent& aParent, std
       title(*this, "title", ""),
       color(*this, "color", "black"),
       size(*this, "size", 12),
-      style(),
+      style(*this, "style", {}),
       offset(*this, "offset", {10, 30})
 {
 }

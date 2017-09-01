@@ -16,7 +16,7 @@ namespace rjson
 
         virtual value& get_ref(std::string aFieldName, value&& aDefault) = 0;
         virtual const value& get_ref(std::string aFieldName, value&& aDefault) const = 0;
-        virtual value& get_ref_to_object(std::string aFieldName) = 0;
+        virtual object& get_ref_to_object(std::string aFieldName) = 0;
         virtual void set_field(std::string aFieldName, value&& aValue) = 0;
 
     }; // class field_container_parent
@@ -30,7 +30,7 @@ namespace rjson
 
         inline value& get_ref(std::string aFieldName, value&& aDefault) override { return mData.get_ref(aFieldName, std::forward<value>(aDefault)); }
         inline const value& get_ref(std::string aFieldName, value&& aDefault) const override { return mData.get_ref(aFieldName, std::forward<value>(aDefault)); }
-        inline value& get_ref_to_object(std::string aFieldName) override { return mData.get_ref_to_object(aFieldName); }
+        inline object& get_ref_to_object(std::string aFieldName) override { return mData.get_ref_to_object(aFieldName); }
         inline void set_field(std::string aFieldName, value&& aValue) override { mData.set_field(aFieldName, std::forward<value>(aValue)); }
 
         inline std::string to_json() const { return mData.to_json(); }
@@ -48,27 +48,16 @@ namespace rjson
         inline field_container_child(field_container_parent& aParent, std::string aFieldName)
             : mParent{aParent}, mFieldName{aFieldName} {}
 
-        inline value& get_ref(std::string aFieldName, value&& aDefault) override
-            {
-                return mParent.get_ref_to_object(mFieldName).get_ref(aFieldName, std::forward<value>(aDefault));
-            }
+        inline object& get_ref_to_object() { return mParent.get_ref_to_object(mFieldName); }
+        inline const object& get_ref_to_object() const { return mParent.get_ref_to_object(mFieldName); }
+        inline object& get_ref_to_object(std::string aFieldName) override { return get_ref_to_object().get_ref_to_object(aFieldName); }
 
-        inline const value& get_ref(std::string aFieldName, value&& aDefault) const override
-            {
-                return mParent.get_ref_to_object(mFieldName).get_ref(aFieldName, std::forward<value>(aDefault));
-            }
+        inline value& get_ref(std::string aFieldName, value&& aDefault) override { return get_ref_to_object().get_ref(aFieldName, std::forward<value>(aDefault)); }
+        inline const value& get_ref(std::string aFieldName, value&& aDefault) const override { return get_ref_to_object().get_ref(aFieldName, std::forward<value>(aDefault)); }
 
-        inline value& get_ref_to_object(std::string aFieldName) override
-            {
-                return mParent.get_ref_to_object(mFieldName).get_ref_to_object(aFieldName);
-            }
+        inline void set_field(std::string aFieldName, value&& aValue) override { get_ref_to_object().set_field(aFieldName, std::forward<value>(aValue)); }
 
-        inline void set_field(std::string aFieldName, value&& aValue) override
-            {
-                mParent.get_ref_to_object(mFieldName).set_field(aFieldName, std::forward<value>(aValue));
-            }
-
-        inline std::string to_json() const { return mParent.get_ref_to_object(mFieldName).to_json(); }
+        inline std::string to_json() const { return get_ref_to_object().to_json(); }
 
      private:
         field_container_parent& mParent;
@@ -125,7 +114,7 @@ namespace rjson
     template <> inline field_get_set<Size>::operator Size() const
     {
         try {
-            const auto& ar = std::get<array>(get_ref());
+            const auto& ar = get_value_ref(); // std::get<array>(get_ref());
             return {std::get<number>(ar[0]), std::get<number>(ar[1])};
         }
         catch (std::exception& /*err*/) {
@@ -137,6 +126,35 @@ namespace rjson
     template <> inline value to_value<Size>(const Size& aSize)
     {
         return array{number{aSize.width}, number{aSize.height}};
+    }
+
+      // ----------------------------------------------------------------------
+      // TextStyle
+      // ----------------------------------------------------------------------
+
+    template <> struct content_type<TextStyle> { using type = object; };
+
+    template <> inline field_get_set<TextStyle>::operator TextStyle() const
+    {
+        try {
+            const auto& obj = get_value_ref(); // std::get<object>(get_ref());
+            TextStyle style;
+            style.font_family(obj.get_field("family", std::string{}));
+            style.slant(obj.get_field("slant", std::string{"normal"}));
+            style.weight(obj.get_field("weight", std::string{"normal"}));
+            return style;
+        }
+        catch (std::exception& /*err*/) {
+            std::cerr << "ERROR: cannot convert json to TextStyle: " << get_ref() << '\n';
+            return {};
+        }
+    }
+
+    template <> inline value to_value<TextStyle>(const TextStyle& aTextStyle)
+    {
+        return object{string{"family"}, string{aTextStyle.font_family()},
+                      string{"slant"}, string{aTextStyle.slant_as_stirng()},
+                      string{"weight"}, string{aTextStyle.weight_as_stirng()}};
     }
 
 } // namespace rjson
