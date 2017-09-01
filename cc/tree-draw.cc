@@ -27,16 +27,17 @@ TreeDraw::~TreeDraw()
 
 void TreeDraw::make_coloring()
 {
-    if (mSettings.color_nodes == "black")
+    const std::string color_nodes = mSettings.color_nodes.get_value_ref();
+    if (color_nodes == "black")
         mColoring = std::unique_ptr<Coloring>(new ColoringBlack());
-    else if (mSettings.color_nodes == "continent")
+    else if (color_nodes == "continent")
         mColoring = std::unique_ptr<Coloring>(new ColoringByContinent());
     else {
         try {
-            mColoring = std::unique_ptr<Coloring>(new ColoringByPos(std::stoul(mSettings.color_nodes)));
+            mColoring = std::unique_ptr<Coloring>(new ColoringByPos(std::stoul(color_nodes)));
         }
         catch (std::exception&) {
-            throw std::runtime_error("Unrecognized TreeDrawSettings.color_nodes: " + mSettings.color_nodes);
+            throw std::runtime_error("Unrecognized TreeDrawSettings.color_nodes: " + color_nodes);
         }
     }
 
@@ -124,7 +125,8 @@ bool TreeDraw::apply_mods()
 void TreeDraw::draw()
 {
     std::cout << "Tree surface: " << mSurface.viewport() << std::endl;
-    mLineWidth = mSettings.force_line_width ? mSettings.line_width : std::min(mSettings.line_width, mVerticalStep * 0.5);
+    const double line_width = mSettings.line_width;
+    mLineWidth = mSettings.force_line_width ? line_width : std::min(line_width, mVerticalStep * 0.5);
       // std::cout << "Tree line width: " << mLineWidth.valeu() << "  Settings: " << mSettings.line_width << "  vertical_step/2: " << mVerticalStep * 0.5 << std::endl;
     fit_labels_into_viewport();
 
@@ -531,7 +533,7 @@ void TreeDraw::draw_legend()
 {
     const Legend* legend = coloring_legend();
     if (legend) {
-        Surface& legend_surface = mSurface.subsurface(mSettings.legend.offset, Scaled{mSettings.legend.width}, legend->size(), false);
+        Surface& legend_surface = mSurface.subsurface(static_cast<Size>(mSettings.legend.offset), Scaled{mSettings.legend.width}, legend->size(), false);
         legend->draw(legend_surface, mSettings.legend);
           // legend_surface->border("red", 1);
     }

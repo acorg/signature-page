@@ -36,9 +36,15 @@ TreeDrawVaccineSettings::TreeDrawVaccineSettings()
 {
 }
 
-LegendSettings::LegendSettings()
-    : offset{-30, 950}, width{100}, title_style{"sans_serif", TextStyle::Slant::Normal, TextStyle::Weight::Bold},
-      title_size{10}, text_style{"monospace"}, text_size{10}, interline{1.5}
+LegendSettings::LegendSettings(rjson::field_container_parent& aParent, std::string aFieldName)
+    : rjson::field_container_child(aParent, aFieldName),
+      offset(*this, "offset", {-30, 950}),
+      width(*this, "width", 100),
+      title_style(*this, "title_style", {"sans_serif", TextStyle::Slant::Normal, TextStyle::Weight::Bold}),
+      title_size(*this, "title_size", 10),
+      text_style(*this, "text_style", {"monospace"}),
+      text_size(*this, "text_size", 10),
+      interline(*this, "interline", 1.5)
 {
 }
 
@@ -54,18 +60,6 @@ TreeDrawMod::TreeDrawMod(std::string aMod, double aD1)
 
 TreeDrawMod::TreeDrawMod(std::string aMod, std::string aS1, std::string aS2)
     : mod(aMod), d1(-1), s1(aS1), s2(aS2)
-{
-}
-
-TreeDrawSettings::TreeDrawSettings()
-    : ladderize(Tree::LadderizeMethod::NumberOfLeaves), force_line_width(false),
-      line_width(1), root_edge(0), line_color(0), name_offset(0.3), color_nodes("continent"),
-      vaccines{{TreeDrawVaccineSettings{}}},
-      _hide_if_cumulative_edge_length_bigger_than(-1)
-{
-}
-
-TreeDrawSettings::~TreeDrawSettings()
 {
 }
 
@@ -231,6 +225,26 @@ void AntigenicMapsDrawSettings::viewport(const Viewport& aViewport)
 
 // ----------------------------------------------------------------------
 
+TreeDrawSettings::TreeDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
+    : rjson::field_container_child(aParent, aFieldName),
+      ladderize(*this, "ladderize", Tree::LadderizeMethod::NumberOfLeaves),
+      ladderize_help(*this, "ladderize?", "number-of-leaves or max-edge-length"),
+        //mods(*this, "mods", ),
+      force_line_width(*this, "force_line_width", false),
+      line_width(*this, "line_width", 1),
+      root_edge(*this, "root_edge", 0),
+      line_color(*this, "line_color", "black"),
+      label_style(*this, "label_style", {}),
+      name_offset(*this, "name_offset", 0.3),
+      color_nodes(*this, "color_nodes", "continent"),
+        // aa_transition(*this, "aa_transition", ),
+      vaccines{{TreeDrawVaccineSettings{}}},
+      legend(*this, "legend")
+{
+} // TreeDrawSettings::TreeDrawSettings
+
+// ----------------------------------------------------------------------
+
 TitleDrawSettings::TitleDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
     : rjson::field_container_child(aParent, aFieldName),
       title(*this, "title", ""),
@@ -263,9 +277,9 @@ SignaturePageDrawSettings::SignaturePageDrawSettings(rjson::field_container_pare
 
 Settings::Settings()
     : signature_page(*this, "signature_page"),
-      title(*this, "title")
+      title(*this, "title"),
+      tree_draw(*this, "tree")
 
-    // tree_draw(*this, "tree"),
     // time_series(*this, "time_series"),
     // clades(*this, "clades"),
     // hz_sections(*this, "hz_sections"),
@@ -916,12 +930,17 @@ template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writ
 
 // ----------------------------------------------------------------------
 
+inline std::string ladderize_to_string(const TreeDrawSettings& aSettings)
+{
+    return aSettings.ladderize.get_value_ref();
+}
+
 template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const TreeDrawSettings& aSettings)
 {
     return writer << jsw::start_object
 
-                  << jsw::key("ladderize?") << "number-of-leaves, max-edge-length"
-                  << jsw::key("ladderize") << aSettings.ladderize_to_string()
+                  << jsw::key("ladderize?") << aSettings.ladderize_help // "number-of-leaves, max-edge-length"
+                  << jsw::key("ladderize") << ladderize_to_string(aSettings)
                   << jsw::key("mods 1?") << "mods is a list of objects:"
                   << jsw::key("mods 2?") << "{mod: root, s1: new-root}"
                   << jsw::key("mods 3?") << "{mod: hide-isolated-before, s1: date}"
@@ -931,6 +950,7 @@ template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writ
                   << jsw::key("mods 7?") << "{mod: hide-one, s1: name-to-hide} - after ladderizing"
                   << jsw::key("mods 8?") << "{mod: mark-with-line, s1: name-to-mark, s2: color-to-mark, d1: line-width-in-pixels}"
                   << jsw::key("mods") << aSettings.mods
+                  << jsw::key("mods?") << aSettings.mods_help
               // v2 << jsw::key("root") << aSettings.root
               // v2 << jsw::key("hide_isolated_before") << aSettings.hide_isolated_before
               // v2 << jsw::key("hide_if_cumulative_edge_length_bigger_than") << aSettings.hide_if_cumulative_edge_length_bigger_than

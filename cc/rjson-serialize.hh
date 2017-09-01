@@ -76,6 +76,8 @@ namespace rjson
         inline field_get_set<FValue>& operator = (const FValue& aValue) { mParent.set_field(mFieldName, to_value(aValue)); return *this; }
         inline field_get_set<FValue>& operator = (const field_get_set<FValue>& aSource) { return operator=(static_cast<FValue>(aSource)); }
 
+        inline const rjson_type<FValue>& get_value_ref() const { return std::get<rjson_type<FValue>>(get_ref()); }
+
      private:
         field_container_parent& mParent;
         std::string mFieldName;
@@ -84,7 +86,6 @@ namespace rjson
         // inline value& get_ref() { return mParent.get_ref(mFieldName, to_value(mDefault)); }
         inline const value& get_ref() const { return mParent.get_ref(mFieldName, to_value(mDefault)); }
         // inline rjson_type<FValue>& get_value_ref() { return std::get<rjson_type<FValue>>(get_ref()); }
-        inline const rjson_type<FValue>& get_value_ref() const { return std::get<rjson_type<FValue>>(get_ref()); }
 
     }; // class field_get_set<>
 
@@ -152,9 +153,11 @@ namespace rjson
 
     template <> inline value to_value<TextStyle>(const TextStyle& aTextStyle)
     {
-        return object{string{"family"}, string{aTextStyle.font_family()},
-                      string{"slant"}, string{aTextStyle.slant_as_stirng()},
-                      string{"weight"}, string{aTextStyle.weight_as_stirng()}};
+        return object{
+            {"family", string{aTextStyle.font_family()}},
+            {"slant", string{aTextStyle.slant_as_stirng()}},
+            {"weight", string{aTextStyle.weight_as_stirng()}}
+        };
     }
 
 } // namespace rjson

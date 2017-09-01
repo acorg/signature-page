@@ -9,6 +9,7 @@
 #include "acmacs-draw/surface.hh"
 #include "legend.hh"
 #include "clades-draw.hh"
+#include "rjson-serialize.hh"
 
 // ----------------------------------------------------------------------
 
@@ -84,11 +85,44 @@ class TreeDrawMod
 
 // ----------------------------------------------------------------------
 
-class TreeDrawSettings
+// serializing Tree::LadderizeMethod from tree.hh
+namespace rjson
+{
+    template <> struct content_type<Tree::LadderizeMethod> { using type = string; };
+
+    template <> inline field_get_set<Tree::LadderizeMethod>::operator Tree::LadderizeMethod() const
+    {
+        try {
+            auto method_s = static_cast<std::string>(get_value_ref());
+            if (method_s == "number-of-leaves")
+                return Tree::LadderizeMethod::NumberOfLeaves;
+            else if (method_s == "max-edge-length")
+                return Tree::LadderizeMethod::MaxEdgeLength;
+            else
+                throw std::exception{}; // std::runtime_error("Unrecognized ladderize method: " + method_s);
+        }
+        catch (std::exception& /*err*/) {
+            std::cerr << "ERROR: cannot convert json to Tree::LadderizeMethod: " << get_ref() << '\n';
+            return {};
+        }
+    }
+
+    template <> inline value to_value<Tree::LadderizeMethod>(const Tree::LadderizeMethod& aLadderizeMethod)
+    {
+            switch (aLadderizeMethod) {
+              case Tree::LadderizeMethod::NumberOfLeaves:
+                  return string{"number-of-leaves"};
+              case Tree::LadderizeMethod::MaxEdgeLength:
+                  return string{"max-edge-length"};
+            }
+            return string{"number-of-leaves"};
+    }
+}
+
+class TreeDrawSettings : public rjson::field_container_child
 {
  public:
-    TreeDrawSettings();
-    ~TreeDrawSettings();
+    TreeDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName);
 
     inline const TreeDrawVaccineSettings& vaccine(std::string aName) const
         {
@@ -100,50 +134,41 @@ class TreeDrawSettings
             return *p;
         }
 
-    Tree::LadderizeMethod ladderize;
-    std::vector<TreeDrawMod> mods;
-    bool force_line_width;
-    double line_width;
-    double root_edge;
-    Color line_color;
-    TextStyle label_style;
-    double name_offset;         // offset of the label from the line right end, in W widths
-    std::string color_nodes;    // black, continent, position number (e.g. 162)
-    AATransitionDrawSettings aa_transition;
-    std::vector<TreeDrawVaccineSettings> vaccines;
+    rjson::field_get_set<Tree::LadderizeMethod> ladderize;
+    rjson::field_get_set<std::string> ladderize_help;
+    std::vector<TreeDrawMod> mods; // $$
+    std::vector<std::string> mods_help; // $$
+    rjson::field_get_set<bool> force_line_width;
+    rjson::field_get_set<double> line_width;
+    rjson::field_get_set<double> root_edge;
+    rjson::field_get_set<Color> line_color;
+    rjson::field_get_set<TextStyle> label_style;
+    rjson::field_get_set<double> name_offset;         // offset of the label from the line right end, in W widths
+    rjson::field_get_set<std::string> color_nodes;    // black, continent, position number (e.g. 162)
+    AATransitionDrawSettings aa_transition; // $$
+    std::vector<TreeDrawVaccineSettings> vaccines; // $$
     LegendSettings legend;
 
       // obsolete: v2
-    std::string _root;           // re-root tree
-    std::string _hide_isolated_before; // hide leaves isolated before the date (empty -> do not hide based on date)
-    double _hide_if_cumulative_edge_length_bigger_than; // hide long branches
-    std::string _hide_if;                               // built-in function to hide stains based on complicated criteria
+    // std::string _root;           // re-root tree
+    // std::string _hide_isolated_before; // hide leaves isolated before the date (empty -> do not hide based on date)
+    // double _hide_if_cumulative_edge_length_bigger_than; // hide long branches
+    // std::string _hide_if;                               // built-in function to hide stains based on complicated criteria
 
       // for json importer
-    inline std::vector<TreeDrawVaccineSettings>& get_vaccines() { return vaccines; }
-    inline std::vector<TreeDrawMod>& get_mods() { return mods; }
+    // inline std::vector<TreeDrawVaccineSettings>& get_vaccines() { return vaccines; }
+    // inline std::vector<TreeDrawMod>& get_mods() { return mods; }
 
-    inline std::string ladderize_to_string() const
-        {
-            switch (ladderize) {
-              case Tree::LadderizeMethod::NumberOfLeaves:
-                  return "number-of-leaves";
-              case Tree::LadderizeMethod::MaxEdgeLength:
-                  return "max-edge-length";
-            }
-            return "number-of-leaves";
-        }
-
-    inline void ladderize_from_string(const char* str, size_t length)
-        {
-            const std::string s(str, length);
-            if (s == "number-of-leaves")
-                ladderize = Tree::LadderizeMethod::NumberOfLeaves;
-            else if (s == "max-edge-length")
-                ladderize = Tree::LadderizeMethod::MaxEdgeLength;
-            else
-                throw std::runtime_error("Unrecognized ladderize method: " + s);
-        }
+    // inline std::string ladderize_to_string() const
+    //     {
+    //         switch (ladderize) {
+    //           case Tree::LadderizeMethod::NumberOfLeaves:
+    //               return "number-of-leaves";
+    //           case Tree::LadderizeMethod::MaxEdgeLength:
+    //               return "max-edge-length";
+    //         }
+    //         return "number-of-leaves";
+    //     }
 
 }; // class TreeDrawSettings
 
