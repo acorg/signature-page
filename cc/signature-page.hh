@@ -20,12 +20,12 @@ class TitleDraw;
 
 // ----------------------------------------------------------------------
 
-class SignaturePageDrawSettings : public rjson::field_container
+class SignaturePageDrawSettings : public rjson::field_container_child
 {
  public:
     enum class Layout { Auto, TreeTSClades, TreeCladesTSMaps };
 
-    SignaturePageDrawSettings();
+    SignaturePageDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName);
 
     rjson::field_get_set<std::string> layout;
     rjson::field_get_set<double>

@@ -12,10 +12,10 @@ class ChartDrawBase;
 
 // ----------------------------------------------------------------------
 
-class TitleDrawSettings : public rjson::field_container
+class TitleDrawSettings : public rjson::field_container_child
 {
  public:
-    TitleDrawSettings();
+    TitleDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName);
 
     rjson::field_get_set<std::string> title;
     rjson::field_get_set<Color> color; // Color

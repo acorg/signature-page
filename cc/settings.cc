@@ -231,34 +231,51 @@ void AntigenicMapsDrawSettings::viewport(const Viewport& aViewport)
 
 // ----------------------------------------------------------------------
 
-TitleDrawSettings::TitleDrawSettings()
-    : title(this, "title", ""),
-      color(this, "color", "black"),
-      size(this, "size", 12),
+TitleDrawSettings::TitleDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
+    : rjson::field_container_child(aParent, aFieldName),
+      title(*this, "title", ""),
+      color(*this, "color", "black"),
+      size(*this, "size", 12),
       style(),
-      offset(this, "offset", {10, 30})
+      offset(*this, "offset", {10, 30})
 {
 }
 
 // ----------------------------------------------------------------------
 
-SignaturePageDrawSettings::SignaturePageDrawSettings()
-    :
-    layout(this, "layout", "auto"),
-    top(this, "top", 60),
-    bottom(this, "bottom", 60),
-    left(this, "left", 50),
-    right(this, "right", 20),
-    tree_margin_right(this, "tree_margin_right", 0),
-    mapped_antigens_margin_right(this, "mapped_antigens_margin_right", 30),
-    time_series_width(this, "time_series_width", 400),
-    clades_width(this, "clades_width", 100),
-    antigenic_maps_width(this, "antigenic_maps_width", 500)
+SignaturePageDrawSettings::SignaturePageDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
+    : rjson::field_container_child(aParent, aFieldName),
+      layout(*this, "layout", "auto"),
+      top(*this, "top", 60),
+      bottom(*this, "bottom", 60),
+      left(*this, "left", 50),
+      right(*this, "right", 20),
+      tree_margin_right(*this, "tree_margin_right", 0),
+      mapped_antigens_margin_right(*this, "mapped_antigens_margin_right", 30),
+      time_series_width(*this, "time_series_width", 400),
+      clades_width(*this, "clades_width", 100),
+      antigenic_maps_width(*this, "antigenic_maps_width", 500)
 {
 }
 
 
 // **********************************************************************
+
+Settings::Settings()
+    : signature_page(*this, "signature_page"),
+      title(*this, "title")
+
+    // tree_draw(*this, "tree"),
+    // time_series(*this, "time_series"),
+    // clades(*this, "clades"),
+    // hz_sections(*this, "hz_sections"),
+    // mapped_antigens(*this, "mapped_antigens"),
+    // antigenic_maps(*this, "antigenic_maps")
+{
+
+} // Settings::Settings
+
+// ----------------------------------------------------------------------
 
 // void Settings::set_version(const char* str, size_t length)
 // {
@@ -269,33 +286,33 @@ SignaturePageDrawSettings::SignaturePageDrawSettings()
 
 // ----------------------------------------------------------------------
 
-void Settings::use_json(rjson::value&& aValue)
-{
-    mData = std::move(aValue);
-    distribute_parsed_value();
+// void Settings::use_json(rjson::value&& aValue)
+// {
+//     mData = std::move(aValue);
+//     distribute_parsed_value();
 
-} // Settings::use_json
+// } // Settings::use_json
 
 // ----------------------------------------------------------------------
 
-void Settings::distribute_parsed_value()
-{
-    signature_page.use_json(mData.get_ref("signature_page", rjson::object{}));
-    title.use_json(mData.get_ref("title", rjson::object{}));
+// void Settings::distribute_parsed_value()
+// {
+//     signature_page.use_json(mData.get_ref("signature_page", rjson::object{}));
+//     title.use_json(mData.get_ref("title", rjson::object{}));
 
-    // tree_draw.use_json(mData.get_ref("tree", rjson::object{}));
-    // time_series.use_json(mData.get_ref("time_series", rjson::object{}));
-    // clades.use_json(mData.get_ref("clades", rjson::object{}));
-    // hz_sections.use_json(mData.get_ref("hz_sections", rjson::object{}));
-    // mapped_antigens.use_json(mData.get_ref("mapped_antigens", rjson::object{}));
-    // antigenic_maps.use_json(mData.get_ref("antigenic_maps", rjson::object{}));
+//     // tree_draw.use_json(mData.get_ref("tree", rjson::object{}));
+//     // time_series.use_json(mData.get_ref("time_series", rjson::object{}));
+//     // clades.use_json(mData.get_ref("clades", rjson::object{}));
+//     // hz_sections.use_json(mData.get_ref("hz_sections", rjson::object{}));
+//     // mapped_antigens.use_json(mData.get_ref("mapped_antigens", rjson::object{}));
+//     // antigenic_maps.use_json(mData.get_ref("antigenic_maps", rjson::object{}));
 
 
-    // std::cerr << "DEBUG: " << mData << DEBUG_LINE_FUNC << '\n';
-    // std::cerr << "DEBUG: " << signature_page.to_json() << DEBUG_LINE_FUNC << '\n';
-      // std::cerr << "DEBUG: signature_page.layout: " << signature_page.layout << '\n';
+//     // std::cerr << "DEBUG: " << mData << DEBUG_LINE_FUNC << '\n';
+//     // std::cerr << "DEBUG: " << signature_page.to_json() << DEBUG_LINE_FUNC << '\n';
+//       // std::cerr << "DEBUG: signature_page.layout: " << signature_page.layout << '\n';
 
-} // Settings::distribute_parsed_value
+// } // Settings::distribute_parsed_value
 
 // ----------------------------------------------------------------------
 

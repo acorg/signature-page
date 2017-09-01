@@ -9,41 +9,95 @@
 
 namespace rjson
 {
-    class field_container
+    class field_container_parent
     {
      public:
-        inline void use_json(value& aData) { mData = &aData; }
-        inline operator value&() { assert(mData); return *mData; }
-        inline operator const value&() const { assert(mData); return *mData; }
-        inline std::string to_json() const { return static_cast<const value&>(*this).to_json(); }
+        virtual inline ~field_container_parent() {}
+
+        virtual value& get_ref(std::string aFieldName, value&& aDefault) = 0;
+        virtual const value& get_ref(std::string aFieldName, value&& aDefault) const = 0;
+        virtual value& get_ref_to_object(std::string aFieldName) = 0;
+        virtual void set_field(std::string aFieldName, value&& aValue) = 0;
+
+    }; // class field_container_parent
+
+      // ----------------------------------------------------------------------
+
+    class field_container_toplevel : public field_container_parent
+    {
+     public:
+        inline void use_json(rjson::value&& aData) { mData = std::move(aData); }
+
+        inline value& get_ref(std::string aFieldName, value&& aDefault) override { return mData.get_ref(aFieldName, std::forward<value>(aDefault)); }
+        inline const value& get_ref(std::string aFieldName, value&& aDefault) const override { return mData.get_ref(aFieldName, std::forward<value>(aDefault)); }
+        inline value& get_ref_to_object(std::string aFieldName) override { return mData.get_ref_to_object(aFieldName); }
+        inline void set_field(std::string aFieldName, value&& aValue) override { mData.set_field(aFieldName, std::forward<value>(aValue)); }
+
+        inline std::string to_json() const { return mData.to_json(); }
 
      private:
-        mutable value* mData = nullptr;
-    };
+        mutable rjson::value mData = rjson::object{};
+
+    }; // class field_container_toplevel
+
+      // ----------------------------------------------------------------------
+
+    class field_container_child : public field_container_parent
+    {
+     public:
+        inline field_container_child(field_container_parent& aParent, std::string aFieldName)
+            : mParent{aParent}, mFieldName{aFieldName} {}
+
+        inline value& get_ref(std::string aFieldName, value&& aDefault) override
+            {
+                return mParent.get_ref_to_object(mFieldName).get_ref(aFieldName, std::forward<value>(aDefault));
+            }
+
+        inline const value& get_ref(std::string aFieldName, value&& aDefault) const override
+            {
+                return mParent.get_ref_to_object(mFieldName).get_ref(aFieldName, std::forward<value>(aDefault));
+            }
+
+        inline value& get_ref_to_object(std::string aFieldName) override
+            {
+                return mParent.get_ref_to_object(mFieldName).get_ref_to_object(aFieldName);
+            }
+
+        inline void set_field(std::string aFieldName, value&& aValue) override
+            {
+                mParent.get_ref_to_object(mFieldName).set_field(aFieldName, std::forward<value>(aValue));
+            }
+
+        inline std::string to_json() const { return mParent.get_ref_to_object(mFieldName).to_json(); }
+
+     private:
+        field_container_parent& mParent;
+        std::string mFieldName;
+
+    }; // class field_container_child
 
       // ----------------------------------------------------------------------
 
     template <typename FValue> class field_get_set
     {
      public:
-        inline field_get_set(field_container* aContainer, std::string aFieldName, FValue&& aDefault) : mContainer{*aContainer}, mFieldName{aFieldName}, mDefault{std::move(aDefault)} {}
-        inline operator FValue() const { return static_cast<value&>(mContainer).get_field(mFieldName, mDefault); } // static_cast to non-const because we need to set to mDefault
-        inline field_get_set<FValue>& operator = (FValue&& aValue) { static_cast<value&>(mContainer).set_field(mFieldName, std::forward<FValue>(aValue)); return *this; }
-        inline field_get_set<FValue>& operator = (const FValue& aValue) { static_cast<value&>(mContainer).set_field(mFieldName, aValue); return *this; }
+        inline field_get_set(field_container_parent& aParent, std::string aFieldName, FValue&& aDefault) : mParent{aParent}, mFieldName{aFieldName}, mDefault{std::move(aDefault)} {}
+        inline operator FValue() const { return std::get<rjson_type<FValue>>(get_ref()); }
+          // inline field_get_set<FValue>& operator = (FValue&& aValue) { mParent.set_field(mFieldName, to_value(aValue)); return *this; }
+        inline field_get_set<FValue>& operator = (const FValue& aValue) { mParent.set_field(mFieldName, to_value(aValue)); return *this; }
         inline field_get_set<FValue>& operator = (const field_get_set<FValue>& aSource) { return operator=(static_cast<FValue>(aSource)); }
 
-     protected:
-        inline value& get_ref() { return static_cast<value&>(mContainer).get_ref(mFieldName, to_value(mDefault)); }
-        inline const value& get_ref() const { return static_cast<value&>(mContainer).get_ref(mFieldName, to_value(mDefault)); }
-        using rjson_type = typename content_type<FValue>::type;
-        inline rjson_type& get_value_ref() { return std::get<rjson_type>(get_ref()); }
-        inline const rjson_type& get_value_ref() const { return std::get<rjson_type>(get_ref()); }
-
      private:
-        field_container& mContainer;
+        field_container_parent& mParent;
         std::string mFieldName;
         FValue mDefault;
-    };
+
+        // inline value& get_ref() { return mParent.get_ref(mFieldName, to_value(mDefault)); }
+        inline const value& get_ref() const { return mParent.get_ref(mFieldName, to_value(mDefault)); }
+        // inline rjson_type<FValue>& get_value_ref() { return std::get<rjson_type<FValue>>(get_ref()); }
+        inline const rjson_type<FValue>& get_value_ref() const { return std::get<rjson_type<FValue>>(get_ref()); }
+
+    }; // class field_get_set<>
 
       // ----------------------------------------------------------------------
       // Color
@@ -83,11 +137,6 @@ namespace rjson
     template <> inline value to_value<Size>(const Size& aSize)
     {
         return array{number{aSize.width}, number{aSize.height}};
-
-        // array result;
-        // result.insert(number{aSize.width});
-        // result.insert(number{aSize.height});
-        // return result;
     }
 
 } // namespace rjson
