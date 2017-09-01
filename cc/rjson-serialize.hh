@@ -70,20 +70,55 @@ namespace rjson
     template <typename Element> class array_field_container_child
     {
      public:
+        class iterator
+        {
+         public:
+            inline iterator& operator++() { ++iter; return *this;}
+            inline iterator operator++(int) { iterator retval = *this; ++(*this); return retval;}
+            inline bool operator==(iterator other) const { return iter == other.iter; }
+            inline bool operator!=(iterator other) const { return !(*this == other); }
+            inline Element operator*() { return Element{*iter}; }
+
+            using difference_type = array::iterator::difference_type;
+            using value_type = Element;
+            using pointer = Element*;
+            using reference = Element&;
+            using iterator_category = array::iterator::iterator_category;
+
+         private:
+            array::iterator iter;
+            inline iterator(array::iterator aIter) : iter(aIter) {}
+
+            friend class array_field_container_child<Element>;
+        };
+
         inline array_field_container_child(field_container_parent& aParent, std::string aFieldName)
             : mParent{aParent}, mFieldName{aFieldName} {}
 
         inline array& get_ref_to_array() { return std::get<array>(mParent.get_ref(mFieldName, array{})); }
         inline const array& get_ref_to_array() const { return std::get<array>(mParent.get_ref(mFieldName, array{})); }
         inline size_t size() const { return get_ref_to_array().size(); }
-        inline auto begin() const { return get_ref_to_array().begin(); }
-        inline auto end() const { return get_ref_to_array().end(); }
+        inline iterator begin() const { return get_ref_to_array().begin(); }
+        inline iterator end() const { return get_ref_to_array().end(); }
 
      private:
         field_container_parent& mParent;
         std::string mFieldName;
 
     }; // class array_field_container_child<>
+
+    class array_field_container_child_element
+    {
+     public:
+        inline array_field_container_child_element(const value& aData) : mData{aData} {}
+
+     protected:
+        // inline const value& get_ref(std::string aFieldName, value&& aDefault) const { return mData.get_ref(aFieldName, std::forward<value>(aDefault)); }
+        // inline const object& get_ref_to_object(std::string aFieldName) const { return mData.get_ref_to_object(aFieldName); }
+
+     private:
+        const value& mData;
+    };
 
       // ----------------------------------------------------------------------
 

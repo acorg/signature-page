@@ -69,12 +69,14 @@ class TreeDrawVaccineSettings
 
 // ----------------------------------------------------------------------
 
-class TreeDrawMod : public rjson::field_container_child
+class TreeDrawMod : public rjson::array_field_container_child_element
 {
  public:
-    TreeDrawMod(std::string aMod = std::string{});
-    TreeDrawMod(std::string aMod, double aD1);
-    TreeDrawMod(std::string aMod, std::string aS1, std::string aS2 = std::string{});
+    using rjson::array_field_container_child_element::array_field_container_child_element;
+
+    // TreeDrawMod(std::string aMod = std::string{});
+    // TreeDrawMod(std::string aMod, double aD1);
+    // TreeDrawMod(std::string aMod, std::string aS1, std::string aS2 = std::string{});
 
     rjson::field_get_set<std::string> mod;            // root, hide_isolated_before, hide_if_cumulative_edge_length_bigger_than, hide_between, before2015-58P-or-146I-or-559I
     rjson::field_get_set<double> d1;                  // depends on mod
@@ -85,6 +87,8 @@ class TreeDrawMod : public rjson::field_container_child
 
 class TreeDrawMods : public rjson::array_field_container_child<TreeDrawMod>
 {
+ public:
+    using rjson::array_field_container_child<TreeDrawMod>::array_field_container_child;
 };
 
 
@@ -141,7 +145,7 @@ class TreeDrawSettings : public rjson::field_container_child
 
     rjson::field_get_set<Tree::LadderizeMethod> ladderize;
     rjson::field_get_set<std::string> ladderize_help;
-    std::vector<TreeDrawMod> mods; // $$
+    TreeDrawMods mods; // $$
     rjson::field_get_set<std::vector<std::string>> mods_help;
     rjson::field_get_set<bool> force_line_width;
     rjson::field_get_set<double> line_width;
