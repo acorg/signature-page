@@ -139,9 +139,9 @@ namespace rjson
         try {
             const auto& obj = get_value_ref(); // std::get<object>(get_ref());
             TextStyle style;
-            style.font_family(obj.get_field("family", std::string{}));
-            style.slant(obj.get_field("slant", std::string{"normal"}));
-            style.weight(obj.get_field("weight", std::string{"normal"}));
+            try { style.font_family(obj.get_field<std::string>("family")); } catch (object::field_not_found&) {}
+            try { style.slant(obj.get_field<std::string>("slant")); } catch (object::field_not_found&) {}
+            try { style.weight(obj.get_field<std::string>("weight")); } catch (object::field_not_found&) {}
             return style;
         }
         catch (std::exception& /*err*/) {
