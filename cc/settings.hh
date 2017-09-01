@@ -1,7 +1,5 @@
 #pragma once
 
-#include "acmacs-base/rjson.hh"
-
 #include "signature-page.hh"
 #include "tree-draw.hh"
 #include "time-series-draw.hh"
@@ -9,6 +7,7 @@
 #include "mapped-antigens-draw.hh"
 #include "antigenic-maps-draw.hh"
 #include "title-draw.hh"
+#include "rjson-serialize.hh"
 
 // ----------------------------------------------------------------------
 

@@ -105,7 +105,7 @@ void sdb::DrawVaccineAntigen::draw(Surface& aSurface, const sdb::Point& aPoint, 
 
 // ----------------------------------------------------------------------
 
-void sdb::DrawMarkedAntigen::draw(Surface& aSurface, const sdb::Point& aPoint, const sdb::PointStyle& /*aStyle*/, const DrawPointSettings& aSettings) const
+void sdb::DrawMarkedAntigen::draw(Surface& /*aSurface*/, const sdb::Point& /*aPoint*/, const sdb::PointStyle& /*aStyle*/, const DrawPointSettings& /*aSettings*/) const
 {
     // if (!aPoint.coordinates.isnan()) {
     //     aSurface.circle_filled(aPoint.coordinates, Pixels{mData.scale * aSettings.point_scale},
@@ -328,7 +328,7 @@ void sdb::AntigenicMapsLayoutDraw::draw_map_title(Surface& aSurface, size_t aSec
 
 // ----------------------------------------------------------------------
 
-void sdb::AntigenicMapsLayoutDraw::mark_tracked_antigens(size_t aSectionIndex, const DrawPointSettings& aSettings)
+void sdb::AntigenicMapsLayoutDraw::mark_tracked_antigens(size_t aSectionIndex, const DrawPointSettings& /*aSettings*/)
 {
     auto& chart = dynamic_cast<sdb::AntigenicMapsDraw&>(antigenic_maps_draw()).chart_sdb();
     for (size_t point_no = 0; point_no < chart.points().size(); ++point_no) {

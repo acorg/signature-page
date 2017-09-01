@@ -2,9 +2,9 @@
 
 #include <memory>
 
-#include "acmacs-base/rjson.hh"
 #include "antigenic-maps-draw.hh"
 #include "chart-draw.hh"
+#include "rjson-serialize.hh"
 
 // ----------------------------------------------------------------------
 

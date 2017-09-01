@@ -121,13 +121,13 @@ namespace sdb
     class DrawMarkedAntigen : public DrawAntigen
     {
      public:
-        inline DrawMarkedAntigen(const MarkAntigenSettings& aData) : mData(aData) {}
+        inline DrawMarkedAntigen(const MarkAntigenSettings& /*aData*/) {} // : mData(aData) {}
 
         virtual void draw(Surface& aSurface, const sdb::Point& aPoint, const sdb::PointStyle& aStyle, const DrawPointSettings& aSettings) const;
         virtual inline size_t level() const { return 7; }
 
      private:
-        MarkAntigenSettings mData;
+          // MarkAntigenSettings mData;
     };
 
 // ----------------------------------------------------------------------

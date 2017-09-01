@@ -3,7 +3,7 @@
 #include <iostream>
 
 #include "acmacs-draw/surface.hh"
-#include "settings-rjson.hh"
+#include "rjson-serialize.hh"
 
 // ----------------------------------------------------------------------
 
