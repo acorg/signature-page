@@ -160,6 +160,34 @@ namespace rjson
         };
     }
 
+      // ----------------------------------------------------------------------
+      // std::vector<std::string>
+      // ----------------------------------------------------------------------
+
+    template <> struct content_type<std::vector<std::string>> { using type = array; };
+
+    template <> inline field_get_set<std::vector<std::string>>::operator std::vector<std::string>() const
+    {
+        try {
+            const auto& ar = get_value_ref();
+            std::vector<std::string> result{ar.size()};
+            std::transform(ar.begin(), ar.end(), result.begin(), [](const rjson::value& elt) -> std::string { return std::get<rjson::string>(elt); });
+            return result;
+        }
+        catch (std::exception& /*err*/) {
+            std::cerr << "ERROR: cannot convert json to std::vector<std::string>: " << get_ref() << '\n';
+            return {};
+        }
+    }
+
+    template <> inline value to_value<std::vector<std::string>>(const std::vector<std::string>& aData)
+    {
+        array ar;
+        for (const auto& elt: aData)
+            ar.insert(string{elt});
+        return ar;
+    }
+
 } // namespace rjson
 
 // ----------------------------------------------------------------------

@@ -230,6 +230,11 @@ TreeDrawSettings::TreeDrawSettings(rjson::field_container_parent& aParent, std::
       ladderize(*this, "ladderize", Tree::LadderizeMethod::NumberOfLeaves),
       ladderize_help(*this, "ladderize?", "number-of-leaves or max-edge-length"),
         //mods(*this, "mods", ),
+      mods_help(*this, "mods?", {"mods is a list of objects:", "{mod: root, s1: new-root}", "{mod: hide-isolated-before, s1: date}",
+                      "{mod: hide-if-cumulative-edge-length-bigger-than, d1: cumulative-length-threshold}", "{mod: before2015-58P-or-146I-or-559I}",
+                      "{mod: hide-between, s1: first-name-to-hide, s2: last-name-to-hide} - after ladderizing", "{mod: hide-one, s1: name-to-hide} - after ladderizing",
+                      "{mod: mark-with-line, s1: name-to-mark, s2: color-to-mark, d1: line-width-in-pixels}"
+          }),
       force_line_width(*this, "force_line_width", false),
       line_width(*this, "line_width", 1),
       root_edge(*this, "root_edge", 0),
@@ -941,14 +946,14 @@ template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writ
 
                   << jsw::key("ladderize?") << aSettings.ladderize_help // "number-of-leaves, max-edge-length"
                   << jsw::key("ladderize") << ladderize_to_string(aSettings)
-                  << jsw::key("mods 1?") << "mods is a list of objects:"
-                  << jsw::key("mods 2?") << "{mod: root, s1: new-root}"
-                  << jsw::key("mods 3?") << "{mod: hide-isolated-before, s1: date}"
-                  << jsw::key("mods 4?") << "{mod: hide-if-cumulative-edge-length-bigger-than, d1: cumulative-length-threshold}"
-                  << jsw::key("mods 5?") << "{mod: before2015-58P-or-146I-or-559I}"
-                  << jsw::key("mods 6?") << "{mod: hide-between, s1: first-name-to-hide, s2: last-name-to-hide} - after ladderizing"
-                  << jsw::key("mods 7?") << "{mod: hide-one, s1: name-to-hide} - after ladderizing"
-                  << jsw::key("mods 8?") << "{mod: mark-with-line, s1: name-to-mark, s2: color-to-mark, d1: line-width-in-pixels}"
+                  // << jsw::key("mods 1?") << "mods is a list of objects:"
+                  // << jsw::key("mods 2?") << "{mod: root, s1: new-root}"
+                  // << jsw::key("mods 3?") << "{mod: hide-isolated-before, s1: date}"
+                  // << jsw::key("mods 4?") << "{mod: hide-if-cumulative-edge-length-bigger-than, d1: cumulative-length-threshold}"
+                  // << jsw::key("mods 5?") << "{mod: before2015-58P-or-146I-or-559I}"
+                  // << jsw::key("mods 6?") << "{mod: hide-between, s1: first-name-to-hide, s2: last-name-to-hide} - after ladderizing"
+                  // << jsw::key("mods 7?") << "{mod: hide-one, s1: name-to-hide} - after ladderizing"
+                  // << jsw::key("mods 8?") << "{mod: mark-with-line, s1: name-to-mark, s2: color-to-mark, d1: line-width-in-pixels}"
                   << jsw::key("mods") << aSettings.mods
                   << jsw::key("mods?") << aSettings.mods_help
               // v2 << jsw::key("root") << aSettings.root

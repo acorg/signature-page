@@ -137,7 +137,7 @@ class TreeDrawSettings : public rjson::field_container_child
     rjson::field_get_set<Tree::LadderizeMethod> ladderize;
     rjson::field_get_set<std::string> ladderize_help;
     std::vector<TreeDrawMod> mods; // $$
-    std::vector<std::string> mods_help; // $$
+    rjson::field_get_set<std::vector<std::string>> mods_help; // $$
     rjson::field_get_set<bool> force_line_width;
     rjson::field_get_set<double> line_width;
     rjson::field_get_set<double> root_edge;
