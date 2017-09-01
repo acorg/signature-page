@@ -82,39 +82,40 @@ void TreeDraw::prepare(const LocDb& aLocDb)
 bool TreeDraw::apply_mods()
 {
     for (const auto& mod: mSettings.mods) {
-        if (mod.mod == "root") {
-            std::cout << "TREE-mod: " << mod.mod << " " << mod.s1 << std::endl;
+        const auto mod_mod = static_cast<std::string>(mod.mod);
+        if (mod_mod == "root") {
+            std::cout << "TREE-mod: " << mod_mod << " " << mod.s1 << std::endl;
             mTree.re_root(mod.s1);
         }
-        else if (mod.mod == "hide-isolated-before") {
-            std::cout << "TREE-mod: " << mod.mod << " " << mod.s1 << std::endl;
+        else if (mod_mod == "hide-isolated-before") {
+            std::cout << "TREE-mod: " << mod_mod << " " << mod.s1 << std::endl;
             hide_isolated_before(mod.s1);
         }
-        else if (mod.mod == "hide-if-cumulative-edge-length-bigger-than") {
-            std::cout << "TREE-mod: " << mod.mod << " " << mod.d1 << std::endl;
+        else if (mod_mod == "hide-if-cumulative-edge-length-bigger-than") {
+            std::cout << "TREE-mod: " << mod_mod << " " << mod.d1 << std::endl;
             hide_if_cumulative_edge_length_bigger_than(mod.d1);
         }
-        else if (mod.mod == "before2015-58P-or-146I-or-559I") {
-            std::cout << "TREE-mod: " << mod.mod << std::endl;
+        else if (mod_mod == "before2015-58P-or-146I-or-559I") {
+            std::cout << "TREE-mod: " << mod_mod << std::endl;
             hide_before2015_58P_or_146I_or_559I();
         }
-        else if (mod.mod == "hide-between") {
-            std::cout << "TREE-mod: " << mod.mod << " \"" << mod.s1 << "\" \"" << mod.s2 << "\"" << std::endl;
+        else if (mod_mod == "hide-between") {
+            std::cout << "TREE-mod: " << mod_mod << " \"" << mod.s1 << "\" \"" << mod.s2 << "\"" << std::endl;
             hide_between(mod.s1, mod.s2);
         }
-        else if (mod.mod == "hide-one") {
-            std::cout << "TREE-mod: " << mod.mod << " \"" << mod.s1 << "\"" << std::endl;
+        else if (mod_mod == "hide-one") {
+            std::cout << "TREE-mod: " << mod_mod << " \"" << mod.s1 << "\"" << std::endl;
             hide_one(mod.s1);
         }
-        else if (mod.mod == "mark-with-line") {
-            std::cout << "TREE-mod: " << mod.mod << " \"" << mod.s1 << "\" \"" << mod.s2 << "\" " << mod.d1 << std::endl;
-            mark_with_line(mod.s1, mod.s2, Pixels{mod.d1});
+        else if (mod_mod == "mark-with-line") {
+            std::cout << "TREE-mod: " << mod_mod << " \"" << mod.s1 << "\" \"" << mod.s2 << "\" " << mod.d1 << std::endl;
+            mark_with_line(mod.s1, static_cast<std::string>(mod.s2), Pixels{mod.d1});
         }
-        else if (mod.mod.empty() || mod.mod[0] == '?') {
+        else if (mod_mod.empty() || mod_mod[0] == '?') {
               // commented out mod
         }
         else
-            throw std::runtime_error("Unrecognized tree mod: " + mod.mod);
+            throw std::runtime_error("Unrecognized tree mod: " + mod_mod);
     }
     return !mSettings.mods.empty();
 

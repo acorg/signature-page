@@ -98,6 +98,7 @@ namespace rjson
         inline array& get_ref_to_array() { return std::get<array>(mParent.get_ref(mFieldName, array{})); }
         inline const array& get_ref_to_array() const { return std::get<array>(mParent.get_ref(mFieldName, array{})); }
         inline size_t size() const { return get_ref_to_array().size(); }
+        inline bool empty() const { return get_ref_to_array().empty(); }
         inline iterator begin() const { return get_ref_to_array().begin(); }
         inline iterator end() const { return get_ref_to_array().end(); }
 
@@ -107,14 +108,15 @@ namespace rjson
 
     }; // class array_field_container_child<>
 
-    class array_field_container_child_element
+    class array_field_container_child_element : public field_container_parent
     {
      public:
         inline array_field_container_child_element(const value& aData) : mData{aData} {}
 
-     protected:
-        // inline const value& get_ref(std::string aFieldName, value&& aDefault) const { return mData.get_ref(aFieldName, std::forward<value>(aDefault)); }
-        // inline const object& get_ref_to_object(std::string aFieldName) const { return mData.get_ref_to_object(aFieldName); }
+        inline value& get_ref(std::string aFieldName, value&& aDefault) override { return const_cast<value&>(mData).get_ref(aFieldName, std::forward<value>(aDefault)); }
+        inline const value& get_ref(std::string aFieldName, value&& aDefault) const override { return const_cast<value&>(mData).get_ref(aFieldName, std::forward<value>(aDefault)); }
+        inline object& get_ref_to_object(std::string aFieldName) override { return const_cast<value&>(mData).get_ref_to_object(aFieldName); }
+        inline void set_field(std::string /*aFieldName*/, value&& /*aValue*/) override { throw std::runtime_error{"no array_field_container_child_element::set_field"}; }
 
      private:
         const value& mData;
@@ -132,6 +134,7 @@ namespace rjson
         inline field_get_set<FValue>& operator = (const field_get_set<FValue>& aSource) { return operator=(static_cast<FValue>(aSource)); }
 
         inline const rjson_type<FValue>& get_value_ref() const { return std::get<rjson_type<FValue>>(get_ref()); }
+        inline bool empty() const { return static_cast<FValue>(*this).empty(); }
 
      private:
         field_container_parent& mParent;

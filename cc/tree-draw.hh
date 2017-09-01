@@ -72,11 +72,13 @@ class TreeDrawVaccineSettings
 class TreeDrawMod : public rjson::array_field_container_child_element
 {
  public:
-    using rjson::array_field_container_child_element::array_field_container_child_element;
-
-    // TreeDrawMod(std::string aMod = std::string{});
-    // TreeDrawMod(std::string aMod, double aD1);
-    // TreeDrawMod(std::string aMod, std::string aS1, std::string aS2 = std::string{});
+    inline TreeDrawMod(const rjson::value& aData)
+        : rjson::array_field_container_child_element(aData),
+          mod(*this, "mod", std::string{}),
+          d1(*this,  "d1", -1.0),
+          s1(*this,  "s1", std::string{}),
+          s2(*this,  "s2", std::string{})
+        {}
 
     rjson::field_get_set<std::string> mod;            // root, hide_isolated_before, hide_if_cumulative_edge_length_bigger_than, hide_between, before2015-58P-or-146I-or-559I
     rjson::field_get_set<double> d1;                  // depends on mod
@@ -145,7 +147,7 @@ class TreeDrawSettings : public rjson::field_container_child
 
     rjson::field_get_set<Tree::LadderizeMethod> ladderize;
     rjson::field_get_set<std::string> ladderize_help;
-    TreeDrawMods mods; // $$
+    TreeDrawMods mods; // $$ test for proper mods reading
     rjson::field_get_set<std::vector<std::string>> mods_help;
     rjson::field_get_set<bool> force_line_width;
     rjson::field_get_set<double> line_width;

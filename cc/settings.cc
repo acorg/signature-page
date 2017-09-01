@@ -48,20 +48,20 @@ LegendSettings::LegendSettings(rjson::field_container_parent& aParent, std::stri
 {
 }
 
-TreeDrawMod::TreeDrawMod(std::string aMod)
-    : mod(aMod), d1(-1)
-{
-}
+// TreeDrawMod::TreeDrawMod(std::string aMod)
+//     : mod(aMod), d1(-1)
+// {
+// }
 
-TreeDrawMod::TreeDrawMod(std::string aMod, double aD1)
-    : mod(aMod), d1(aD1)
-{
-}
+// TreeDrawMod::TreeDrawMod(std::string aMod, double aD1)
+//     : mod(aMod), d1(aD1)
+// {
+// }
 
-TreeDrawMod::TreeDrawMod(std::string aMod, std::string aS1, std::string aS2)
-    : mod(aMod), d1(-1), s1(aS1), s2(aS2)
-{
-}
+// TreeDrawMod::TreeDrawMod(std::string aMod, std::string aS1, std::string aS2)
+//     : mod(aMod), d1(-1), s1(aS1), s2(aS2)
+// {
+// }
 
 HzSection::HzSection(std::string aName, bool aShowLine)
     : show(true), show_line(aShowLine), show_label_in_time_series(true), show_map(true), name(aName), first(nullptr), last(nullptr), index(1, '?')
@@ -938,6 +938,25 @@ template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writ
 inline std::string ladderize_to_string(const TreeDrawSettings& aSettings)
 {
     return aSettings.ladderize.get_value_ref();
+}
+
+// template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const TreeDrawMod& aMods)
+// {
+//     writer.StartObject();
+//     for (const auto& e: aMods)
+//         writer << e;
+//     writer.EndArray();
+//     return writer;
+// }
+
+template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const TreeDrawMods& aMods)
+{
+    return jsw::write_list(writer, aMods);
+    // writer.StartArray();
+    // for (const auto& e: aMods)
+    //     writer << e;
+    // writer.EndArray();
+    // return writer;
 }
 
 template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const TreeDrawSettings& aSettings)
