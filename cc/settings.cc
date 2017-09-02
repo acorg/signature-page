@@ -179,53 +179,45 @@ MappedAntigensDrawSettings::MappedAntigensDrawSettings(rjson::field_container_pa
 {
 }
 
-// MarkAntigenSettings::MarkAntigenSettings(bool aShow, std::string aName)
-//     : show(aShow), name(aName), label(aName), scale(15), aspect(1), rotation(0), outline_width(1), label_line_width(0.1),
-//     fill_color("red"), outline_color("white"),
-//     label_color("black"), label_line_color("transparent"), label_offset{-0.5, 0.5}, label_size(9)
-// {
-// }
-
 // ----------------------------------------------------------------------
 
-// AntigenicMapMod::AntigenicMapMod()
-// {
-// } // AntigenicMapMod::AntigenicMapMod
-
-// AntigenicMapMod::~AntigenicMapMod()
-// {
-// } // AntigenicMapMod::~AntigenicMapMod
-
-AntigenicMapsDrawSettings::AntigenicMapsDrawSettings()
-    : layout("labelled_grid"), columns(3), gap(20),
-      mapped_antigens_section_line_color("black"), mapped_antigens_section_line_width(1)
+AntigenicMapsDrawSettings::AntigenicMapsDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
+    : rjson::field_container_child(aParent, aFieldName),
+      layout(*this, "layout", "labelled_grid"),
+      columns(*this, "columns", 3),
+      gap(*this, "gap", 20),
+      mapped_antigens_section_line_color(*this, "mapped_antigens_section_line_color", "black"),
+      mapped_antigens_section_line_width(*this, "mapped_antigens_section_line_width", 1),
+      mods(*this, "mods")
 {
-    using namespace std::string_literals;
-    mods.push_back(AntigenicMapMod{{"N", "viewport"s}, {"viewport", SettingList{0.0, 0.0, 0.0}}});
-    mods.push_back(AntigenicMapMod{{"N", "point_scale"s}, {"scale", 1.0}, {"outline_scale"s, 1.0}});
-    mods.push_back(AntigenicMapMod{{"N", "rotate_degrees"s}, {"angle", 0.0}});
-    mods.push_back(AntigenicMapMod{{"N", "sera"s}, {"outline", "grey88"s}, {"outline_width", 0.5}, {"size", 5.0}});
-    mods.push_back(AntigenicMapMod{{"N", "reference_antigens"s}, {"fill", "transparent"s}, {"outline", "grey88"s}, {"outline_width", 0.5}, {"size", 5.0}});
-    mods.push_back(AntigenicMapMod{{"N", "test_antigens"s}, {"fill", "grey88"s}, {"outline", "grey88"s}, {"outline_width", 0.5}, {"size", 3.0}});
-    mods.push_back(AntigenicMapMod{{"N", "sequenced_antigens"s}, {"fill", "grey63"s}, {"outline", "white"s}, {"outline_width", 0.5}, {"size", 3.0}});
-    mods.push_back(AntigenicMapMod{{"N", "tracked_antigens"s}, {"fill", "green3"s}, {"outline", "white"s}, {"outline_width", 0.5}, {"size", 5.0}});
-    mods.push_back(AntigenicMapMod{{"N", "tracked_sera"s}, {"fill", "transparent"s}, {"outline", "black"s}, {"outline_width", 0.5}, {"size", 5.0}}); // tracked sera above tracked antigens!
-    mods.push_back(AntigenicMapMod{{"N", "tracked_serum_circles"s}, {"outline", "black"s}, {"outline_width", 0.5}}); // tracked serum circles above tracked antigens!
-    mods.push_back(AntigenicMapMod{{"N", "vaccines"s}, {"mods", SettingList{
-        SettingDict{{"size", 15}},
-        SettingDict{{"outline", "white"s}, {"fill", "blue"s}},
-        SettingDict{{"type", "current"s}, {"fill", "red"s}},
-        SettingDict{{"type", "current"s}, {"passage", "reassortant"s}, {"fill", "green"s}},
-        SettingDict{{"type", "surrogate"s}, {"fill", "pink"s}},
-        SettingDict{{"name", "TEXAS"s}, {"?show", false}},
-        SettingDict{{"label", SettingDict{{"offset", SettingList{0, 1}}, {"color", "black"s}, {"weight", "normal"s}, {"slant", "normal"s},
-                                          {"font_family", "helvetica neu"s}, {"size", 9}, {"name_type", "abbreviated_location_with_passage_type"s}}}},
-    }}});
+      // $$
 
-    mods.push_back(AntigenicMapMod{{"N", "title"s}, {"text_color", "black"s}, {"text_size", 12.0}, {"padding", 3.0}, {"offset", SettingList{0.0, 0.0}}, {"weight", "normal"s}, {"slant", "normal"s}, {"font_family", "san serif"s}});
-    mods.push_back(AntigenicMapMod{{"N", "background"s}, {"color", "white"s}});
-    mods.push_back(AntigenicMapMod{{"N", "grid"s}, {"color", "grey80"s}, {"line_width", 1.0}});
-    mods.push_back(AntigenicMapMod{{"N", "border"s}, {"color", "black"s}, {"line_width", 1.0}});
+    // using namespace std::string_literals;
+    // mods.push_back(AntigenicMapMod{{"N", "viewport"s}, {"viewport", SettingList{0.0, 0.0, 0.0}}});
+    // mods.push_back(AntigenicMapMod{{"N", "point_scale"s}, {"scale", 1.0}, {"outline_scale"s, 1.0}});
+    // mods.push_back(AntigenicMapMod{{"N", "rotate_degrees"s}, {"angle", 0.0}});
+    // mods.push_back(AntigenicMapMod{{"N", "sera"s}, {"outline", "grey88"s}, {"outline_width", 0.5}, {"size", 5.0}});
+    // mods.push_back(AntigenicMapMod{{"N", "reference_antigens"s}, {"fill", "transparent"s}, {"outline", "grey88"s}, {"outline_width", 0.5}, {"size", 5.0}});
+    // mods.push_back(AntigenicMapMod{{"N", "test_antigens"s}, {"fill", "grey88"s}, {"outline", "grey88"s}, {"outline_width", 0.5}, {"size", 3.0}});
+    // mods.push_back(AntigenicMapMod{{"N", "sequenced_antigens"s}, {"fill", "grey63"s}, {"outline", "white"s}, {"outline_width", 0.5}, {"size", 3.0}});
+    // mods.push_back(AntigenicMapMod{{"N", "tracked_antigens"s}, {"fill", "green3"s}, {"outline", "white"s}, {"outline_width", 0.5}, {"size", 5.0}});
+    // mods.push_back(AntigenicMapMod{{"N", "tracked_sera"s}, {"fill", "transparent"s}, {"outline", "black"s}, {"outline_width", 0.5}, {"size", 5.0}}); // tracked sera above tracked antigens!
+    // mods.push_back(AntigenicMapMod{{"N", "tracked_serum_circles"s}, {"outline", "black"s}, {"outline_width", 0.5}}); // tracked serum circles above tracked antigens!
+    // mods.push_back(AntigenicMapMod{{"N", "vaccines"s}, {"mods", SettingList{
+    //     SettingDict{{"size", 15}},
+    //     SettingDict{{"outline", "white"s}, {"fill", "blue"s}},
+    //     SettingDict{{"type", "current"s}, {"fill", "red"s}},
+    //     SettingDict{{"type", "current"s}, {"passage", "reassortant"s}, {"fill", "green"s}},
+    //     SettingDict{{"type", "surrogate"s}, {"fill", "pink"s}},
+    //     SettingDict{{"name", "TEXAS"s}, {"?show", false}},
+    //     SettingDict{{"label", SettingDict{{"offset", SettingList{0, 1}}, {"color", "black"s}, {"weight", "normal"s}, {"slant", "normal"s},
+    //                                       {"font_family", "helvetica neu"s}, {"size", 9}, {"name_type", "abbreviated_location_with_passage_type"s}}}},
+    // }}});
+
+    // mods.push_back(AntigenicMapMod{{"N", "title"s}, {"text_color", "black"s}, {"text_size", 12.0}, {"padding", 3.0}, {"offset", SettingList{0.0, 0.0}}, {"weight", "normal"s}, {"slant", "normal"s}, {"font_family", "san serif"s}});
+    // mods.push_back(AntigenicMapMod{{"N", "background"s}, {"color", "white"s}});
+    // mods.push_back(AntigenicMapMod{{"N", "grid"s}, {"color", "grey80"s}, {"line_width", 1.0}});
+    // mods.push_back(AntigenicMapMod{{"N", "border"s}, {"color", "black"s}, {"line_width", 1.0}});
 }
 
 //       vaccine_antigen_scale(15),
@@ -252,10 +244,6 @@ AntigenicMapsDrawSettings::AntigenicMapsDrawSettings()
 //       _width(0)
 // {
 // }
-
-AntigenicMapsDrawSettings::~AntigenicMapsDrawSettings()
-{
-}
 
 void AntigenicMapsDrawSettings::viewport(const Viewport& aViewport)
 {
@@ -340,9 +328,8 @@ Settings::Settings()
       time_series(*this, "time_series"),
       clades(*this, "clades"),
       hz_sections(*this, "hz_sections"),
-      mapped_antigens(*this, "mapped_antigens")
-    // antigenic_maps(*this, "antigenic_maps")
-        // $$
+      mapped_antigens(*this, "mapped_antigens"),
+      antigenic_maps(*this, "antigenic_maps")
 {
 
 } // Settings::Settings

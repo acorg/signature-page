@@ -10,6 +10,7 @@
 
 #include "acmacs-base/transformation.hh"
 #include "acmacs-draw/surface.hh"
+#include "rjson-serialize.hh"
 
 // ----------------------------------------------------------------------
 
@@ -68,175 +69,172 @@ AntigenicMapsDrawBase* make_antigenic_maps_draw(std::string aChartFilename, Surf
 
 // ----------------------------------------------------------------------
 
-class SettingDict;
-class SettingList;
+// class SettingDict;
+// class SettingList;
 
-using SettingValue = boost::variant<std::string, double, int, bool, SettingDict, SettingList>;
+// using SettingValue = boost::variant<std::string, double, int, bool, SettingDict, SettingList>;
 
-using SettingListBase = std::vector<SettingValue>;
-using SettingDictBase = std::map<std::string, SettingValue>;
+// using SettingListBase = std::vector<SettingValue>;
+// using SettingDictBase = std::map<std::string, SettingValue>;
 
-class SettingList : public SettingListBase
-{
- public:
-    SettingList();
-    SettingList(std::initializer_list<SettingValue> init);
-};
+// class SettingList : public SettingListBase
+// {
+//  public:
+//     SettingList();
+//     SettingList(std::initializer_list<SettingValue> init);
+// };
 
-class SettingDict : public SettingDictBase
-{
- public:
-    SettingDict();
-    SettingDict(std::initializer_list<SettingDictBase::value_type> init);
+// class SettingDict : public SettingDictBase
+// {
+//  public:
+//     SettingDict();
+//     SettingDict(std::initializer_list<SettingDictBase::value_type> init);
 
-    template <typename Value> Value get(std::string aName, Value aDefault) const;
-    std::string get(std::string aName, const char* aDefault) const;
-    Location get(std::string aName, const Location& aDefault) const;
-    Viewport get_viewport() const;
-    const SettingList& get_mods() const;
-};
+//     template <typename Value> Value get(std::string aName, Value aDefault) const;
+//     std::string get(std::string aName, const char* aDefault) const;
+//     Location get(std::string aName, const Location& aDefault) const;
+//     Viewport get_viewport() const;
+//     const SettingList& get_mods() const;
+// };
 
-inline SettingList::SettingList() {}
-inline SettingList::SettingList(std::initializer_list<SettingValue> init) : SettingListBase(init) {}
-inline SettingDict::SettingDict() {}
-inline SettingDict::SettingDict(std::initializer_list<SettingDictBase::value_type> init) : SettingDictBase(init) {}
+// inline SettingList::SettingList() {}
+// inline SettingList::SettingList(std::initializer_list<SettingValue> init) : SettingListBase(init) {}
+// inline SettingDict::SettingDict() {}
+// inline SettingDict::SettingDict(std::initializer_list<SettingDictBase::value_type> init) : SettingDictBase(init) {}
 
-template <typename Value> inline const Value& SettingValue_get(const SettingValue& aValue, const Value& aDefault)
-{
-    const Value* value = boost::get<Value>(&aValue);
-    if (value)
-        return *value;
-    return aDefault;
-}
+// template <typename Value> inline const Value& SettingValue_get(const SettingValue& aValue, const Value& aDefault)
+// {
+//     const Value* value = boost::get<Value>(&aValue);
+//     if (value)
+//         return *value;
+//     return aDefault;
+// }
 
-inline double SettingValue_get(const SettingValue& aValue, double aDefault)
-{
-    double result = aDefault;
-    const double* dvalue = boost::get<double>(&aValue);
-    if (dvalue) {
-        result = *dvalue;
-    }
-    else {
-        const int* ivalue = boost::get<int>(&aValue);
-        if (ivalue)
-            result = static_cast<double>(*ivalue);
-    }
-    return result;
-}
+// inline double SettingValue_get(const SettingValue& aValue, double aDefault)
+// {
+//     double result = aDefault;
+//     const double* dvalue = boost::get<double>(&aValue);
+//     if (dvalue) {
+//         result = *dvalue;
+//     }
+//     else {
+//         const int* ivalue = boost::get<int>(&aValue);
+//         if (ivalue)
+//             result = static_cast<double>(*ivalue);
+//     }
+//     return result;
+// }
 
-inline size_t SettingValue_get(const SettingValue& aValue, size_t aDefault)
-{
-    const int* ivalue = boost::get<int>(&aValue);
-    if (ivalue)
-        return static_cast<size_t>(*ivalue);
-    else
-        return aDefault;
-}
+// inline size_t SettingValue_get(const SettingValue& aValue, size_t aDefault)
+// {
+//     const int* ivalue = boost::get<int>(&aValue);
+//     if (ivalue)
+//         return static_cast<size_t>(*ivalue);
+//     else
+//         return aDefault;
+// }
 
-inline bool SettingValue_get(const SettingValue& aValue, bool aDefault)
-{
-    bool result = aDefault;
-    const bool* bvalue = boost::get<bool>(&aValue);
-    if (bvalue) {
-        result = *bvalue;
-    }
-    else {
-        const int* ivalue = boost::get<int>(&aValue);
-        if (ivalue)
-            result = *ivalue;
-    }
-    return result;
-}
+// inline bool SettingValue_get(const SettingValue& aValue, bool aDefault)
+// {
+//     bool result = aDefault;
+//     const bool* bvalue = boost::get<bool>(&aValue);
+//     if (bvalue) {
+//         result = *bvalue;
+//     }
+//     else {
+//         const int* ivalue = boost::get<int>(&aValue);
+//         if (ivalue)
+//             result = *ivalue;
+//     }
+//     return result;
+// }
 
-template <typename Value> inline Value SettingDict::get(std::string aName, Value aDefault) const
-{
-    const auto found = find(aName);
-    if (found != end()) {
-        const auto* value = boost::get<Value>(&found->second);
-        if (value)
-            return *value;
-    }
-    return aDefault;
-}
+// template <typename Value> inline Value SettingDict::get(std::string aName, Value aDefault) const
+// {
+//     const auto found = find(aName);
+//     if (found != end()) {
+//         const auto* value = boost::get<Value>(&found->second);
+//         if (value)
+//             return *value;
+//     }
+//     return aDefault;
+// }
 
-inline std::string SettingDict::get(std::string aName, const char* aDefault) const
-{
-    return get(aName, std::string{aDefault});
-}
+// inline std::string SettingDict::get(std::string aName, const char* aDefault) const
+// {
+//     return get(aName, std::string{aDefault});
+// }
 
-inline Location SettingDict::get(std::string aName, const Location& aDefault) const
-{
-    const auto found = find(aName);
-    if (found == end())
-        return aDefault;
-    const auto* list = boost::get<SettingList>(&found->second);
-    if (list && list->size() == 2 && std::all_of(list->begin(), list->end(), [](const auto& e) -> bool { return boost::get<double>(&e); }))
-        return {*boost::get<double>(&(*list)[0]), *boost::get<double>(&(*list)[1])};
-    else
-        return {};
-}
+// inline Location SettingDict::get(std::string aName, const Location& aDefault) const
+// {
+//     const auto found = find(aName);
+//     if (found == end())
+//         return aDefault;
+//     const auto* list = boost::get<SettingList>(&found->second);
+//     if (list && list->size() == 2 && std::all_of(list->begin(), list->end(), [](const auto& e) -> bool { return boost::get<double>(&e); }))
+//         return {*boost::get<double>(&(*list)[0]), *boost::get<double>(&(*list)[1])};
+//     else
+//         return {};
+// }
 
-inline Viewport SettingDict::get_viewport() const
-{
-    const auto found = find("viewport");
-    if (found == end())
-        return {};
-    const auto* list = boost::get<SettingList>(&found->second);
-    if (list && std::all_of(list->begin(), list->end(), [](const auto& e) -> bool { return boost::get<double>(&e); })) {
-        switch (list->size()) {
-          case 3:
-              return {*boost::get<double>(&(*list)[0]), *boost::get<double>(&(*list)[1]), *boost::get<double>(&(*list)[2])};
-          case 4:
-              return {*boost::get<double>(&(*list)[0]), *boost::get<double>(&(*list)[1]), *boost::get<double>(&(*list)[2]), *boost::get<double>(&(*list)[3])};
-        }
-    }
-    return {};
-}
+// inline Viewport SettingDict::get_viewport() const
+// {
+//     const auto found = find("viewport");
+//     if (found == end())
+//         return {};
+//     const auto* list = boost::get<SettingList>(&found->second);
+//     if (list && std::all_of(list->begin(), list->end(), [](const auto& e) -> bool { return boost::get<double>(&e); })) {
+//         switch (list->size()) {
+//           case 3:
+//               return {*boost::get<double>(&(*list)[0]), *boost::get<double>(&(*list)[1]), *boost::get<double>(&(*list)[2])};
+//           case 4:
+//               return {*boost::get<double>(&(*list)[0]), *boost::get<double>(&(*list)[1]), *boost::get<double>(&(*list)[2]), *boost::get<double>(&(*list)[3])};
+//         }
+//     }
+//     return {};
+// }
 
-inline const SettingList& SettingDict::get_mods() const
-{
-    const auto found = find("mods");
-    if (found != end()) {
-        const auto* list = boost::get<SettingList>(&found->second);
-        if (list)
-            return *list;
-    }
-#pragma GCC diagnostic push
-#ifdef __clang__
-#pragma GCC diagnostic ignored "-Wexit-time-destructors"
-#endif
-    static const SettingList empty;
-#pragma GCC diagnostic pop
-    return empty;
-}
+// inline const SettingList& SettingDict::get_mods() const
+// {
+//     const auto found = find("mods");
+//     if (found != end()) {
+//         const auto* list = boost::get<SettingList>(&found->second);
+//         if (list)
+//             return *list;
+//     }
+// #pragma GCC diagnostic push
+// #ifdef __clang__
+// #pragma GCC diagnostic ignored "-Wexit-time-destructors"
+// #endif
+//     static const SettingList empty;
+// #pragma GCC diagnostic pop
+//     return empty;
+// }
 
 // ----------------------------------------------------------------------
 
-class AntigenicMapMod : public SettingDict
+class AntigenicMapMod : public rjson::array_field_container_child_element // public SettingDict
 {
  public:
-    // AntigenicMapMod();
-    using SettingDict::SettingDict;
-    // ~AntigenicMapMod();
+    inline AntigenicMapMod(const rjson::value& aData) : rjson::array_field_container_child_element(aData) {}
 
-    inline std::string name() const { return get("N", std::string{}); }
+    // inline std::string name() const { return get("N", std::string{}); }
 
 }; // class AntigenicMapMod
 
-class AntigenicMapsDrawSettings
+class AntigenicMapsDrawSettings : public rjson::field_container_child
 {
  public:
-    AntigenicMapsDrawSettings();
-    ~AntigenicMapsDrawSettings();
+    AntigenicMapsDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName);
 
-    std::string layout;
-    size_t columns;
-    double gap;
-    Color mapped_antigens_section_line_color;
-    double mapped_antigens_section_line_width;
-    std::vector<AntigenicMapMod> mods;
+    rjson::field_get_set<std::string> layout;
+    rjson::field_get_set<size_t> columns;
+    rjson::field_get_set<double> gap;
+    rjson::field_get_set<Color> mapped_antigens_section_line_color;
+    rjson::field_get_set<double> mapped_antigens_section_line_width;
+    rjson::array_field_container_child<AntigenicMapMod> mods;
 
-    inline std::vector<AntigenicMapMod>& get_mods() { return mods; }
+    // inline std::vector<AntigenicMapMod>& get_mods() { return mods; }
     void viewport(const Viewport& aViewport);
 
 }; // class AntigenicMapsDrawSettings
