@@ -19,9 +19,15 @@ static constexpr const char* SETTINGS_VERSION_4 = "signature-page-settings-v4";
 
 // ----------------------------------------------------------------------
 
-AATransitionPerBranchDrawSettings::AATransitionPerBranchDrawSettings()
-    : size(8), color("black"), style("Courier New"), interline(1.2),
-      label_offset{-40, 20}, label_connection_line_width(0.1), label_connection_line_color("black")
+AATransitionPerBranchDrawSettings::AATransitionPerBranchDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
+    : rjson::field_container_child(aParent, aFieldName),
+      size(*this, "size", 8),
+      color(*this, "color", "black"),
+      style(*this, "style", {"Courier New"}),
+      interline(*this, "interline", 1.2),
+      label_offset(*this, "label_offset", {-40, 20}),
+      label_connection_line_width(*this, "label_connection_line_width", 0.1),
+      label_connection_line_color(*this, "label_connection_line_color", "black")
 {
 }
 
@@ -29,8 +35,9 @@ AATransitionDrawSettings::AATransitionDrawSettings(rjson::field_container_parent
     : rjson::field_container_child(aParent, aFieldName),
       show(*this, "show", true),
       number_strains_threshold(*this, "number_strains_threshold", 20),
+      number_strains_threshold_help(*this, "number_strains_threshold?", "do not show aa transition label if number_strains (leaf nodes) for the branch is less than this value"),
       show_empty_left(*this, "show_empty_left", false),
-      per_branch(),
+      per_branch(*this, "per_branch"),
       show_node_for_left_line(*this, "show_node_for_left_line", false),
       node_for_left_line_color(*this, "node_for_left_line_color", "green"),
       node_for_left_line_width(*this, "node_for_left_line_width", 1)
@@ -933,7 +940,7 @@ template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writ
     return writer << jsw::start_object
                   << jsw::key("show") << aSettings.show
                   << jsw::key("number_strains_threshold") << aSettings.number_strains_threshold
-                  << jsw::key("number_strains_threshold?") << "do not show aa transition label if number_strains (leaf nodes) for the branch is less than this value"
+                  << jsw::key("number_strains_threshold?") << aSettings.number_strains_threshold_help // "do not show aa transition label if number_strains (leaf nodes) for the branch is less than this value"
                   << jsw::key("show_empty_left") << aSettings.show_empty_left
                   << jsw::key("show_node_for_left_line") << aSettings.show_node_for_left_line
                   << jsw::key("node_for_left_line_color") << aSettings.node_for_left_line_color

@@ -19,18 +19,18 @@ class Coloring;
 
 // ----------------------------------------------------------------------
 
-class AATransitionPerBranchDrawSettings
+class AATransitionPerBranchDrawSettings : public rjson::field_container_child
 {
  public:
-    AATransitionPerBranchDrawSettings();
+    AATransitionPerBranchDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName);
 
-    double size;
-    Color color;
-    TextStyle style;
-    double interline;
-    Size label_offset;
-    double label_connection_line_width;
-    Color label_connection_line_color;
+    rjson::field_get_set<double> size;
+    rjson::field_get_set<Color> color;
+    rjson::field_get_set<TextStyle> style;
+    rjson::field_get_set<double> interline;
+    rjson::field_get_set<Size> label_offset;
+    rjson::field_get_set<double> label_connection_line_width;
+    rjson::field_get_set<Color> label_connection_line_color;
 
 }; // class AATransitionPerBranchDrawSettings
 
@@ -43,6 +43,7 @@ class AATransitionDrawSettings : public rjson::field_container_child
 
     rjson::field_get_set<bool> show;
     rjson::field_get_set<size_t> number_strains_threshold; // Do not show aa transition label if number_strains (leaf nodes) for the branch is less than this value.
+    rjson::field_get_set<std::string> number_strains_threshold_help;
     rjson::field_get_set<bool> show_empty_left;
     AATransitionPerBranchDrawSettings per_branch;
     rjson::field_get_set<bool> show_node_for_left_line;
