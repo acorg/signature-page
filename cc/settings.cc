@@ -170,15 +170,12 @@ HzSections::HzSections(rjson::field_container_parent& aParent, std::string aFiel
 {
 }
 
-MappedAntigensDrawSettings::MappedAntigensDrawSettings()
-    : width(10),
-line_width(0.5),
-line_color("grey56"),
-line_length(0.5)
-{
-}
-
-MappedAntigensDrawSettings::~MappedAntigensDrawSettings()
+MappedAntigensDrawSettings::MappedAntigensDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
+    : rjson::field_container_child(aParent, aFieldName),
+      width(*this, "width", 10),
+      line_width(*this, "line_width", 0.5),
+      line_color(*this, "line_color", "grey56"),
+      line_length(*this, "line_length", 0.5)
 {
 }
 
@@ -342,8 +339,8 @@ Settings::Settings()
       tree_draw(*this, "tree"),
       time_series(*this, "time_series"),
       clades(*this, "clades"),
-      hz_sections(*this, "hz_sections")
-    // mapped_antigens(*this, "mapped_antigens"),
+      hz_sections(*this, "hz_sections"),
+      mapped_antigens(*this, "mapped_antigens")
     // antigenic_maps(*this, "antigenic_maps")
         // $$
 {
