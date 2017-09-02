@@ -4,6 +4,7 @@
 
 #include "acmacs-draw/surface.hh"
 #include "acmacs-base/date.hh"
+#include "rjson-serialize.hh"
 
 // ----------------------------------------------------------------------
 
@@ -14,20 +15,20 @@ class HzSections;
 
 // ----------------------------------------------------------------------
 
-class TimeSeriesDrawSettings
+class TimeSeriesDrawSettings : public rjson::field_container_child
 {
  public:
-    TimeSeriesDrawSettings();
-    ~TimeSeriesDrawSettings();
+    TimeSeriesDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName);
 
-    std::string begin, end;
-    double label_size;
-    TextStyle label_style;
-    double month_year_to_timeseries_gap;
-    Color month_separator_color;
-    double month_separator_width;
-    double dash_width;
-    double dash_line_width;
+    rjson::field_get_set<std::string> begin;
+    rjson::field_get_set<std::string> end;
+    rjson::field_get_set<double> label_size;
+    rjson::field_get_set<TextStyle> label_style;
+    rjson::field_get_set<double> month_year_to_timeseries_gap;
+    rjson::field_get_set<Color> month_separator_color;
+    rjson::field_get_set<double> month_separator_width;
+    rjson::field_get_set<double> dash_width;
+    rjson::field_get_set<double> dash_line_width;
 
 }; // class TimeSeriesDrawSettings
 

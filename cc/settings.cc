@@ -68,20 +68,19 @@ LegendSettings::LegendSettings(rjson::field_container_parent& aParent, std::stri
 {
 }
 
-// TreeDrawMod::TreeDrawMod(std::string aMod)
-//     : mod(aMod), d1(-1)
-// {
-// }
-
-// TreeDrawMod::TreeDrawMod(std::string aMod, double aD1)
-//     : mod(aMod), d1(aD1)
-// {
-// }
-
-// TreeDrawMod::TreeDrawMod(std::string aMod, std::string aS1, std::string aS2)
-//     : mod(aMod), d1(-1), s1(aS1), s2(aS2)
-// {
-// }
+TimeSeriesDrawSettings::TimeSeriesDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
+    : rjson::field_container_child(aParent, aFieldName),
+      begin(*this, "begin", ""),
+      end(*this, "end", ""),
+      label_size(*this, "label_size", 8),
+      label_style(*this, "label_style", {}),
+      month_year_to_timeseries_gap(*this, "month_year_to_timeseries_gap", 2),
+      month_separator_color(*this, "month_separator_color", "black"),
+      month_separator_width(*this, "month_separator_width", 0.5),
+      dash_width(*this, "dash_width", 0.5),
+      dash_line_width(*this, "dash_line_width", 1)
+{
+}
 
 HzSection::HzSection(std::string aName, bool aShowLine)
     : show(true),
@@ -122,20 +121,6 @@ show_labels_in_time_series_in_tree_mode(false)
 }
 
 HzSections::~HzSections()
-{
-}
-
-TimeSeriesDrawSettings::TimeSeriesDrawSettings()
-    : label_size(8),
-month_year_to_timeseries_gap(2),
-month_separator_color("black"),
-      month_separator_width(0.5),
-dash_width(0.5),
-dash_line_width(1)
-{
-}
-
-TimeSeriesDrawSettings::~TimeSeriesDrawSettings()
 {
 }
 
@@ -344,9 +329,8 @@ SignaturePageDrawSettings::SignaturePageDrawSettings(rjson::field_container_pare
 Settings::Settings()
     : signature_page(*this, "signature_page"),
       title(*this, "title"),
-      tree_draw(*this, "tree")
-
-    // time_series(*this, "time_series"),
+      tree_draw(*this, "tree"),
+      time_series(*this, "time_series")
     // clades(*this, "clades"),
     // hz_sections(*this, "hz_sections"),
     // mapped_antigens(*this, "mapped_antigens"),
