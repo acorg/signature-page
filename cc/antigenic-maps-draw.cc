@@ -80,11 +80,11 @@ void AntigenicMapsDrawBase::draw(Surface& aMappedAntigensDrawSurface)
 void AntigenicMapsDrawBase::prepare()
 {
       // std::cerr << "DEBUG: AntigenicMapsDrawBase::prepare" << std::endl;
-    if (settings().layout == "labelled_grid") {
+    if (static_cast<std::string>(settings().layout) == "labelled_grid") {
         make_layout();
     }
     else {
-        throw std::runtime_error("Unrecognized antigenic maps layout: " + settings().layout);
+        throw std::runtime_error("Unrecognized antigenic maps layout: " + static_cast<std::string>(settings().layout));
     }
     layout().prepare();
 

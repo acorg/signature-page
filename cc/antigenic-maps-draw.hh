@@ -213,12 +213,35 @@ AntigenicMapsDrawBase* make_antigenic_maps_draw(std::string aChartFilename, Surf
 
 // ----------------------------------------------------------------------
 
-class AntigenicMapMod : public rjson::array_field_container_child_element // public SettingDict
+class AntigenicMapMod : public rjson::array_field_container_child_element
 {
  public:
     inline AntigenicMapMod(const rjson::value& aData) : rjson::array_field_container_child_element(aData) {}
 
-    // inline std::string name() const { return get("N", std::string{}); }
+    inline std::string name() const { return std::get<rjson::string>(get_ref("N", std::string{})); }
+    inline Color get_color(std::string aName, const char* aDefault) const { return static_cast<std::string>(std::get<rjson::string>(get_ref(aName, rjson::string{aDefault}))); }
+    inline double get(std::string aName, double aDefault) const { return std::get<rjson::number>(get_ref(aName, rjson::number{aDefault})); }
+    inline std::string get(std::string aName, const char* aDefault) const { return std::get<rjson::string>(get_ref(aName, rjson::string{aDefault})); }
+
+    inline Viewport get_viewport() const
+        {
+            try {
+                const auto& ar = std::get<rjson::array>(get_ref("viewport", rjson::array{rjson::number{0.0}, rjson::number{0.0}, rjson::number{0.0}}));
+                switch (ar.size()) {
+                  case 3:
+                      return {std::get<rjson::number>(ar[0]), std::get<rjson::number>(ar[1]), std::get<rjson::number>(ar[2])};
+                  case 4:
+                      return {std::get<rjson::number>(ar[0]), std::get<rjson::number>(ar[1]), std::get<rjson::number>(ar[2]), std::get<rjson::number>(ar[3])};
+                  default:
+                      throw std::exception{};
+                }
+            }
+            catch (std::exception&) {
+                std::cerr << "ERROR: cannot convert json to array (viewport): " << get_ref("viewport", rjson::array{}) << '\n';
+                throw;
+            }
+            return {};
+        }
 
 }; // class AntigenicMapMod
 

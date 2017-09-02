@@ -143,7 +143,7 @@ void sdb::AntigenicMapsLayoutDraw::prepare_apply_mods()
             chart.viewport(mod.get_viewport());
         }
         else if (name == "tracked_antigen") {
-            mDrawTrackedAntigen.color(mod.get("color", "green3"));
+            mDrawTrackedAntigen.color(mod.get_color("color", "green3"));
         }
     }
     chart.calculate_viewport();

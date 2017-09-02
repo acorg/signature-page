@@ -37,10 +37,10 @@ void AntigenicMapsLayoutDraw::apply_mods_before(Surface& aSurface)
     for (const auto& mod: settings().mods) {
         const std::string name = mod.name();
         if (name == "background") {
-            aSurface.background(mod.get("color", "black"));
+            aSurface.background(mod.get_color("color", "black"));
         }
         else if (name == "grid") {
-            aSurface.grid(Scaled{1}, mod.get("color", "grey80"), Pixels{mod.get("line_width", 1.0)});
+            aSurface.grid(Scaled{1}, mod.get_color("color", "grey80"), Pixels{mod.get("line_width", 1.0)});
         }
     }
 
@@ -53,7 +53,7 @@ void AntigenicMapsLayoutDraw::apply_mods_after(Surface& aSurface)
     for (const auto& mod: settings().mods) {
         const std::string name = mod.name();
         if (name == "border") {
-            aSurface.border(mod.get("color", "black"), Pixels{mod.get("line_width", 1.0)});
+            aSurface.border(mod.get_color("color", "black"), Pixels{mod.get("line_width", 1.0)});
         }
     }
 
