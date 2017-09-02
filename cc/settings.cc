@@ -25,14 +25,23 @@ AATransitionPerBranchDrawSettings::AATransitionPerBranchDrawSettings()
 {
 }
 
-AATransitionDrawSettings::AATransitionDrawSettings()
-    : show(true), number_strains_threshold(20), show_empty_left(false), show_node_for_left_line(false),
-      node_for_left_line_color("green"), node_for_left_line_width(1)
+AATransitionDrawSettings::AATransitionDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
+    : rjson::field_container_child(aParent, aFieldName),
+      show(*this, "show", true),
+      number_strains_threshold(*this, "number_strains_threshold", 20),
+      show_empty_left(*this, "show_empty_left", false),
+      per_branch(),
+      show_node_for_left_line(*this, "show_node_for_left_line", false),
+      node_for_left_line_color(*this, "node_for_left_line_color", "green"),
+      node_for_left_line_width(*this, "node_for_left_line_width", 1)
 {
 }
 
 TreeDrawVaccineSettings::TreeDrawVaccineSettings()
-    : label_color("black"), label_size(10), line_color("black"), line_width(1)
+    : label_color("black"),
+label_size(10),
+line_color("black"),
+line_width(1)
 {
 }
 
@@ -64,12 +73,26 @@ LegendSettings::LegendSettings(rjson::field_container_parent& aParent, std::stri
 // }
 
 HzSection::HzSection(std::string aName, bool aShowLine)
-    : show(true), show_line(aShowLine), show_label_in_time_series(true), show_map(true), name(aName), first(nullptr), last(nullptr), index(1, '?')
+    : show(true),
+show_line(aShowLine),
+show_label_in_time_series(true),
+show_map(true),
+name(aName),
+first(nullptr),
+last(nullptr),
+index(1, '?')
 {
 }
 
 HzSection::HzSection(const Node& aFirst, bool aShow, bool aShowLine, bool aShowMap)
-    : show(aShow), show_line(aShowLine), show_label_in_time_series(false), show_map(aShowMap), name(aFirst.seq_id), first(&aFirst), last(nullptr), index(1, '?')
+    : show(aShow),
+show_line(aShowLine),
+show_label_in_time_series(false),
+show_map(aShowMap),
+name(aFirst.seq_id),
+first(&aFirst),
+last(nullptr),
+index(1, '?')
 {
 }
 
@@ -78,7 +101,12 @@ HzSection::~HzSection()
 }
 
 HzSections::HzSections()
-    : vertical_gap(20), line_color("grey63"), line_width(1), ts_label_size(10), ts_label_color("black"), show_labels_in_time_series_in_tree_mode(false)
+    : vertical_gap(20),
+line_color("grey63"),
+line_width(1),
+ts_label_size(10),
+ts_label_color("black"),
+show_labels_in_time_series_in_tree_mode(false)
 {
 }
 
@@ -87,8 +115,12 @@ HzSections::~HzSections()
 }
 
 TimeSeriesDrawSettings::TimeSeriesDrawSettings()
-    : label_size(8), month_year_to_timeseries_gap(2), month_separator_color("black"),
-      month_separator_width(0.5), dash_width(0.5), dash_line_width(1)
+    : label_size(8),
+month_year_to_timeseries_gap(2),
+month_separator_color("black"),
+      month_separator_width(0.5),
+dash_width(0.5),
+dash_line_width(1)
 {
 }
 
@@ -97,9 +129,21 @@ TimeSeriesDrawSettings::~TimeSeriesDrawSettings()
 }
 
 CladeDrawSettings::CladeDrawSettings(std::string aName, bool aShow)
-    : name(aName), show(aShow), section_inclusion_tolerance(10), section_exclusion_tolerance(5), show_section_size_in_label(true),
-      arrow_color("black"), line_width(0.8), arrow_width(3), separator_color("grey63"), separator_width(0.5),
-      label_position("middle"), label_offset{5, 0}, label_color("black"), label_size(11), label_rotation(0),
+    : name(aName),
+show(aShow),
+section_inclusion_tolerance(10),
+section_exclusion_tolerance(5),
+show_section_size_in_label(true),
+      arrow_color("black"),
+line_width(0.8),
+arrow_width(3),
+separator_color("grey63"),
+separator_width(0.5),
+      label_position("middle"),
+label_offset{5, 0},
+label_color("black"),
+label_size(11),
+label_rotation(0),
       slot(NoSlot)
 {
 }
@@ -109,7 +153,10 @@ CladeDrawSettings::~CladeDrawSettings()
 }
 
 CladesDrawSettings::CladesDrawSettings()
-    : clades{{CladeDrawSettings{}, CladeDrawSettings{"gly", false}, CladeDrawSettings{"no-gly", false}}}, slot_width(10)
+    : clades{{CladeDrawSettings{},
+CladeDrawSettings{"gly", false},
+CladeDrawSettings{"no-gly", false}}},
+slot_width(10)
 {
 }
 
@@ -118,7 +165,10 @@ CladesDrawSettings::~CladesDrawSettings()
 }
 
 MappedAntigensDrawSettings::MappedAntigensDrawSettings()
-    : width(10), line_width(0.5), line_color("grey56"), line_length(0.5)
+    : width(10),
+line_width(0.5),
+line_color("grey56"),
+line_length(0.5)
 {
 }
 
@@ -242,7 +292,7 @@ TreeDrawSettings::TreeDrawSettings(rjson::field_container_parent& aParent, std::
       label_style(*this, "label_style", {}),
       name_offset(*this, "name_offset", 0.3),
       color_nodes(*this, "color_nodes", "continent"),
-        // aa_transition(*this, "aa_transition", ),
+      aa_transition(*this, "aa_transition"),
       vaccines{{TreeDrawVaccineSettings{}}},
       legend(*this, "legend")
 {
@@ -290,6 +340,7 @@ Settings::Settings()
     // hz_sections(*this, "hz_sections"),
     // mapped_antigens(*this, "mapped_antigens"),
     // antigenic_maps(*this, "antigenic_maps")
+        // $$
 {
 
 } // Settings::Settings

@@ -36,18 +36,18 @@ class AATransitionPerBranchDrawSettings
 
 // ----------------------------------------------------------------------
 
-class AATransitionDrawSettings
+class AATransitionDrawSettings : public rjson::field_container_child
 {
  public:
-    AATransitionDrawSettings();
+    AATransitionDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName);
 
-    bool show;
-    size_t number_strains_threshold; // Do not show aa transition label if number_strains (leaf nodes) for the branch is less than this value.
-    bool show_empty_left;
+    rjson::field_get_set<bool> show;
+    rjson::field_get_set<size_t> number_strains_threshold; // Do not show aa transition label if number_strains (leaf nodes) for the branch is less than this value.
+    rjson::field_get_set<bool> show_empty_left;
     AATransitionPerBranchDrawSettings per_branch;
-    bool show_node_for_left_line;
-    Color node_for_left_line_color;
-    double node_for_left_line_width;
+    rjson::field_get_set<bool> show_node_for_left_line;
+    rjson::field_get_set<Color> node_for_left_line_color;
+    rjson::field_get_set<double> node_for_left_line_width;
 
 }; // class AATransitionDrawSettings
 
@@ -146,7 +146,7 @@ class TreeDrawSettings : public rjson::field_container_child
 
     rjson::field_get_set<Tree::LadderizeMethod> ladderize;
     rjson::field_get_set<std::string> ladderize_help;
-    TreeDrawMods mods; // $$ test for proper mods reading
+    TreeDrawMods mods;
     rjson::field_get_set<std::vector<std::string>> mods_help;
     rjson::field_get_set<bool> force_line_width;
     rjson::field_get_set<double> line_width;
