@@ -134,7 +134,7 @@ void LabelledGridBase::draw(Surface& aMappedAntigensDrawSurface)
 void LabelledGridBase::draw_mapped_antigens_section(size_t aSectionIndex, Surface& aMappedAntigensDrawSurface)
 {
     const AntigenicMapsDrawSettings& settings = layout_draw().settings();
-    const auto& section = layout_draw().hz_sections().sections[aSectionIndex];
+    const auto& section = layout_draw().hz_sections().node_refs[aSectionIndex];
 
     const double left = 0, right = aMappedAntigensDrawSurface.viewport().size.width;
     const double top = section.first->draw.vertical_pos, bottom = section.last->draw.vertical_pos;

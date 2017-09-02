@@ -314,10 +314,10 @@ void sdb::AntigenicMapsLayoutDraw::draw_map_title(Surface& aSurface, size_t aSec
 {
     const Pixels map_title_size{aSettings.map_title_size};
     const Size map_title_offset = aSettings.map_title_offset;
+    std::string title = hz_sections().node_refs[aSectionIndex].index + "."; // std::string(1, 'A' + static_cast<char>(aSectionNo)) + ".";
     const HzSection& section = hz_sections().sections[aSectionIndex];
-    std::string title = section.index + "."; // std::string(1, 'A' + static_cast<char>(aSectionNo)) + ".";
     if (!section.label.empty())
-        title += " " + section.label;
+        title += " " + static_cast<std::string>(section.label);
     const Size wsize = aSurface.text_size("W", map_title_size);
     const Size tsize = aSurface.text_size(title, map_title_size);
     aSurface.text({map_title_offset.width * wsize.width + aSurface.viewport().origin.x,

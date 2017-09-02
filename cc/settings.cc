@@ -119,45 +119,54 @@ CladesDrawSettings::CladesDrawSettings(rjson::field_container_parent& aParent, s
     c3.show = false;
 }
 
-HzSection::HzSection(std::string aName, bool aShowLine)
-    : show(true),
-show_line(aShowLine),
-show_label_in_time_series(true),
-show_map(true),
-name(aName),
-first(nullptr),
-last(nullptr),
-index(1, '?')
+HzSection::HzSection(const rjson::value& aData)
+    : rjson::array_field_container_child_element(aData),
+      show(*this, "show", true),
+      show_line(*this, "show_line", true),
+      show_label_in_time_series(*this, "show_label_in_time_series", true),
+      show_map(*this, "show_map", true),
+      name(*this, "name", ""),
+      label(*this, "label", "")
+      // first(nullptr),
+      // last(nullptr),
+      // index("?")
 {
 }
 
-HzSection::HzSection(const Node& aFirst, bool aShow, bool aShowLine, bool aShowMap)
-    : show(aShow),
-show_line(aShowLine),
-show_label_in_time_series(false),
-show_map(aShowMap),
-name(aFirst.seq_id),
-first(&aFirst),
-last(nullptr),
-index(1, '?')
-{
-}
+// HzSection::HzSection(std::string aName, bool aShowLine)
+//     : show(true),
+// show_line(aShowLine),
+// show_label_in_time_series(true),
+// show_map(true),
+// name(aName),
+// first(nullptr),
+// last(nullptr),
+// index(1, '?')
+// {
+// }
 
-HzSection::~HzSection()
-{
-}
+// HzSection::HzSection(const Node& aFirst, bool aShow, bool aShowLine, bool aShowMap)
+//     : show(aShow),
+// show_line(aShowLine),
+// show_label_in_time_series(false),
+// show_map(aShowMap),
+// name(aFirst.seq_id),
+// first(&aFirst),
+// last(nullptr),
+// index(1, '?')
+// {
+// }
 
-HzSections::HzSections()
-    : vertical_gap(20),
-line_color("grey63"),
-line_width(1),
-ts_label_size(10),
-ts_label_color("black"),
-show_labels_in_time_series_in_tree_mode(false)
-{
-}
-
-HzSections::~HzSections()
+HzSections::HzSections(rjson::field_container_parent& aParent, std::string aFieldName)
+    : rjson::field_container_child(aParent, aFieldName),
+      vertical_gap(*this, "vertical_gap", 20),
+      line_color(*this, "line_color", "grey63"),
+      line_width(*this, "line_width", 1),
+      ts_label_size(*this, "ts_label_size", 10),
+      ts_label_style(*this, "ts_label_style", {}),
+      ts_label_color(*this, "ts_label_color", "black"),
+      sections(*this, "sections"),
+      show_labels_in_time_series_in_tree_mode(*this, "show_labels_in_time_series_in_tree_mode", false)
 {
 }
 
@@ -332,8 +341,8 @@ Settings::Settings()
       title(*this, "title"),
       tree_draw(*this, "tree"),
       time_series(*this, "time_series"),
-      clades(*this, "clades")
-    // hz_sections(*this, "hz_sections"),
+      clades(*this, "clades"),
+      hz_sections(*this, "hz_sections")
     // mapped_antigens(*this, "mapped_antigens"),
     // antigenic_maps(*this, "antigenic_maps")
         // $$
@@ -1113,16 +1122,21 @@ template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writ
 template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const HzSection& aSettings)
 {
     return writer << jsw::start_object
+                  << jsw::key("label") << aSettings.label
                   << jsw::key("name") << aSettings.name
                   << jsw::key("show") << aSettings.show
-                  << jsw::key("show_line") << aSettings.show_line
                   << jsw::key("show_label_in_time_series") << aSettings.show_label_in_time_series
+                  << jsw::key("show_line") << aSettings.show_line
                   << jsw::key("show_map") << aSettings.show_map
-                  << jsw::key("label") << aSettings.label
                   << jsw::end_object;
 }
 
 // ----------------------------------------------------------------------
+
+template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const rjson::array_field_container_child<HzSection>& clades)
+{
+    return jsw::write_list(writer, clades);
+}
 
 template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const HzSections& aSettings)
 {

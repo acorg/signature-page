@@ -75,17 +75,18 @@ namespace rjson
         class iterator
         {
          public:
-            inline iterator& operator++() { ++iter; return *this;}
-            inline iterator operator++(int) { iterator retval = *this; ++(*this); return retval;}
-            inline bool operator==(iterator other) const { return iter == other.iter; }
-            inline bool operator!=(iterator other) const { return !(*this == other); }
-            inline Element operator*() { /* std::cerr << "DEBUG: " << *iter << DEBUG_LINE_FUNC << '\n'; */ return Element{*iter}; }
-
             using difference_type = array::iterator::difference_type;
             using value_type = Element;
             using pointer = Element*;
             using reference = Element&;
             using iterator_category = array::iterator::iterator_category;
+
+            inline iterator& operator++() { ++iter; return *this;}
+            inline iterator operator++(int) { iterator retval = *this; ++(*this); return retval;}
+            inline bool operator==(iterator other) const { return iter == other.iter; }
+            inline bool operator!=(iterator other) const { return !(*this == other); }
+            inline Element operator*() { /* std::cerr << "DEBUG: " << *iter << DEBUG_LINE_FUNC << '\n'; */ return Element{*iter}; }
+            inline difference_type operator-(iterator other) const { return iter - other.iter; }
 
          private:
             array::iterator iter;
@@ -105,13 +106,14 @@ namespace rjson
         inline iterator end() const { return get_ref_to_array().end(); }
         inline iterator begin() { return get_ref_to_array().begin(); }
         inline iterator end() { return get_ref_to_array().end(); }
-
+        inline Element operator[](size_t index) const { return get_ref_to_array()[index]; }
         inline Element emplace_back()
             {
                 auto& ar = get_ref_to_array();
                 ar.insert(object{});
                 return Element{*ar.rbegin()};
             }
+        inline void erase(size_t index) { get_ref_to_array().erase(index); }
 
      private:
         field_container_parent& mParent;

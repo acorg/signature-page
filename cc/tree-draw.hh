@@ -192,54 +192,64 @@ class TreeDrawSettings : public rjson::field_container_child
 
 // ----------------------------------------------------------------------
 
-class HzSection
+class HzSection : public rjson::array_field_container_child_element
 {
  public:
-    HzSection(std::string aName = std::string{}, bool aShowLine = true);
-    HzSection(const Node& aFirst, bool aShow, bool aShowLine, bool aShowMap);
-    inline HzSection(const HzSection&) = default;
+    HzSection(const rjson::value& aData);
+    // HzSection(std::string aName = std::string{}, bool aShowLine = true);
+    // HzSection(const Node& aFirst, bool aShow, bool aShowLine, bool aShowMap);
+      // inline HzSection(const HzSection&) = default;
     // inline HzSection(HzSection&&) = default;
-    ~HzSection();
-    inline HzSection& operator=(const HzSection&) = default;
+    // inline HzSection& operator=(const HzSection&) = default;
 
-    bool show;
-    bool show_line;
-    bool show_label_in_time_series;
-    bool show_map;
-    std::string name;           // first seq_id
-    std::string label;          // antigenic map label, empty - generate automatically
+    rjson::field_get_set<bool> show;
+    rjson::field_get_set<bool> show_line;
+    rjson::field_get_set<bool> show_label_in_time_series;
+    rjson::field_get_set<bool> show_map;
+    rjson::field_get_set<std::string> name;           // first seq_id
+    rjson::field_get_set<std::string> label;          // antigenic map label, empty - generate automatically
 
     // not stored in settings
-    const Node* first;
-    const Node* last;
-    std::string index;
+    // const Node* first;
+    // const Node* last;
+    // std::string index;
 };
 
-class HzSections
+class HzSections : public rjson::field_container_child
 {
  public:
-    HzSections();
-    ~HzSections();
+    HzSections(rjson::field_container_parent& aParent, std::string aFieldName);
+
+    rjson::field_get_set<double> vertical_gap;
+    rjson::field_get_set<Color> line_color;
+    rjson::field_get_set<double> line_width;
+    rjson::field_get_set<double> ts_label_size;
+    rjson::field_get_set<TextStyle> ts_label_style;
+    rjson::field_get_set<Color> ts_label_color;
+    rjson::array_field_container_child<HzSection> sections;
+    rjson::field_get_set<bool> show_labels_in_time_series_in_tree_mode;
+
+      // not stored
+
+    struct NodeRef
+    {
+        inline NodeRef() = default;
+        inline NodeRef(const Node* aFirst) : first{aFirst} {}
+        const Node* first = nullptr;
+        const Node* last = nullptr;
+        std::string index;
+    };
+    std::vector<NodeRef> node_refs;
+    std::vector<size_t> section_order;
 
     void sort(const Tree& aTree);
-    void auto_detect(Tree& aTree, const Clades* aClades);
+    // void auto_detect(Tree& aTree, const Clades* aClades);
 
     inline size_t shown_maps() const
         {
             return std::accumulate(sections.begin(), sections.end(), 0U, [](size_t a, const HzSection& section) -> size_t { return a + (section.show_map ? 1 : 0); });
         }
 
-    double vertical_gap;
-    Color line_color;
-    double line_width;
-    double ts_label_size;
-    TextStyle ts_label_style;
-    Color ts_label_color;
-    std::vector<HzSection> sections;
-    bool show_labels_in_time_series_in_tree_mode;
-
-      // for json importer
-    inline std::vector<HzSection>& get_sections() { return sections; }
 };
 
 // ----------------------------------------------------------------------

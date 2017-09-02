@@ -149,10 +149,10 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex)
       // marked antigens
       // tracked_antigen_colored_by_clade
 
+    std::string title = hz_sections().node_refs[aSectionIndex].index + "."; // std::string(1, 'A' + static_cast<char>(aSectionNo)) + ".";
     const HzSection& section = hz_sections().sections[aSectionIndex];
-    std::string title = section.index + "."; // std::string(1, 'A' + static_cast<char>(aSectionNo)) + ".";
     if (!section.label.empty())
-        title += " " + section.label;
+        title += " " + static_cast<std::string>(section.label);
     chart_draw().title().remove_all_lines().add_line(title);
 
 } // AntigenicMapsLayoutDrawAce::prepare_drawing_chart
