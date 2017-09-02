@@ -22,7 +22,7 @@ int main(int argc, const char *argv[])
             output = static_cast<std::string>(acmacs_base::TempFile{});
         write_settings(settings, output);
           // std::cout << static_cast<std::string>(output) << std::endl;
-        if (std::system(("/usr/bin/diff -b '" + static_cast<std::string>(output) + "' '" + argv[1] + "'").c_str()))
+        if (std::system((std::string{"/usr/bin/diff -b '"} + argv[1] + "' '" + static_cast<std::string>(output) + "'").c_str()))
             throw std::runtime_error("FAILED");
     }
     catch (std::exception& err) {

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <typeinfo>
+
 #include "acmacs-base/rjson.hh"
 
 #include "acmacs-base/color.hh"
@@ -77,7 +79,7 @@ namespace rjson
             inline iterator operator++(int) { iterator retval = *this; ++(*this); return retval;}
             inline bool operator==(iterator other) const { return iter == other.iter; }
             inline bool operator!=(iterator other) const { return !(*this == other); }
-            inline Element operator*() { return Element{*iter}; }
+            inline Element operator*() { /* std::cerr << "DEBUG: " << *iter << DEBUG_LINE_FUNC << '\n'; */ return Element{*iter}; }
 
             using difference_type = array::iterator::difference_type;
             using value_type = Element;
@@ -128,13 +130,26 @@ namespace rjson
     {
      public:
         inline field_get_set(field_container_parent& aParent, std::string aFieldName, FValue&& aDefault) : mParent{aParent}, mFieldName{aFieldName}, mDefault{std::move(aDefault)} {}
-        inline operator FValue() const { return std::get<rjson_type<FValue>>(get_ref()); }
+
+        inline const rjson_type<FValue>& get_value_ref() const
+            {
+                try {
+                    return std::get<rjson_type<FValue>>(get_ref());
+                }
+                catch (std::bad_variant_access& /*err*/) {
+                    std::cerr << "ERROR: cannot convert json to " <<  typeid(rjson_type<FValue>).name() << " (" << typeid(FValue).name() << "): " << get_ref() << '\n';
+                    throw;
+                }
+            }
+
           // inline field_get_set<FValue>& operator = (FValue&& aValue) { mParent.set_field(mFieldName, to_value(aValue)); return *this; }
         inline field_get_set<FValue>& operator = (const FValue& aValue) { mParent.set_field(mFieldName, to_value(aValue)); return *this; }
         inline field_get_set<FValue>& operator = (const field_get_set<FValue>& aSource) { return operator=(static_cast<FValue>(aSource)); }
 
-        inline const rjson_type<FValue>& get_value_ref() const { return std::get<rjson_type<FValue>>(get_ref()); }
         inline bool empty() const { return static_cast<FValue>(*this).empty(); }
+
+          // to be specialized for complex types
+        inline operator FValue() const { return get_value_ref(); }
 
      private:
         field_container_parent& mParent;
@@ -148,21 +163,28 @@ namespace rjson
     }; // class field_get_set<>
 
       // ----------------------------------------------------------------------
+      // double: can be extracted from rjson::number and rjson::integer
+      // ----------------------------------------------------------------------
+
+    template <> inline field_get_set<double>::operator double() const
+    {
+        if (auto ptr_n = std::get_if<number>(&get_ref()))
+            return *ptr_n;
+        else if (auto ptr_i = std::get_if<integer>(&get_ref()))
+            return *ptr_i;
+        else {
+            std::cerr << "ERROR: cannot convert json to double (from rjson::number or rjson::integer): " << get_ref() << '\n';
+            throw std::bad_variant_access{};
+        }
+    }
+
+      // ----------------------------------------------------------------------
       // Color
       // ----------------------------------------------------------------------
 
     template <> struct content_type<Color> { using type = string; };
 
-    template <> inline field_get_set<Color>::operator Color() const
-    {
-        try {
-            return static_cast<std::string>(get_value_ref());
-        }
-        catch (std::exception& /*err*/) {
-            std::cerr << "ERROR: cannot convert json to Color: " << get_ref() << '\n';
-            return {};
-        }
-    }
+    template <> inline field_get_set<Color>::operator Color() const { return static_cast<std::string>(get_value_ref()); }
 
       // ----------------------------------------------------------------------
       // Size
@@ -172,14 +194,8 @@ namespace rjson
 
     template <> inline field_get_set<Size>::operator Size() const
     {
-        try {
-            const auto& ar = get_value_ref(); // std::get<array>(get_ref());
-            return {std::get<number>(ar[0]), std::get<number>(ar[1])};
-        }
-        catch (std::exception& /*err*/) {
-            std::cerr << "ERROR: cannot convert json to Size: " << get_ref() << '\n';
-            return {};
-        }
+        const auto& ar = get_value_ref(); // std::get<array>(get_ref());
+        return {std::get<number>(ar[0]), std::get<number>(ar[1])};
     }
 
     template <> inline value to_value<Size>(const Size& aSize)
@@ -195,18 +211,12 @@ namespace rjson
 
     template <> inline field_get_set<TextStyle>::operator TextStyle() const
     {
-        try {
-            const auto& obj = get_value_ref(); // std::get<object>(get_ref());
-            TextStyle style;
-            try { style.font_family(obj.get_field<std::string>("family")); } catch (object::field_not_found&) {}
-            try { style.slant(obj.get_field<std::string>("slant")); } catch (object::field_not_found&) {}
-            try { style.weight(obj.get_field<std::string>("weight")); } catch (object::field_not_found&) {}
-            return style;
-        }
-        catch (std::exception& /*err*/) {
-            std::cerr << "ERROR: cannot convert json to TextStyle: " << get_ref() << '\n';
-            return {};
-        }
+        const auto& obj = get_value_ref(); // std::get<object>(get_ref());
+        TextStyle style;
+        try { style.font_family(obj.get_field<std::string>("family")); } catch (object::field_not_found&) {}
+        try { style.slant(obj.get_field<std::string>("slant")); } catch (object::field_not_found&) {}
+        try { style.weight(obj.get_field<std::string>("weight")); } catch (object::field_not_found&) {}
+        return style;
     }
 
     template <> inline value to_value<TextStyle>(const TextStyle& aTextStyle)
@@ -226,16 +236,10 @@ namespace rjson
 
     template <> inline field_get_set<std::vector<std::string>>::operator std::vector<std::string>() const
     {
-        try {
-            const auto& ar = get_value_ref();
-            std::vector<std::string> result{ar.size()};
-            std::transform(ar.begin(), ar.end(), result.begin(), [](const rjson::value& elt) -> std::string { return std::get<rjson::string>(elt); });
-            return result;
-        }
-        catch (std::exception& /*err*/) {
-            std::cerr << "ERROR: cannot convert json to std::vector<std::string>: " << get_ref() << '\n';
-            return {};
-        }
+        const auto& ar = get_value_ref();
+        std::vector<std::string> result{ar.size()};
+        std::transform(ar.begin(), ar.end(), result.begin(), [](const rjson::value& elt) -> std::string { return std::get<rjson::string>(elt); });
+        return result;
     }
 
     template <> inline value to_value<std::vector<std::string>>(const std::vector<std::string>& aData)

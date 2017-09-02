@@ -93,7 +93,6 @@ class TreeDrawMods : public rjson::array_field_container_child<TreeDrawMod>
     using rjson::array_field_container_child<TreeDrawMod>::array_field_container_child;
 };
 
-
 // ----------------------------------------------------------------------
 
 // serializing Tree::LadderizeMethod from tree.hh

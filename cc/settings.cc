@@ -929,7 +929,7 @@ template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writ
                   << jsw::key("mod") << aMod.mod
                   << jsw::if_non_negative("d1", aMod.d1)
                   << jsw::if_not_empty("s1", aMod.s1)
-                  << jsw::if_not_empty("s2", aMod.s1)
+                  << jsw::if_not_empty("s2", aMod.s2)
                   << jsw::end_object;
 }
 
@@ -1255,11 +1255,11 @@ template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writ
 template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const TitleDrawSettings& aSettings)
 {
     return writer << jsw::start_object
-                  << jsw::key("title") << aSettings.title
                   << jsw::key("color") << aSettings.color
+                  << jsw::key("offset") << aSettings.offset
                   << jsw::key("size") << aSettings.size
                   << jsw::key("style") << aSettings.style
-                  << jsw::key("offset") << aSettings.offset
+                  << jsw::key("title") << aSettings.title
                   << jsw::end_object;
 }
 
