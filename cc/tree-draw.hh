@@ -54,19 +54,26 @@ class AATransitionDrawSettings : public rjson::field_container_child
 
 // ----------------------------------------------------------------------
 
-class TreeDrawVaccineSettings
+class TreeDrawVaccineSettings : public rjson::array_field_container_child_element
 {
  public:
-    TreeDrawVaccineSettings();
+    TreeDrawVaccineSettings(const rjson::value& aData);
 
-    std::string name;           // empty for default settings
-    Color label_color;
-    double label_size;
-    TextStyle label_style;
-    Color line_color;
-    double line_width;
+    rjson::field_get_set<std::string> name;           // empty for default settings
+    rjson::field_get_set<std::string> name_help;
+    rjson::field_get_set<Color> label_color;
+    rjson::field_get_set<double> label_size;
+    rjson::field_get_set<TextStyle> label_style;
+    rjson::field_get_set<Color> line_color;
+    rjson::field_get_set<double> line_width;
 
 }; // class TreeDrawVaccineSettings
+
+class TreeDrawVaccines : public rjson::array_field_container_child<TreeDrawVaccineSettings>
+{
+ public:
+    using rjson::array_field_container_child<TreeDrawVaccineSettings>::array_field_container_child;
+};
 
 // ----------------------------------------------------------------------
 
@@ -135,9 +142,9 @@ class TreeDrawSettings : public rjson::field_container_child
  public:
     TreeDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName);
 
-    inline const TreeDrawVaccineSettings& vaccine(std::string aName) const
+    inline const TreeDrawVaccineSettings vaccine(std::string aName) const
         {
-            auto p = std::find_if(vaccines.begin(), vaccines.end(), [&aName](const auto& e) { return e.name == aName; });
+            auto p = std::find_if(vaccines.begin(), vaccines.end(), [&aName](const auto& e) { return static_cast<std::string>(e.name) == aName; });
             if (p == vaccines.end())
                 p = std::find_if(vaccines.begin(), vaccines.end(), [](const auto& e) { return e.name.empty(); });
             if (p == vaccines.end())
@@ -156,8 +163,8 @@ class TreeDrawSettings : public rjson::field_container_child
     rjson::field_get_set<TextStyle> label_style;
     rjson::field_get_set<double> name_offset;         // offset of the label from the line right end, in W widths
     rjson::field_get_set<std::string> color_nodes;    // black, continent, position number (e.g. 162)
-    AATransitionDrawSettings aa_transition; // $$
-    std::vector<TreeDrawVaccineSettings> vaccines; // $$
+    AATransitionDrawSettings aa_transition;
+    TreeDrawVaccines vaccines;
     LegendSettings legend;
 
       // obsolete: v2

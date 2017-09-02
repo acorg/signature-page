@@ -44,11 +44,15 @@ AATransitionDrawSettings::AATransitionDrawSettings(rjson::field_container_parent
 {
 }
 
-TreeDrawVaccineSettings::TreeDrawVaccineSettings()
-    : label_color("black"),
-label_size(10),
-line_color("black"),
-line_width(1)
+TreeDrawVaccineSettings::TreeDrawVaccineSettings(const rjson::value& aData)
+    : rjson::array_field_container_child_element(aData),
+      name(*this, "name", ""),
+      name_help(*this, "name?", "empty for default settings"),
+      label_color(*this, "label_color", "black"),
+      label_size(*this, "label_size", 10),
+      label_style(*this, "label_style", {}),
+      line_color(*this, "line_color", "black"),
+      line_width(*this, "line_width", 1)
 {
 }
 
@@ -300,7 +304,7 @@ TreeDrawSettings::TreeDrawSettings(rjson::field_container_parent& aParent, std::
       name_offset(*this, "name_offset", 0.3),
       color_nodes(*this, "color_nodes", "continent"),
       aa_transition(*this, "aa_transition"),
-      vaccines{{TreeDrawVaccineSettings{}}},
+      vaccines(*this, "vaccines"),
       legend(*this, "legend")
 {
 } // TreeDrawSettings::TreeDrawSettings
@@ -955,7 +959,7 @@ template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writ
 {
     return writer << jsw::start_object
                   << jsw::key("name") << aSettings.name
-                  << jsw::key("name?") << "empty for default settings"
+                  << jsw::key("name?") << aSettings.name_help // "empty for default settings"
                   << jsw::key("label_color") << aSettings.label_color
                   << jsw::key("label_size") << aSettings.label_size
                   << jsw::key("label_style") << aSettings.label_style
@@ -998,23 +1002,14 @@ inline std::string ladderize_to_string(const TreeDrawSettings& aSettings)
     return aSettings.ladderize.get_value_ref();
 }
 
-// template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const TreeDrawMod& aMods)
-// {
-//     writer.StartObject();
-//     for (const auto& e: aMods)
-//         writer << e;
-//     writer.EndArray();
-//     return writer;
-// }
-
 template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const TreeDrawMods& aMods)
 {
     return jsw::write_list(writer, aMods);
-    // writer.StartArray();
-    // for (const auto& e: aMods)
-    //     writer << e;
-    // writer.EndArray();
-    // return writer;
+}
+
+template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const TreeDrawVaccines& aMods)
+{
+    return jsw::write_list(writer, aMods);
 }
 
 template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const TreeDrawSettings& aSettings)
