@@ -7,6 +7,7 @@
 
 #include "acmacs-draw/surface.hh"
 #include "tree.hh"
+#include "rjson-serialize.hh"
 
 // ----------------------------------------------------------------------
 
@@ -15,48 +16,46 @@ class TimeSeriesDraw;
 
 // ----------------------------------------------------------------------
 
-class CladeDrawSettings
+class CladeDrawSettings : public rjson::array_field_container_child_element
 {
  public:
     constexpr static const size_t NoSlot = static_cast<size_t>(-1);
 
-    CladeDrawSettings(std::string aName = std::string{}, bool aShow = true);
+    CladeDrawSettings(const rjson::value& aData, std::string aName = std::string{}, bool aShow = true);
     inline CladeDrawSettings(const CladeDrawSettings&) = default;
     inline CladeDrawSettings(CladeDrawSettings&&) = default;
-    ~CladeDrawSettings();
 
-    std::string name;           // empty for default settings
-    std::string display_name;
-    bool show; // show this clade
-    size_t section_inclusion_tolerance; // max number of lines (strains) within section from another clade that do not interrupt the secion
-    size_t section_exclusion_tolerance; // max number of lines (strains) to exclude small sections
-    bool show_section_size_in_label;
-    Color arrow_color;
-    double line_width;
-    double arrow_width;
-    Color separator_color;
-    double separator_width;
-    std::string label_position; // middle, top, bottom
-    Size label_offset;
-    Color label_color;
-    double label_size;
-    TextStyle label_style;
-    double label_rotation;
-    size_t slot;
+    rjson::field_get_set<std::string> name;           // empty for default settings
+    rjson::field_get_set<std::string> display_name;
+    rjson::field_get_set<bool> show; // show this clade
+    rjson::field_get_set<size_t> section_inclusion_tolerance; // max number of lines (strains) within section from another clade that do not interrupt the secion
+    rjson::field_get_set<size_t> section_exclusion_tolerance; // max number of lines (strains) to exclude small sections
+    rjson::field_get_set<bool> show_section_size_in_label;
+    rjson::field_get_set<Color> arrow_color;
+    rjson::field_get_set<double> line_width;
+    rjson::field_get_set<double> arrow_width;
+    rjson::field_get_set<Color> separator_color;
+    rjson::field_get_set<double> separator_width;
+    rjson::field_get_set<std::string> label_position; // middle, top, bottom
+    rjson::field_get_set<Size> label_offset;
+    rjson::field_get_set<Color> label_color;
+    rjson::field_get_set<double> label_size;
+    rjson::field_get_set<TextStyle> label_style;
+    rjson::field_get_set<double> label_rotation;
+    rjson::field_get_set<size_t> slot;
 
 }; // class CladeDrawSettings
 
 // ----------------------------------------------------------------------
 
-class CladesDrawSettings
+class CladesDrawSettings : public rjson::field_container_child
 {
  public:
-    CladesDrawSettings();
-    ~CladesDrawSettings();
+    CladesDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName);
 
-    inline const CladeDrawSettings& for_clade(std::string name) const
+    inline const CladeDrawSettings for_clade(std::string name) const
         {
-            auto p = std::find_if(clades.begin(), clades.end(), [&name](const auto& c) { return c.name == name; });
+            auto p = std::find_if(clades.begin(), clades.end(), [&name](const auto& c) { return static_cast<std::string>(c.name) == name; });
             if (p == clades.end()) {
                 p = std::find_if(clades.begin(), clades.end(), [](const auto& c) { return c.name.empty(); });
                 if (p == clades.end())
@@ -65,11 +64,11 @@ class CladesDrawSettings
             return *p;
         }
 
-    std::vector<CladeDrawSettings> clades;
-    double slot_width;
+    rjson::array_field_container_child<CladeDrawSettings> clades;
+    rjson::field_get_set<double> slot_width;
 
       // for json importer
-    inline std::vector<CladeDrawSettings>& get_clades() { return clades; }
+    // inline std::vector<CladeDrawSettings>& get_clades() { return clades; }
 
 }; // class CladesDrawSettings
 

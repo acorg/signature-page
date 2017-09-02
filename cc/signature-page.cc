@@ -146,8 +146,8 @@ void SignaturePageDraw::init_settings()
         mSettings->tree_draw.legend.width = 100;
         mSettings->hz_sections.vertical_gap = 15;
         mSettings->clades.slot_width = 10;
-        for (auto& clade: mSettings->clades.clades) {
-            clade.label_offset.set(1, 0);
+        for (auto clade: mSettings->clades.clades) {
+            clade.label_offset = Size{1, 0};
         }
 
         if (mAntigenicMapsDraw)
@@ -161,8 +161,8 @@ void SignaturePageDraw::init_settings()
         // }
 
         mSettings->clades.slot_width = 10;
-        for (auto& clade: mSettings->clades.clades) {
-            clade.label_offset.set(10, 0);
+        for (auto clade: mSettings->clades.clades) {
+            clade.label_offset = Size{10, 0};
         }
     }
 

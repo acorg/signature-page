@@ -103,6 +103,15 @@ namespace rjson
         inline bool empty() const { return get_ref_to_array().empty(); }
         inline iterator begin() const { return get_ref_to_array().begin(); }
         inline iterator end() const { return get_ref_to_array().end(); }
+        inline iterator begin() { return get_ref_to_array().begin(); }
+        inline iterator end() { return get_ref_to_array().end(); }
+
+        inline Element emplace_back()
+            {
+                auto& ar = get_ref_to_array();
+                ar.insert(object{});
+                return Element{*ar.rbegin()};
+            }
 
      private:
         field_container_parent& mParent;
@@ -130,6 +139,7 @@ namespace rjson
     {
      public:
         inline field_get_set(field_container_parent& aParent, std::string aFieldName, FValue&& aDefault) : mParent{aParent}, mFieldName{aFieldName}, mDefault{std::move(aDefault)} {}
+        inline field_get_set(field_container_parent& aParent, std::string aFieldName, const FValue& aDefault) : mParent{aParent}, mFieldName{aFieldName}, mDefault{aDefault} {}
 
         inline const rjson_type<FValue>& get_value_ref() const
             {

@@ -126,13 +126,14 @@ void CladesDraw::init_settings()
 {
     collect();
     for (auto& clade: mClades) {
-        auto p = std::find_if(mSettings.clades.begin(), mSettings.clades.end(), [&](const auto& c) { return c.name == clade.first; });
+        auto p = std::find_if(mSettings.clades.begin(), mSettings.clades.end(), [&](const auto& c) { return static_cast<std::string>(c.name) == clade.first; });
         if (p == mSettings.clades.end()) {
-            mSettings.clades.emplace_back(clade.first);
-            mSettings.clades.back().slot = clade.second.slot;
+            auto new_clade = mSettings.clades.emplace_back();
+            new_clade.name = clade.first;
+            new_clade.slot = clade.second.slot;
         }
         else {
-            p->slot = clade.second.slot;
+            (*p).slot = clade.second.slot;
         }
     }
 
@@ -153,10 +154,11 @@ void CladesDraw::draw()
                 const double bottom = section.last->draw.vertical_pos + mTreeDraw.vertical_step() / 2;
                 const double label_height = mSurface.text_size("W", Pixels{for_clade.label_size}, for_clade.label_style).height;
                 double label_vpos = top + label_height;
-                if (for_clade.label_position == "middle") {
+                const std::string label_position = for_clade.label_position;
+                if (label_position == "middle") {
                     label_vpos = (top + bottom + label_height) / 2.0;
                 }
-                else if (for_clade.label_position == "bottom") {
+                else if (label_position == "bottom") {
                     label_vpos = bottom;
                 }
                 (this->*draw_lines)(clade.slot, name_clade.first, top, bottom, label_vpos, for_clade);
@@ -188,7 +190,8 @@ void CladesDraw::draw_left(size_t aSlot, std::string aCladeName, double top, dou
     mSurface.double_arrow({x, top}, {x, bottom}, for_clade.arrow_color, Pixels{for_clade.line_width}, Pixels{for_clade.arrow_width});
     std::string name = for_clade.display_name.empty() ? aCladeName : for_clade.display_name;
     const double label_width = mSurface.text_size(name, Pixels{for_clade.label_size}, for_clade.label_style).width;
-    mSurface.text(Location{x, label_vpos} + Size{- for_clade.label_offset.width - label_width, for_clade.label_offset.height},
+    const Size label_offset{for_clade.label_offset};
+    mSurface.text(Location{x, label_vpos} + Size{- label_offset.width - label_width, label_offset.height},
                   name, for_clade.label_color, Pixels{for_clade.label_size}, for_clade.label_style, Rotation{for_clade.label_rotation});
     const double right = mSurface.viewport().size.width + mTimeSeriesDraw.size().width;
     mSurface.line({x, top}, {right, top}, for_clade.separator_color, Pixels{for_clade.separator_width});

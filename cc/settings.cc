@@ -82,6 +82,43 @@ TimeSeriesDrawSettings::TimeSeriesDrawSettings(rjson::field_container_parent& aP
 {
 }
 
+CladeDrawSettings::CladeDrawSettings(const rjson::value& aData, std::string aName, bool aShow)
+    : rjson::array_field_container_child_element(aData),
+      name(*this, "name", aName),
+      display_name(*this, "display_name", ""),
+      show(*this, "show", aShow),
+      section_inclusion_tolerance(*this, "section_inclusion_tolerance", 10),
+      section_exclusion_tolerance(*this, "section_exclusion_tolerance", 5),
+      show_section_size_in_label(*this, "show_section_size_in_label", true),
+      arrow_color(*this, "arrow_color", "black"),
+      line_width(*this, "line_width", 0.8),
+      arrow_width(*this, "arrow_width", 3),
+      separator_color(*this, "separator_color", "grey63"),
+      separator_width(*this, "separator_width", 0.5),
+      label_position(*this, "label_position", "middle"),
+      label_offset(*this, "label_offset", {5, 0}),
+      label_color(*this, "label_color", "black"),
+      label_size(*this, "label_size", 11),
+      label_style(*this, "label_style", {}),
+      label_rotation(*this, "label_rotation", 0),
+      slot(*this, "slot", NoSlot)
+{
+}
+
+CladesDrawSettings::CladesDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
+    : rjson::field_container_child(aParent, aFieldName),
+      clades(*this, "clades"),
+      slot_width(*this, "slot_width", 10)
+{
+    clades.emplace_back();
+    auto c2 = clades.emplace_back();
+    c2.name = "gly";
+    c2.show = false;
+    auto c3 = clades.emplace_back();
+    c3.name = "no-gly";
+    c3.show = false;
+}
+
 HzSection::HzSection(std::string aName, bool aShowLine)
     : show(true),
 show_line(aShowLine),
@@ -121,42 +158,6 @@ show_labels_in_time_series_in_tree_mode(false)
 }
 
 HzSections::~HzSections()
-{
-}
-
-CladeDrawSettings::CladeDrawSettings(std::string aName, bool aShow)
-    : name(aName),
-show(aShow),
-section_inclusion_tolerance(10),
-section_exclusion_tolerance(5),
-show_section_size_in_label(true),
-      arrow_color("black"),
-line_width(0.8),
-arrow_width(3),
-separator_color("grey63"),
-separator_width(0.5),
-      label_position("middle"),
-label_offset{5, 0},
-label_color("black"),
-label_size(11),
-label_rotation(0),
-      slot(NoSlot)
-{
-}
-
-CladeDrawSettings::~CladeDrawSettings()
-{
-}
-
-CladesDrawSettings::CladesDrawSettings()
-    : clades{{CladeDrawSettings{},
-CladeDrawSettings{"gly", false},
-CladeDrawSettings{"no-gly", false}}},
-slot_width(10)
-{
-}
-
-CladesDrawSettings::~CladesDrawSettings()
 {
 }
 
@@ -330,8 +331,8 @@ Settings::Settings()
     : signature_page(*this, "signature_page"),
       title(*this, "title"),
       tree_draw(*this, "tree"),
-      time_series(*this, "time_series")
-    // clades(*this, "clades"),
+      time_series(*this, "time_series"),
+      clades(*this, "clades")
     // hz_sections(*this, "hz_sections"),
     // mapped_antigens(*this, "mapped_antigens"),
     // antigenic_maps(*this, "antigenic_maps")
@@ -1093,6 +1094,11 @@ template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writ
 }
 
 // ----------------------------------------------------------------------
+
+template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const rjson::array_field_container_child<CladeDrawSettings>& clades)
+{
+    return jsw::write_list(writer, clades);
+}
 
 template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const CladesDrawSettings& aSettings)
 {
