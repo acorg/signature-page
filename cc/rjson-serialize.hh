@@ -127,7 +127,7 @@ namespace rjson
         inline value& get_ref(std::string aFieldName, value&& aDefault) override { return const_cast<value&>(mData).get_ref(aFieldName, std::forward<value>(aDefault)); }
         inline const value& get_ref(std::string aFieldName, value&& aDefault) const override { return const_cast<value&>(mData).get_ref(aFieldName, std::forward<value>(aDefault)); }
         inline object& get_ref_to_object(std::string aFieldName) override { return const_cast<value&>(mData).get_ref_to_object(aFieldName); }
-        inline void set_field(std::string /*aFieldName*/, value&& /*aValue*/) override { throw std::runtime_error{"no array_field_container_child_element::set_field"}; }
+        inline void set_field(std::string aFieldName, value&& aValue) override { const_cast<value&>(mData).set_field(aFieldName, std::forward<value>(aValue)); }
 
      private:
         const value& mData;
