@@ -151,7 +151,7 @@ namespace rjson
                 try {
                     return std::get<rjson_type<FValue>>(get_ref());
                 }
-                catch (std::bad_variant_access& /*err*/) {
+                catch (std::bad_variant_access&) {
                     std::cerr << "ERROR: cannot convert json to " <<  typeid(rjson_type<FValue>).name() << " (" << typeid(FValue).name() << "): " << get_ref() << '\n';
                     throw;
                 }
@@ -189,7 +189,16 @@ namespace rjson
 
     template <> struct content_type<Color> { using type = string; };
 
-    template <> inline field_get_set<Color>::operator Color() const { return static_cast<std::string>(get_value_ref()); }
+    template <> inline field_get_set<Color>::operator Color() const
+    {
+        try {
+            return static_cast<std::string>(get_value_ref());
+        }
+        catch (std::exception&) {
+            std::cerr << "ERROR: cannot convert json to Color: " << get_ref() << '\n';
+            throw;
+        }
+    }
 
       // ----------------------------------------------------------------------
       // Size
@@ -199,8 +208,14 @@ namespace rjson
 
     template <> inline field_get_set<Size>::operator Size() const
     {
-        const auto& ar = get_value_ref(); // std::get<array>(get_ref());
-        return {std::get<number>(ar[0]), std::get<number>(ar[1])};
+        try {
+            const auto& ar = get_value_ref();
+            return {static_cast<double>(ar[0]), static_cast<double>(ar[1])};
+        }
+        catch (std::exception&) {
+            std::cerr << "ERROR: cannot convert json to Size: " << get_ref() << '\n';
+            throw;
+        }
     }
 
     template <> inline value to_value<Size>(const Size& aSize)
@@ -216,12 +231,18 @@ namespace rjson
 
     template <> inline field_get_set<TextStyle>::operator TextStyle() const
     {
-        const auto& obj = get_value_ref(); // std::get<object>(get_ref());
-        TextStyle style;
-        try { style.font_family(obj.get_field<std::string>("family")); } catch (object::field_not_found&) {}
-        try { style.slant(obj.get_field<std::string>("slant")); } catch (object::field_not_found&) {}
-        try { style.weight(obj.get_field<std::string>("weight")); } catch (object::field_not_found&) {}
-        return style;
+        try {
+            const auto& obj = get_value_ref();
+            TextStyle style;
+            try { style.font_family(obj.get_field<std::string>("family")); } catch (object::field_not_found&) {}
+            try { style.slant(obj.get_field<std::string>("slant")); } catch (object::field_not_found&) {}
+            try { style.weight(obj.get_field<std::string>("weight")); } catch (object::field_not_found&) {}
+            return style;
+        }
+        catch (std::exception&) {
+            std::cerr << "ERROR: cannot convert json to TextStyle: " << get_ref() << '\n';
+            throw;
+        }
     }
 
     template <> inline value to_value<TextStyle>(const TextStyle& aTextStyle)
@@ -241,10 +262,16 @@ namespace rjson
 
     template <> inline field_get_set<std::vector<std::string>>::operator std::vector<std::string>() const
     {
-        const auto& ar = get_value_ref();
-        std::vector<std::string> result{ar.size()};
-        std::transform(ar.begin(), ar.end(), result.begin(), [](const rjson::value& elt) -> std::string { return std::get<rjson::string>(elt); });
-        return result;
+        try {
+            const auto& ar = get_value_ref();
+            std::vector<std::string> result{ar.size()};
+            std::transform(ar.begin(), ar.end(), result.begin(), [](const rjson::value& elt) -> std::string { return std::get<rjson::string>(elt); });
+            return result;
+        }
+        catch (std::exception&) {
+            std::cerr << "ERROR: cannot convert json to std::vector<std::string>: " << get_ref() << '\n';
+            throw;
+        }
     }
 
     template <> inline value to_value<std::vector<std::string>>(const std::vector<std::string>& aData)
