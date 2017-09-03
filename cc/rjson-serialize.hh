@@ -131,6 +131,8 @@ namespace rjson
         inline object& get_ref_to_object(std::string aFieldName) override { return const_cast<value&>(mData).get_ref_to_object(aFieldName); }
         inline void set_field(std::string aFieldName, value&& aValue) override { const_cast<value&>(mData).set_field(aFieldName, std::forward<value>(aValue)); }
 
+        inline std::string to_json() const { return mData.to_json(); }
+
      private:
         const value& mData;
     };
@@ -178,17 +180,7 @@ namespace rjson
       // double: can be extracted from rjson::number and rjson::integer
       // ----------------------------------------------------------------------
 
-    template <> inline field_get_set<double>::operator double() const
-    {
-        if (auto ptr_n = std::get_if<number>(&get_ref()))
-            return *ptr_n;
-        else if (auto ptr_i = std::get_if<integer>(&get_ref()))
-            return *ptr_i;
-        else {
-            std::cerr << "ERROR: cannot convert json to double (from rjson::number or rjson::integer): " << get_ref() << '\n';
-            throw std::bad_variant_access{};
-        }
-    }
+    template <> inline field_get_set<double>::operator double() const { return get_ref(); }
 
       // ----------------------------------------------------------------------
       // Color

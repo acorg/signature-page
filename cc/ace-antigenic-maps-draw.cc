@@ -43,7 +43,7 @@ void AntigenicMapsLayoutDrawAce::prepare_apply_mods()
                     .background("transparent")
                     .border_width(0)
                     .padding(mod.get("padding", 3.0))
-                    .offset(mod.get("offset", Location{}))
+                    .offset(mod.offset())
                     .remove_all_lines();
         }
         // else if (name == "tracked_antigen") {
@@ -232,39 +232,43 @@ void AntigenicMapsLayoutDrawAce::mark_vaccines(const AntigenicMapMod& vaccine_mo
         const auto& chart = static_cast<const Chart&>(chart_draw().chart());
         const auto& hidb = mHiDbSet.get(chart.chart_info().virus_type());
         Vaccines vaccs{chart, hidb};
-        for (const SettingValue& mod_v: vaccine_mod.get_mods()) {
-            const SettingDict& mod = boost::get<SettingDict>(mod_v);
-            const std::string type = mod.get("type", ""), passage = mod.get("passage", ""), name = mod.get("name", "");
+        for (const auto& mod_v: vaccine_mod.mods()) {
+            const rjson::object& mod = mod_v;
+            const std::string type = mod.get_field("type", std::string{}), passage = mod.get_field("passage", std::string{}), name = mod.get_field("name", std::string{});
             std::unique_ptr<VaccineMatcher> matcher{vaccs.match(name, type, passage)};
-            for (const auto& item: mod) {
-                if (item.first == "size")
-                    matcher->size(SettingValue_get(item.second, 0.0));
-                else if (item.first == "fill")
-                    matcher->fill(SettingValue_get(item.second, std::string{}));
-                else if (item.first == "outline")
-                    matcher->outline(SettingValue_get(item.second, std::string{}));
-                else if (item.first == "outline_width")
-                    matcher->outline_width(SettingValue_get(item.second, 0.0));
-                else if (item.first == "aspect")
-                    matcher->aspect(SettingValue_get(item.second, 0.0));
-                else if (item.first == "rotation")
-                    matcher->rotation(SettingValue_get(item.second, 0.0));
-                else if (item.first == "no")
-                    matcher->no(SettingValue_get(item.second, static_cast<size_t>(0)));
-                else if (item.first == "show") {
-                    const bool show = SettingValue_get(item.second, true);
+            for (const auto& [item_key, item_value]: mod) {
+                const std::string field_name = item_key;
+                if (field_name == "size")
+                    matcher->size(item_value);
+                else if (field_name == "fill")
+                    matcher->fill(static_cast<std::string>(item_value));
+                else if (field_name == "outline")
+                    matcher->outline(static_cast<std::string>(item_value));
+                else if (field_name == "outline_width")
+                    matcher->outline_width(item_value);
+                else if (field_name == "aspect")
+                    matcher->aspect(item_value);
+                else if (field_name == "rotation")
+                    matcher->rotation(item_value);
+                else if (field_name == "no")
+                    matcher->no(item_value); // size_t
+                else if (field_name == "show") {
+                    const bool show = item_value;
                     matcher->show(show);
                     if (!show)
                         matcher->hide_label(chart_draw(), hidb.locdb());
                 }
-                else if (item.first == "label")
-                    add_label(std::shared_ptr<VaccineMatcherLabel>{matcher->label(chart_draw(), hidb.locdb())}, SettingValue_get(item.second, SettingDict{}));
-                else if (item.first != "type" && item.first != "passage" && item.first != "name" && (item.first.empty() || (item.first.front() != '?' && item.first.back() != '?')))
-                    std::cerr << "WARNING: mark_vaccines: unrecognized key \"" << item.first << '"' << std::endl;
+                else if (field_name == "label")
+                    add_label(std::shared_ptr<VaccineMatcherLabel>{matcher->label(chart_draw(), hidb.locdb())}, static_cast<const rjson::object&>(item_value));
+                else if (field_name != "type" && field_name != "passage" && field_name != "name" && (field_name.empty() || (field_name.front() != '?' && field_name.back() != '?')))
+                    std::cerr << "WARNING: mark_vaccines: unrecognized key \"" << field_name << '"' << std::endl;
             }
         }
           // std::cerr << "DEBUG: Vaccines:" << std::endl << vaccs.report(2) << std::endl;
         vaccs.plot(chart_draw());
+    }
+    catch (std::bad_variant_access&) {
+        std::cerr << "WARNING: cannot mark vaccines: invalid vaccine settings: " << vaccine_mod.to_json() << std::endl;
     }
     catch (hidb::NoHiDb&) {
         std::cerr << "WARNING: cannot mark vaccines: no hidb for \"" << chart_draw().chart().chart_info().virus_type() << "\"" << std::endl;
@@ -274,27 +278,28 @@ void AntigenicMapsLayoutDrawAce::mark_vaccines(const AntigenicMapMod& vaccine_mo
 
 // ----------------------------------------------------------------------
 
-void AntigenicMapsLayoutDrawAce::add_label(std::shared_ptr<VaccineMatcherLabel> label, const SettingDict& data)
+void AntigenicMapsLayoutDrawAce::add_label(std::shared_ptr<VaccineMatcherLabel> label, const rjson::object& data)
 {
-    for (const auto& item: data) {
-        if (item.first == "size")
-            label->size(SettingValue_get(item.second, 0.0));
-        else if (item.first == "color")
-            label->color(SettingValue_get(item.second, std::string{}));
-        else if (item.first == "font_family")
-            label->font_family(SettingValue_get(item.second, std::string{}));
-        else if (item.first == "name_type")
-            label->name_type(SettingValue_get(item.second, std::string{}));
-        else if (item.first == "slant")
-            label->slant(SettingValue_get(item.second, std::string{}));
-        else if (item.first == "weight")
-            label->weight(SettingValue_get(item.second, std::string{}));
-        else if (item.first == "offset") {
-            const SettingList& offset = SettingValue_get(item.second, SettingList{0.0, 1.0});
-            label->offset(SettingValue_get(offset[0], 0.0), SettingValue_get(offset[1], 1.0));
+    for (const auto& [item_key, item_value]: data) {
+        const std::string field_name = item_key;
+        if (field_name == "size")
+            label->size(item_value);
+        else if (field_name == "color")
+            label->color(static_cast<std::string>(item_value));
+        else if (field_name == "font_family")
+            label->font_family(item_value);
+        else if (field_name == "name_type")
+            label->name_type(item_value);
+        else if (field_name == "slant")
+            label->slant(item_value);
+        else if (field_name == "weight")
+            label->weight(item_value);
+        else if (field_name == "offset") {
+            const rjson::array& offset = item_value;
+            label->offset(offset[0], offset[1]);
         }
-        else if (item.first.empty() || (item.first.front() != '?' && item.first.back() != '?'))
-            std::cerr << "WARNING: mark_vaccines label: unrecognized key \"" << item.first << '"' << std::endl;
+        else if (field_name.empty() || (field_name.front() != '?' && field_name.back() != '?'))
+            std::cerr << "WARNING: mark_vaccines label: unrecognized key \"" << field_name << '"' << std::endl;
     }
 
 } // AntigenicMapsLayoutDrawAce::add_label
