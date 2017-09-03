@@ -69,7 +69,9 @@ void TreeDraw::prepare(const LocDb& aLocDb)
     mTree.make_aa_transitions();
     set_line_no();
 
-    const size_t number_of_hz_sections = prepare_hz_sections();
+    size_t number_of_hz_sections = prepare_hz_sections();
+    if (number_of_hz_sections == 0)
+        number_of_hz_sections = 1;
     const auto& canvas_size = mSurface.viewport().size;
     mHorizontalStep = canvas_size.width / mTree.width();
     mVerticalStep = (canvas_size.height - (number_of_hz_sections - 1) * mHzSections.vertical_gap) / static_cast<double>(mTree.height() + 2); // +2 to add space at the top and bottom
@@ -388,7 +390,7 @@ size_t TreeDraw::prepare_hz_sections()
 void TreeDraw::calculate_name_offset()
 {
     const auto tsize = mSurface.text_size("W", mFontSize, mSettings.label_style);
-    mNameOffset  = mSettings.name_offset * tsize.width;
+    mNameOffset = mSettings.name_offset * tsize.width;
 
 } // TreeDraw::calculate_name_offset
 
@@ -441,6 +443,9 @@ void TreeDraw::draw_node(const Node& aNode, double aOriginX, double& aVerticalGa
             const auto tsize = mSurface.text_size(text, mFontSize, mSettings.label_style);
             const Location text_origin{right + mNameOffset, aNode.draw.vertical_pos + tsize.height / 2};
             mSurface.text(text_origin, text, mColoring->color(aNode), mFontSize, mSettings.label_style);
+            if (text_origin.x < 0 || text_origin.y < 0) {
+                std::cerr << "WARNING: bad origin for a node label: " << text_origin << ' ' << text << " mNameOffset:" << mNameOffset << " aOriginX:" << aOriginX << '\n';
+            }
             if (!aNode.draw.vaccine_label.empty()) {
                 const auto& settings = mSettings.vaccine(aNode.draw.vaccine_label);
                 Size label_offset{-20, 20}; // TODO: settings
@@ -585,6 +590,7 @@ void HzSections::sort(const Tree& aTree)
     if (sections.empty() || node_refs[section_order.front()].first != first_leaf) {
         auto new_sec = sections.emplace_back();
         node_refs.emplace_back(first_leaf);
+        new_sec.name = first_leaf->seq_id;
         new_sec.show = true;
         new_sec.show_line = false;
         new_sec.show_map = false;
