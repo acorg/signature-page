@@ -131,6 +131,7 @@ namespace rjson
         inline object& get_ref_to_object(std::string aFieldName) override { return const_cast<value&>(mData).get_ref_to_object(aFieldName); }
         inline void set_field(std::string aFieldName, value&& aValue) override { const_cast<value&>(mData).set_field(aFieldName, std::forward<value>(aValue)); }
 
+        inline const value& data() const { return mData; }
         inline std::string to_json() const { return mData.to_json(); }
 
      private:

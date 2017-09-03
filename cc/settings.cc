@@ -247,20 +247,22 @@ AntigenicMapsDrawSettings::AntigenicMapsDrawSettings(rjson::field_container_pare
 
 void AntigenicMapsDrawSettings::viewport(const Viewport& aViewport)
 {
-    auto make_setting_list = [&aViewport]() -> SettingList {
+    auto make_setting_list = [&aViewport]() -> rjson::array {
         if (float_equal(aViewport.size.width, aViewport.size.height))
-            return SettingList{aViewport.origin.x, aViewport.origin.y, aViewport.size.width};
+            return {rjson::number{aViewport.origin.x}, rjson::number{aViewport.origin.y}, rjson::number{aViewport.size.width}};
         else
-            return SettingList{aViewport.origin.x, aViewport.origin.y, aViewport.size.width, aViewport.size.height};
+            return {rjson::number{aViewport.origin.x}, rjson::number{aViewport.origin.y}, rjson::number{aViewport.size.width}, rjson::number{aViewport.size.height}};
     };
     using namespace std::string_literals;
-    AntigenicMapMod viewport_mod{{"N", "viewport"s}, {"viewport", make_setting_list()}};
       // std::cerr << "DEBUG: AntigenicMapsDrawSettings::viewport" << std::endl;
-    const auto vpmod = std::find_if(mods.begin(), mods.end(), [](const auto& mod) -> bool { return mod.name() == "viewport"; });
-    if (vpmod == mods.end())
-        mods.push_back(viewport_mod);
+    auto vpmod = std::find_if(mods.begin(), mods.end(), [](const auto& mod) -> bool { return mod.name() == "viewport"; });
+    if (vpmod == mods.end()) {
+        auto mod = mods.emplace_back();
+        mod.set_field("N", rjson::string{"viewport"});
+        mod.set_field("viewport", make_setting_list());
+    }
     else
-        *vpmod = viewport_mod;
+        (*vpmod).set_field("viewport", make_setting_list());
 
 } // AntigenicMapsDrawSettings::viewport
 
@@ -533,73 +535,73 @@ class ViewportStorer : public jsi::StorerBase
 
 // ----------------------------------------------------------------------
 
-class SettingValueStorer : public jsi::StorerBase
-{
- public:
-    inline SettingValueStorer(SettingValue& aTarget) : mTarget(aTarget) {}
-    inline virtual Base* String(const char* str, rapidjson::SizeType length) { mTarget = std::string(str, length); return jsi::storers::_i::pop(); }
-    inline virtual Base* Int(int i) { mTarget = i; return jsi::storers::_i::pop(); }
-    inline virtual Base* Uint(unsigned u) { mTarget = static_cast<int>(u); return jsi::storers::_i::pop(); }
-    inline virtual Base* Double(double d) { mTarget = d; return jsi::storers::_i::pop(); }
-    inline virtual Base* Bool(bool b) { mTarget = b; return jsi::storers::_i::pop(); }
-    virtual Base* StartArray();
-    virtual Base* StartObject();
+// class SettingValueStorer : public jsi::StorerBase
+// {
+//  public:
+//     inline SettingValueStorer(SettingValue& aTarget) : mTarget(aTarget) {}
+//     inline virtual Base* String(const char* str, rapidjson::SizeType length) { mTarget = std::string(str, length); return jsi::storers::_i::pop(); }
+//     inline virtual Base* Int(int i) { mTarget = i; return jsi::storers::_i::pop(); }
+//     inline virtual Base* Uint(unsigned u) { mTarget = static_cast<int>(u); return jsi::storers::_i::pop(); }
+//     inline virtual Base* Double(double d) { mTarget = d; return jsi::storers::_i::pop(); }
+//     inline virtual Base* Bool(bool b) { mTarget = b; return jsi::storers::_i::pop(); }
+//     virtual Base* StartArray();
+//     virtual Base* StartObject();
 
- private:
-    SettingValue& mTarget;
-};
+//  private:
+//     SettingValue& mTarget;
+// };
 
-class SettingDictStorer : public jsi::StorerBase
-{
- public:
-    inline SettingDictStorer(SettingDict& aTarget, bool aPop2 = false) : mTarget(aTarget), mPop2(aPop2) {}
-    inline virtual Base* EndObject() { if (mPop2) return jsi::storers::_i::pop2(); else return jsi::storers::_i::pop(); }
-    inline virtual Base* Key(const char* str, rapidjson::SizeType length) { std::string key(str, length); auto p = mTarget.emplace(key, SettingValue{}); return new SettingValueStorer(p.first->second); }
+// class SettingDictStorer : public jsi::StorerBase
+// {
+//  public:
+//     inline SettingDictStorer(SettingDict& aTarget, bool aPop2 = false) : mTarget(aTarget), mPop2(aPop2) {}
+//     inline virtual Base* EndObject() { if (mPop2) return jsi::storers::_i::pop2(); else return jsi::storers::_i::pop(); }
+//     inline virtual Base* Key(const char* str, rapidjson::SizeType length) { std::string key(str, length); auto p = mTarget.emplace(key, SettingValue{}); return new SettingValueStorer(p.first->second); }
 
- private:
-    SettingDict& mTarget;
-    bool mPop2;
-};
+//  private:
+//     SettingDict& mTarget;
+//     bool mPop2;
+// };
 
-class SettingListStorer : public jsi::StorerBase
-{
- public:
-    inline SettingListStorer(SettingList& aTarget, bool aPop2 = false) : mTarget(aTarget), mPop2(aPop2) {}
-    inline virtual Base* EndArray() { if (mPop2) return jsi::storers::_i::pop2(); else return jsi::storers::_i::pop(); }
-    inline virtual Base* String(const char* str, rapidjson::SizeType length) { mTarget.emplace_back(std::string(str, length)); return nullptr; }
-    inline virtual Base* Int(int i) { mTarget.emplace_back(i); return nullptr; }
-    inline virtual Base* Uint(unsigned u) { mTarget.emplace_back(static_cast<int>(u)); return nullptr; }
-    inline virtual Base* Double(double d) { mTarget.emplace_back(d); return nullptr; }
-    inline virtual Base* StartObject() { mTarget.emplace_back(SettingDict{}); return new SettingDictStorer(*boost::get<SettingDict>(&mTarget.back()), false); }
+// class SettingListStorer : public jsi::StorerBase
+// {
+//  public:
+//     inline SettingListStorer(SettingList& aTarget, bool aPop2 = false) : mTarget(aTarget), mPop2(aPop2) {}
+//     inline virtual Base* EndArray() { if (mPop2) return jsi::storers::_i::pop2(); else return jsi::storers::_i::pop(); }
+//     inline virtual Base* String(const char* str, rapidjson::SizeType length) { mTarget.emplace_back(std::string(str, length)); return nullptr; }
+//     inline virtual Base* Int(int i) { mTarget.emplace_back(i); return nullptr; }
+//     inline virtual Base* Uint(unsigned u) { mTarget.emplace_back(static_cast<int>(u)); return nullptr; }
+//     inline virtual Base* Double(double d) { mTarget.emplace_back(d); return nullptr; }
+//     inline virtual Base* StartObject() { mTarget.emplace_back(SettingDict{}); return new SettingDictStorer(*boost::get<SettingDict>(&mTarget.back()), false); }
 
- private:
-    SettingList& mTarget;
-    bool mPop2;
-};
+//  private:
+//     SettingList& mTarget;
+//     bool mPop2;
+// };
 
-SettingValueStorer::Base* SettingValueStorer::StartArray()
-{
-    mTarget = SettingList{};
-    return new SettingListStorer(*boost::get<SettingList>(&mTarget), true);
-}
+// SettingValueStorer::Base* SettingValueStorer::StartArray()
+// {
+//     mTarget = SettingList{};
+//     return new SettingListStorer(*boost::get<SettingList>(&mTarget), true);
+// }
 
-SettingValueStorer::Base* SettingValueStorer::StartObject()
-{
-    mTarget = SettingDict{};
-    return new SettingDictStorer(*boost::get<SettingDict>(&mTarget), true);
-}
+// SettingValueStorer::Base* SettingValueStorer::StartObject()
+// {
+//     mTarget = SettingDict{};
+//     return new SettingDictStorer(*boost::get<SettingDict>(&mTarget), true);
+// }
 
-class AntigenicMapModsStorer : public jsi::StorerBase
-{
- public:
-    inline AntigenicMapModsStorer(std::vector<AntigenicMapMod>& aTarget) : mTarget(aTarget) {}
-    inline virtual Base* StartArray() { mTarget.clear(); return nullptr; }
-    inline virtual Base* EndArray() { return jsi::storers::_i::pop(); }
-    inline virtual Base* StartObject() { mTarget.emplace_back(); return new SettingDictStorer(mTarget.back()); }
+// class AntigenicMapModsStorer : public jsi::StorerBase
+// {
+//  public:
+//     inline AntigenicMapModsStorer(std::vector<AntigenicMapMod>& aTarget) : mTarget(aTarget) {}
+//     inline virtual Base* StartArray() { mTarget.clear(); return nullptr; }
+//     inline virtual Base* EndArray() { return jsi::storers::_i::pop(); }
+//     inline virtual Base* StartObject() { mTarget.emplace_back(); return new SettingDictStorer(mTarget.back()); }
 
- private:
-    std::vector<AntigenicMapMod>& mTarget;
-};
+//  private:
+//     std::vector<AntigenicMapMod>& mTarget;
+// };
 
 // ----------------------------------------------------------------------
 
@@ -1183,31 +1185,31 @@ template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writ
 
 // // ----------------------------------------------------------------------
 
-template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const SettingValue& aSettingValue)
-{
-    // std::cerr << "DEBUG: SettingValue " << aSettingValue.which() << " " << aSettingValue << std::endl;
-    switch (aSettingValue.which()) {
-      case 0:
-          writer << *boost::get<std::string>(&aSettingValue);
-          break;
-      case 1:
-          writer << std::round(*boost::get<double>(&aSettingValue) * 100.0) / 100.0;
-          break;
-      case 2:
-          writer << *boost::get<int>(&aSettingValue);
-          break;
-      case 3:
-          writer << *boost::get<bool>(&aSettingValue);
-          break;
-      case 4:
-          writer << *boost::get<SettingDict>(&aSettingValue);
-          break;
-      case 5:
-          writer << *boost::get<SettingList>(&aSettingValue);
-          break;
-    }
-    return writer;
-}
+// template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const SettingValue& aSettingValue)
+// {
+//     // std::cerr << "DEBUG: SettingValue " << aSettingValue.which() << " " << aSettingValue << std::endl;
+//     switch (aSettingValue.which()) {
+//       case 0:
+//           writer << *boost::get<std::string>(&aSettingValue);
+//           break;
+//       case 1:
+//           writer << std::round(*boost::get<double>(&aSettingValue) * 100.0) / 100.0;
+//           break;
+//       case 2:
+//           writer << *boost::get<int>(&aSettingValue);
+//           break;
+//       case 3:
+//           writer << *boost::get<bool>(&aSettingValue);
+//           break;
+//       case 4:
+//           writer << *boost::get<SettingDict>(&aSettingValue);
+//           break;
+//       case 5:
+//           writer << *boost::get<SettingList>(&aSettingValue);
+//           break;
+//     }
+//     return writer;
+// }
 
 // template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const SettingList& aSettings)
 // {
@@ -1218,13 +1220,62 @@ template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writ
 //     return writer;
 // }
 
-template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const SettingDict& aSettings)
+// template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const SettingDict& aSettings)
+// {
+//     writer << jsw::start_object;
+//     for (const auto& value: aSettings)
+//         writer << jsw::key(value.first) << value.second;
+//     writer << jsw::end_object;
+//     return writer;
+// }
+
+template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const rjson::value& aValue);
+
+template <typename RW> class ValueVisitor
 {
-    writer << jsw::start_object;
-    for (const auto& value: aSettings)
-        writer << jsw::key(value.first) << value.second;
-    writer << jsw::end_object;
+ public:
+    inline ValueVisitor(jsw::writer<RW>& aWriter) : writer{aWriter} {}
+
+    inline void operator()(const rjson::object& aValue)
+        {
+            writer << jsw::start_object;
+            for (const auto& [key, val]: aValue)
+                writer << jsw::key(key) << val;
+            writer << jsw::end_object;
+        }
+
+    inline void operator()(const rjson::array& aValue)
+        {
+            writer << jsw::start_array;
+            for (const auto& val: aValue)
+                writer << val;
+            writer << jsw::end_array;
+        }
+
+    inline void operator()(const rjson::null&) { writer << nullptr; }
+    inline void operator()(const rjson::string& aValue) { writer << static_cast<std::string>(aValue); }
+    inline void operator()(const rjson::integer& aValue) { writer << static_cast<int>(aValue); }
+    inline void operator()(const rjson::number& aValue) { writer << static_cast<double>(aValue); }
+    inline void operator()(const rjson::boolean& aValue) { writer << static_cast<bool>(aValue); }
+
+ private:
+    jsw::writer<RW>& writer;
+};
+
+template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const rjson::value& aValue)
+{
+    std::visit(ValueVisitor<RW>{writer}, aValue);
     return writer;
+}
+
+template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const AntigenicMapMod& mod)
+{
+    return writer << mod.data();
+}
+
+template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const rjson::array_field_container_child<AntigenicMapMod>& mods)
+{
+    return jsw::write_list(writer, mods);
 }
 
 template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const AntigenicMapsDrawSettings& aSettings)
