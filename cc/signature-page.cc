@@ -198,6 +198,8 @@ void SignaturePageDraw::prepare()
           //     mTimeSeriesDraw->hide_hz_section_labels_in_time_series();
           break;
       case SignaturePageDrawSettings::Layout::TreeCladesTSMaps:
+          if (mChartFilename.empty())
+              throw std::runtime_error("Cannot generate page in the TreeCladesTSMaps layout: no chart provided (--chart)");
           make_layout_tree_clades_ts_maps();
           if (mTimeSeriesDraw)
               mTimeSeriesDraw->tree_mode(false);

@@ -58,8 +58,10 @@ class CladesDrawSettings : public rjson::field_container_child
             auto p = std::find_if(clades.begin(), clades.end(), [&name](const auto& c) { return static_cast<std::string>(c.name) == name; });
             if (p == clades.end()) {
                 p = std::find_if(clades.begin(), clades.end(), [](const auto& c) { return c.name.empty(); });
-                if (p == clades.end())
+                if (p == clades.end()) {
+                    std::cerr << "DEBUG: " << clades.to_json() << DEBUG_LINE_FUNC << '\n';
                     throw std::runtime_error("ERROR: no clade entry with empty name (for default settings)");
+                }
             }
             return *p;
         }

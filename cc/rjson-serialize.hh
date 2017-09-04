@@ -115,6 +115,8 @@ namespace rjson
             }
         inline void erase(size_t index) { get_ref_to_array().erase(index); }
 
+        inline std::string to_json() const { return get_ref_to_array().to_json(); }
+
      private:
         field_container_parent& mParent;
         std::string mFieldName;
