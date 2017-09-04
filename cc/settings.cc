@@ -608,7 +608,7 @@ class ViewportStorer : public jsi::StorerBase
 void read_settings(Settings& aSettings, std::string aFilename)
 {
     std::cout << "INFO: reading settings from " << aFilename << std::endl;
-    aSettings.use_json(rjson::parse_file(aFilename));
+    aSettings.update(rjson::parse_file(aFilename));
       // jsi::import(acmacs_base::read_file(aFilename), aSettings, settings_data);
     aSettings.upgrade();
 

@@ -29,6 +29,7 @@ namespace rjson
     {
      public:
         inline void use_json(rjson::value&& aData) { mData = std::move(aData); }
+        inline void update(rjson::value&& aData) { mData.update(aData); }
 
         inline value& get_ref(std::string aFieldName, value&& aDefault) override { return mData.get_ref(aFieldName, std::forward<value>(aDefault)); }
         inline const value& get_ref(std::string aFieldName, value&& aDefault) const override { return mData.get_ref(aFieldName, std::forward<value>(aDefault)); }

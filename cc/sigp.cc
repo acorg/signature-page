@@ -43,10 +43,10 @@ int main(int argc, const char *argv[])
             if (!options.chart_filename.empty())
                 signature_page.chart(options.chart_filename); // before make_surface!
             signature_page.make_surface(options.output_filename, !options.init_settings_filename.empty(), !options.no_draw); // before init_layout!
-            if (!options.init_settings_filename.empty())
+            if (!options.init_settings_filename.empty()) {
                 signature_page.init_layout();
-            if (!options.init_settings_filename.empty())
                 signature_page.init_settings();
+            }
             signature_page.prepare();
             if (!options.init_settings_filename.empty())
                 write_settings(signature_page.settings(), options.init_settings_filename);
