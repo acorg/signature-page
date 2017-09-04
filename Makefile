@@ -24,9 +24,6 @@ TARGET_ROOT=$(shell if [ -f /Volumes/rdisk/ramdisk-id ]; then echo /Volumes/rdis
 include $(TARGET_ROOT)/share/Makefile.g++
 include $(TARGET_ROOT)/share/Makefile.dist-build.vars
 
-# -fvisibility=hidden and -flto make resulting lib smaller (pybind11) but linking is much slower
-OPTIMIZATION = -O3 #-fvisibility=hidden -flto
-PROFILE = # -pg
 CXXFLAGS = -MMD -g $(OPTIMIZATION) $(PROFILE) -fPIC -std=$(STD) $(WEVERYTHING) $(WARNINGS) -Icc -I$(AD_INCLUDE) $(PKG_INCLUDES)
 LDFLAGS = $(OPTIMIZATION) $(PROFILE)
 
