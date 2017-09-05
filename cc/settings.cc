@@ -190,60 +190,39 @@ AntigenicMapsDrawSettings::AntigenicMapsDrawSettings(rjson::field_container_pare
       mapped_antigens_section_line_width(*this, "mapped_antigens_section_line_width", 1),
       mods(*this, "mods")
 {
-      // $$
-
-    // using namespace std::string_literals;
-    // mods.push_back(AntigenicMapMod{{"N", "viewport"s}, {"viewport", SettingList{0.0, 0.0, 0.0}}});
-    // mods.push_back(AntigenicMapMod{{"N", "point_scale"s}, {"scale", 1.0}, {"outline_scale"s, 1.0}});
-    // mods.push_back(AntigenicMapMod{{"N", "rotate_degrees"s}, {"angle", 0.0}});
-    // mods.push_back(AntigenicMapMod{{"N", "sera"s}, {"outline", "grey88"s}, {"outline_width", 0.5}, {"size", 5.0}});
-    // mods.push_back(AntigenicMapMod{{"N", "reference_antigens"s}, {"fill", "transparent"s}, {"outline", "grey88"s}, {"outline_width", 0.5}, {"size", 5.0}});
-    // mods.push_back(AntigenicMapMod{{"N", "test_antigens"s}, {"fill", "grey88"s}, {"outline", "grey88"s}, {"outline_width", 0.5}, {"size", 3.0}});
-    // mods.push_back(AntigenicMapMod{{"N", "sequenced_antigens"s}, {"fill", "grey63"s}, {"outline", "white"s}, {"outline_width", 0.5}, {"size", 3.0}});
-    // mods.push_back(AntigenicMapMod{{"N", "tracked_antigens"s}, {"fill", "green3"s}, {"outline", "white"s}, {"outline_width", 0.5}, {"size", 5.0}});
-    // mods.push_back(AntigenicMapMod{{"N", "tracked_sera"s}, {"fill", "transparent"s}, {"outline", "black"s}, {"outline_width", 0.5}, {"size", 5.0}}); // tracked sera above tracked antigens!
-    // mods.push_back(AntigenicMapMod{{"N", "tracked_serum_circles"s}, {"outline", "black"s}, {"outline_width", 0.5}}); // tracked serum circles above tracked antigens!
-    // mods.push_back(AntigenicMapMod{{"N", "vaccines"s}, {"mods", SettingList{
-    //     SettingDict{{"size", 15}},
-    //     SettingDict{{"outline", "white"s}, {"fill", "blue"s}},
-    //     SettingDict{{"type", "current"s}, {"fill", "red"s}},
-    //     SettingDict{{"type", "current"s}, {"passage", "reassortant"s}, {"fill", "green"s}},
-    //     SettingDict{{"type", "surrogate"s}, {"fill", "pink"s}},
-    //     SettingDict{{"name", "TEXAS"s}, {"?show", false}},
-    //     SettingDict{{"label", SettingDict{{"offset", SettingList{0, 1}}, {"color", "black"s}, {"weight", "normal"s}, {"slant", "normal"s},
-    //                                       {"font_family", "helvetica neu"s}, {"size", 9}, {"name_type", "abbreviated_location_with_passage_type"s}}}},
-    // }}});
-
-    // mods.push_back(AntigenicMapMod{{"N", "title"s}, {"text_color", "black"s}, {"text_size", 12.0}, {"padding", 3.0}, {"offset", SettingList{0.0, 0.0}}, {"weight", "normal"s}, {"slant", "normal"s}, {"font_family", "san serif"s}});
-    // mods.push_back(AntigenicMapMod{{"N", "background"s}, {"color", "white"s}});
-    // mods.push_back(AntigenicMapMod{{"N", "grid"s}, {"color", "grey80"s}, {"line_width", 1.0}});
-    // mods.push_back(AntigenicMapMod{{"N", "border"s}, {"color", "black"s}, {"line_width", 1.0}});
+    mods.emplace_back().add("N", "?viewport").add("viewport", rjson::array{0, 0, 0});
+    mods.emplace_back().add("N", "point_scale").add("scale", 1.0).add("outline_scale", 1.0);
+    mods.emplace_back().add("N", "rotate_degrees").add("angle", 0.0);
+    mods.emplace_back().add("N", "sera").add("outline", "grey88").add("outline_width", 0.5).add("size", 5.0);
+    mods.emplace_back().add("N", "reference_antigens").add("fill", "transparent").add("outline", "grey88").add("outline_width", 0.5).add("size", 5.0);
+    mods.emplace_back().add("N", "test_antigens").add("fill", "grey88").add("outline", "grey88").add("outline_width", 0.5).add("size", 3.0);
+    mods.emplace_back().add("N", "equenced_antigens").add("fill", "grey63").add("outline", "white").add("outline_width", 0.5).add("size", 3.0);
+    mods.emplace_back().add("N", "tracked_antigens").add("fill", "green3").add("outline", "white").add("outline_width", 0.5).add("size", 5.0);
+    mods.emplace_back().add("N", "?tracked_sera").add("fill", "transparent").add("outline", "black").add("outline_width", 0.5).add("size", 5.0); // tracked sera above tracked antigens!
+    mods.emplace_back().add("N", "?tracked_serum_circles").add("outline", "black").add("outline_width", 0.5); // tracked serum circles above tracked antigens!
+    mods.emplace_back().add("N", "title").add("text_color", "black").add("text_size", 12.0).add("padding", 3.0)
+            .add("offset", rjson::array{0.0, 0.0}).add("weight", "normal").add("slant", "normal").add("font_family", "san serif");
+    mods.emplace_back().add("N", "background").add("color", "white");
+    mods.emplace_back().add("N", "grid").add("color", "grey80").add("line_width", 1.0);
+    mods.emplace_back().add("N", "border").add("color", "black").add("line_width", 1.0);
+    mods.emplace_back().add("N", "vaccines").add("mods", rjson::array{
+            rjson::object{{"size", rjson::number{15}}, {"outline", rjson::string{"white"}}},
+            rjson::object{{"type", rjson::string{"previous"}}, {"passage", rjson::string{"cell"}}, {"fill", rjson::string{"blue"}}},
+            rjson::object{{"type", rjson::string{"previous"}}, {"passage", rjson::string{"egg"}}, {"fill", rjson::string{"blue"}}},
+            rjson::object{{"type", rjson::string{"previous"}}, {"passage", rjson::string{"reassortant"}}, {"fill", rjson::string{"blue"}}},
+            rjson::object{{"type", rjson::string{"current"}}, {"passage", rjson::string{"cell"}}, {"fill", rjson::string{"red"}}},
+            rjson::object{{"type", rjson::string{"current"}}, {"passage", rjson::string{"egg"}}, {"fill", rjson::string{"red"}}},
+            rjson::object{{"type", rjson::string{"current"}}, {"passage", rjson::string{"reassortant"}}, {"fill", rjson::string{"green"}}},
+            rjson::object{{"type", rjson::string{"surrogate"}}, {"passage", rjson::string{"cell"}}, {"fill", rjson::string{"pink"}}},
+            rjson::object{{"type", rjson::string{"surrogate"}}, {"passage", rjson::string{"egg"}}, {"fill", rjson::string{"pink"}}},
+            rjson::object{{"type", rjson::string{"surrogate"}}, {"passage", rjson::string{"reassortant"}}, {"fill", rjson::string{"pink"}}},
+            rjson::object{{"?name", rjson::string{"TEXAS"}}, {"?show", rjson::boolean{false}}},
+            rjson::object{{"label", rjson::object{{"offset", rjson::array{0, 1}}, {"color", rjson::string{"black"}},
+                                                  {"weight", rjson::string{"normal"}}, {"slant", rjson::string{"normal"}},
+                                                  {"font_family", rjson::string{"helvetica neu"}}, {"size", rjson::number{9}},
+                                                  {"name_type", rjson::string{"abbreviated_location_with_passage_type"}}}}},
+       });
 }
-
-//       vaccine_antigen_scale(15),
-//       vaccine_antigen_outline_width(0.5),
-//       vaccine_antigen_outline_color("white"),
-//       tracked_antigen_colored_by_clade(false),
-//       show_tracked_sera(false), serum_circle_color("grey50"), tracked_serum_outline_color("black"), serum_circle_thickness(0.1), tracked_serum_outline_width(0.1),
-
-// AntigenicMapsDrawSettings::AntigenicMapsDrawSettings()
-//     : layout("labelled_grid"), columns(3), gap(20),
-//       border_width(1), grid_line_width(0.5),
-//       border_color("black"), grid_line_color("grey63"), background_color("white"), // 0xFFFFF8
-//       point_scale(1), serum_scale(5), reference_antigen_scale(5), test_antigen_scale(3), vaccine_antigen_scale(15), tracked_antigen_scale(5),
-//       serum_outline_width(0.5), reference_antigen_outline_width(0.5), test_antigen_outline_width(0.5), vaccine_antigen_outline_width(0.5),
-//       sequenced_antigen_outline_width(0.5), tracked_antigen_outline_width(0.5),
-//       serum_outline_color("grey88"), reference_antigen_outline_color("grey88"), test_antigen_outline_color("grey88"),
-//       test_antigen_fill_color("grey88"), vaccine_antigen_outline_color("white"), sequenced_antigen_outline_color("white"), sequenced_antigen_fill_color("grey63"),
-//       tracked_antigen_outline_color("white"), tracked_antigen_colored_by_clade(false), tracked_antigen_color("green3"),
-//       reassortant_rotation(0.5 /* M_PI / 6.0 */), egg_antigen_aspect(0.75),
-//       show_tracked_sera(false), serum_circle_color("grey50"), tracked_serum_outline_color("black"), serum_circle_thickness(0.1), tracked_serum_outline_width(0.1),
-//       map_title_color("black"), map_title_offset{0.3, 0.4}, map_title_size(11),
-//       mapped_antigens_section_line_color("black"), mapped_antigens_section_line_width(1),
-//       mark_antigens{{true, "? VT 14-002966-VIR SIAT1 (2014-06-29)"}},
-//       _width(0)
-// {
-// }
 
 void AntigenicMapsDrawSettings::viewport(const Viewport& aViewport)
 {
