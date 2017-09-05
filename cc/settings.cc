@@ -338,6 +338,50 @@ Settings::Settings()
 
 // ----------------------------------------------------------------------
 
+void read_settings(Settings& aSettings, std::string aFilename)
+{
+    std::cout << "INFO: reading settings from " << aFilename << std::endl;
+    aSettings.update(rjson::parse_file(aFilename));
+      // jsi::import(acmacs_base::read_file(aFilename), aSettings, settings_data);
+    aSettings.upgrade();
+
+} // read_settings
+
+// ----------------------------------------------------------------------
+
+void Settings::upgrade()             // upgrade to the new version in case old version data provided
+{
+    // if (version == SETTINGS_VERSION_2) {
+    //     signature_page.antigenic_maps_width = antigenic_maps._width;
+    //     if (!tree_draw._root.empty())
+    //         tree_draw.mods.emplace_back("root", tree_draw._root);
+    //     if (!tree_draw._hide_isolated_before.empty())
+    //         tree_draw.mods.emplace_back("hide-isolated-before", tree_draw._hide_isolated_before);
+    //     if (tree_draw._hide_if_cumulative_edge_length_bigger_than > 0.0)
+    //         tree_draw.mods.emplace_back("hide-if-cumulative-edge-length-bigger-than", tree_draw._hide_if_cumulative_edge_length_bigger_than);
+    //     if (!tree_draw._hide_if.empty())
+    //         tree_draw.mods.emplace_back(tree_draw._hide_if);
+    // }
+    // else if (version == SETTINGS_VERSION_3) {
+    //       // fail, if old version data provided
+    //     if (!float_zero(antigenic_maps._width))
+    //         throw std::runtime_error("antigenic_maps.width provided, must be signature_page.antigenic_maps_width");
+    //     if (!tree_draw._hide_isolated_before.empty())
+    //         throw std::runtime_error("tree_draw.hide_isolated_before provided, must be in tree_draw.mods");
+    //     if (tree_draw._hide_if_cumulative_edge_length_bigger_than > 0.0)
+    //         throw std::runtime_error("tree_draw.hide_if_cumulative_edge_length_bigger_than provided, must be in tree_draw.mods");
+    //     if (!tree_draw._hide_if.empty())
+    //         throw std::runtime_error("tree_draw.hide_if provided, must be in tree_draw.mods");
+    //     if (!tree_draw._root.empty())
+    //         throw std::runtime_error("tree_draw.root provided, must be in tree_draw.mods");
+    // }
+
+} // Settings::upgrade
+
+// ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
+
 // void Settings::set_version(const char* str, size_t length)
 // {
 //     version.assign(str, length);
@@ -377,161 +421,130 @@ Settings::Settings()
 
 // ----------------------------------------------------------------------
 
-void Settings::upgrade()             // upgrade to the new version in case old version data provided
-{
-    // if (version == SETTINGS_VERSION_2) {
-    //     signature_page.antigenic_maps_width = antigenic_maps._width;
-    //     if (!tree_draw._root.empty())
-    //         tree_draw.mods.emplace_back("root", tree_draw._root);
-    //     if (!tree_draw._hide_isolated_before.empty())
-    //         tree_draw.mods.emplace_back("hide-isolated-before", tree_draw._hide_isolated_before);
-    //     if (tree_draw._hide_if_cumulative_edge_length_bigger_than > 0.0)
-    //         tree_draw.mods.emplace_back("hide-if-cumulative-edge-length-bigger-than", tree_draw._hide_if_cumulative_edge_length_bigger_than);
-    //     if (!tree_draw._hide_if.empty())
-    //         tree_draw.mods.emplace_back(tree_draw._hide_if);
-    // }
-    // else if (version == SETTINGS_VERSION_3) {
-    //       // fail, if old version data provided
-    //     if (!float_zero(antigenic_maps._width))
-    //         throw std::runtime_error("antigenic_maps.width provided, must be signature_page.antigenic_maps_width");
-    //     if (!tree_draw._hide_isolated_before.empty())
-    //         throw std::runtime_error("tree_draw.hide_isolated_before provided, must be in tree_draw.mods");
-    //     if (tree_draw._hide_if_cumulative_edge_length_bigger_than > 0.0)
-    //         throw std::runtime_error("tree_draw.hide_if_cumulative_edge_length_bigger_than provided, must be in tree_draw.mods");
-    //     if (!tree_draw._hide_if.empty())
-    //         throw std::runtime_error("tree_draw.hide_if provided, must be in tree_draw.mods");
-    //     if (!tree_draw._root.empty())
-    //         throw std::runtime_error("tree_draw.root provided, must be in tree_draw.mods");
-    // }
+// class ColorStorer : public jsi::StorerBase
+// {
+//  public:
+//     inline ColorStorer(Color& aTarget) : mTarget(aTarget) {}
+//     inline virtual Base* String(const char* str, rapidjson::SizeType length) { mTarget.from_string(str, length); return jsi::storers::_i::pop(); }
 
-} // Settings::upgrade
+//  private:
+//     Color& mTarget;
+// };
 
-// ----------------------------------------------------------------------
+// template <typename SZ> class SZStorer : public jsi::StorerBase
+// {
+//  public:
+//     inline SZStorer(SZ& aTarget) : mTarget(aTarget), mPos(0) {}
 
-class ColorStorer : public jsi::StorerBase
-{
- public:
-    inline ColorStorer(Color& aTarget) : mTarget(aTarget) {}
-    inline virtual Base* String(const char* str, rapidjson::SizeType length) { mTarget.from_string(str, length); return jsi::storers::_i::pop(); }
+//     inline virtual Base* StartArray()
+//         {
+//             if (mPos)
+//                 return jsi::storers::_i::failure(typeid(*this).name() + std::string(": unexpected StartArray event"));
+//             ++mPos;
+//             return nullptr;
+//         }
 
- private:
-    Color& mTarget;
-};
+//     inline virtual Base* EndArray()
+//         {
+//             if (mPos != 3)
+//                 return jsi::storers::_i::failure(typeid(*this).name() + std::string(": unexpected EndArray event"));
+//             return jsi::storers::_i::pop();
+//         }
 
-template <typename SZ> class SZStorer : public jsi::StorerBase
-{
- public:
-    inline SZStorer(SZ& aTarget) : mTarget(aTarget), mPos(0) {}
+//     virtual Base* Double(double d);
 
-    inline virtual Base* StartArray()
-        {
-            if (mPos)
-                return jsi::storers::_i::failure(typeid(*this).name() + std::string(": unexpected StartArray event"));
-            ++mPos;
-            return nullptr;
-        }
+//     inline virtual Base* Int(int i) { return Double(static_cast<double>(i)); }
+//     inline virtual Base* Uint(unsigned u) { return Double(static_cast<double>(u)); }
 
-    inline virtual Base* EndArray()
-        {
-            if (mPos != 3)
-                return jsi::storers::_i::failure(typeid(*this).name() + std::string(": unexpected EndArray event"));
-            return jsi::storers::_i::pop();
-        }
+//  private:
+//     SZ& mTarget;
+//     size_t mPos;
+// };
 
-    virtual Base* Double(double d);
+// template <> jsi::StorerBase* SZStorer<Size>::Double(double d)
+// {
+//     switch (mPos) {
+//       case 1:
+//           mTarget.width = d;
+//           break;
+//       case 2:
+//           mTarget.height = d;
+//           break;
+//       default:
+//           return jsi::storers::_i::failure(typeid(*this).name() + std::string(": unexpected Double event"));
+//     }
+//     ++mPos;
+//     return nullptr;
+// }
 
-    inline virtual Base* Int(int i) { return Double(static_cast<double>(i)); }
-    inline virtual Base* Uint(unsigned u) { return Double(static_cast<double>(u)); }
+// template <> jsi::StorerBase* SZStorer<Location>::Double(double d)
+// {
+//     switch (mPos) {
+//       case 1:
+//           mTarget.x = d;
+//           break;
+//       case 2:
+//           mTarget.y = d;
+//           break;
+//       default:
+//           return jsi::storers::_i::failure(typeid(*this).name() + std::string(": unexpected Double event"));
+//     }
+//     ++mPos;
+//     return nullptr;
+// }
 
- private:
-    SZ& mTarget;
-    size_t mPos;
-};
+// using SizeStorer = SZStorer<Size>;
+// using LocationStorer = SZStorer<Location>;
 
-template <> jsi::StorerBase* SZStorer<Size>::Double(double d)
-{
-    switch (mPos) {
-      case 1:
-          mTarget.width = d;
-          break;
-      case 2:
-          mTarget.height = d;
-          break;
-      default:
-          return jsi::storers::_i::failure(typeid(*this).name() + std::string(": unexpected Double event"));
-    }
-    ++mPos;
-    return nullptr;
-}
+// class ViewportStorer : public jsi::StorerBase
+// {
+//  public:
+//     inline ViewportStorer(Viewport& aTarget) : mTarget(aTarget), mPos(0) {}
 
-template <> jsi::StorerBase* SZStorer<Location>::Double(double d)
-{
-    switch (mPos) {
-      case 1:
-          mTarget.x = d;
-          break;
-      case 2:
-          mTarget.y = d;
-          break;
-      default:
-          return jsi::storers::_i::failure(typeid(*this).name() + std::string(": unexpected Double event"));
-    }
-    ++mPos;
-    return nullptr;
-}
+//     inline virtual Base* StartArray()
+//         {
+//             if (mPos)
+//                 return jsi::storers::_i::failure(typeid(*this).name() + std::string(": unexpected StartArray event"));
+//             ++mPos;
+//             return nullptr;
+//         }
 
-using SizeStorer = SZStorer<Size>;
-using LocationStorer = SZStorer<Location>;
+//     inline virtual Base* EndArray()
+//         {
+//             if (mPos != 4 && mPos != 5)
+//                 return jsi::storers::_i::failure(typeid(*this).name() + std::string(": unexpected EndArray event"));
+//             return jsi::storers::_i::pop();
+//         }
 
-class ViewportStorer : public jsi::StorerBase
-{
- public:
-    inline ViewportStorer(Viewport& aTarget) : mTarget(aTarget), mPos(0) {}
+//     virtual inline Base* Double(double d)
+//         {
+//             switch (mPos) {
+//               case 1:
+//                   mTarget.origin.x = d;
+//                   break;
+//               case 2:
+//                   mTarget.origin.y = d;
+//                   break;
+//               case 3:
+//                   mTarget.size.width = mTarget.size.height = d;
+//                   break;
+//               case 4:
+//                   mTarget.size.height = d;
+//                   break;
+//               default:
+//                   return jsi::storers::_i::failure(typeid(*this).name() + std::string(": unexpected Double event"));
+//             }
+//             ++mPos;
+//             return nullptr;
+//         }
 
-    inline virtual Base* StartArray()
-        {
-            if (mPos)
-                return jsi::storers::_i::failure(typeid(*this).name() + std::string(": unexpected StartArray event"));
-            ++mPos;
-            return nullptr;
-        }
+//     inline virtual Base* Int(int i) { return Double(static_cast<double>(i)); }
+//     inline virtual Base* Uint(unsigned u) { return Double(static_cast<double>(u)); }
 
-    inline virtual Base* EndArray()
-        {
-            if (mPos != 4 && mPos != 5)
-                return jsi::storers::_i::failure(typeid(*this).name() + std::string(": unexpected EndArray event"));
-            return jsi::storers::_i::pop();
-        }
-
-    virtual inline Base* Double(double d)
-        {
-            switch (mPos) {
-              case 1:
-                  mTarget.origin.x = d;
-                  break;
-              case 2:
-                  mTarget.origin.y = d;
-                  break;
-              case 3:
-                  mTarget.size.width = mTarget.size.height = d;
-                  break;
-              case 4:
-                  mTarget.size.height = d;
-                  break;
-              default:
-                  return jsi::storers::_i::failure(typeid(*this).name() + std::string(": unexpected Double event"));
-            }
-            ++mPos;
-            return nullptr;
-        }
-
-    inline virtual Base* Int(int i) { return Double(static_cast<double>(i)); }
-    inline virtual Base* Uint(unsigned u) { return Double(static_cast<double>(u)); }
-
- private:
-    Viewport& mTarget;
-    size_t mPos;
-};
+//  private:
+//     Viewport& mTarget;
+//     size_t mPos;
+// };
 
 // ----------------------------------------------------------------------
 
@@ -602,17 +615,6 @@ class ViewportStorer : public jsi::StorerBase
 //  private:
 //     std::vector<AntigenicMapMod>& mTarget;
 // };
-
-// ----------------------------------------------------------------------
-
-void read_settings(Settings& aSettings, std::string aFilename)
-{
-    std::cout << "INFO: reading settings from " << aFilename << std::endl;
-    aSettings.update(rjson::parse_file(aFilename));
-      // jsi::import(acmacs_base::read_file(aFilename), aSettings, settings_data);
-    aSettings.upgrade();
-
-} // read_settings
 
 // ----------------------------------------------------------------------
 
