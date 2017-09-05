@@ -164,6 +164,9 @@ void SignaturePageDraw::init_settings()
         for (auto clade: mSettings->clades.clades) {
             clade.label_offset = Size{10, 0};
         }
+
+          // do not write antigenic maps settings
+        mSettings->antigenic_maps.remove();
     }
 
 } // SignaturePageDraw::init_settings

@@ -21,6 +21,7 @@ namespace rjson
         virtual const value& get_ref(std::string aFieldName, value&& aDefault) const = 0;
         virtual object& get_ref_to_object(std::string aFieldName) = 0;
         virtual field_container_parent& set_field(std::string aFieldName, value&& aValue) = 0;
+        virtual void remove_child(std::string aFieldName) = 0;
 
     }; // class field_container_parent
 
@@ -37,6 +38,7 @@ namespace rjson
         inline const value& get_ref(std::string aFieldName, value&& aDefault) const override { return mData.get_ref(aFieldName, std::forward<value>(aDefault)); }
         inline object& get_ref_to_object(std::string aFieldName) override { return mData.get_ref_to_object(aFieldName); }
         inline field_container_toplevel& set_field(std::string aFieldName, value&& aValue) override { mData.set_field(aFieldName, std::forward<value>(aValue)); return *this; }
+        inline void remove_child(std::string aFieldName) override { try { std::get<object>(mData).delete_field(aFieldName); } catch (object::field_not_found&) {} }
 
         inline std::string to_json() const { return mData.to_json(); }
 
@@ -60,10 +62,14 @@ namespace rjson
         inline value& get_ref(const char* aFieldName, value&& aDefault) override { return get_ref_to_object().get_ref(aFieldName, std::forward<value>(aDefault)); }
         inline value& get_ref(std::string aFieldName, value&& aDefault) override { return get_ref_to_object().get_ref(aFieldName, std::forward<value>(aDefault)); }
         inline const value& get_ref(std::string aFieldName, value&& aDefault) const override { return get_ref_to_object().get_ref(aFieldName, std::forward<value>(aDefault)); }
+        inline void remove_child(std::string aFieldName) override { try { get_ref_to_object().delete_field(aFieldName); } catch (object::field_not_found&) {} }
 
         inline field_container_child& set_field(std::string aFieldName, value&& aValue) override { get_ref_to_object().set_field(aFieldName, std::forward<value>(aValue)); return *this; }
 
         inline std::string to_json() const { return get_ref_to_object().to_json(); }
+
+          // remove this field from parent
+        inline void remove() { mParent.remove_child(mFieldName); }
 
      private:
         field_container_parent& mParent;
@@ -137,6 +143,7 @@ namespace rjson
         inline const value& get_ref(std::string aFieldName, value&& aDefault) const override { return const_cast<value&>(mData).get_ref(aFieldName, std::forward<value>(aDefault)); }
         inline object& get_ref_to_object(std::string aFieldName) override { return const_cast<value&>(mData).get_ref_to_object(aFieldName); }
         inline array_field_container_child_element& set_field(std::string aFieldName, value&& aValue) override { const_cast<value&>(mData).set_field(aFieldName, std::forward<value>(aValue)); return *this; }
+        inline void remove_child(std::string aFieldName) override { try { std::get<object>(const_cast<value&>(mData)).delete_field(aFieldName); } catch (std::exception&) {} }
 
         // inline array_field_container_child_element& add(std::string aFieldName, const char* aValue) { return set_field(aFieldName, string{aValue}); }
         template <typename T> inline array_field_container_child_element& add(std::string aFieldName, T&& aValue) { return set_field(aFieldName, to_value(aValue)); }
