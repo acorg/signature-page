@@ -141,8 +141,8 @@ void TimeSeriesDraw::draw_hz_section_lines()
     double previous_vertical_pos = -1e-8;
     auto draw = [&](const Node& aNode) {
         if (aNode.draw.shown) {
-            const auto section_settings = mHzSections.sections[aNode.draw.hz_section_index];
             if (aNode.draw.hz_section_index != NodeDrawData::HzSectionNoIndex) {
+                const auto section_settings = mHzSections.sections[aNode.draw.hz_section_index];
                 double y = aNode.draw.vertical_pos;
                 if (section_settings.show_line) {
                     y = (previous_vertical_pos + aNode.draw.vertical_pos) / 2;
