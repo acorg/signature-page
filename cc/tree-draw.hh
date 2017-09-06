@@ -53,6 +53,9 @@ class AATransitionPerBranchDrawSettings : public rjson::field_container_child
     rjson::field_get_set<Color> label_connection_line_color;
     rjson::array_field_container_child<AATransitionIndividualSettings> by_aa_label;
 
+      // returns ref to static object overriden with each call
+    const AATransitionIndividualSettings& settings_for_label(const AA_Transitions::label_node_t& aLabels) const;
+
 }; // class AATransitionPerBranchDrawSettings
 
 // ----------------------------------------------------------------------

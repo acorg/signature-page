@@ -67,6 +67,7 @@ namespace rjson
 
         inline field_container_child& set_field(std::string aFieldName, value&& aValue) override { get_ref_to_object().set_field(aFieldName, std::forward<value>(aValue)); return *this; }
 
+        inline const object& data() const { return get_ref_to_object(); }
         inline std::string to_json() const { return get_ref_to_object().to_json(); }
 
           // remove this field from parent

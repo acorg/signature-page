@@ -69,13 +69,17 @@ class AA_Transitions : public std::vector<AA_Transition>
             return std::any_of(begin(), end(), [](const auto& a) -> bool { return a; });
         }
 
-    inline void make_labels(std::vector<std::pair<std::string, const Node*>>& labels, bool show_empty_left = false) const
+    using label_node_t = std::vector<std::pair<std::string, const Node*>>;
+
+    inline label_node_t make_labels(bool show_empty_left = false) const
         {
+            label_node_t labels;
             for (const auto& aa_transition: *this) {
                 if (show_empty_left || !aa_transition.empty_left()) {
                     labels.emplace_back(aa_transition.display_name(), aa_transition.for_left);
                 }
             }
+            return labels;
         }
 
     inline void make_labels(std::vector<std::string>& labels, bool show_empty_left = false) const

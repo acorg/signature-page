@@ -487,22 +487,14 @@ void TreeDraw::draw_aa_transition(const Node& aNode, const Location& aOrigin, do
 {
     const auto& settings = mSettings.aa_transition;
     if (settings.show && !aNode.data.aa_transitions.empty() && aNode.data.number_strains >= settings.number_strains_threshold) {
-        std::vector<std::pair<std::string, const Node*>> labels;
-        aNode.data.aa_transitions.make_labels(labels, settings.show_empty_left);
-        if (!labels.empty()) {
-            const auto& branch_settings = settings.per_branch;
+        if (auto labels = aNode.data.aa_transitions.make_labels(settings.show_empty_left); !labels.empty()) {
+            const auto& branch_settings = settings.per_branch.settings_for_label(labels);
             const auto longest_label = std::max_element(labels.begin(), labels.end(), [](const auto& a, const auto& b) { return a.first.size() < b.first.size(); });
             const auto longest_label_size = mSurface.text_size(longest_label->first, Pixels{branch_settings.size}, branch_settings.style);
             const auto node_line_width = aRight - aOrigin.x;
             Size offset(node_line_width > longest_label_size.width ? (node_line_width - longest_label_size.width) / 2 : (node_line_width - longest_label_size.width),
                         longest_label_size.height * branch_settings.interline);
             offset += branch_settings.label_offset;
-            if (branch_settings.scatter_label_offset > 0) {
-                std::random_device rand;
-                constexpr const auto rand_size = static_cast<double>(rand.max() - rand.min());
-                offset.width += static_cast<double>(rand()) * branch_settings.scatter_label_offset * 2 / rand_size - branch_settings.scatter_label_offset;
-                offset.height += static_cast<double>(rand()) * branch_settings.scatter_label_offset * 2 / rand_size - branch_settings.scatter_label_offset;
-            }
             Location origin = aOrigin + offset;
             for (const auto& label: labels) {
                 const auto label_width = mSurface.text_size(label.first, Pixels{branch_settings.size}, branch_settings.style).width;
@@ -682,6 +674,38 @@ void HzSections::sort(const Tree& aTree)
 //     }
 
 // } // HzSections::auto_detect
+
+// ----------------------------------------------------------------------
+
+const AATransitionIndividualSettings& AATransitionPerBranchDrawSettings::settings_for_label(const AA_Transitions::label_node_t& aLabels) const
+{
+#pragma GCC diagnostic push
+#ifdef __clang__
+#pragma GCC diagnostic ignored "-Wexit-time-destructors"
+#endif
+    static rjson::value settings{rjson::object{}};
+    static AATransitionIndividualSettings result{settings};
+#pragma GCC diagnostic pop
+
+    const std::string label = std::accumulate(std::begin(aLabels), std::end(aLabels), std::string{}, [](const std::string& accum, const auto& source) -> std::string { if (accum.empty()) return source.first; else return accum + " " + source.first; });
+    settings = data();
+    for (const auto entry: by_aa_label) {
+        if (entry.label == label) {
+            settings.update(entry.data());
+            break;
+        }
+    }
+
+    if (scatter_label_offset > 0) {
+        std::random_device rand;
+        constexpr const auto rand_size = static_cast<double>(rand.max() - rand.min());
+        const rjson::array& old_label_offset = settings.get_ref("label_offset", rjson::array{0.0, 0.0});
+        settings.set_field("label_offset", rjson::array{static_cast<double>(rand()) * scatter_label_offset * 2 / rand_size - scatter_label_offset + static_cast<double>(old_label_offset[0]),
+                        static_cast<double>(rand()) * scatter_label_offset * 2 / rand_size - scatter_label_offset + static_cast<double>(old_label_offset[1])});
+    }
+    return result;
+
+} // AATransitionPerBranchDrawSettings::settings_for_label
 
 // ----------------------------------------------------------------------
 /// Local Variables:
