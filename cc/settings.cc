@@ -249,10 +249,10 @@ TreeDrawSettings::TreeDrawSettings(rjson::field_container_parent& aParent, std::
 TitleDrawSettings::TitleDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
     : rjson::field_container_child(aParent, aFieldName),
       title(*this, "title", ""),
-      color(*this, "color", "black"),
-      size(*this, "size", 12),
-      style(*this, "style", {}),
-      offset(*this, "offset", {10, 30})
+      color(*this, "color", "black", rjson::initialize_field::yes),
+      size(*this, "size", 12, rjson::initialize_field::yes),
+      style(*this, "style", {}, rjson::initialize_field::yes),
+      offset(*this, "offset", {10, 30}, rjson::initialize_field::yes)
 {
 }
 

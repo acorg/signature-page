@@ -451,6 +451,24 @@ std::string Tree::virus_type() const
         return r;
     };
     tree::iterate_leaf_stop(*this, find_virus_type);
+
+    if (virus_type == "B") {    // infer lineage
+        std::string lineage;
+        auto find_lineage = [&lineage](const Node& aNode) -> bool {
+            if (std::string_view(aNode.seq_id.data(), 27) == "B/SOUTH%20AUSTRALIA/81/2012" || std::string_view(aNode.seq_id.data(), 19) == "B/IRELAND/3154/2016") {
+                lineage = "/Vic";
+                return true;
+            }
+            else if (std::string_view(aNode.seq_id.data(), 16) == "PHUKET/3073/2013") {
+                lineage = "/Yam";
+                return true;
+            }
+            return false;
+        };
+        tree::iterate_leaf_stop(*this, find_lineage);
+        virus_type += lineage;
+    }
+
     return virus_type;
 
 } // Tree::virus_type
