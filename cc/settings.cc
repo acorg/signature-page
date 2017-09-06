@@ -19,6 +19,8 @@ AATransitionPerBranchDrawSettings::AATransitionPerBranchDrawSettings(rjson::fiel
       style(*this, "style", {"Courier New"}, rjson::initialize_field::yes),
       interline(*this, "interline", 1.2, rjson::initialize_field::yes),
       label_offset(*this, "label_offset", {-40, 20}, rjson::initialize_field::yes),
+      scatter_label_offset(*this, "scatter_label_offset", 0, rjson::initialize_field::yes),
+      scatter_label_offset_help(*this, "scatter_label_offset?", "randomization range for label offset in trying to avoid clattering (mostly for figuring out good offsets", rjson::initialize_field::yes),
       label_connection_line_width(*this, "label_connection_line_width", 0.1, rjson::initialize_field::yes),
       label_connection_line_color(*this, "label_connection_line_color", "black", rjson::initialize_field::yes)
 {

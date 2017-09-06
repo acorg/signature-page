@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <iomanip>
+#include <random>
 
 #include "acmacs-base/range.hh"
 #include "tree-draw.hh"
@@ -496,6 +497,12 @@ void TreeDraw::draw_aa_transition(const Node& aNode, const Location& aOrigin, do
             Size offset(node_line_width > longest_label_size.width ? (node_line_width - longest_label_size.width) / 2 : (node_line_width - longest_label_size.width),
                         longest_label_size.height * branch_settings.interline);
             offset += branch_settings.label_offset;
+            if (branch_settings.scatter_label_offset > 0) {
+                std::random_device rand;
+                constexpr const auto rand_size = static_cast<double>(rand.max() - rand.min());
+                offset.width += static_cast<double>(rand()) * branch_settings.scatter_label_offset * 2 / rand_size - branch_settings.scatter_label_offset;
+                offset.height += static_cast<double>(rand()) * branch_settings.scatter_label_offset * 2 / rand_size - branch_settings.scatter_label_offset;
+            }
             Location origin = aOrigin + offset;
             for (const auto& label: labels) {
                 const auto label_width = mSurface.text_size(label.first, Pixels{branch_settings.size}, branch_settings.style).width;

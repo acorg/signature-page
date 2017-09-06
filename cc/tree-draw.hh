@@ -29,6 +29,8 @@ class AATransitionPerBranchDrawSettings : public rjson::field_container_child
     rjson::field_get_set<TextStyle> style;
     rjson::field_get_set<double> interline;
     rjson::field_get_set<Size> label_offset;
+    rjson::field_get_set<double> scatter_label_offset;
+    rjson::field_get_set<std::string> scatter_label_offset_help;
     rjson::field_get_set<double> label_connection_line_width;
     rjson::field_get_set<Color> label_connection_line_color;
 
