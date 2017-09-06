@@ -2,20 +2,18 @@
 
 #include "acmacs-base/debug.hh"
 #include "acmacs-base/float.hh"
+#include "acmacs-base/read-file.hh"
 
-//#include "acmacs-base/read-file.hh"
-#include "acmacs-base/json-writer.hh"
-#include "acmacs-base/json-importer.hh"
-namespace jsi = json_importer;
-namespace jsw = json_writer;
+// #include "acmacs-base/json-writer.hh"
+// #include "acmacs-base/json-importer.hh"
+// namespace jsi = json_importer;
+// namespace jsw = json_writer;
 
 #include "settings.hh"
 
 // ----------------------------------------------------------------------
 
 static constexpr const char* SETTINGS_VERSION_4 = "signature-page-settings-v4";
-// static constexpr const char* SETTINGS_VERSION_3 = "signature-page-settings-v3";
-// static constexpr const char* SETTINGS_VERSION_2 = "signature-page-settings-v2";
 
 // ----------------------------------------------------------------------
 
@@ -132,30 +130,6 @@ HzSection::HzSection(const rjson::value& aData)
       // index("?")
 {
 }
-
-// HzSection::HzSection(std::string aName, bool aShowLine)
-//     : show(true),
-// show_line(aShowLine),
-// show_label_in_time_series(true),
-// show_map(true),
-// name(aName),
-// first(nullptr),
-// last(nullptr),
-// index(1, '?')
-// {
-// }
-
-// HzSection::HzSection(const Node& aFirst, bool aShow, bool aShowLine, bool aShowMap)
-//     : show(aShow),
-// show_line(aShowLine),
-// show_label_in_time_series(false),
-// show_map(aShowMap),
-// name(aFirst.seq_id),
-// first(&aFirst),
-// last(nullptr),
-// index(1, '?')
-// {
-// }
 
 HzSections::HzSections(rjson::field_container_parent& aParent, std::string aFieldName)
     : rjson::field_container_child(aParent, aFieldName),
@@ -303,7 +277,8 @@ SignaturePageDrawSettings::SignaturePageDrawSettings(rjson::field_container_pare
 // **********************************************************************
 
 Settings::Settings()
-    : signature_page(*this, "signature_page"),
+    : version(*this, "  version", SETTINGS_VERSION_4),
+      signature_page(*this, "signature_page"),
       title(*this, "title"),
       tree_draw(*this, "tree"),
       time_series(*this, "time_series"),
@@ -330,6 +305,10 @@ void read_settings(Settings& aSettings, std::string aFilename)
 
 void Settings::upgrade()             // upgrade to the new version in case old version data provided
 {
+    if (version != SETTINGS_VERSION_4) {
+        throw std::runtime_error("Unsupported settings version: " + static_cast<std::string>(version));
+    }
+
     // if (version == SETTINGS_VERSION_2) {
     //     signature_page.antigenic_maps_width = antigenic_maps._width;
     //     if (!tree_draw._root.empty())
@@ -356,6 +335,15 @@ void Settings::upgrade()             // upgrade to the new version in case old v
     // }
 
 } // Settings::upgrade
+
+// ----------------------------------------------------------------------
+
+void write_settings(const Settings& aSettings, std::string aFilename, size_t aIndent)
+{
+    std::cerr << "INFO: writing settings to " << aFilename << std::endl;
+    acmacs_base::write_file(aFilename, aSettings.to_json_pp(aIndent));
+
+} // write_settings
 
 // ----------------------------------------------------------------------
 // ----------------------------------------------------------------------
@@ -853,514 +841,516 @@ void Settings::upgrade()             // upgrade to the new version in case old v
 // } // read_settings
 
 // **********************************************************************
-
-template <typename RW, typename FValue> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const rjson::field_get_set<FValue>& aValue)
-{
-    return writer << static_cast<FValue>(aValue);
-}
-
-template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const TextStyle& aStyle)
-{
-    return writer << jsw::start_object
-                  << jsw::key("family") << aStyle.font_family()
-                  << jsw::key("slant") << aStyle.slant_as_stirng()
-                  << jsw::key("weight") << aStyle.weight_as_stirng()
-                  << jsw::end_object;
-}
-
-// ----------------------------------------------------------------------
-
-template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const Size& aSize)
-{
-    return writer << jsw::start_array << aSize.width << aSize.height << jsw::end_array;
-}
-
-// ----------------------------------------------------------------------
-
-template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, Color aColor)
-{
-    return writer << aColor.to_string();
-}
-
 // ----------------------------------------------------------------------
 // ----------------------------------------------------------------------
 
-template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const AATransitionPerBranchDrawSettings& aSettings)
-{
-    return writer << jsw::start_object
-                  << jsw::key("size") << aSettings.size
-                  << jsw::key("color") << aSettings.color
-                  << jsw::key("style") << aSettings.style
-                  << jsw::key("interline") << aSettings.interline
-                  << jsw::key("label_offset") << aSettings.label_offset
-                  << jsw::key("label_connection_line_width") << aSettings.label_connection_line_width
-                  << jsw::key("label_connection_line_color") << aSettings.label_connection_line_color
-                  << jsw::end_object;
-}
+// template <typename RW, typename FValue> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const rjson::field_get_set<FValue>& aValue)
+// {
+//     return writer << static_cast<FValue>(aValue);
+// }
 
-// ----------------------------------------------------------------------
-
-template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const AATransitionDrawSettings& aSettings)
-{
-    return writer << jsw::start_object
-                  << jsw::key("show") << aSettings.show
-                  << jsw::key("number_strains_threshold") << aSettings.number_strains_threshold
-                  << jsw::key("number_strains_threshold?") << aSettings.number_strains_threshold_help // "do not show aa transition label if number_strains (leaf nodes) for the branch is less than this value"
-                  << jsw::key("show_empty_left") << aSettings.show_empty_left
-                  << jsw::key("show_node_for_left_line") << aSettings.show_node_for_left_line
-                  << jsw::key("node_for_left_line_color") << aSettings.node_for_left_line_color
-                  << jsw::key("node_for_left_line_width") << aSettings.node_for_left_line_width
-                  << jsw::key("per_branch") << aSettings.per_branch
-                  << jsw::end_object;
-}
-
-// ----------------------------------------------------------------------
-
-template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const TreeDrawVaccineSettings& aSettings)
-{
-    return writer << jsw::start_object
-                  << jsw::key("name") << aSettings.name
-                  << jsw::key("name?") << aSettings.name_help // "empty for default settings"
-                  << jsw::key("label_color") << aSettings.label_color
-                  << jsw::key("label_size") << aSettings.label_size
-                  << jsw::key("label_style") << aSettings.label_style
-                  << jsw::key("line_color") << aSettings.line_color
-                  << jsw::key("line_width") << aSettings.line_width
-                  << jsw::end_object;
-}
-
-// ----------------------------------------------------------------------
-
-template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const LegendSettings& aSettings)
-{
-    return writer << jsw::start_object
-                  << jsw::key("offset") << aSettings.offset
-                  << jsw::key("width") << aSettings.width
-                  << jsw::key("title_style") << aSettings.title_style
-                  << jsw::key("title_size") << aSettings.title_size
-                  << jsw::key("text_style") << aSettings.text_style
-                  << jsw::key("text_size") << aSettings.text_size
-                  << jsw::key("interline") << aSettings.interline
-                  << jsw::end_object;
-}
-
-// ----------------------------------------------------------------------
-
-template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const TreeDrawMod& aMod)
-{
-    return writer << jsw::start_object
-                  << jsw::key("mod") << aMod.mod
-                  << jsw::if_non_negative("d1", aMod.d1)
-                  << jsw::if_not_empty("s1", aMod.s1)
-                  << jsw::if_not_empty("s2", aMod.s2)
-                  << jsw::end_object;
-}
-
-// ----------------------------------------------------------------------
-
-inline std::string ladderize_to_string(const TreeDrawSettings& aSettings)
-{
-    return aSettings.ladderize.get_value_ref();
-}
-
-template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const TreeDrawMods& aMods)
-{
-    return jsw::write_list(writer, aMods);
-}
-
-template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const TreeDrawVaccines& aMods)
-{
-    return jsw::write_list(writer, aMods);
-}
-
-template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const TreeDrawSettings& aSettings)
-{
-    return writer << jsw::start_object
-
-                  << jsw::key("ladderize?") << aSettings.ladderize_help // "number-of-leaves, max-edge-length"
-                  << jsw::key("ladderize") << ladderize_to_string(aSettings)
-                  // << jsw::key("mods 1?") << "mods is a list of objects:"
-                  // << jsw::key("mods 2?") << "{mod: root, s1: new-root}"
-                  // << jsw::key("mods 3?") << "{mod: hide-isolated-before, s1: date}"
-                  // << jsw::key("mods 4?") << "{mod: hide-if-cumulative-edge-length-bigger-than, d1: cumulative-length-threshold}"
-                  // << jsw::key("mods 5?") << "{mod: before2015-58P-or-146I-or-559I}"
-                  // << jsw::key("mods 6?") << "{mod: hide-between, s1: first-name-to-hide, s2: last-name-to-hide} - after ladderizing"
-                  // << jsw::key("mods 7?") << "{mod: hide-one, s1: name-to-hide} - after ladderizing"
-                  // << jsw::key("mods 8?") << "{mod: mark-with-line, s1: name-to-mark, s2: color-to-mark, d1: line-width-in-pixels}"
-                  << jsw::key("mods") << aSettings.mods
-                  << jsw::key("mods?") << aSettings.mods_help
-              // v2 << jsw::key("root") << aSettings.root
-              // v2 << jsw::key("hide_isolated_before") << aSettings.hide_isolated_before
-              // v2 << jsw::key("hide_if_cumulative_edge_length_bigger_than") << aSettings.hide_if_cumulative_edge_length_bigger_than
-              // v2 << jsw::key("hide_if") << aSettings.hide_if
-
-                  << jsw::key("force_line_width") << aSettings.force_line_width
-                  << jsw::key("line_width") << aSettings.line_width
-                  << jsw::key("root_edge") << aSettings.root_edge
-                  << jsw::key("line_color") << aSettings.line_color
-                  << jsw::key("label_style") << aSettings.label_style
-                  << jsw::key("name_offset") << aSettings.name_offset
-                  << jsw::key("color_nodes") << aSettings.color_nodes
-                  << jsw::key("color_nodes?") << "black, continent, position number (e.g. 162)"
-                  << jsw::key("aa_transition") << aSettings.aa_transition
-                  << jsw::key("vaccines") << aSettings.vaccines
-                  << jsw::key("legend") << aSettings.legend
-                  << jsw::end_object;
-}
-
-// ----------------------------------------------------------------------
-
-template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const SignaturePageDrawSettings& aSettings)
-{
-    return writer << jsw::start_object
-                  << jsw::key("layout") << aSettings.layout
-                  << jsw::key("top") << aSettings.top
-                  << jsw::key("bottom") << aSettings.bottom
-                  << jsw::key("left") << aSettings.left
-                  << jsw::key("right") << aSettings.right
-                  << jsw::key("tree_margin_right") << aSettings.tree_margin_right
-                  << jsw::key("mapped_antigens_margin_right") << aSettings.mapped_antigens_margin_right
-                  << jsw::key("time_series_width") << aSettings.time_series_width
-                  << jsw::key("clades_width") << aSettings.clades_width
-                  << jsw::key("antigenic_maps_width") << aSettings.antigenic_maps_width
-                  << jsw::end_object;
-}
-
-// ----------------------------------------------------------------------
-
-template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const TimeSeriesDrawSettings& aSettings)
-{
-    return writer << jsw::start_object
-                  << jsw::key("begin") << aSettings.begin
-                  << jsw::key("end") << aSettings.end
-                  << jsw::key("label_size") << aSettings.label_size
-                  << jsw::key("label_style") << aSettings.label_style
-                  << jsw::key("month_year_to_timeseries_gap") << aSettings.month_year_to_timeseries_gap
-                  << jsw::key("month_separator_color") << aSettings.month_separator_color
-                  << jsw::key("month_separator_width") << aSettings.month_separator_width
-                  << jsw::key("dash_width") << aSettings.dash_width
-                  << jsw::key("dash_line_width") << aSettings.dash_line_width
-                  << jsw::end_object;
-}
-
-// ----------------------------------------------------------------------
-
-template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const CladeDrawSettings& aSettings)
-{
-    return writer << jsw::start_object
-                  << jsw::key("name") << aSettings.name
-                  << jsw::key("display_name") << aSettings.display_name
-                  << jsw::key("show") << aSettings.show
-                  << jsw::key("slot") << static_cast<int>(aSettings.slot)
-                  << jsw::key("section_inclusion_tolerance") << aSettings.section_inclusion_tolerance
-                  << jsw::key("section_exclusion_tolerance") << aSettings.section_exclusion_tolerance
-                  << jsw::key("show_section_size_in_label") << aSettings.show_section_size_in_label
-                  << jsw::key("arrow_color") << aSettings.arrow_color
-                  << jsw::key("line_width") << aSettings.line_width
-                  << jsw::key("arrow_width") << aSettings.arrow_width
-                  << jsw::key("separator_color") << aSettings.separator_color
-                  << jsw::key("separator_width") << aSettings.separator_width
-                  << jsw::key("label_position") << aSettings.label_position
-                  << jsw::key("label_offset") << aSettings.label_offset
-                  << jsw::key("label_color") << aSettings.label_color
-                  << jsw::key("label_size") << aSettings.label_size
-                  << jsw::key("label_style") << aSettings.label_style
-                  << jsw::key("label_rotation") << aSettings.label_rotation
-                  << jsw::end_object;
-}
-
-// ----------------------------------------------------------------------
-
-template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const rjson::array_field_container_child<CladeDrawSettings>& clades)
-{
-    return jsw::write_list(writer, clades);
-}
-
-template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const CladesDrawSettings& aSettings)
-{
-    return writer << jsw::start_object
-                  << jsw::key("slot_width") << aSettings.slot_width
-                  << jsw::key("clades") << aSettings.clades
-                  << jsw::end_object;
-}
-
-// ----------------------------------------------------------------------
-
-template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const HzSection& aSettings)
-{
-    return writer << jsw::start_object
-                  << jsw::key("label") << aSettings.label
-                  << jsw::key("name") << aSettings.name
-                  << jsw::key("show") << aSettings.show
-                  << jsw::key("show_label_in_time_series") << aSettings.show_label_in_time_series
-                  << jsw::key("show_line") << aSettings.show_line
-                  << jsw::key("show_map") << aSettings.show_map
-                  << jsw::end_object;
-}
-
-// ----------------------------------------------------------------------
-
-template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const rjson::array_field_container_child<HzSection>& clades)
-{
-    return jsw::write_list(writer, clades);
-}
-
-template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const HzSections& aSettings)
-{
-    return writer << jsw::start_object
-                  << jsw::key("vertical_gap") << aSettings.vertical_gap
-                  << jsw::key("line_color") << aSettings.line_color
-                  << jsw::key("line_width") << aSettings.line_width
-                  << jsw::key("ts_label_size") << aSettings.ts_label_size
-                  << jsw::key("ts_label_style") << aSettings.ts_label_style
-                  << jsw::key("ts_label_color") << aSettings.ts_label_color
-                  << jsw::key("show_labels_in_time_series_in_tree_mode") << aSettings.show_labels_in_time_series_in_tree_mode
-                  << jsw::key("sections") << aSettings.sections
-                  << jsw::end_object;
-}
-
-// ----------------------------------------------------------------------
-
-template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const MappedAntigensDrawSettings& aSettings)
-{
-    return writer << jsw::start_object
-                  << jsw::key("width") << aSettings.width
-                  << jsw::key("line_color") << aSettings.line_color
-                  << jsw::key("line_width") << aSettings.line_width
-                  << jsw::key("line_length") << aSettings.line_length
-                  << jsw::end_object;
-}
-
-// ----------------------------------------------------------------------
-
-template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const Viewport& aViewport)
-{
-    writer << jsw::start_array << aViewport.origin.x << aViewport.origin.y << aViewport.size.width;
-    if (!float_equal(aViewport.size.width, aViewport.size.height))
-        writer << aViewport.size.height;
-    writer << jsw::end_array;
-    return writer;
-}
-
-// ----------------------------------------------------------------------
-
-// template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const MarkAntigenSettings& aSettings)
+// template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const TextStyle& aStyle)
 // {
 //     return writer << jsw::start_object
-//                   << jsw::key("show") << aSettings.show
-//                   << jsw::key("name") << aSettings.name
-//                   << jsw::key("scale") << aSettings.scale
-//                   << jsw::key("aspect") << aSettings.aspect
-//                   << jsw::key("rotation") << aSettings.rotation
-//                   << jsw::key("fill_color") << aSettings.fill_color
-//                   << jsw::key("outline_color") << aSettings.outline_color
-//                   << jsw::key("outline_width") << aSettings.outline_width
-//                   << jsw::key("label") << aSettings.label
-//                   << jsw::key("label_color") << aSettings.label_color
-//                   << jsw::key("label_offset") << aSettings.label_offset
-//                   << jsw::key("label_size") << aSettings.label_size
-//                   << jsw::key("label_line_color") << aSettings.label_line_color
-//                   << jsw::key("label_line_width") << aSettings.label_line_width
+//                   << jsw::key("family") << aStyle.font_family()
+//                   << jsw::key("slant") << aStyle.slant_as_stirng()
+//                   << jsw::key("weight") << aStyle.weight_as_stirng()
 //                   << jsw::end_object;
 // }
 
 // // ----------------------------------------------------------------------
 
-// template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const SettingValue& aSettingValue)
+// template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const Size& aSize)
 // {
-//     // std::cerr << "DEBUG: SettingValue " << aSettingValue.which() << " " << aSettingValue << std::endl;
-//     switch (aSettingValue.which()) {
-//       case 0:
-//           writer << *boost::get<std::string>(&aSettingValue);
-//           break;
-//       case 1:
-//           writer << std::round(*boost::get<double>(&aSettingValue) * 100.0) / 100.0;
-//           break;
-//       case 2:
-//           writer << *boost::get<int>(&aSettingValue);
-//           break;
-//       case 3:
-//           writer << *boost::get<bool>(&aSettingValue);
-//           break;
-//       case 4:
-//           writer << *boost::get<SettingDict>(&aSettingValue);
-//           break;
-//       case 5:
-//           writer << *boost::get<SettingList>(&aSettingValue);
-//           break;
-//     }
-//     return writer;
+//     return writer << jsw::start_array << aSize.width << aSize.height << jsw::end_array;
 // }
 
-// template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const SettingList& aSettings)
+// // ----------------------------------------------------------------------
+
+// template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, Color aColor)
 // {
-//     writer << jsw::start_array;
-//     for (const auto& value: aSettings)
-//         writer << value;
+//     return writer << aColor.to_string();
+// }
+
+// // ----------------------------------------------------------------------
+// // ----------------------------------------------------------------------
+
+// template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const AATransitionPerBranchDrawSettings& aSettings)
+// {
+//     return writer << jsw::start_object
+//                   << jsw::key("size") << aSettings.size
+//                   << jsw::key("color") << aSettings.color
+//                   << jsw::key("style") << aSettings.style
+//                   << jsw::key("interline") << aSettings.interline
+//                   << jsw::key("label_offset") << aSettings.label_offset
+//                   << jsw::key("label_connection_line_width") << aSettings.label_connection_line_width
+//                   << jsw::key("label_connection_line_color") << aSettings.label_connection_line_color
+//                   << jsw::end_object;
+// }
+
+// // ----------------------------------------------------------------------
+
+// template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const AATransitionDrawSettings& aSettings)
+// {
+//     return writer << jsw::start_object
+//                   << jsw::key("show") << aSettings.show
+//                   << jsw::key("number_strains_threshold") << aSettings.number_strains_threshold
+//                   << jsw::key("number_strains_threshold?") << aSettings.number_strains_threshold_help // "do not show aa transition label if number_strains (leaf nodes) for the branch is less than this value"
+//                   << jsw::key("show_empty_left") << aSettings.show_empty_left
+//                   << jsw::key("show_node_for_left_line") << aSettings.show_node_for_left_line
+//                   << jsw::key("node_for_left_line_color") << aSettings.node_for_left_line_color
+//                   << jsw::key("node_for_left_line_width") << aSettings.node_for_left_line_width
+//                   << jsw::key("per_branch") << aSettings.per_branch
+//                   << jsw::end_object;
+// }
+
+// // ----------------------------------------------------------------------
+
+// template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const TreeDrawVaccineSettings& aSettings)
+// {
+//     return writer << jsw::start_object
+//                   << jsw::key("name") << aSettings.name
+//                   << jsw::key("name?") << aSettings.name_help // "empty for default settings"
+//                   << jsw::key("label_color") << aSettings.label_color
+//                   << jsw::key("label_size") << aSettings.label_size
+//                   << jsw::key("label_style") << aSettings.label_style
+//                   << jsw::key("line_color") << aSettings.line_color
+//                   << jsw::key("line_width") << aSettings.line_width
+//                   << jsw::end_object;
+// }
+
+// // ----------------------------------------------------------------------
+
+// template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const LegendSettings& aSettings)
+// {
+//     return writer << jsw::start_object
+//                   << jsw::key("offset") << aSettings.offset
+//                   << jsw::key("width") << aSettings.width
+//                   << jsw::key("title_style") << aSettings.title_style
+//                   << jsw::key("title_size") << aSettings.title_size
+//                   << jsw::key("text_style") << aSettings.text_style
+//                   << jsw::key("text_size") << aSettings.text_size
+//                   << jsw::key("interline") << aSettings.interline
+//                   << jsw::end_object;
+// }
+
+// // ----------------------------------------------------------------------
+
+// template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const TreeDrawMod& aMod)
+// {
+//     return writer << jsw::start_object
+//                   << jsw::key("mod") << aMod.mod
+//                   << jsw::if_non_negative("d1", aMod.d1)
+//                   << jsw::if_not_empty("s1", aMod.s1)
+//                   << jsw::if_not_empty("s2", aMod.s2)
+//                   << jsw::end_object;
+// }
+
+// // ----------------------------------------------------------------------
+
+// inline std::string ladderize_to_string(const TreeDrawSettings& aSettings)
+// {
+//     return aSettings.ladderize.get_value_ref();
+// }
+
+// template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const TreeDrawMods& aMods)
+// {
+//     return jsw::write_list(writer, aMods);
+// }
+
+// template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const TreeDrawVaccines& aMods)
+// {
+//     return jsw::write_list(writer, aMods);
+// }
+
+// template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const TreeDrawSettings& aSettings)
+// {
+//     return writer << jsw::start_object
+
+//                   << jsw::key("ladderize?") << aSettings.ladderize_help // "number-of-leaves, max-edge-length"
+//                   << jsw::key("ladderize") << ladderize_to_string(aSettings)
+//                   // << jsw::key("mods 1?") << "mods is a list of objects:"
+//                   // << jsw::key("mods 2?") << "{mod: root, s1: new-root}"
+//                   // << jsw::key("mods 3?") << "{mod: hide-isolated-before, s1: date}"
+//                   // << jsw::key("mods 4?") << "{mod: hide-if-cumulative-edge-length-bigger-than, d1: cumulative-length-threshold}"
+//                   // << jsw::key("mods 5?") << "{mod: before2015-58P-or-146I-or-559I}"
+//                   // << jsw::key("mods 6?") << "{mod: hide-between, s1: first-name-to-hide, s2: last-name-to-hide} - after ladderizing"
+//                   // << jsw::key("mods 7?") << "{mod: hide-one, s1: name-to-hide} - after ladderizing"
+//                   // << jsw::key("mods 8?") << "{mod: mark-with-line, s1: name-to-mark, s2: color-to-mark, d1: line-width-in-pixels}"
+//                   << jsw::key("mods") << aSettings.mods
+//                   << jsw::key("mods?") << aSettings.mods_help
+//               // v2 << jsw::key("root") << aSettings.root
+//               // v2 << jsw::key("hide_isolated_before") << aSettings.hide_isolated_before
+//               // v2 << jsw::key("hide_if_cumulative_edge_length_bigger_than") << aSettings.hide_if_cumulative_edge_length_bigger_than
+//               // v2 << jsw::key("hide_if") << aSettings.hide_if
+
+//                   << jsw::key("force_line_width") << aSettings.force_line_width
+//                   << jsw::key("line_width") << aSettings.line_width
+//                   << jsw::key("root_edge") << aSettings.root_edge
+//                   << jsw::key("line_color") << aSettings.line_color
+//                   << jsw::key("label_style") << aSettings.label_style
+//                   << jsw::key("name_offset") << aSettings.name_offset
+//                   << jsw::key("color_nodes") << aSettings.color_nodes
+//                   << jsw::key("color_nodes?") << "black, continent, position number (e.g. 162)"
+//                   << jsw::key("aa_transition") << aSettings.aa_transition
+//                   << jsw::key("vaccines") << aSettings.vaccines
+//                   << jsw::key("legend") << aSettings.legend
+//                   << jsw::end_object;
+// }
+
+// // ----------------------------------------------------------------------
+
+// template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const SignaturePageDrawSettings& aSettings)
+// {
+//     return writer << jsw::start_object
+//                   << jsw::key("layout") << aSettings.layout
+//                   << jsw::key("top") << aSettings.top
+//                   << jsw::key("bottom") << aSettings.bottom
+//                   << jsw::key("left") << aSettings.left
+//                   << jsw::key("right") << aSettings.right
+//                   << jsw::key("tree_margin_right") << aSettings.tree_margin_right
+//                   << jsw::key("mapped_antigens_margin_right") << aSettings.mapped_antigens_margin_right
+//                   << jsw::key("time_series_width") << aSettings.time_series_width
+//                   << jsw::key("clades_width") << aSettings.clades_width
+//                   << jsw::key("antigenic_maps_width") << aSettings.antigenic_maps_width
+//                   << jsw::end_object;
+// }
+
+// // ----------------------------------------------------------------------
+
+// template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const TimeSeriesDrawSettings& aSettings)
+// {
+//     return writer << jsw::start_object
+//                   << jsw::key("begin") << aSettings.begin
+//                   << jsw::key("end") << aSettings.end
+//                   << jsw::key("label_size") << aSettings.label_size
+//                   << jsw::key("label_style") << aSettings.label_style
+//                   << jsw::key("month_year_to_timeseries_gap") << aSettings.month_year_to_timeseries_gap
+//                   << jsw::key("month_separator_color") << aSettings.month_separator_color
+//                   << jsw::key("month_separator_width") << aSettings.month_separator_width
+//                   << jsw::key("dash_width") << aSettings.dash_width
+//                   << jsw::key("dash_line_width") << aSettings.dash_line_width
+//                   << jsw::end_object;
+// }
+
+// // ----------------------------------------------------------------------
+
+// template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const CladeDrawSettings& aSettings)
+// {
+//     return writer << jsw::start_object
+//                   << jsw::key("name") << aSettings.name
+//                   << jsw::key("display_name") << aSettings.display_name
+//                   << jsw::key("show") << aSettings.show
+//                   << jsw::key("slot") << static_cast<int>(aSettings.slot)
+//                   << jsw::key("section_inclusion_tolerance") << aSettings.section_inclusion_tolerance
+//                   << jsw::key("section_exclusion_tolerance") << aSettings.section_exclusion_tolerance
+//                   << jsw::key("show_section_size_in_label") << aSettings.show_section_size_in_label
+//                   << jsw::key("arrow_color") << aSettings.arrow_color
+//                   << jsw::key("line_width") << aSettings.line_width
+//                   << jsw::key("arrow_width") << aSettings.arrow_width
+//                   << jsw::key("separator_color") << aSettings.separator_color
+//                   << jsw::key("separator_width") << aSettings.separator_width
+//                   << jsw::key("label_position") << aSettings.label_position
+//                   << jsw::key("label_offset") << aSettings.label_offset
+//                   << jsw::key("label_color") << aSettings.label_color
+//                   << jsw::key("label_size") << aSettings.label_size
+//                   << jsw::key("label_style") << aSettings.label_style
+//                   << jsw::key("label_rotation") << aSettings.label_rotation
+//                   << jsw::end_object;
+// }
+
+// // ----------------------------------------------------------------------
+
+// template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const rjson::array_field_container_child<CladeDrawSettings>& clades)
+// {
+//     return jsw::write_list(writer, clades);
+// }
+
+// template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const CladesDrawSettings& aSettings)
+// {
+//     return writer << jsw::start_object
+//                   << jsw::key("slot_width") << aSettings.slot_width
+//                   << jsw::key("clades") << aSettings.clades
+//                   << jsw::end_object;
+// }
+
+// // ----------------------------------------------------------------------
+
+// template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const HzSection& aSettings)
+// {
+//     return writer << jsw::start_object
+//                   << jsw::key("label") << aSettings.label
+//                   << jsw::key("name") << aSettings.name
+//                   << jsw::key("show") << aSettings.show
+//                   << jsw::key("show_label_in_time_series") << aSettings.show_label_in_time_series
+//                   << jsw::key("show_line") << aSettings.show_line
+//                   << jsw::key("show_map") << aSettings.show_map
+//                   << jsw::end_object;
+// }
+
+// // ----------------------------------------------------------------------
+
+// template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const rjson::array_field_container_child<HzSection>& clades)
+// {
+//     return jsw::write_list(writer, clades);
+// }
+
+// template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const HzSections& aSettings)
+// {
+//     return writer << jsw::start_object
+//                   << jsw::key("vertical_gap") << aSettings.vertical_gap
+//                   << jsw::key("line_color") << aSettings.line_color
+//                   << jsw::key("line_width") << aSettings.line_width
+//                   << jsw::key("ts_label_size") << aSettings.ts_label_size
+//                   << jsw::key("ts_label_style") << aSettings.ts_label_style
+//                   << jsw::key("ts_label_color") << aSettings.ts_label_color
+//                   << jsw::key("show_labels_in_time_series_in_tree_mode") << aSettings.show_labels_in_time_series_in_tree_mode
+//                   << jsw::key("sections") << aSettings.sections
+//                   << jsw::end_object;
+// }
+
+// // ----------------------------------------------------------------------
+
+// template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const MappedAntigensDrawSettings& aSettings)
+// {
+//     return writer << jsw::start_object
+//                   << jsw::key("width") << aSettings.width
+//                   << jsw::key("line_color") << aSettings.line_color
+//                   << jsw::key("line_width") << aSettings.line_width
+//                   << jsw::key("line_length") << aSettings.line_length
+//                   << jsw::end_object;
+// }
+
+// // ----------------------------------------------------------------------
+
+// template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const Viewport& aViewport)
+// {
+//     writer << jsw::start_array << aViewport.origin.x << aViewport.origin.y << aViewport.size.width;
+//     if (!float_equal(aViewport.size.width, aViewport.size.height))
+//         writer << aViewport.size.height;
 //     writer << jsw::end_array;
 //     return writer;
 // }
 
-// template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const SettingDict& aSettings)
+// // ----------------------------------------------------------------------
+
+// // template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const MarkAntigenSettings& aSettings)
+// // {
+// //     return writer << jsw::start_object
+// //                   << jsw::key("show") << aSettings.show
+// //                   << jsw::key("name") << aSettings.name
+// //                   << jsw::key("scale") << aSettings.scale
+// //                   << jsw::key("aspect") << aSettings.aspect
+// //                   << jsw::key("rotation") << aSettings.rotation
+// //                   << jsw::key("fill_color") << aSettings.fill_color
+// //                   << jsw::key("outline_color") << aSettings.outline_color
+// //                   << jsw::key("outline_width") << aSettings.outline_width
+// //                   << jsw::key("label") << aSettings.label
+// //                   << jsw::key("label_color") << aSettings.label_color
+// //                   << jsw::key("label_offset") << aSettings.label_offset
+// //                   << jsw::key("label_size") << aSettings.label_size
+// //                   << jsw::key("label_line_color") << aSettings.label_line_color
+// //                   << jsw::key("label_line_width") << aSettings.label_line_width
+// //                   << jsw::end_object;
+// // }
+
+// // // ----------------------------------------------------------------------
+
+// // template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const SettingValue& aSettingValue)
+// // {
+// //     // std::cerr << "DEBUG: SettingValue " << aSettingValue.which() << " " << aSettingValue << std::endl;
+// //     switch (aSettingValue.which()) {
+// //       case 0:
+// //           writer << *boost::get<std::string>(&aSettingValue);
+// //           break;
+// //       case 1:
+// //           writer << std::round(*boost::get<double>(&aSettingValue) * 100.0) / 100.0;
+// //           break;
+// //       case 2:
+// //           writer << *boost::get<int>(&aSettingValue);
+// //           break;
+// //       case 3:
+// //           writer << *boost::get<bool>(&aSettingValue);
+// //           break;
+// //       case 4:
+// //           writer << *boost::get<SettingDict>(&aSettingValue);
+// //           break;
+// //       case 5:
+// //           writer << *boost::get<SettingList>(&aSettingValue);
+// //           break;
+// //     }
+// //     return writer;
+// // }
+
+// // template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const SettingList& aSettings)
+// // {
+// //     writer << jsw::start_array;
+// //     for (const auto& value: aSettings)
+// //         writer << value;
+// //     writer << jsw::end_array;
+// //     return writer;
+// // }
+
+// // template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const SettingDict& aSettings)
+// // {
+// //     writer << jsw::start_object;
+// //     for (const auto& value: aSettings)
+// //         writer << jsw::key(value.first) << value.second;
+// //     writer << jsw::end_object;
+// //     return writer;
+// // }
+
+// template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const rjson::value& aValue);
+
+// template <typename RW> class ValueVisitor
 // {
-//     writer << jsw::start_object;
-//     for (const auto& value: aSettings)
-//         writer << jsw::key(value.first) << value.second;
-//     writer << jsw::end_object;
+//  public:
+//     inline ValueVisitor(jsw::writer<RW>& aWriter) : writer{aWriter} {}
+
+//     inline void operator()(const rjson::object& aValue)
+//         {
+//             writer << jsw::start_object;
+//             for (const auto& [key, val]: aValue)
+//                 writer << jsw::key(key) << val;
+//             writer << jsw::end_object;
+//         }
+
+//     inline void operator()(const rjson::array& aValue)
+//         {
+//             writer << jsw::start_array;
+//             for (const auto& val: aValue)
+//                 writer << val;
+//             writer << jsw::end_array;
+//         }
+
+//     inline void operator()(const rjson::null&) { writer << nullptr; }
+//     inline void operator()(const rjson::string& aValue) { writer << static_cast<std::string>(aValue); }
+//     inline void operator()(const rjson::integer& aValue) { writer << static_cast<int>(aValue); }
+//     inline void operator()(const rjson::number& aValue) { writer << static_cast<double>(aValue); }
+//     inline void operator()(const rjson::boolean& aValue) { writer << static_cast<bool>(aValue); }
+
+//  private:
+//     jsw::writer<RW>& writer;
+// };
+
+// template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const rjson::value& aValue)
+// {
+//     std::visit(ValueVisitor<RW>{writer}, aValue);
 //     return writer;
 // }
 
-template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const rjson::value& aValue);
+// template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const AntigenicMapMod& mod)
+// {
+//     return writer << mod.data();
+// }
 
-template <typename RW> class ValueVisitor
-{
- public:
-    inline ValueVisitor(jsw::writer<RW>& aWriter) : writer{aWriter} {}
-
-    inline void operator()(const rjson::object& aValue)
-        {
-            writer << jsw::start_object;
-            for (const auto& [key, val]: aValue)
-                writer << jsw::key(key) << val;
-            writer << jsw::end_object;
-        }
-
-    inline void operator()(const rjson::array& aValue)
-        {
-            writer << jsw::start_array;
-            for (const auto& val: aValue)
-                writer << val;
-            writer << jsw::end_array;
-        }
-
-    inline void operator()(const rjson::null&) { writer << nullptr; }
-    inline void operator()(const rjson::string& aValue) { writer << static_cast<std::string>(aValue); }
-    inline void operator()(const rjson::integer& aValue) { writer << static_cast<int>(aValue); }
-    inline void operator()(const rjson::number& aValue) { writer << static_cast<double>(aValue); }
-    inline void operator()(const rjson::boolean& aValue) { writer << static_cast<bool>(aValue); }
-
- private:
-    jsw::writer<RW>& writer;
-};
-
-template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const rjson::value& aValue)
-{
-    std::visit(ValueVisitor<RW>{writer}, aValue);
-    return writer;
-}
-
-template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const AntigenicMapMod& mod)
-{
-    return writer << mod.data();
-}
-
-template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const rjson::array_field_container_child<AntigenicMapMod>& mods)
-{
-    return jsw::write_list(writer, mods);
-}
-
-template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const AntigenicMapsDrawSettings& aSettings)
-{
-    return writer << jsw::start_object
-                  << jsw::key("layout") << aSettings.layout
-                  << jsw::key("columns") << aSettings.columns
-                  << jsw::key("gap") << aSettings.gap
-                  << jsw::key("mapped_antigens_section_line_color") << aSettings.mapped_antigens_section_line_color
-                  << jsw::key("mapped_antigens_section_line_width") << aSettings.mapped_antigens_section_line_width
-                  << jsw::key("mods") << aSettings.mods
-                  << jsw::end_object;
-}
+// template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const rjson::array_field_container_child<AntigenicMapMod>& mods)
+// {
+//     return jsw::write_list(writer, mods);
+// }
 
 // template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const AntigenicMapsDrawSettings& aSettings)
 // {
 //     return writer << jsw::start_object
 //                   << jsw::key("layout") << aSettings.layout
-//               // v2 << jsw::key("width") << aSettings.width
 //                   << jsw::key("columns") << aSettings.columns
 //                   << jsw::key("gap") << aSettings.gap
-//                   << jsw::key("transformation") << aSettings.transformation
-//                   << jsw::key("viewport") << aSettings.viewport
-//                   << jsw::key("show_tracked_sera") << aSettings.show_tracked_sera
-//                   << jsw::key("background_color") << aSettings.background_color
-//                   << jsw::key("border_color") << aSettings.border_color
-//                   << jsw::key("border_width") << aSettings.border_width
-//                   << jsw::key("grid_line_width") << aSettings.grid_line_width
-//                   << jsw::key("grid_line_color") << aSettings.grid_line_color
-//                   << jsw::key("point_scale") << aSettings.point_scale
-//                   << jsw::key("serum_scale") << aSettings.serum_scale
-//                   << jsw::key("reference_antigen_scale") << aSettings.reference_antigen_scale
-//                   << jsw::key("test_antigen_scale") << aSettings.test_antigen_scale
-//                   << jsw::key("vaccine_antigen_scale") << aSettings.vaccine_antigen_scale
-//                   << jsw::key("tracked_antigen_scale") << aSettings.tracked_antigen_scale
-//                   << jsw::key("serum_outline_width") << aSettings.serum_outline_width
-//                   << jsw::key("reference_antigen_outline_width") << aSettings.reference_antigen_outline_width
-//                   << jsw::key("test_antigen_outline_width") << aSettings.test_antigen_outline_width
-//                   << jsw::key("vaccine_antigen_outline_width") << aSettings.vaccine_antigen_outline_width
-//                   << jsw::key("sequenced_antigen_outline_width") << aSettings.sequenced_antigen_outline_width
-//                   << jsw::key("serum_outline_color") << aSettings.serum_outline_color
-//                   << jsw::key("reference_antigen_outline_color") << aSettings.reference_antigen_outline_color
-//                   << jsw::key("test_antigen_outline_color") << aSettings.test_antigen_outline_color
-//                   << jsw::key("test_antigen_fill_color") << aSettings.test_antigen_fill_color
-//                   << jsw::key("vaccine_antigen_outline_color") << aSettings.vaccine_antigen_outline_color
-//                   << jsw::key("sequenced_antigen_outline_color") << aSettings.sequenced_antigen_outline_color
-//                   << jsw::key("sequenced_antigen_fill_color") << aSettings.sequenced_antigen_fill_color
-//                   << jsw::key("tracked_antigen_outline_width") << aSettings.tracked_antigen_outline_width
-//                   << jsw::key("tracked_antigen_outline_color") << aSettings.tracked_antigen_outline_color
-//                   << jsw::key("tracked_antigen_colored_by_clade") << aSettings.tracked_antigen_colored_by_clade
-//                   << jsw::key("tracked_antigen_color") << aSettings.tracked_antigen_color
-//                   << jsw::key("reassortant_rotation") << aSettings.reassortant_rotation
-//                   << jsw::key("egg_antigen_aspect") << aSettings.egg_antigen_aspect
-//                   << jsw::key("serum_circle_color") << aSettings.serum_circle_color
-//                   << jsw::key("tracked_serum_outline_color") << aSettings.tracked_serum_outline_color
-//                   << jsw::key("serum_circle_thickness") << aSettings.serum_circle_thickness
-//                   << jsw::key("tracked_serum_outline_width") << aSettings.tracked_serum_outline_width
-//                   << jsw::key("map_title_color") << aSettings.map_title_color
-//                   << jsw::key("map_title_offset") << aSettings.map_title_offset
-//                   << jsw::key("map_title_size") << aSettings.map_title_size
 //                   << jsw::key("mapped_antigens_section_line_color") << aSettings.mapped_antigens_section_line_color
 //                   << jsw::key("mapped_antigens_section_line_width") << aSettings.mapped_antigens_section_line_width
-//                   << jsw::key("mark_antigens") << aSettings.mark_antigens
+//                   << jsw::key("mods") << aSettings.mods
 //                   << jsw::end_object;
 // }
 
-// ----------------------------------------------------------------------
+// // template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const AntigenicMapsDrawSettings& aSettings)
+// // {
+// //     return writer << jsw::start_object
+// //                   << jsw::key("layout") << aSettings.layout
+// //               // v2 << jsw::key("width") << aSettings.width
+// //                   << jsw::key("columns") << aSettings.columns
+// //                   << jsw::key("gap") << aSettings.gap
+// //                   << jsw::key("transformation") << aSettings.transformation
+// //                   << jsw::key("viewport") << aSettings.viewport
+// //                   << jsw::key("show_tracked_sera") << aSettings.show_tracked_sera
+// //                   << jsw::key("background_color") << aSettings.background_color
+// //                   << jsw::key("border_color") << aSettings.border_color
+// //                   << jsw::key("border_width") << aSettings.border_width
+// //                   << jsw::key("grid_line_width") << aSettings.grid_line_width
+// //                   << jsw::key("grid_line_color") << aSettings.grid_line_color
+// //                   << jsw::key("point_scale") << aSettings.point_scale
+// //                   << jsw::key("serum_scale") << aSettings.serum_scale
+// //                   << jsw::key("reference_antigen_scale") << aSettings.reference_antigen_scale
+// //                   << jsw::key("test_antigen_scale") << aSettings.test_antigen_scale
+// //                   << jsw::key("vaccine_antigen_scale") << aSettings.vaccine_antigen_scale
+// //                   << jsw::key("tracked_antigen_scale") << aSettings.tracked_antigen_scale
+// //                   << jsw::key("serum_outline_width") << aSettings.serum_outline_width
+// //                   << jsw::key("reference_antigen_outline_width") << aSettings.reference_antigen_outline_width
+// //                   << jsw::key("test_antigen_outline_width") << aSettings.test_antigen_outline_width
+// //                   << jsw::key("vaccine_antigen_outline_width") << aSettings.vaccine_antigen_outline_width
+// //                   << jsw::key("sequenced_antigen_outline_width") << aSettings.sequenced_antigen_outline_width
+// //                   << jsw::key("serum_outline_color") << aSettings.serum_outline_color
+// //                   << jsw::key("reference_antigen_outline_color") << aSettings.reference_antigen_outline_color
+// //                   << jsw::key("test_antigen_outline_color") << aSettings.test_antigen_outline_color
+// //                   << jsw::key("test_antigen_fill_color") << aSettings.test_antigen_fill_color
+// //                   << jsw::key("vaccine_antigen_outline_color") << aSettings.vaccine_antigen_outline_color
+// //                   << jsw::key("sequenced_antigen_outline_color") << aSettings.sequenced_antigen_outline_color
+// //                   << jsw::key("sequenced_antigen_fill_color") << aSettings.sequenced_antigen_fill_color
+// //                   << jsw::key("tracked_antigen_outline_width") << aSettings.tracked_antigen_outline_width
+// //                   << jsw::key("tracked_antigen_outline_color") << aSettings.tracked_antigen_outline_color
+// //                   << jsw::key("tracked_antigen_colored_by_clade") << aSettings.tracked_antigen_colored_by_clade
+// //                   << jsw::key("tracked_antigen_color") << aSettings.tracked_antigen_color
+// //                   << jsw::key("reassortant_rotation") << aSettings.reassortant_rotation
+// //                   << jsw::key("egg_antigen_aspect") << aSettings.egg_antigen_aspect
+// //                   << jsw::key("serum_circle_color") << aSettings.serum_circle_color
+// //                   << jsw::key("tracked_serum_outline_color") << aSettings.tracked_serum_outline_color
+// //                   << jsw::key("serum_circle_thickness") << aSettings.serum_circle_thickness
+// //                   << jsw::key("tracked_serum_outline_width") << aSettings.tracked_serum_outline_width
+// //                   << jsw::key("map_title_color") << aSettings.map_title_color
+// //                   << jsw::key("map_title_offset") << aSettings.map_title_offset
+// //                   << jsw::key("map_title_size") << aSettings.map_title_size
+// //                   << jsw::key("mapped_antigens_section_line_color") << aSettings.mapped_antigens_section_line_color
+// //                   << jsw::key("mapped_antigens_section_line_width") << aSettings.mapped_antigens_section_line_width
+// //                   << jsw::key("mark_antigens") << aSettings.mark_antigens
+// //                   << jsw::end_object;
+// // }
 
-template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const TitleDrawSettings& aSettings)
-{
-    return writer << jsw::start_object
-                  << jsw::key("color") << aSettings.color
-                  << jsw::key("offset") << aSettings.offset
-                  << jsw::key("size") << aSettings.size
-                  << jsw::key("style") << aSettings.style
-                  << jsw::key("title") << aSettings.title
-                  << jsw::end_object;
-}
+// // ----------------------------------------------------------------------
 
-// ----------------------------------------------------------------------
+// template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const TitleDrawSettings& aSettings)
+// {
+//     return writer << jsw::start_object
+//                   << jsw::key("color") << aSettings.color
+//                   << jsw::key("offset") << aSettings.offset
+//                   << jsw::key("size") << aSettings.size
+//                   << jsw::key("style") << aSettings.style
+//                   << jsw::key("title") << aSettings.title
+//                   << jsw::end_object;
+// }
 
-template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const Settings& aSettings)
-{
-    return writer << jsw::start_object
-                  << jsw::key("  version") << SETTINGS_VERSION_4
-                  << jsw::key("signature_page") << aSettings.signature_page
-                  << jsw::key("title") << aSettings.title
-                  << jsw::key("tree") << aSettings.tree_draw
-                  << jsw::key("time_series") << aSettings.time_series
-                  << jsw::key("clades") << aSettings.clades
-                  << jsw::key("hz_sections") << aSettings.hz_sections
-                  << jsw::key("mapped_antigens") << aSettings.mapped_antigens
-                  << jsw::key("antigenic_maps") << aSettings.antigenic_maps
-                  << jsw::end_object;
-}
+// // ----------------------------------------------------------------------
 
-// ----------------------------------------------------------------------
+// template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writer, const Settings& aSettings)
+// {
+//     return writer << jsw::start_object
+//                   << jsw::key("  version") << SETTINGS_VERSION_4
+//                   << jsw::key("signature_page") << aSettings.signature_page
+//                   << jsw::key("title") << aSettings.title
+//                   << jsw::key("tree") << aSettings.tree_draw
+//                   << jsw::key("time_series") << aSettings.time_series
+//                   << jsw::key("clades") << aSettings.clades
+//                   << jsw::key("hz_sections") << aSettings.hz_sections
+//                   << jsw::key("mapped_antigens") << aSettings.mapped_antigens
+//                   << jsw::key("antigenic_maps") << aSettings.antigenic_maps
+//                   << jsw::end_object;
+// }
 
-void write_settings(const Settings& aSettings, std::string aFilename, size_t aIndent)
-{
-    std::cerr << "INFO: writing settings to " << aFilename << std::endl;
-    jsw::export_to_json(aSettings, aFilename, aIndent);
+// // ----------------------------------------------------------------------
 
-} // write_settings
+// void write_settings(const Settings& aSettings, std::string aFilename, size_t aIndent)
+// {
+//     std::cerr << "INFO: writing settings to " << aFilename << std::endl;
+//     jsw::export_to_json(aSettings, aFilename, aIndent);
+
+// } // write_settings
 
 // ----------------------------------------------------------------------
 /// Local Variables:

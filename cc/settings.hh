@@ -16,6 +16,7 @@ class Settings : public rjson::field_container_toplevel
  public:
     Settings();
 
+    rjson::field_get_set<std::string> version;
     SignaturePageDrawSettings signature_page;
     TitleDrawSettings title;
     TreeDrawSettings tree_draw;
@@ -27,11 +28,9 @@ class Settings : public rjson::field_container_toplevel
 
     void upgrade();             // upgrade to the new version in case old version data provided
 
-    // inline void indentation(const char* /*str*/, size_t /*length*/) {}
-    // void set_version(const char* str, size_t length);
-    // std::string version;
 
     // void distribute_parsed_value();
+
 
 }; // class Settings
 

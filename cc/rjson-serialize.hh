@@ -41,6 +41,7 @@ namespace rjson
         inline void remove_child(std::string aFieldName) override { try { std::get<object>(mData).delete_field(aFieldName); } catch (object::field_not_found&) {} }
 
         inline std::string to_json() const { return mData.to_json(); }
+        inline std::string to_json_pp(size_t aIndent, json_pp_emacs_indent emacs_indent = json_pp_emacs_indent::yes) const { return mData.to_json_pp(aIndent, emacs_indent); }
 
      private:
         mutable rjson::value mData = rjson::object{};
@@ -177,6 +178,8 @@ namespace rjson
           // inline field_get_set<FValue>& operator = (FValue&& aValue) { mParent.set_field(mFieldName, to_value(aValue)); return *this; }
         inline field_get_set<FValue>& operator = (const FValue& aValue) { mParent.set_field(mFieldName, to_value(aValue)); return *this; }
         inline field_get_set<FValue>& operator = (const field_get_set<FValue>& aSource) { return operator=(static_cast<FValue>(aSource)); }
+        inline bool operator == (const FValue& aToCompare) const { return static_cast<FValue>(*this) == aToCompare; }
+        inline bool operator != (const FValue& aToCompare) const { return !operator==(aToCompare); }
 
         inline bool empty() const { return static_cast<FValue>(*this).empty(); }
 
