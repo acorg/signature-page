@@ -12,6 +12,19 @@ static constexpr const char* SETTINGS_VERSION_4 = "signature-page-settings-v4";
 
 // ----------------------------------------------------------------------
 
+AATransitionIndividualSettings::AATransitionIndividualSettings(const rjson::value& aData)
+    : rjson::array_field_container_child_element(aData),
+      label(*this, "label", "", rjson::initialize_field::yes),
+      size(*this, "size", 8),
+      color(*this, "color", "black"),
+      style(*this, "style", {"Courier New"}),
+      interline(*this, "interline", 1.2),
+      label_offset(*this, "label_offset", {-40, 20}, rjson::initialize_field::yes),
+      label_connection_line_width(*this, "label_connection_line_width", 0.1),
+      label_connection_line_color(*this, "label_connection_line_color", "black")
+{
+}
+
 AATransitionPerBranchDrawSettings::AATransitionPerBranchDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
     : rjson::field_container_child(aParent, aFieldName),
       size(*this, "size", 8, rjson::initialize_field::yes),
@@ -22,8 +35,10 @@ AATransitionPerBranchDrawSettings::AATransitionPerBranchDrawSettings(rjson::fiel
       scatter_label_offset(*this, "scatter_label_offset", 0, rjson::initialize_field::yes),
       scatter_label_offset_help(*this, "scatter_label_offset?", "randomization range for label offset in trying to avoid clattering (mostly for figuring out good offsets", rjson::initialize_field::yes),
       label_connection_line_width(*this, "label_connection_line_width", 0.1, rjson::initialize_field::yes),
-      label_connection_line_color(*this, "label_connection_line_color", "black", rjson::initialize_field::yes)
+      label_connection_line_color(*this, "label_connection_line_color", "black", rjson::initialize_field::yes),
+      by_aa_label(*this, "by_aa_label")
 {
+    by_aa_label.emplace_back();
 }
 
 AATransitionDrawSettings::AATransitionDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)

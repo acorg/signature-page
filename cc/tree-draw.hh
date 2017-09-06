@@ -19,6 +19,24 @@ class Coloring;
 
 // ----------------------------------------------------------------------
 
+class AATransitionIndividualSettings : public rjson::array_field_container_child_element
+{
+ public:
+    AATransitionIndividualSettings(const rjson::value& aData);
+
+    rjson::field_get_set<std::string> label;
+    rjson::field_get_set<double> size;
+    rjson::field_get_set<Color> color;
+    rjson::field_get_set<TextStyle> style;
+    rjson::field_get_set<double> interline;
+    rjson::field_get_set<Size> label_offset;
+    rjson::field_get_set<double> label_connection_line_width;
+    rjson::field_get_set<Color> label_connection_line_color;
+
+}; // class AATransitionIndividualSettings
+
+// ----------------------------------------------------------------------
+
 class AATransitionPerBranchDrawSettings : public rjson::field_container_child
 {
  public:
@@ -33,6 +51,7 @@ class AATransitionPerBranchDrawSettings : public rjson::field_container_child
     rjson::field_get_set<std::string> scatter_label_offset_help;
     rjson::field_get_set<double> label_connection_line_width;
     rjson::field_get_set<Color> label_connection_line_color;
+    rjson::array_field_container_child<AATransitionIndividualSettings> by_aa_label;
 
 }; // class AATransitionPerBranchDrawSettings
 
