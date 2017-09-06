@@ -94,17 +94,17 @@ void CladesDraw::collect()
 
 void CladesDraw::assign_slots()
 {
-    std::set<size_t> used_slots;
+    std::set<CladeData::slot_type> used_slots;
       // slots forced in settings
     for (auto& clade: mClades) {
-        const size_t forced = mSettings.for_clade(clade.first).slot;
+        const CladeData::slot_type forced = mSettings.for_clade(clade.first).slot;
         if (forced != CladeDrawSettings::NoSlot) {
             clade.second.slot = forced;
             used_slots.insert(forced);
         }
     }
 
-    size_t slot = 0;
+    CladeData::slot_type slot = 0;
     // while (used_slots.count(slot))
     //     ++slot;
 
@@ -170,7 +170,7 @@ void CladesDraw::draw()
 
 // ----------------------------------------------------------------------
 
-void CladesDraw::draw_right(size_t aSlot, std::string aCladeName, double top, double bottom, double label_vpos, const CladeDrawSettings& for_clade)
+void CladesDraw::draw_right(CladeData::slot_type aSlot, std::string aCladeName, double top, double bottom, double label_vpos, const CladeDrawSettings& for_clade)
 {
     const auto x = (aSlot + 1) * mSettings.slot_width;
     mSurface.double_arrow({x, top}, {x, bottom}, for_clade.arrow_color, Pixels{for_clade.line_width}, Pixels{for_clade.arrow_width});
@@ -184,7 +184,7 @@ void CladesDraw::draw_right(size_t aSlot, std::string aCladeName, double top, do
 
 // ----------------------------------------------------------------------
 
-void CladesDraw::draw_left(size_t aSlot, std::string aCladeName, double top, double bottom, double label_vpos, const CladeDrawSettings& for_clade)
+void CladesDraw::draw_left(CladeData::slot_type aSlot, std::string aCladeName, double top, double bottom, double label_vpos, const CladeDrawSettings& for_clade)
 {
     const auto x = mSurface.viewport().size.width - (aSlot + 1) * mSettings.slot_width;
     mSurface.double_arrow({x, top}, {x, bottom}, for_clade.arrow_color, Pixels{for_clade.line_width}, Pixels{for_clade.arrow_width});

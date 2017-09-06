@@ -82,49 +82,49 @@ TimeSeriesDrawSettings::TimeSeriesDrawSettings(rjson::field_container_parent& aP
 
 CladeDrawSettings::CladeDrawSettings(const rjson::value& aData, std::string aName, bool aShow)
     : rjson::array_field_container_child_element(aData),
-      name(*this, "name", aName),
-      display_name(*this, "display_name", ""),
-      show(*this, "show", aShow),
-      section_inclusion_tolerance(*this, "section_inclusion_tolerance", 10),
-      section_exclusion_tolerance(*this, "section_exclusion_tolerance", 5),
-      show_section_size_in_label(*this, "show_section_size_in_label", true),
-      arrow_color(*this, "arrow_color", "black"),
-      line_width(*this, "line_width", 0.8),
-      arrow_width(*this, "arrow_width", 3),
-      separator_color(*this, "separator_color", "grey63"),
-      separator_width(*this, "separator_width", 0.5),
-      label_position(*this, "label_position", "middle"),
-      label_offset(*this, "label_offset", {5, 0}),
-      label_color(*this, "label_color", "black"),
-      label_size(*this, "label_size", 11),
-      label_style(*this, "label_style", {}),
-      label_rotation(*this, "label_rotation", 0),
-      slot(*this, "slot", NoSlot)
+      name(*this, "name", aName, rjson::initialize_field::yes),
+      display_name(*this, "display_name", "", rjson::initialize_field::yes),
+      show(*this, "show", aShow, rjson::initialize_field::yes),
+      section_inclusion_tolerance(*this, "section_inclusion_tolerance", 10, rjson::initialize_field::yes),
+      section_exclusion_tolerance(*this, "section_exclusion_tolerance", 5, rjson::initialize_field::yes),
+      show_section_size_in_label(*this, "show_section_size_in_label", true, rjson::initialize_field::yes),
+      arrow_color(*this, "arrow_color", "black", rjson::initialize_field::yes),
+      line_width(*this, "line_width", 0.8, rjson::initialize_field::yes),
+      arrow_width(*this, "arrow_width", 3, rjson::initialize_field::yes),
+      separator_color(*this, "separator_color", "grey63", rjson::initialize_field::yes),
+      separator_width(*this, "separator_width", 0.5, rjson::initialize_field::yes),
+      label_position(*this, "label_position", "middle", rjson::initialize_field::yes),
+      label_offset(*this, "label_offset", {5, 0}, rjson::initialize_field::yes),
+      label_color(*this, "label_color", "black", rjson::initialize_field::yes),
+      label_size(*this, "label_size", 11, rjson::initialize_field::yes),
+      label_style(*this, "label_style", {}, rjson::initialize_field::yes),
+      label_rotation(*this, "label_rotation", 0, rjson::initialize_field::yes),
+      slot(*this, "slot", NoSlot, rjson::initialize_field::yes)
 {
 }
 
 CladesDrawSettings::CladesDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
     : rjson::field_container_child(aParent, aFieldName),
       clades(*this, "clades"),
-      slot_width(*this, "slot_width", 10)
+      slot_width(*this, "slot_width", 10, rjson::initialize_field::yes)
 {
     clades.emplace_back();
-    auto c2 = clades.emplace_back();
-    c2.name = "gly";
-    c2.show = false;
-    auto c3 = clades.emplace_back();
-    c3.name = "no-gly";
-    c3.show = false;
+    // auto c2 = clades.emplace_back();
+    // c2.name = "gly";
+    // c2.show = false;
+    // auto c3 = clades.emplace_back();
+    // c3.name = "no-gly";
+    // c3.show = false;
 }
 
 HzSection::HzSection(const rjson::value& aData)
     : rjson::array_field_container_child_element(aData),
-      show(*this, "show", true),
-      show_line(*this, "show_line", true),
-      show_label_in_time_series(*this, "show_label_in_time_series", true),
-      show_map(*this, "show_map", true),
-      name(*this, "name", ""),
-      label(*this, "label", "")
+      show(*this, "show", true, rjson::initialize_field::yes),
+      show_line(*this, "show_line", true, rjson::initialize_field::yes),
+      show_label_in_time_series(*this, "show_label_in_time_series", true, rjson::initialize_field::yes),
+      show_map(*this, "show_map", true, rjson::initialize_field::yes),
+      name(*this, "name", "", rjson::initialize_field::yes),
+      label(*this, "label", "", rjson::initialize_field::yes)
       // first(nullptr),
       // last(nullptr),
       // index("?")
@@ -133,23 +133,23 @@ HzSection::HzSection(const rjson::value& aData)
 
 HzSections::HzSections(rjson::field_container_parent& aParent, std::string aFieldName)
     : rjson::field_container_child(aParent, aFieldName),
-      vertical_gap(*this, "vertical_gap", 20),
-      line_color(*this, "line_color", "grey63"),
-      line_width(*this, "line_width", 1),
-      ts_label_size(*this, "ts_label_size", 10),
-      ts_label_style(*this, "ts_label_style", {}),
-      ts_label_color(*this, "ts_label_color", "black"),
+      vertical_gap(*this, "vertical_gap", 20, rjson::initialize_field::yes),
+      line_color(*this, "line_color", "grey63", rjson::initialize_field::yes),
+      line_width(*this, "line_width", 1, rjson::initialize_field::yes),
+      ts_label_size(*this, "ts_label_size", 10, rjson::initialize_field::yes),
+      ts_label_style(*this, "ts_label_style", {}, rjson::initialize_field::yes),
+      ts_label_color(*this, "ts_label_color", "black", rjson::initialize_field::yes),
       sections(*this, "sections"),
-      show_labels_in_time_series_in_tree_mode(*this, "show_labels_in_time_series_in_tree_mode", false)
+      show_labels_in_time_series_in_tree_mode(*this, "show_labels_in_time_series_in_tree_mode", false, rjson::initialize_field::yes)
 {
 }
 
 MappedAntigensDrawSettings::MappedAntigensDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
     : rjson::field_container_child(aParent, aFieldName),
-      width(*this, "width", 10),
-      line_width(*this, "line_width", 0.5),
-      line_color(*this, "line_color", "grey56"),
-      line_length(*this, "line_length", 0.5)
+      width(*this, "width", 10, rjson::initialize_field::yes),
+      line_width(*this, "line_width", 0.5, rjson::initialize_field::yes),
+      line_color(*this, "line_color", "grey56", rjson::initialize_field::yes),
+      line_length(*this, "line_length", 0.5, rjson::initialize_field::yes)
 {
 }
 
@@ -157,11 +157,11 @@ MappedAntigensDrawSettings::MappedAntigensDrawSettings(rjson::field_container_pa
 
 AntigenicMapsDrawSettings::AntigenicMapsDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
     : rjson::field_container_child(aParent, aFieldName),
-      layout(*this, "layout", "labelled_grid"),
-      columns(*this, "columns", 3),
-      gap(*this, "gap", 20),
-      mapped_antigens_section_line_color(*this, "mapped_antigens_section_line_color", "black"),
-      mapped_antigens_section_line_width(*this, "mapped_antigens_section_line_width", 1),
+      layout(*this, "layout", "labelled_grid", rjson::initialize_field::yes),
+      columns(*this, "columns", 3, rjson::initialize_field::yes),
+      gap(*this, "gap", 20, rjson::initialize_field::yes),
+      mapped_antigens_section_line_color(*this, "mapped_antigens_section_line_color", "black", rjson::initialize_field::yes),
+      mapped_antigens_section_line_width(*this, "mapped_antigens_section_line_width", 1, rjson::initialize_field::yes),
       mods(*this, "mods")
 {
     mods.emplace_back().add("N", "?viewport").add("viewport", rjson::array{0, 0, 0});
@@ -260,16 +260,16 @@ TitleDrawSettings::TitleDrawSettings(rjson::field_container_parent& aParent, std
 
 SignaturePageDrawSettings::SignaturePageDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
     : rjson::field_container_child(aParent, aFieldName),
-      layout(*this, "layout", "auto"),
-      top(*this, "top", 60),
-      bottom(*this, "bottom", 60),
-      left(*this, "left", 50),
-      right(*this, "right", 20),
-      tree_margin_right(*this, "tree_margin_right", 0),
-      mapped_antigens_margin_right(*this, "mapped_antigens_margin_right", 30),
-      time_series_width(*this, "time_series_width", 400),
-      clades_width(*this, "clades_width", 100),
-      antigenic_maps_width(*this, "antigenic_maps_width", 500),
+      layout(*this, "layout", "auto", rjson::initialize_field::yes),
+      top(*this, "top", 60, rjson::initialize_field::yes),
+      bottom(*this, "bottom", 60, rjson::initialize_field::yes),
+      left(*this, "left", 50, rjson::initialize_field::yes),
+      right(*this, "right", 20, rjson::initialize_field::yes),
+      tree_margin_right(*this, "tree_margin_right", 0, rjson::initialize_field::yes),
+      mapped_antigens_margin_right(*this, "mapped_antigens_margin_right", 30, rjson::initialize_field::yes),
+      time_series_width(*this, "time_series_width", 400, rjson::initialize_field::yes),
+      clades_width(*this, "clades_width", 100, rjson::initialize_field::yes),
+      antigenic_maps_width(*this, "antigenic_maps_width", 500, rjson::initialize_field::yes),
       _force_pp(*this, rjson::object::force_pp_key, true, rjson::initialize_field::yes)
 {
 }

@@ -19,7 +19,7 @@ class TimeSeriesDraw;
 class CladeDrawSettings : public rjson::array_field_container_child_element
 {
  public:
-    constexpr static const size_t NoSlot = static_cast<size_t>(-1);
+    constexpr static const int NoSlot = -1;
 
     CladeDrawSettings(const rjson::value& aData, std::string aName = std::string{}, bool aShow = true);
     inline CladeDrawSettings(const CladeDrawSettings&) = default;
@@ -42,7 +42,7 @@ class CladeDrawSettings : public rjson::array_field_container_child_element
     rjson::field_get_set<double> label_size;
     rjson::field_get_set<TextStyle> label_style;
     rjson::field_get_set<double> label_rotation;
-    rjson::field_get_set<size_t> slot;
+    rjson::field_get_set<int> slot;
 
 }; // class CladeDrawSettings
 
@@ -87,6 +87,8 @@ class CladeSection
 class CladeData
 {
  public:
+    using slot_type = int;
+
     inline CladeData() : slot{CladeDrawSettings::NoSlot} {}
     inline CladeData(const Node& node) : sections{{&node}}, slot{CladeDrawSettings::NoSlot} {}
 
@@ -108,7 +110,7 @@ class CladeData
         }
 
     std::vector<CladeSection> sections;
-    size_t slot;
+    slot_type slot;
 };
 
 using Clades = std::map<std::string, CladeData>; // clade name to data
@@ -141,8 +143,8 @@ class CladesDraw
 
     void collect();
     void assign_slots();
-    void draw_right(size_t aSlot, std::string aCladeName, double top, double bottom, double label_vpos, const CladeDrawSettings& for_clade);
-    void draw_left(size_t aSlot, std::string aCladeName, double top, double bottom, double label_vpos, const CladeDrawSettings& for_clade);
+    void draw_right(CladeData::slot_type aSlot, std::string aCladeName, double top, double bottom, double label_vpos, const CladeDrawSettings& for_clade);
+    void draw_left(CladeData::slot_type aSlot, std::string aCladeName, double top, double bottom, double label_vpos, const CladeDrawSettings& for_clade);
 
 }; // class CladesDraw
 
