@@ -164,12 +164,34 @@ void SignaturePageDraw::init_settings()
         for (auto clade: mSettings->clades.clades) {
             clade.label_offset = Size{10, 0};
         }
-
-          // do not write antigenic maps settings
-        mSettings->antigenic_maps.remove();
     }
 
 } // SignaturePageDraw::init_settings
+
+// ----------------------------------------------------------------------
+
+void SignaturePageDraw::write_initialized_settings(std::string aFilename)
+{
+    auto layout = settings().signature_page.get_layout();
+    if (layout == SignaturePageDrawSettings::Layout::Auto)
+        layout = mSurface->aspect() > 1 ? SignaturePageDrawSettings::Layout::TreeCladesTSMaps : SignaturePageDrawSettings::Layout::TreeTSClades;
+    switch (layout) {
+      case SignaturePageDrawSettings::Layout::Auto:
+          break;
+      case SignaturePageDrawSettings::Layout::TreeCladesTSMaps:
+          settings().tree_draw.remove();
+          settings().time_series.remove();
+          settings().clades.remove();
+          settings().hz_sections.remove();
+          break;
+      case SignaturePageDrawSettings::Layout::TreeTSClades:
+          settings().antigenic_maps.remove();
+          settings().mapped_antigens.remove();
+          break;
+    }
+    write_settings(settings(), aFilename);
+
+} // SignaturePageDraw::write_initialized_settings
 
 // ----------------------------------------------------------------------
 

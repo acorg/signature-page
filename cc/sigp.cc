@@ -48,14 +48,14 @@ int main(int argc, const char *argv[])
                 signature_page.init_settings();
             }
             signature_page.prepare();
-            if (!options.init_settings_filename.empty())
-                write_settings(signature_page.settings(), options.init_settings_filename);
             if (options.report_cumulative)
                 signature_page.tree().report_cumulative_edge_length(std::cout);
             if (options.list_ladderized)
                 signature_page.tree().list_strains(std::cout);
             if (!options.no_draw)
                 signature_page.draw();
+            if (!options.init_settings_filename.empty())
+                signature_page.write_initialized_settings(options.init_settings_filename);
         }
         catch (std::exception& err) {
             std::cerr << err.what() << std::endl;

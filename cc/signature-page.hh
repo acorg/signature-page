@@ -53,32 +53,6 @@ class SignaturePageDrawSettings : public rjson::field_container_child
                 throw std::runtime_error("Unrecognized layout: " + layout_s);
         }
 
-    // inline rjson::value default_layout() const { return rjson::string{"auto"}; }
-    // inline std::string layout_to_string() const { return std::get<rjson::string>(mData->get_ref("layout", default_layout())); }
-    // inline void set_layot(std::string s) { std::get<rjson::string>(mData->get_ref("layout", default_layout())) = s; }
-
-    // inline double top() const { return mData->get_field("top", 60.0); }
-    // inline void top(double aValue) { mData->set_field("top", aValue); }
-    // inline double bottom() const { return mData->get_field("bottom", 60.0); }
-    // inline void bottom(double aValue) { mData->set_field("bottom", aValue); }
-    // inline double left() const { return mData->get_field("left", 50.0); }
-    // inline void left(double aValue) { mData->set_field("left", aValue); }
-    // inline double right() const { return mData->get_field("right", 20.0); }
-    // inline void right(double aValue) { mData->set_field("right", aValue); }
-    // inline double tree_margin_right() const { return mData->get_field("tree_margin_right", 0.0); }
-    // inline void tree_margin_right(double aValue) { mData->set_field("tree_margin_right", aValue); }
-    // inline double mapped_antigens_margin_right() const { return mData->get_field("mapped_antigens_margin_right", 30.0); }
-    // inline void mapped_antigens_margin_right(double aValue) { mData->set_field("mapped_antigens_margin_right", aValue); }
-    // inline double time_series_width() const { return mData->get_field("time_series_width", 400.0); }
-    // inline void time_series_width(double aValue) { mData->set_field("time_series_width", aValue); }
-    // inline double clades_width() const { return mData->get_field("clades_width", 100.0); }
-    // inline void clades_width(double aValue) { mData->set_field("clades_width", aValue); }
-    // inline double antigenic_maps_width() const { return mData->get_field("antigenic_maps_width", 500.0); }
-    // inline void antigenic_maps_width(double aValue) { mData->set_field("antigenic_maps_width", aValue); }
-
- // private:
- //    mutable rjson::value* mData = nullptr;
-
 }; // class SignaturePageDrawSettings
 
 // ----------------------------------------------------------------------
@@ -94,6 +68,7 @@ class SignaturePageDraw
     void make_surface(std::string aFilename, bool init_settings, bool draw_map);
     void init_layout();
     void init_settings();
+    void write_initialized_settings(std::string aFilename); // removes redundant settings entries depending on layout!
     inline Settings& settings() { return *mSettings; }
     void tree(std::string aTreeFilename, std::string aSeqdbFilename);
     inline Tree& tree() { return *mTree; }
