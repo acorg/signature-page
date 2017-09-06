@@ -28,6 +28,7 @@ class AntigenicMapsLayoutDraw
     inline Surface& surface() const { return mAntigenicMapsDraw.surface(); }
     inline const auto& hz_sections() const { return mAntigenicMapsDraw.hz_sections(); }
     inline const auto& signature_page_settings() const { return mAntigenicMapsDraw.signature_page_settings(); }
+    inline auto& signature_page_settings() { return mAntigenicMapsDraw.signature_page_settings(); }
     const Viewport& viewport() const;
     inline const auto& sequenced_antigens() const { return mSequencedAntigens; }
 

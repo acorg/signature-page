@@ -21,34 +21,40 @@ void AntigenicMapsDraw::make_layout()
 
 void AntigenicMapsLayoutDrawAce::prepare_apply_mods()
 {
-    // std::cerr << "DEBUG: [ace] AntigenicMapsLayoutDrawAce::prepare_apply_mods" << std::endl;
+      // std::cerr << "DEBUG: [ace] AntigenicMapsLayoutDrawAce::prepare_apply_mods" << std::endl;
     for (const auto& mod: settings().mods) {
-        const std::string name = mod.name();
-        if (name == "rotate_degrees") {
-            chart_draw().rotate(mod.get("angle", 0.0) * M_PI / 180.0);
+        try {
+            const std::string name = mod.name();
+            if (name == "rotate_degrees") {
+                chart_draw().rotate(mod.get("angle", 0.0) * M_PI / 180.0);
+            }
+            else if (name == "rotate_radians") {
+                chart_draw().rotate(mod.get("angle", 0.0));
+            }
+            else if (name == "viewport") {
+                chart_draw().viewport(mod.get_viewport());
+            }
+            else if (name == "title") {
+                chart_draw().title()
+                        .text_size(mod.get("text_size", 12.0))
+                        .text_color(mod.get_color("text_color", "black"))
+                        .weight(mod.get("weight", "normal"))
+                        .slant(mod.get("slant", "normal"))
+                        .font_family(mod.get("font_family", "san serif"))
+                        .background("transparent")
+                        .border_width(0)
+                        .padding(mod.get("padding", 3.0))
+                        .offset(mod.offset())
+                        .remove_all_lines();
+            }
+              // else if (name == "tracked_antigen") {
+              //     mDrawTrackedAntigen.color(mod.get("color", "green3"));
+              // }
         }
-        else if (name == "rotate_radians") {
-            chart_draw().rotate(mod.get("angle", 0.0));
+        catch (std::bad_variant_access&) {
+            std::cerr << "MOD: " << mod.to_json() << DEBUG_LINE_FUNC << '\n';
+            throw;
         }
-        else if (name == "viewport") {
-            chart_draw().viewport(mod.get_viewport());
-        }
-        else if (name == "title") {
-            chart_draw().title()
-                    .text_size(mod.get("text_size", 12.0))
-                    .text_color(mod.get_color("text_color", "black"))
-                    .weight(mod.get("weight", "normal"))
-                    .slant(mod.get("slant", "normal"))
-                    .font_family(mod.get("font_family", "san serif"))
-                    .background("transparent")
-                    .border_width(0)
-                    .padding(mod.get("padding", 3.0))
-                    .offset(mod.offset())
-                    .remove_all_lines();
-        }
-        // else if (name == "tracked_antigen") {
-        //     mDrawTrackedAntigen.color(mod.get("color", "green3"));
-        // }
     }
     chart_draw().calculate_viewport();
 

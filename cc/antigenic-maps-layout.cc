@@ -122,10 +122,13 @@ void LabelledGridBase::draw(Surface& aMappedAntigensDrawSurface)
     const double maps_height = map_width * rows + (rows - 1) * settings.gap;
     const double suggested_surface_width = antigenic_maps_width * surface.viewport().size.height / maps_height;
     std::cout << "Map area height: " << maps_height << std::endl;
-    if (std::abs((antigenic_maps_width - suggested_surface_width) / antigenic_maps_width) > 0.01)
-        std::cout << "Change antigenic_maps.width from " << antigenic_maps_width << " to " << suggested_surface_width << std::endl;
+    if (std::abs((antigenic_maps_width - suggested_surface_width) / antigenic_maps_width) > 0.01) {
+        std::cout << "Change signature_page.antigenic_maps_width from " << antigenic_maps_width << " to " << suggested_surface_width << '\n'
+                  << "  If you use --init-settings changed width will be saved there" << '\n';
+        layout_draw().signature_page_settings().antigenic_maps_width = suggested_surface_width;
+    }
     else
-        std::cout << "antigenic_maps.width is OK: " << antigenic_maps_width << " vs. suggested " << suggested_surface_width << std::endl;
+        std::cout << "antigenic_maps.width is OK: " << antigenic_maps_width << " vs. suggested " << suggested_surface_width << '\n';
 
 } // LabelledGridBase::draw
 
