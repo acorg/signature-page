@@ -10,20 +10,18 @@
 
 void TimeSeriesDraw::prepare()
 {
-    mBegin = mSettings.begin;
-    mEnd = mSettings.end;
     std::map<Date, size_t> sequences_per_month;
     mTree.sequences_per_month(sequences_per_month);
     if (!sequences_per_month.empty()) {
-        if (mBegin.empty()) {
+        if (mSettings.begin.empty()) {
             for (Date d = sequences_per_month.crbegin()->first; sequences_per_month.find(d) != sequences_per_month.end(); d.decrement_month()) {
-                mBegin = d;
+                mSettings.begin = d;
             }
         }
-        if (mEnd.empty()) {
-            for (auto ms = sequences_per_month.crbegin(); mEnd.empty() && ms != sequences_per_month.crend(); ++ms) {
+        if (mSettings.end.empty()) {
+            for (auto ms = sequences_per_month.crbegin(); mSettings.end.empty() && ms != sequences_per_month.crend(); ++ms) {
                 if (ms->second)
-                    mEnd = ms->first;
+                    mSettings.end = ms->first;
             }
         }
 
@@ -32,8 +30,8 @@ void TimeSeriesDraw::prepare()
             std::cout << "  " << e.first << " " << e.second << '\n';
         }
 
-        mNumberOfMonths = static_cast<size_t>(months_between_dates(mBegin, mEnd)) + 2;
-        std::cout << "INFO: dates to show: " << mBegin << " .. " << mEnd << "  months: " << mNumberOfMonths << DEBUG_LINE_FUNC << '\n';
+        mNumberOfMonths = static_cast<size_t>(months_between_dates(Date{mSettings.begin}, Date{mSettings.end})) + 2;
+        std::cout << "INFO: dates to show: " << mSettings.begin << " .. " << mSettings.end << "  months: " << mNumberOfMonths << DEBUG_LINE_FUNC << '\n';
     }
     else {
         std::cout << "WARNING: no dates found for sequences" << DEBUG_LINE_FUNC << '\n';
@@ -85,7 +83,7 @@ void TimeSeriesDraw::draw_labels(double month_width)
 void TimeSeriesDraw::draw_labels_at_side(const Location& aOrigin, double month_width, double month_max_height)
 {
     try {
-        Date current_month = mBegin;
+        Date current_month{mSettings.begin};
         for (size_t month_no = 0; month_no < mNumberOfMonths; ++month_no, current_month.increment_month()) {
             const double left = aOrigin.x + month_no * month_width;
             mSurface.text({left, aOrigin.y}, current_month.month_3(), 0, Pixels{mSettings.label_size}, mSettings.label_style, Rotation{M_PI_2});
@@ -119,7 +117,7 @@ void TimeSeriesDraw::draw_dashes(double month_width)
 
     auto draw_dash = [&](const Node& aNode) {
         if (aNode.draw.shown) {
-            const int month_no = months_between_dates(mBegin, Date(aNode.data.date()));
+            const int month_no = months_between_dates(Date{mSettings.begin}, Date{aNode.data.date()});
             if (month_no >= 0) {
                 const Location a{base_x + month_width * month_no, aNode.draw.vertical_pos};
                 mSurface.line(a, {a.x + month_width * mSettings.dash_width, a.y}, coloring.color(aNode), Pixels{mSettings.dash_line_width}, Surface::LineCap::Round);

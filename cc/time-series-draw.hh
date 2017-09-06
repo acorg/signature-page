@@ -57,7 +57,6 @@ class TimeSeriesDraw
     const TreeDraw& mTreeDraw;
     TimeSeriesDrawSettings& mSettings;
     HzSections& mHzSections;
-    Date mBegin, mEnd;
     size_t mNumberOfMonths;
     bool mTreeMode;
 

@@ -158,11 +158,15 @@ namespace rjson
 
       // ----------------------------------------------------------------------
 
+    enum class initialize_field { no, yes };
+
     template <typename FValue> class field_get_set
     {
      public:
-        inline field_get_set(field_container_parent& aParent, std::string aFieldName, FValue&& aDefault) : mParent{aParent}, mFieldName{aFieldName}, mDefault{std::move(aDefault)} {}
-        inline field_get_set(field_container_parent& aParent, std::string aFieldName, const FValue& aDefault) : mParent{aParent}, mFieldName{aFieldName}, mDefault{aDefault} {}
+        inline field_get_set(field_container_parent& aParent, std::string aFieldName, FValue&& aDefault, initialize_field aInitialize = initialize_field::no)
+            : mParent{aParent}, mFieldName{aFieldName}, mDefault{std::move(aDefault)} { if (aInitialize == initialize_field::yes) get_ref(); }
+        inline field_get_set(field_container_parent& aParent, std::string aFieldName, const FValue& aDefault, initialize_field aInitialize = initialize_field::no)
+            : mParent{aParent}, mFieldName{aFieldName}, mDefault{aDefault} { if (aInitialize == initialize_field::yes) get_ref(); }
 
         inline const rjson_type<FValue>& get_value_ref() const
             {

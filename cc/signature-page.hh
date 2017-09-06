@@ -38,6 +38,7 @@ class SignaturePageDrawSettings : public rjson::field_container_child
         time_series_width,
         clades_width,
         antigenic_maps_width;
+    rjson::field_get_set<bool> _force_pp; // hidden field to force pretty printing this rjson object
 
     inline Layout get_layout() const
         {

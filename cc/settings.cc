@@ -19,50 +19,50 @@ static constexpr const char* SETTINGS_VERSION_4 = "signature-page-settings-v4";
 
 AATransitionPerBranchDrawSettings::AATransitionPerBranchDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
     : rjson::field_container_child(aParent, aFieldName),
-      size(*this, "size", 8),
-      color(*this, "color", "black"),
-      style(*this, "style", {"Courier New"}),
-      interline(*this, "interline", 1.2),
-      label_offset(*this, "label_offset", {-40, 20}),
-      label_connection_line_width(*this, "label_connection_line_width", 0.1),
-      label_connection_line_color(*this, "label_connection_line_color", "black")
+      size(*this, "size", 8, rjson::initialize_field::yes),
+      color(*this, "color", "black", rjson::initialize_field::yes),
+      style(*this, "style", {"Courier New"}, rjson::initialize_field::yes),
+      interline(*this, "interline", 1.2, rjson::initialize_field::yes),
+      label_offset(*this, "label_offset", {-40, 20}, rjson::initialize_field::yes),
+      label_connection_line_width(*this, "label_connection_line_width", 0.1, rjson::initialize_field::yes),
+      label_connection_line_color(*this, "label_connection_line_color", "black", rjson::initialize_field::yes)
 {
 }
 
 AATransitionDrawSettings::AATransitionDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
     : rjson::field_container_child(aParent, aFieldName),
-      show(*this, "show", true),
-      number_strains_threshold(*this, "number_strains_threshold", 20),
-      number_strains_threshold_help(*this, "number_strains_threshold?", "do not show aa transition label if number_strains (leaf nodes) for the branch is less than this value"),
-      show_empty_left(*this, "show_empty_left", false),
+      show(*this, "show", true, rjson::initialize_field::yes),
+      number_strains_threshold(*this, "number_strains_threshold", 20, rjson::initialize_field::yes),
+      number_strains_threshold_help(*this, "number_strains_threshold?", "do not show aa transition label if number_strains (leaf nodes) for the branch is less than this value", rjson::initialize_field::yes),
+      show_empty_left(*this, "show_empty_left", false, rjson::initialize_field::yes),
       per_branch(*this, "per_branch"),
-      show_node_for_left_line(*this, "show_node_for_left_line", false),
-      node_for_left_line_color(*this, "node_for_left_line_color", "green"),
-      node_for_left_line_width(*this, "node_for_left_line_width", 1)
+      show_node_for_left_line(*this, "show_node_for_left_line", false, rjson::initialize_field::yes),
+      node_for_left_line_color(*this, "node_for_left_line_color", "green", rjson::initialize_field::yes),
+      node_for_left_line_width(*this, "node_for_left_line_width", 1, rjson::initialize_field::yes)
 {
 }
 
 TreeDrawVaccineSettings::TreeDrawVaccineSettings(const rjson::value& aData)
     : rjson::array_field_container_child_element(aData),
-      name(*this, "name", ""),
-      name_help(*this, "name?", "empty for default settings"),
-      label_color(*this, "label_color", "black"),
-      label_size(*this, "label_size", 10),
-      label_style(*this, "label_style", {}),
-      line_color(*this, "line_color", "black"),
-      line_width(*this, "line_width", 1)
+      name(*this, "name", "", rjson::initialize_field::yes),
+      name_help(*this, "name?", "empty for default settings", rjson::initialize_field::yes),
+      label_color(*this, "label_color", "black", rjson::initialize_field::yes),
+      label_size(*this, "label_size", 10, rjson::initialize_field::yes),
+      label_style(*this, "label_style", {}, rjson::initialize_field::yes),
+      line_color(*this, "line_color", "black", rjson::initialize_field::yes),
+      line_width(*this, "line_width", 1, rjson::initialize_field::yes)
 {
 }
 
 LegendSettings::LegendSettings(rjson::field_container_parent& aParent, std::string aFieldName)
     : rjson::field_container_child(aParent, aFieldName),
-      offset(*this, "offset", {-30, 950}),
-      width(*this, "width", 100),
-      title_style(*this, "title_style", {"sans_serif", TextStyle::Slant::Normal, TextStyle::Weight::Bold}),
-      title_size(*this, "title_size", 10),
-      text_style(*this, "text_style", {"monospace"}),
-      text_size(*this, "text_size", 10),
-      interline(*this, "interline", 1.5)
+      offset(*this, "offset", {-30, 950}, rjson::initialize_field::yes),
+      width(*this, "width", 100, rjson::initialize_field::yes),
+      title_style(*this, "title_style", {"sans_serif", TextStyle::Slant::Normal, TextStyle::Weight::Bold}, rjson::initialize_field::yes),
+      title_size(*this, "title_size", 10, rjson::initialize_field::yes),
+      text_style(*this, "text_style", {"monospace"}, rjson::initialize_field::yes),
+      text_size(*this, "text_size", 10, rjson::initialize_field::yes),
+      interline(*this, "interline", 1.5, rjson::initialize_field::yes)
 {
 }
 
@@ -70,13 +70,13 @@ TimeSeriesDrawSettings::TimeSeriesDrawSettings(rjson::field_container_parent& aP
     : rjson::field_container_child(aParent, aFieldName),
       begin(*this, "begin", ""),
       end(*this, "end", ""),
-      label_size(*this, "label_size", 8),
-      label_style(*this, "label_style", {}),
-      month_year_to_timeseries_gap(*this, "month_year_to_timeseries_gap", 2),
-      month_separator_color(*this, "month_separator_color", "black"),
-      month_separator_width(*this, "month_separator_width", 0.5),
-      dash_width(*this, "dash_width", 0.5),
-      dash_line_width(*this, "dash_line_width", 1)
+      label_size(*this, "label_size", 8, rjson::initialize_field::yes),
+      label_style(*this, "label_style", {}, rjson::initialize_field::yes),
+      month_year_to_timeseries_gap(*this, "month_year_to_timeseries_gap", 2, rjson::initialize_field::yes),
+      month_separator_color(*this, "month_separator_color", "black", rjson::initialize_field::yes),
+      month_separator_width(*this, "month_separator_width", 0.5, rjson::initialize_field::yes),
+      dash_width(*this, "dash_width", 0.5, rjson::initialize_field::yes),
+      dash_line_width(*this, "dash_line_width", 1, rjson::initialize_field::yes)
 {
 }
 
@@ -269,7 +269,8 @@ SignaturePageDrawSettings::SignaturePageDrawSettings(rjson::field_container_pare
       mapped_antigens_margin_right(*this, "mapped_antigens_margin_right", 30),
       time_series_width(*this, "time_series_width", 400),
       clades_width(*this, "clades_width", 100),
-      antigenic_maps_width(*this, "antigenic_maps_width", 500)
+      antigenic_maps_width(*this, "antigenic_maps_width", 500),
+      _force_pp(*this, rjson::object::force_pp_key, true, rjson::initialize_field::yes)
 {
 }
 
@@ -277,7 +278,7 @@ SignaturePageDrawSettings::SignaturePageDrawSettings(rjson::field_container_pare
 // **********************************************************************
 
 Settings::Settings()
-    : version(*this, "  version", SETTINGS_VERSION_4),
+    : version(*this, "  version", SETTINGS_VERSION_4, rjson::initialize_field::yes),
       signature_page(*this, "signature_page"),
       title(*this, "title"),
       tree_draw(*this, "tree"),
@@ -287,6 +288,7 @@ Settings::Settings()
       mapped_antigens(*this, "mapped_antigens"),
       antigenic_maps(*this, "antigenic_maps")
 {
+    // std::cerr << "Settings: " << to_json_pp(2) << '\n';
 
 } // Settings::Settings
 
