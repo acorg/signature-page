@@ -274,6 +274,7 @@ class HzSections : public rjson::field_container_child
 
     void sort(const Tree& aTree);
     // void auto_detect(Tree& aTree, const Clades* aClades);
+    void detect_hz_lines_for_clades(Tree& aTree, const Clades* aClades, bool aForce);
 
     inline size_t shown_maps() const
         {
@@ -298,6 +299,8 @@ class TreeDraw
     double vertical_step() const { return mVerticalStep; }
 
     void init_settings(const Clades* aClades);
+    void ladderize();
+    void detect_hz_lines_for_clades(const Clades* aClades, bool aForce = true);
     void set_line_no();
     inline Surface& surface() { return mSurface; }
 

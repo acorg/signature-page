@@ -47,31 +47,31 @@ void TreeDraw::make_coloring()
 
 // ----------------------------------------------------------------------
 
-void TreeDraw::init_settings(const Clades* /*aClades*/)
+void TreeDraw::init_settings(const Clades* aClades)
 {
     mInitializeSettings = true;
 
       // set_line_no();    // line_no is necessary to sort detected hz sections, but set_line_no is called by SignaturePageDraw::init_settings(), so this call is redundant
+    mHzSections.detect_hz_lines_for_clades(mTree, aClades, true);
     // mHzSections.auto_detect(mTree, aClades); // makes no sense
 
 } // TreeDraw::init_settings
 
 // ----------------------------------------------------------------------
 
+void TreeDraw::detect_hz_lines_for_clades(const Clades* aClades, bool aForce)
+{
+    mHzSections.detect_hz_lines_for_clades(mTree, aClades, aForce);
+
+} // TreeDraw::detect_hz_lines_for_clades
+
+// ----------------------------------------------------------------------
+
 void TreeDraw::prepare(const LocDb& aLocDb)
 {
     mTree.set_continents(aLocDb);
-    mTree.set_number_strains();
-    mTree.ladderize(mSettings.ladderize);
-    mTree.compute_cumulative_edge_length();
-    if (apply_mods()) {
-          // nodes were hidden:
-        mTree.set_number_strains();
-        mTree.ladderize(mSettings.ladderize);
-        mTree.compute_cumulative_edge_length();
-    }
+    ladderize();
     mTree.make_aa_transitions();
-    set_line_no();
 
     size_t number_of_hz_sections = prepare_hz_sections();
     if (number_of_hz_sections == 0)
@@ -82,6 +82,23 @@ void TreeDraw::prepare(const LocDb& aLocDb)
     set_vertical_pos();
 
 } // TreeDraw::prepare
+
+// ----------------------------------------------------------------------
+
+void TreeDraw::ladderize()
+{
+    mTree.set_number_strains();
+    mTree.ladderize(mSettings.ladderize);
+    mTree.compute_cumulative_edge_length();
+    if (apply_mods()) {
+          // nodes were hidden:
+        mTree.set_number_strains();
+        mTree.ladderize(mSettings.ladderize);
+        mTree.compute_cumulative_edge_length();
+    }
+    set_line_no();
+
+} // TreeDraw::ladderize
 
 // ----------------------------------------------------------------------
 
@@ -678,6 +695,39 @@ void HzSections::sort(const Tree& aTree)
 //     }
 
 // } // HzSections::auto_detect
+
+// ----------------------------------------------------------------------
+
+void HzSections::detect_hz_lines_for_clades(Tree& aTree, const Clades* aClades, bool aForce)
+{
+    if (aForce)
+        sections.clear();
+    if (sections.empty()) {
+        auto sec = sections.emplace_back();
+        sec.name = find_first_leaf(aTree).seq_id;
+        sec.show_line = false;
+
+        if (aClades) {
+            for (const auto& clade: *aClades) {
+                if (clade.second.shown()) {
+                    for (const auto& s: clade.second.seq_ids()) {
+                        // std::cerr << "DEBUG: clade: " << s << DEBUG_LINE_FUNC << '\n';
+                        auto sec2 = sections.emplace_back();
+                        sec2.name = s.first;
+                        sec2.show_line = false;
+                        const Node* last_node_of_clade = aTree.find_leaf_by_seqid(s.second);
+                        if (const Node* next_node = aTree.find_leaf_by_line_no(last_node_of_clade->draw.line_no + 1); next_node) {
+                            auto sec3 = sections.emplace_back();
+                            sec3.name = next_node->seq_id;
+                            sec3.show_line = false;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+} // HzSections::detect_hz_lines_for_clades
 
 // ----------------------------------------------------------------------
 

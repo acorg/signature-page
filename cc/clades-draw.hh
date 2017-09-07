@@ -88,6 +88,8 @@ class CladeData
 {
  public:
     using slot_type = int;
+    using seq_ids_entry_t = std::pair<std::string, std::string>;
+    using seq_ids_t = std::vector<seq_ids_entry_t>;
 
     inline CladeData() : slot{CladeDrawSettings::NoSlot} {}
     inline CladeData(const Node& node) : sections{{&node}}, slot{CladeDrawSettings::NoSlot} {}
@@ -102,11 +104,11 @@ class CladeData
 
     inline bool shown() const { return slot != CladeDrawSettings::NoSlot; }
 
-    inline void seq_ids(std::vector<std::pair<std::string, std::string>>& aSeqIds) const
+    inline seq_ids_t seq_ids() const
         {
-            for (const auto& sec: sections) {
-                aSeqIds.emplace_back(sec.first->seq_id, sec.last->seq_id);
-            }
+            seq_ids_t result;
+            std::transform(std::begin(sections), std::end(sections), std::back_inserter(result), [](const auto& sec) -> seq_ids_entry_t { return {sec.first->seq_id, sec.last->seq_id}; });
+            return result;
         }
 
     std::vector<CladeSection> sections;

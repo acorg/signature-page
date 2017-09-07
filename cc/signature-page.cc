@@ -134,7 +134,7 @@ void SignaturePageDraw::init_settings()
     if (mTitleDraw)
         mTitleDraw->init_settings();
     if (mTreeDraw)
-        mTreeDraw->set_line_no();
+        mTreeDraw->ladderize(); // ladderize and set_line_no before init clades!
     if (mCladesDraw)
         mCladesDraw->init_settings();
     if (mTreeDraw)
@@ -164,6 +164,8 @@ void SignaturePageDraw::init_settings()
         for (auto clade: mSettings->clades.clades) {
             clade.label_offset = Size{10, 0};
         }
+        if (mTreeDraw)
+            mTreeDraw->detect_hz_lines_for_clades(mCladesDraw ? mCladesDraw->clades() : nullptr, true);
     }
 
 } // SignaturePageDraw::init_settings

@@ -126,6 +126,7 @@ namespace rjson
                 return Element{*ar.rbegin()};
             }
         inline void erase(size_t index) { get_ref_to_array().erase(index); }
+        inline void clear() { get_ref_to_array().clear(); }
 
         inline std::string to_json() const { return get_ref_to_array().to_json(); }
 
