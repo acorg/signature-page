@@ -49,6 +49,8 @@ void TreeDraw::make_coloring()
 
 void TreeDraw::init_settings(const Clades* /*aClades*/)
 {
+    mInitializeSettings = true;
+
       // set_line_no();    // line_no is necessary to sort detected hz sections, but set_line_no is called by SignaturePageDraw::init_settings(), so this call is redundant
     // mHzSections.auto_detect(mTree, aClades); // makes no sense
 
@@ -485,7 +487,7 @@ void TreeDraw::draw_node(const Node& aNode, double aOriginX, double& aVerticalGa
 
 void TreeDraw::draw_aa_transition(const Node& aNode, const Location& aOrigin, double aRight)
 {
-    const auto& settings = mSettings.aa_transition;
+    auto& settings = mSettings.aa_transition;
     if (settings.show && !aNode.data.aa_transitions.empty() && aNode.data.number_strains >= settings.number_strains_threshold) {
         if (auto labels = aNode.data.aa_transitions.make_labels(settings.show_empty_left); !labels.empty()) {
             const auto& branch_settings = settings.per_branch.settings_for_label(labels);
@@ -514,9 +516,11 @@ void TreeDraw::draw_aa_transition(const Node& aNode, const Location& aOrigin, do
                 mSurface.line(connection_line_start, connection_line_end, branch_settings.label_connection_line_color, mLineWidth /*branch_settings.label_connection_line_width*/);
             }
 
-            std::cout << "AA transitions: ";
-            std::transform(labels.begin(), labels.end(), std::ostream_iterator<std::string>(std::cout, " "), [](const auto& e) -> std::string { return e.first; });
-            std::cout << " --> " << /* aNode.branch_id << */ " number_strains: " << aNode.data.number_strains << std::endl;
+            if (mInitializeSettings) {
+                settings.per_branch.by_aa_label.emplace_back().set_label_disabled_offset(labels.label(), settings.per_branch.label_offset);
+            }
+
+            std::cout << "AA transitions: " << labels.label() << " --> " << /* aNode.branch_id << */ " " << aNode.data.number_strains << " strains\n";
         }
     }
 
@@ -677,7 +681,7 @@ void HzSections::sort(const Tree& aTree)
 
 // ----------------------------------------------------------------------
 
-const AATransitionIndividualSettings& AATransitionPerBranchDrawSettings::settings_for_label(const AA_Transitions::label_node_t& aLabels) const
+const AATransitionIndividualSettings& AATransitionPerBranchDrawSettings::settings_for_label(const AA_TransitionLabels& aLabels) const
 {
 #pragma GCC diagnostic push
 #ifdef __clang__
@@ -687,13 +691,11 @@ const AATransitionIndividualSettings& AATransitionPerBranchDrawSettings::setting
     static AATransitionIndividualSettings result{settings};
 #pragma GCC diagnostic pop
 
-    const std::string label = std::accumulate(std::begin(aLabels), std::end(aLabels), std::string{}, [](const std::string& accum, const auto& source) -> std::string { if (accum.empty()) return source.first; else return accum + " " + source.first; });
     settings = data();
-    for (const auto entry: by_aa_label) {
-        if (entry.label == label) {
-            settings.update(entry.data());
-            break;
-        }
+
+    if (auto found = std::find_if(std::begin(by_aa_label), std::end(by_aa_label), [label = aLabels.label()](const auto& entry) { return entry.label == label; });
+        found != std::end(by_aa_label)) {
+        settings.update((*found).data());
     }
 
     if (scatter_label_offset > 0) {

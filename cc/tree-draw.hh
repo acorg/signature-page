@@ -24,6 +24,12 @@ class AATransitionIndividualSettings : public rjson::array_field_container_child
  public:
     AATransitionIndividualSettings(const rjson::value& aData);
 
+    inline void set_label_disabled_offset(std::string aLabel, Size&& aLabelOffset)
+        {
+            label = aLabel;
+            add("?label_offset", std::move(aLabelOffset));
+        }
+
     rjson::field_get_set<std::string> label;
     rjson::field_get_set<double> size;
     rjson::field_get_set<Color> color;
@@ -54,7 +60,7 @@ class AATransitionPerBranchDrawSettings : public rjson::field_container_child
     rjson::array_field_container_child<AATransitionIndividualSettings> by_aa_label;
 
       // returns ref to static object overriden with each call
-    const AATransitionIndividualSettings& settings_for_label(const AA_Transitions::label_node_t& aLabels) const;
+    const AATransitionIndividualSettings& settings_for_label(const AA_TransitionLabels& aLabels) const;
 
 }; // class AATransitionPerBranchDrawSettings
 
@@ -310,6 +316,7 @@ class TreeDraw
     Scaled mLineWidth;
     Scaled mFontSize;
     double mNameOffset;
+    bool mInitializeSettings = false;
 
     bool apply_mods();          // returns if nodes were hidden
     void set_vertical_pos();

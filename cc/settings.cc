@@ -19,7 +19,7 @@ AATransitionIndividualSettings::AATransitionIndividualSettings(const rjson::valu
       color(*this, "color", "black"),
       style(*this, "style", {"Courier New"}),
       interline(*this, "interline", 1.2),
-      label_offset(*this, "label_offset", {-40, 20}, rjson::initialize_field::yes),
+      label_offset(*this, "label_offset", {-40, 20}),
       label_connection_line_width(*this, "label_connection_line_width", 0.1),
       label_connection_line_color(*this, "label_connection_line_color", "black")
 {
@@ -38,7 +38,6 @@ AATransitionPerBranchDrawSettings::AATransitionPerBranchDrawSettings(rjson::fiel
       label_connection_line_color(*this, "label_connection_line_color", "black", rjson::initialize_field::yes),
       by_aa_label(*this, "by_aa_label")
 {
-    by_aa_label.emplace_back();
 }
 
 AATransitionDrawSettings::AATransitionDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)

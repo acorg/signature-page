@@ -31,6 +31,32 @@ class AA_Transition
 
 // ----------------------------------------------------------------------
 
+class AA_TransitionLabels : public std::vector<std::pair<std::string, const Node*>>
+{
+ public:
+    inline AA_TransitionLabels() = default;
+
+    inline std::string label() const
+        {
+            if (mLabel.empty()) {
+                auto summer = [](const std::string& accum, const auto& source) -> std::string {
+                                  if (accum.empty())
+                                      return source.first;
+                                  else
+                                      return accum + " " + source.first;
+                              };
+                mLabel = std::accumulate(begin(), end(), std::string{}, summer);
+            }
+            return mLabel;
+        }
+
+ private:
+    mutable std::string mLabel;
+
+}; // class AA_TransitionLabels
+
+// ----------------------------------------------------------------------
+
 class AA_Transitions : public std::vector<AA_Transition>
 {
  public:
@@ -71,9 +97,9 @@ class AA_Transitions : public std::vector<AA_Transition>
 
     using label_node_t = std::vector<std::pair<std::string, const Node*>>;
 
-    inline label_node_t make_labels(bool show_empty_left = false) const
+    inline AA_TransitionLabels make_labels(bool show_empty_left = false) const
         {
-            label_node_t labels;
+            AA_TransitionLabels labels;
             for (const auto& aa_transition: *this) {
                 if (show_empty_left || !aa_transition.empty_left()) {
                     labels.emplace_back(aa_transition.display_name(), aa_transition.for_left);
