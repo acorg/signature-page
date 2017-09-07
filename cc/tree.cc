@@ -459,13 +459,14 @@ std::string Tree::virus_type() const
                 lineage = "/Vic";
                 return true;
             }
-            else if (std::string_view(aNode.seq_id.data(), 16) == "PHUKET/3073/2013") {
+            else if (std::string_view(aNode.seq_id.data(), 18) == "B/PHUKET/3073/2013") {
                 lineage = "/Yam";
                 return true;
             }
             return false;
         };
         tree::iterate_leaf_stop(*this, find_lineage);
+        std::cout << "INFO: B lineage: " << lineage << '\n';
         virus_type += lineage;
     }
 
