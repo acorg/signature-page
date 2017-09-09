@@ -134,6 +134,10 @@ bool TreeDraw::apply_mods()
             std::cout << "TREE-mod: " << mod_mod << " \"" << mod.s1 << "\" \"" << mod.s2 << "\" " << mod.d1 << std::endl;
             mark_with_line(mod.s1, static_cast<std::string>(mod.s2), Pixels{mod.d1});
         }
+        else if (mod_mod == "mark-clade-with-line") {
+            std::cout << "TREE-mod: " << mod_mod << " \"" << mod.clade << "\" \"" << mod.color << "\" " << mod.line_width << std::endl;
+            mark_clade_with_line(mod.clade, static_cast<std::string>(mod.color), Pixels{mod.line_width});
+        }
         else if (mod_mod.empty() || mod_mod[0] == '?') {
               // commented out mod
         }
@@ -278,6 +282,26 @@ void TreeDraw::mark_with_line(std::string aName, Color aColor, Pixels aLineWidth
         std::cout << "leaf nodes marked: " << marked << std::endl;
 
 } // TreeDraw::mark_with_line
+
+// ----------------------------------------------------------------------
+
+void TreeDraw::mark_clade_with_line(std::string aClade, Color aColor, Pixels aLineWidth)
+{
+    size_t marked = 0;
+    auto mark_leaf = [aClade,&aColor,&aLineWidth,&marked](Node& aNode) {
+        if (aNode.data.has_clade(aClade)) {
+            aNode.draw.mark_with_line = aColor;
+            aNode.draw.mark_with_line_width = aLineWidth;
+            ++marked;
+        }
+    };
+    tree::iterate_leaf(mTree, mark_leaf);
+    if (marked == 0)
+        std::cerr << "WARNING: not found to mark with line for clade: " << aClade << '\n';
+    else
+        std::cout << "Clade " << aClade << " leaf nodes marked: " << marked << std::endl;
+
+} // TreeDraw::mark_clade_with_line
 
 // ----------------------------------------------------------------------
 

@@ -115,13 +115,19 @@ class TreeDrawMod : public rjson::array_field_container_child_element
           mod(*this, "mod", std::string{}),
           d1(*this,  "d1", -1.0),
           s1(*this,  "s1", std::string{}),
-          s2(*this,  "s2", std::string{})
+          s2(*this,  "s2", std::string{}),
+          clade(*this,  "clade", std::string{}),
+          color(*this,  "color", std::string{}),
+          line_width(*this,  "line_width", -1.0)
         {}
 
     rjson::field_get_set<std::string> mod;            // root, hide_isolated_before, hide_if_cumulative_edge_length_bigger_than, hide_between, before2015-58P-or-146I-or-559I
     rjson::field_get_set<double> d1;                  // depends on mod
     rjson::field_get_set<std::string> s1;             // depends on mod
     rjson::field_get_set<std::string> s2;             // depends on mod
+    rjson::field_get_set<std::string> clade;          // mark-clade-with-line mod
+    rjson::field_get_set<std::string> color;          // mark-clade-with-line mod
+    rjson::field_get_set<double> line_width;          // in pixels, mark-clade-with-line
 
 }; // class TreeDrawMod
 
@@ -341,6 +347,7 @@ class TreeDraw
     void hide_between(std::string aFirst, std::string aLast);
     void hide_one(std::string aName);
     void mark_with_line(std::string aName, Color aColor, Pixels aLineWidth);
+    void mark_clade_with_line(std::string aClade, Color aColor, Pixels aLineWidth);
     static void hide_branch(Node& aNode);
 
 }; // class TreeDraw

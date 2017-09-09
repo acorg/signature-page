@@ -241,6 +241,7 @@ TreeDrawSettings::TreeDrawSettings(rjson::field_container_parent& aParent, std::
                       "{mod: hide-if-cumulative-edge-length-bigger-than, d1: cumulative-length-threshold}", "{mod: before2015-58P-or-146I-or-559I}",
                       "{mod: hide-between, s1: first-name-to-hide, s2: last-name-to-hide} - after ladderizing", "{mod: hide-one, s1: name-to-hide} - after ladderizing",
                       "{mod: mark-with-line, s1: name-to-mark, s2: color-to-mark, d1: line-width-in-pixels}"
+                      "{mod: mark-clade-with-line, clade: , color: , line_width: line-width-in-pixels}"
           }),
       force_line_width(*this, "force_line_width", false),
       line_width(*this, "line_width", 1),
