@@ -61,6 +61,7 @@ class AATransitionPerBranchDrawSettings : public rjson::field_container_child
 
       // returns ref to static object overriden with each call
     const AATransitionIndividualSettings& settings_for_label(const AA_TransitionLabels& aLabels) const;
+    void remove_for_signature_page_settings();
 
 }; // class AATransitionPerBranchDrawSettings
 
@@ -79,6 +80,8 @@ class AATransitionDrawSettings : public rjson::field_container_child
     rjson::field_get_set<bool> show_node_for_left_line;
     rjson::field_get_set<Color> node_for_left_line_color;
     rjson::field_get_set<double> node_for_left_line_width;
+
+    void remove_for_signature_page_settings();
 
 }; // class AATransitionDrawSettings
 
@@ -202,6 +205,8 @@ class TreeDrawSettings : public rjson::field_container_child
     AATransitionDrawSettings aa_transition;
     TreeDrawVaccines vaccines;
     LegendSettings legend;
+
+    void remove_for_signature_page_settings();
 
       // obsolete: v2
     // std::string _root;           // re-root tree

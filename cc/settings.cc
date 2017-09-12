@@ -40,6 +40,12 @@ AATransitionPerBranchDrawSettings::AATransitionPerBranchDrawSettings(rjson::fiel
 {
 }
 
+void AATransitionPerBranchDrawSettings::remove_for_signature_page_settings()
+{
+    for (const auto name: {"size", "color", "style", "interline", "label_offset", "scatter_label_offset", "scatter_label_offset?", "label_connection_line_width", "label_connection_line_color"})
+        remove_child(name);
+}
+
 AATransitionDrawSettings::AATransitionDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
     : rjson::field_container_child(aParent, aFieldName),
       show(*this, "show", true, rjson::initialize_field::yes),
@@ -51,6 +57,13 @@ AATransitionDrawSettings::AATransitionDrawSettings(rjson::field_container_parent
       node_for_left_line_color(*this, "node_for_left_line_color", "green", rjson::initialize_field::yes),
       node_for_left_line_width(*this, "node_for_left_line_width", 1, rjson::initialize_field::yes)
 {
+}
+
+void AATransitionDrawSettings::remove_for_signature_page_settings()
+{
+    for (const auto name: {"show", "number_strains_threshold", "number_strains_threshold?", "show_empty_left", "show_node_for_left_line", "node_for_left_line_color", "node_for_left_line_width"})
+        remove_child(name);
+    per_branch.remove_for_signature_page_settings();
 }
 
 TreeDrawVaccineSettings::TreeDrawVaccineSettings(const rjson::value& aData)
@@ -255,6 +268,14 @@ TreeDrawSettings::TreeDrawSettings(rjson::field_container_parent& aParent, std::
       legend(*this, "legend")
 {
 } // TreeDrawSettings::TreeDrawSettings
+
+void TreeDrawSettings::remove_for_signature_page_settings()
+{
+    for (const auto name: {"ladderize", "ladderize?", "mods", "mods?", "force_line_width", "line_width", "root_edge", "line_color", "label_style", "name_offset", "color_nodes", "vaccines", "legend"})
+        remove_child(name);
+    aa_transition.remove_for_signature_page_settings();
+
+} // TreeDrawSettings::remove_for_signature_page_settings
 
 // ----------------------------------------------------------------------
 

@@ -181,7 +181,7 @@ void SignaturePageDraw::write_initialized_settings(std::string aFilename)
       case SignaturePageDrawSettings::Layout::Auto:
           break;
       case SignaturePageDrawSettings::Layout::TreeCladesTSMaps:
-          settings().tree_draw.remove();
+          settings().tree_draw.remove_for_signature_page_settings();
           settings().time_series.remove();
           settings().clades.remove();
           settings().hz_sections.remove();
