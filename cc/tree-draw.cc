@@ -529,9 +529,10 @@ void TreeDraw::draw_node(const Node& aNode, double aOriginX, double& aVerticalGa
 void TreeDraw::draw_aa_transition(const Node& aNode, const Location& aOrigin, double aRight)
 {
     auto& settings = mSettings.aa_transition;
+    const auto& first_leaf = find_first_leaf(aNode);
     if (settings.show && !aNode.data.aa_transitions.empty() && aNode.data.number_strains >= settings.number_strains_threshold) {
         if (auto labels = aNode.data.aa_transitions.make_labels(settings.show_empty_left); !labels.empty()) {
-            const auto& branch_settings = settings.per_branch.settings_for_label(labels);
+            const auto& branch_settings = settings.per_branch.settings_for_label(labels, first_leaf.seq_id);
             if (branch_settings.show) {
                 const auto longest_label = std::max_element(labels.begin(), labels.end(), [](const auto& a, const auto& b) { return a.first.size() < b.first.size(); });
                 const auto longest_label_size = mSurface.text_size(longest_label->first, Pixels{branch_settings.size}, branch_settings.style);
@@ -559,10 +560,10 @@ void TreeDraw::draw_aa_transition(const Node& aNode, const Location& aOrigin, do
                 }
 
                 if (mInitializeSettings) {
-                    settings.per_branch.by_aa_label.emplace_back().set_label_disabled_offset(labels.label(), settings.per_branch.label_offset);
+                    settings.per_branch.by_aa_label.emplace_back().set_label_disabled_offset(labels.label(), first_leaf.seq_id, settings.per_branch.label_offset);
                 }
 
-                std::cout << "AA transitions: " << labels.label() << " --> " << /* aNode.branch_id << */ " " << aNode.data.number_strains << " strains  label pos: " << origin << '\n';
+                std::cout << "AA transitions: " << labels.label() << " --> " << aNode.data.number_strains << " strains  label pos: " << origin << " first-leaf-seq-id:" << first_leaf.seq_id << '\n';
             }
         }
     }
@@ -757,7 +758,7 @@ void HzSections::detect_hz_lines_for_clades(Tree& aTree, const Clades* aClades, 
 
 // ----------------------------------------------------------------------
 
-const AATransitionIndividualSettings& AATransitionPerBranchDrawSettings::settings_for_label(const AA_TransitionLabels& aLabels) const
+const AATransitionIndividualSettings& AATransitionPerBranchDrawSettings::settings_for_label(const AA_TransitionLabels& aLabels, std::string aFirstLeafSeqid) const
 {
 #pragma GCC diagnostic push
 #ifdef __clang__
@@ -769,7 +770,10 @@ const AATransitionIndividualSettings& AATransitionPerBranchDrawSettings::setting
 
     settings = data();
 
-    if (auto found = std::find_if(std::begin(by_aa_label), std::end(by_aa_label), [label = aLabels.label()](const auto& entry) { return entry.label == label; });
+    auto match_entry = [label = aLabels.label(), aFirstLeafSeqid](const auto& entry) {
+                           return entry.label == label && (entry.first_leaf_seq_id.empty() || entry.first_leaf_seq_id == aFirstLeafSeqid);
+                       };
+    if (auto found = std::find_if(std::begin(by_aa_label), std::end(by_aa_label), match_entry);
         found != std::end(by_aa_label)) {
         settings.update((*found).data());
     }

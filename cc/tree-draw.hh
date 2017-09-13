@@ -24,13 +24,15 @@ class AATransitionIndividualSettings : public rjson::array_field_container_child
  public:
     AATransitionIndividualSettings(const rjson::value& aData);
 
-    inline void set_label_disabled_offset(std::string aLabel, Size&& aLabelOffset)
+    inline void set_label_disabled_offset(std::string aLabel, std::string aFirstLeafSeqid, Size&& aLabelOffset)
         {
             label = aLabel;
+            first_leaf_seq_id = aFirstLeafSeqid;
             add("?label_offset", std::move(aLabelOffset));
         }
 
     rjson::field_get_set<std::string> label;
+    rjson::field_get_set<std::string> first_leaf_seq_id;
     rjson::field_get_set<bool> show;
     rjson::field_get_set<double> size;
     rjson::field_get_set<Color> color;
@@ -63,7 +65,7 @@ class AATransitionPerBranchDrawSettings : public rjson::field_container_child
     rjson::array_field_container_child<AATransitionIndividualSettings> by_aa_label;
 
       // returns ref to static object overriden with each call
-    const AATransitionIndividualSettings& settings_for_label(const AA_TransitionLabels& aLabels) const;
+    const AATransitionIndividualSettings& settings_for_label(const AA_TransitionLabels& aLabels, std::string aFirstLeafSeqid) const;
     void remove_for_signature_page_settings();
 
 }; // class AATransitionPerBranchDrawSettings

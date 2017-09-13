@@ -15,6 +15,7 @@ static constexpr const char* SETTINGS_VERSION_4 = "signature-page-settings-v4";
 AATransitionIndividualSettings::AATransitionIndividualSettings(const rjson::value& aData)
     : rjson::array_field_container_child_element(aData),
       label(*this, "label", "", rjson::initialize_field::yes),
+      first_leaf_seq_id(*this, "first_leaf_seq_id", ""),
       show(*this, "show", true),
       size(*this, "size", 8),
       color(*this, "color", "black"),
