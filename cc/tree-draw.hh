@@ -39,6 +39,7 @@ class AATransitionIndividualSettings : public rjson::array_field_container_child
     rjson::field_get_set<Size> label_offset;
     rjson::field_get_set<double> label_connection_line_width;
     rjson::field_get_set<Color> label_connection_line_color;
+    rjson::field_get_set<bool> _no_pp; // hidden field to avoid pretty printing this rjson object
 
 }; // class AATransitionIndividualSettings
 

@@ -22,7 +22,8 @@ AATransitionIndividualSettings::AATransitionIndividualSettings(const rjson::valu
       interline(*this, "interline", 1.2),
       label_offset(*this, "label_offset", {-40, 20}),
       label_connection_line_width(*this, "label_connection_line_width", 0.1),
-      label_connection_line_color(*this, "label_connection_line_color", "black")
+      label_connection_line_color(*this, "label_connection_line_color", "black"),
+      _no_pp(*this, rjson::object::no_pp_key, true, rjson::initialize_field::yes)
 {
 }
 
