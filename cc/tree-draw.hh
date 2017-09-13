@@ -31,6 +31,7 @@ class AATransitionIndividualSettings : public rjson::array_field_container_child
         }
 
     rjson::field_get_set<std::string> label;
+    rjson::field_get_set<bool> show;
     rjson::field_get_set<double> size;
     rjson::field_get_set<Color> color;
     rjson::field_get_set<TextStyle> style;
@@ -48,6 +49,7 @@ class AATransitionPerBranchDrawSettings : public rjson::field_container_child
  public:
     AATransitionPerBranchDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName);
 
+    rjson::field_get_set<bool> show;
     rjson::field_get_set<double> size;
     rjson::field_get_set<Color> color;
     rjson::field_get_set<TextStyle> style;

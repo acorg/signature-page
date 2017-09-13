@@ -532,36 +532,38 @@ void TreeDraw::draw_aa_transition(const Node& aNode, const Location& aOrigin, do
     if (settings.show && !aNode.data.aa_transitions.empty() && aNode.data.number_strains >= settings.number_strains_threshold) {
         if (auto labels = aNode.data.aa_transitions.make_labels(settings.show_empty_left); !labels.empty()) {
             const auto& branch_settings = settings.per_branch.settings_for_label(labels);
-            const auto longest_label = std::max_element(labels.begin(), labels.end(), [](const auto& a, const auto& b) { return a.first.size() < b.first.size(); });
-            const auto longest_label_size = mSurface.text_size(longest_label->first, Pixels{branch_settings.size}, branch_settings.style);
-            const auto node_line_width = aRight - aOrigin.x;
-            Size offset(node_line_width > longest_label_size.width ? (node_line_width - longest_label_size.width) / 2 : (node_line_width - longest_label_size.width),
-                        longest_label_size.height * branch_settings.interline);
-            offset += branch_settings.label_offset;
-            Location origin = aOrigin + offset;
-            for (const auto& label: labels) {
-                const auto label_width = mSurface.text_size(label.first, Pixels{branch_settings.size}, branch_settings.style).width;
-                const Location label_xy(origin.x + (longest_label_size.width - label_width) / 2, origin.y);
-                mSurface.text(label_xy, label.first, branch_settings.color, Pixels{branch_settings.size}, branch_settings.style);
-                if (settings.show_node_for_left_line && label.second) {
-                    mSurface.line(Location{},
-                                  Location(mHorizontalStep * label.second->data.cumulative_edge_length, mVerticalStep * label.second->draw.line_no),
-                                  settings.node_for_left_line_color, Pixels{settings.node_for_left_line_width});
+            if (branch_settings.show) {
+                const auto longest_label = std::max_element(labels.begin(), labels.end(), [](const auto& a, const auto& b) { return a.first.size() < b.first.size(); });
+                const auto longest_label_size = mSurface.text_size(longest_label->first, Pixels{branch_settings.size}, branch_settings.style);
+                const auto node_line_width = aRight - aOrigin.x;
+                Size offset(node_line_width > longest_label_size.width ? (node_line_width - longest_label_size.width) / 2 : (node_line_width - longest_label_size.width),
+                            longest_label_size.height * branch_settings.interline);
+                offset += branch_settings.label_offset;
+                Location origin = aOrigin + offset;
+                for (const auto& label: labels) {
+                    const auto label_width = mSurface.text_size(label.first, Pixels{branch_settings.size}, branch_settings.style).width;
+                    const Location label_xy(origin.x + (longest_label_size.width - label_width) / 2, origin.y);
+                    mSurface.text(label_xy, label.first, branch_settings.color, Pixels{branch_settings.size}, branch_settings.style);
+                    if (settings.show_node_for_left_line && label.second) {
+                        mSurface.line(Location{},
+                                      Location(mHorizontalStep * label.second->data.cumulative_edge_length, mVerticalStep * label.second->draw.line_no),
+                                      settings.node_for_left_line_color, Pixels{settings.node_for_left_line_width});
+                    }
+                    origin.y += longest_label_size.height * branch_settings.interline;
                 }
-                origin.y += longest_label_size.height * branch_settings.interline;
-            }
 
-            const Location connection_line_start{(aOrigin.x + aRight) / 2, aOrigin.y};
-            const Location connection_line_end{aOrigin.x + longest_label_size.width / 2 + offset.width, aOrigin.y - longest_label_size.height + offset.height};
-            if (distance(connection_line_start, connection_line_end) > 10) {
-                mSurface.line(connection_line_start, connection_line_end, branch_settings.label_connection_line_color, mLineWidth /*branch_settings.label_connection_line_width*/);
-            }
+                const Location connection_line_start{(aOrigin.x + aRight) / 2, aOrigin.y};
+                const Location connection_line_end{aOrigin.x + longest_label_size.width / 2 + offset.width, aOrigin.y - longest_label_size.height + offset.height};
+                if (distance(connection_line_start, connection_line_end) > 10) {
+                    mSurface.line(connection_line_start, connection_line_end, branch_settings.label_connection_line_color, mLineWidth /*branch_settings.label_connection_line_width*/);
+                }
 
-            if (mInitializeSettings) {
-                settings.per_branch.by_aa_label.emplace_back().set_label_disabled_offset(labels.label(), settings.per_branch.label_offset);
-            }
+                if (mInitializeSettings) {
+                    settings.per_branch.by_aa_label.emplace_back().set_label_disabled_offset(labels.label(), settings.per_branch.label_offset);
+                }
 
-            std::cout << "AA transitions: " << labels.label() << " --> " << /* aNode.branch_id << */ " " << aNode.data.number_strains << " strains\n";
+                std::cout << "AA transitions: " << labels.label() << " --> " << /* aNode.branch_id << */ " " << aNode.data.number_strains << " strains  label pos: " << origin << '\n';
+            }
         }
     }
 

@@ -15,6 +15,7 @@ static constexpr const char* SETTINGS_VERSION_4 = "signature-page-settings-v4";
 AATransitionIndividualSettings::AATransitionIndividualSettings(const rjson::value& aData)
     : rjson::array_field_container_child_element(aData),
       label(*this, "label", "", rjson::initialize_field::yes),
+      show(*this, "show", true),
       size(*this, "size", 8),
       color(*this, "color", "black"),
       style(*this, "style", {"Courier New"}),
@@ -27,6 +28,7 @@ AATransitionIndividualSettings::AATransitionIndividualSettings(const rjson::valu
 
 AATransitionPerBranchDrawSettings::AATransitionPerBranchDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
     : rjson::field_container_child(aParent, aFieldName),
+      show(*this, "show", true, rjson::initialize_field::yes),
       size(*this, "size", 8, rjson::initialize_field::yes),
       color(*this, "color", "black", rjson::initialize_field::yes),
       style(*this, "style", {"Courier New"}, rjson::initialize_field::yes),
@@ -42,7 +44,7 @@ AATransitionPerBranchDrawSettings::AATransitionPerBranchDrawSettings(rjson::fiel
 
 void AATransitionPerBranchDrawSettings::remove_for_signature_page_settings()
 {
-    for (const auto name: {"size", "color", "style", "interline", "label_offset", "scatter_label_offset", "scatter_label_offset?", "label_connection_line_width", "label_connection_line_color"})
+    for (const auto name: {"show", "size", "color", "style", "interline", "label_offset", "scatter_label_offset", "scatter_label_offset?", "label_connection_line_width", "label_connection_line_color"})
         remove_child(name);
 }
 
