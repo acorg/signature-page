@@ -554,7 +554,16 @@ void TreeDraw::draw_aa_transition(const Node& aNode, const Location& aOrigin, do
                 }
 
                 const Location connection_line_start{(aOrigin.x + aRight) / 2, aOrigin.y};
-                const Location connection_line_end{aOrigin.x + longest_label_size.width / 2 + offset.width, aOrigin.y - longest_label_size.height + offset.height};
+                Location connection_line_end;
+                const Size label_offset = branch_settings.label_offset;
+                if (label_offset.height > 5)
+                    connection_line_end.set(aOrigin.x + longest_label_size.width / 2 + offset.width, aOrigin.y - longest_label_size.height + offset.height);
+                else if (label_offset.height < -5)
+                    connection_line_end.set(aOrigin.x + longest_label_size.width / 2 + offset.width, aOrigin.y + offset.height);
+                else if (label_offset.width > 0)
+                    connection_line_end.set(aOrigin.x + offset.width, aOrigin.y + offset.height - longest_label_size.height / 2);
+                else
+                    connection_line_end.set(aOrigin.x + longest_label_size.width + offset.width, aOrigin.y + offset.height - longest_label_size.height / 2);
                 if (distance(connection_line_start, connection_line_end) > 10) {
                     mSurface.line(connection_line_start, connection_line_end, branch_settings.label_connection_line_color, mLineWidth /*branch_settings.label_connection_line_width*/);
                 }
