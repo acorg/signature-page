@@ -198,7 +198,7 @@ AntigenicMapsDrawSettings::AntigenicMapsDrawSettings(rjson::field_container_pare
     mods.emplace_back().add("N", "sera").add("outline", "grey88").add("outline_width", 0.5).add("size", 5.0);
     mods.emplace_back().add("N", "reference_antigens").add("fill", "transparent").add("outline", "grey88").add("outline_width", 0.5).add("size", 5.0);
     mods.emplace_back().add("N", "test_antigens").add("fill", "grey88").add("outline", "grey88").add("outline_width", 0.5).add("size", 3.0);
-    mods.emplace_back().add("N", "equenced_antigens").add("fill", "grey63").add("outline", "white").add("outline_width", 0.5).add("size", 3.0);
+    mods.emplace_back().add("N", "sequenced_antigens").add("fill", "grey63").add("outline", "white").add("outline_width", 0.5).add("size", 3.0);
     mods.emplace_back().add("N", "tracked_antigens").add("fill", "green3").add("outline", "white").add("outline_width", 0.5).add("size", 5.0);
     mods.emplace_back().add("N", "?tracked_sera").add("fill", "transparent").add("outline", "black").add("outline_width", 0.5).add("size", 5.0); // tracked sera above tracked antigens!
     mods.emplace_back().add("N", "?tracked_serum_circles").add("outline", "black").add("outline_width", 0.5); // tracked serum circles above tracked antigens!
@@ -209,6 +209,10 @@ AntigenicMapsDrawSettings::AntigenicMapsDrawSettings(rjson::field_container_pare
     mods.emplace_back().add("N", "border").add("color", "black").add("line_width", 1.0);
     mods.emplace_back().add("N", "vaccines").add("mods", rjson::array{
             rjson::object{{"size", rjson::number{15}}, {"outline", rjson::string{"white"}}},
+            rjson::object{{"label", rjson::object{{"offset", rjson::array{0, 1}}, {"color", rjson::string{"black"}},
+                                                  {"weight", rjson::string{"normal"}}, {"slant", rjson::string{"normal"}},
+                                                  {"font_family", rjson::string{"helvetica neu"}}, {"size", rjson::number{9}},
+                                                  {"name_type", rjson::string{"abbreviated_location_with_passage_type"}}}}},
             rjson::object{{"type", rjson::string{"previous"}}, {"passage", rjson::string{"cell"}}, {"fill", rjson::string{"blue"}}},
             rjson::object{{"type", rjson::string{"previous"}}, {"passage", rjson::string{"egg"}}, {"fill", rjson::string{"blue"}}},
             rjson::object{{"type", rjson::string{"previous"}}, {"passage", rjson::string{"reassortant"}}, {"fill", rjson::string{"blue"}}},
@@ -219,10 +223,6 @@ AntigenicMapsDrawSettings::AntigenicMapsDrawSettings(rjson::field_container_pare
             rjson::object{{"type", rjson::string{"surrogate"}}, {"passage", rjson::string{"egg"}}, {"fill", rjson::string{"pink"}}},
             rjson::object{{"type", rjson::string{"surrogate"}}, {"passage", rjson::string{"reassortant"}}, {"fill", rjson::string{"pink"}}},
             rjson::object{{"?name", rjson::string{"TEXAS"}}, {"?show", rjson::boolean{false}}},
-            rjson::object{{"label", rjson::object{{"offset", rjson::array{0, 1}}, {"color", rjson::string{"black"}},
-                                                  {"weight", rjson::string{"normal"}}, {"slant", rjson::string{"normal"}},
-                                                  {"font_family", rjson::string{"helvetica neu"}}, {"size", rjson::number{9}},
-                                                  {"name_type", rjson::string{"abbreviated_location_with_passage_type"}}}}},
        });
 }
 
