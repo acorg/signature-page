@@ -94,12 +94,13 @@ void LabelledGridBase::draw(Surface& aMappedAntigensDrawSurface)
 
     const double map_width = (surface.viewport().size.width - (settings.columns - 1) * settings.gap) / settings.columns;
 
-    size_t row = 0, column = 0, section_index = 0;
-    for (const auto& section: layout_draw().hz_sections().sections) {
+    size_t shown_maps = 0, row = 0, column = 0;
+    for (const auto section_index: layout_draw().hz_sections().section_order) {
+        const auto& section = layout_draw().hz_sections().sections[section_index];
         if (section.show && section.show_map) {
             Surface& map_surface = surface.subsurface({column * (map_width + settings.gap), row * (map_width + settings.gap)},
                                                       Scaled{map_width}, layout_draw().viewport(), true);
-            std::cout << "===============================\nINFO: MAP " << section_index << ": " << map_surface << std::endl;
+            std::cout << "===============================\nINFO: MAP " << section_index << ' ' << layout_draw().hz_sections().node_refs[section_index].index << ": " << map_surface << std::endl;
             // std::cerr << "Map " << map_surface << std::endl;
             // std::cerr << "origin_offset: " << map_surface.origin_offset() << "  scale: " << map_surface.scale() << std::endl;
             layout_draw().prepare_drawing_chart(section_index);
@@ -110,15 +111,15 @@ void LabelledGridBase::draw(Surface& aMappedAntigensDrawSurface)
                 ++row;
                 column = 0;
             }
+            ++shown_maps;
         }
         else {
             std::cout << "===============================\nINFO: MAP " << section_index << ": not shown" << std::endl;
         }
-        ++section_index;
     }
 
     const double antigenic_maps_width = layout_draw().signature_page_settings().antigenic_maps_width;
-    const size_t rows = row + (column ? 1 : 0);
+    const size_t rows = shown_maps / settings.columns + ((shown_maps % settings.columns) ? 1 : 0);
     const double maps_height = map_width * rows + (rows - 1) * settings.gap;
     const double suggested_surface_width = antigenic_maps_width * surface.viewport().size.height / maps_height;
     std::cout << "Map area height: " << maps_height << std::endl;
