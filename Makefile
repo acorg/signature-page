@@ -1,5 +1,5 @@
 # -*- Makefile -*-
-# Eugene Skepner 2016
+# Eugene Skepner 2017
 # ======================================================================
 
 MAKEFLAGS = -w
@@ -20,11 +20,10 @@ TEST_DRAW_CHART_SOURCES = test-draw-chart.cc $(SIGNATURE_PAGE_SOURCES)
 
 # ----------------------------------------------------------------------
 
-TARGET_ROOT=$(shell if [ -f /Volumes/rdisk/ramdisk-id ]; then echo /Volumes/rdisk/AD; else echo $(ACMACSD_ROOT); fi)
-include $(TARGET_ROOT)/share/Makefile.g++
-include $(TARGET_ROOT)/share/Makefile.dist-build.vars
+include $(ACMACSD_ROOT)/share/makefiles/Makefile.g++
+include $(ACMACSD_ROOT)/share/makefiles/Makefile.dist-build.vars
 
-CXXFLAGS = -MMD -g $(OPTIMIZATION) $(PROFILE) -fPIC -std=$(STD) $(WEVERYTHING) $(WARNINGS) -Icc -I$(AD_INCLUDE) $(PKG_INCLUDES)
+CXXFLAGS = -MMD -g $(OPTIMIZATION) $(PROFILE) -fPIC -std=$(STD) $(WARNINGS) -Icc -I$(AD_INCLUDE) $(PKG_INCLUDES)
 LDFLAGS = $(OPTIMIZATION) $(PROFILE)
 
 PYTHON_VERSION = $(shell python3 -c 'import sys; print("{0.major}.{0.minor}".format(sys.version_info))')
@@ -40,7 +39,7 @@ SIGP_LDLIBS = $(ACMACSD_LIBS) $(shell pkg-config --libs cairo) $(shell pkg-confi
 
 # ----------------------------------------------------------------------
 
-all: check-python $(DIST)/signature_page_backend$(PYTHON_MODULE_SUFFIX) $(DIST)/sigp-settings-create $(DIST)/test-settings-copy $(DIST)/sigp $(DIST)/test-draw-chart
+all: $(DIST)/signature_page_backend$(PYTHON_MODULE_SUFFIX) $(DIST)/sigp-settings-create $(DIST)/test-settings-copy $(DIST)/sigp $(DIST)/test-draw-chart
 
 # ----------------------------------------------------------------------
 
@@ -78,22 +77,11 @@ install: $(DIST)/signature_page_backend$(PYTHON_MODULE_SUFFIX) $(DIST)/sigp | ch
 test: install $(DIST)/sigp
 	test/test
 
-include $(AD_SHARE)/Makefile.rtags
-
 # ----------------------------------------------------------------------
 
 -include $(BUILD)/*.d
-
-# ----------------------------------------------------------------------
-
-# abspath below is to show full file path by __FILE__ macro used in logging
-$(BUILD)/%.o: cc/%.cc | $(BUILD)
-	@echo $(CXX_NAME) $(OPTIMIZATION) $<
-	@$(CXX) $(CXXFLAGS) -c -o $@ $(abspath $<)
-
-# ----------------------------------------------------------------------
-
-include $(AD_SHARE)/Makefile.dist-build.rules
+include $(ACMACSD_ROOT)/share/makefiles/Makefile.dist-build.rules
+include $(ACMACSD_ROOT)/share/makefiles/Makefile.rtags
 
 # ======================================================================
 ### Local Variables:
