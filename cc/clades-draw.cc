@@ -131,6 +131,8 @@ void CladesDraw::init_settings()
             auto new_clade = mSettings.clades.emplace_back();
             new_clade.name = clade.first;
             new_clade.slot = clade.second.slot;
+            if (clade.first == "gly" || clade.first == "no-gly")
+                new_clade.show = false;
         }
         else {
             (*p).slot = clade.second.slot;
