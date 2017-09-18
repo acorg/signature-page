@@ -137,12 +137,11 @@ CladesDrawSettings::CladesDrawSettings(rjson::field_container_parent& aParent, s
       slot_width(*this, "slot_width", 10, rjson::initialize_field::yes)
 {
     clades.emplace_back();
-    auto c2 = clades.emplace_back();
-    c2.name = "gly";
-    c2.show = false;
-    auto c3 = clades.emplace_back();
-    c3.name = "no-gly";
-    c3.show = false;
+    for (const auto* n: {"gly", "no-gly", "DEL2017"}) {
+        auto cn = clades.emplace_back();
+        cn.name = n;
+        cn.show = false;
+    }
 }
 
 HzSection::HzSection(const rjson::value& aData)
