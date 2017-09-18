@@ -747,7 +747,7 @@ void HzSections::detect_hz_lines_for_clades(Tree& aTree, const Clades* aClades, 
             for (const auto& clade: *aClades) {
                 if (clade.second.shown()) {
                     for (const auto& s: clade.second.seq_ids()) {
-                        // std::cerr << "DEBUG: clade: " << s << DEBUG_LINE_FUNC << '\n';
+                        std::cerr << "DEBUG: clade: " << clade.first << ' ' << s << DEBUG_LINE_FUNC << '\n';
                         auto sec2 = sections.emplace_back();
                         sec2.name = s.first;
                         sec2.show_line = false;
