@@ -33,7 +33,7 @@ PYTHON_LD_LIB = $(shell $(PYTHON_CONFIG) --ldflags | sed -E 's/-Wl,-stack_size,[
 
 PKG_INCLUDES = $(shell pkg-config --cflags cairo) $(shell pkg-config --cflags liblzma) $(shell $(PYTHON_CONFIG) --includes)
 
-ACMACSD_LIBS = $(FS_LIB) -L$(AD_LIB) -lacmacsbase -lacmacschart -lacmacsdraw -lacmacsmapdraw -lseqdb -lhidb -llocationdb -lboost_date_time -lboost_program_options -lboost_filesystem -lboost_system
+ACMACSD_LIBS = $(FS_LIB) -L$(AD_LIB) -lacmacsbase -lacmacschart -lacmacsdraw -lacmacsmapdraw -lseqdb -lhidb -llocationdb -lboost_date_time -lboost_program_options -lboost_system
 SETTINGS_CREATE_LDLIBS = $(ACMACSD_LIBS) $(shell pkg-config --libs liblzma)
 SIGP_LDLIBS = $(ACMACSD_LIBS) $(shell pkg-config --libs cairo) $(shell pkg-config --libs liblzma)
 
