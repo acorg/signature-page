@@ -280,7 +280,7 @@ void TreeDraw::hide_between(std::string aFirst, std::string aLast)
 void TreeDraw::hide_one(std::string aName)
 {
     size_t hidden = 0;
-    auto hide_show_leaf = [aName,&hidden](Node& aNode) {
+    auto hide_show_leaf = [aName, &hidden](Node &aNode) {
         if (aNode.seq_id == aName) {
             aNode.draw.shown = false;
             ++hidden;
