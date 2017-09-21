@@ -351,6 +351,7 @@ class TreeDraw
 
     void make_coloring();
 
+    // void unhide();
     void hide_isolated_before(std::string aDate);
     void hide_if_cumulative_edge_length_bigger_than(double aThreshold);
     void hide_before2015_58P_or_146I_or_559I();

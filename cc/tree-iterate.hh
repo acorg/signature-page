@@ -69,7 +69,7 @@ namespace tree
 
 // ----------------------------------------------------------------------
 
-// Stop descending the tree if f_subtree_pre returned false
+      // Stop descending the tree if f_subtree_pre returned false
     template <typename N, typename F1, typename F2> inline void iterate_leaf_pre_stop(N& aNode, F1 f_name, F2 f_subtree_pre)
     {
         if (aNode.is_leaf()) {

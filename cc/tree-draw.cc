@@ -104,6 +104,8 @@ void TreeDraw::ladderize()
 
 bool TreeDraw::apply_mods()
 {
+    // std::cout << "TREE-mod: unhide" << std::endl;
+    // unhide();                   // reset previous mods
     for (const auto& mod: mSettings.mods) {
         const auto mod_mod = static_cast<std::string>(mod.mod);
         if (mod_mod == "root") {
@@ -169,6 +171,18 @@ void TreeDraw::draw()
 
 // ----------------------------------------------------------------------
 
+// void TreeDraw::unhide()
+// {
+//     auto show_leaf = [](Node& aNode) {
+//         aNode.draw.shown = true;
+//     };
+
+//     tree::iterate_leaf(mTree, show_leaf);
+
+// } // TreeDraw::unhide
+
+// ----------------------------------------------------------------------
+
 void TreeDraw::hide_isolated_before(std::string aDate)
 {
     auto hide_show_leaf = [aDate](Node& aNode) {
@@ -213,34 +227,51 @@ void TreeDraw::hide_before2015_58P_or_146I_or_559I()
 void TreeDraw::hide_between(std::string aFirst, std::string aLast)
 {
     bool hiding = false;
+    bool cancelled = false;
     size_t hidden = 0;
-    auto hide_show_leaf = [aFirst,aLast,&hiding,&hidden](Node& aNode) {
-        if (aNode.seq_id == aFirst) {
-            if (hiding)
-                throw std::runtime_error("tree hide_between: first node found and hiding is active: " + aFirst);
-            hiding = true;
-            aNode.draw.shown = false;
-            ++hidden;
-        }
-        else if (aNode.seq_id == aLast) {
-            if (!hiding)
-                throw std::runtime_error("tree hide_between: last node found and hiding is not active: " + aLast);
-            hiding = false;
-            aNode.draw.shown = false; // hide the last node
-            ++hidden;
-        }
-        else if (hiding) {
-            aNode.draw.shown = false;
-            ++hidden;
+    auto hide_show_leaf = [aFirst,aLast,&hiding,&hidden,&cancelled](Node& aNode) {
+        if (!cancelled) {
+            if (aNode.seq_id == aFirst) {
+                  // std::cerr << "DEBUG: hide_between first " << aNode.draw.line_no << ' ' << aFirst << '\n';
+                if (hiding) {
+                    std::cerr << "WARNING: tree hide_between: first node found and hiding is active: " << aFirst << " (hiding cancelled)\n";
+                    cancelled = true;
+                      // throw std::runtime_error("tree hide_between: first node found and hiding is active: " + aFirst);
+                }
+                hiding = true;
+                aNode.draw.shown = false;
+                ++hidden;
+            }
+            else if (aNode.seq_id == aLast) {
+                  // std::cerr << "DEBUG: hide_between last " << aNode.draw.line_no << ' ' << aLast << '\n';
+                if (!hiding) {
+                    std::cerr << "WARNING: tree hide_between: last node found and hiding is not active: " << aLast << " (hiding cancelled)\n";
+                    cancelled = true;
+                      //throw std::runtime_error("tree hide_between: last node found and hiding is not active: " + aLast);
+                }
+                hiding = false;
+                aNode.draw.shown = false; // hide the last node
+                ++hidden;
+            }
+            else if (hiding) {
+                  // std::cerr << "DEBUG: hide_between hide " << aNode.draw.line_no << ' ' << aNode.seq_id << '\n';
+                aNode.draw.shown = false;
+                ++hidden;
+            }
         }
     };
 
     tree::iterate_leaf_post(mTree, hide_show_leaf, hide_branch);
-    if (hiding)
-        throw std::runtime_error("tree hide_between: last node not found: " + aLast);
-    if (hidden == 0)
-        throw std::runtime_error("tree hide_between: no nodes hidden");
-    std::cout << "leaf nodes hidden: " << hidden << std::endl;
+    if (!cancelled) {
+        if (hiding)
+            throw std::runtime_error("tree hide_between: last node not found: " + aLast);
+        if (hidden == 0)
+            throw std::runtime_error("tree hide_between: no nodes hidden");
+        std::cout << "leaf nodes hidden: " << hidden << std::endl;
+    }
+    else {
+        std::cerr << "WARNING: node hiding cancelled\n";
+    }
 
 } // TreeDraw::hide_between
 
