@@ -651,7 +651,8 @@ void HzSections::sort(const Tree& aTree)
     std::vector<size_t> to_remove;
     for (size_t sec_no = 0; sec_no < node_refs.size(); ++sec_no) {
         if (node_refs[sec_no].first == nullptr) {
-            std::cerr << "WARNING: HZ section removed (leaf node not found): " << sections[sec_no].name << std::endl;
+            if (!sections[sec_no].name.empty())
+                std::cerr << "WARNING: HZ section removed (leaf node not found): " << sections[sec_no].name << std::endl;
             to_remove.push_back(sec_no);
         }
         else if (!node_refs[sec_no].first->draw.shown) {
