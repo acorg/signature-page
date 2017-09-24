@@ -223,6 +223,7 @@ class AntigenicMapMod : public rjson::array_field_container_child_element
     inline Location offset() const { const rjson::array& ar = get_ref("offset", rjson::array{0.0, 0.0}); return {ar[0], ar[1]}; }
     inline Color get_color(std::string aName, const char* aDefault) const { return static_cast<std::string>(get_ref(aName, rjson::string{aDefault})); }
     inline double get(std::string aName, double aDefault) const { return get_ref(aName, rjson::number{aDefault}); }
+    inline bool get(std::string aName, bool aDefault) const { return get_ref(aName, rjson::boolean{aDefault}); }
     inline std::string get(std::string aName, const char* aDefault) const { return get_ref(aName, rjson::string{aDefault}); }
 
     inline Viewport get_viewport() const
