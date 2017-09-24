@@ -246,6 +246,7 @@ void AntigenicMapsLayoutDrawAce::mark_vaccines(const AntigenicMapMod& vaccine_mo
             const rjson::object& mod = mod_v;
             const std::string type = mod.get_field("type", std::string{}), passage = mod.get_field("passage", std::string{}), name = mod.get_field("name", std::string{});
             std::unique_ptr<VaccineMatcher> matcher{vaccs.match(name, type, passage)};
+              // std::cout << matcher->report(2) << '\n';
             for (const auto& [item_key, item_value]: mod) {
                 const std::string field_name = item_key;
                 if (field_name == "size")
