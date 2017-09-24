@@ -31,6 +31,10 @@ void AntigenicMapsLayoutDrawAce::prepare_apply_mods()
             else if (name == "rotate_radians") {
                 chart_draw().rotate(mod.get("angle", 0.0));
             }
+            else if (name == "flip") {
+                const rjson::array& ar = mod.get_ref("value", rjson::array{0.0, 0.0});
+                chart_draw().flip(ar[0], ar[1]);
+            }
             else if (name == "viewport") {
                 chart_draw().viewport(mod.get_viewport());
             }
