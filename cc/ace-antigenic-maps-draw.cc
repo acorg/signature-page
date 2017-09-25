@@ -158,7 +158,6 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, boo
             const rjson::object& select = mod.get_ref("select", rjson::object{});
             try {
                 const auto index = select.get_ref("index");
-                  // std::cerr << "DEBUG: Antigens " << index << '\n';
                 chart_draw().modify(index,
                                     PointStyleDraw(PointStyle::Empty)
                                     .size(Pixels{mod.get("size", 5.0)})
@@ -168,16 +167,12 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, boo
                                     mod.get("raise_", true) ? ChartDraw::Raise : ChartDraw::NoOrderChange);
                 try {
                     const rjson::object& label_data = const_cast<AntigenicMapMod&>(mod).get_ref_to_object("label");
-                    // std::cerr << "DEBUG: label_data: " << label_data << '\n';
-                    // std::cerr << "DEBUG: label size: " << label_data.get_ref_not_set("size", rjson::number{0}) << '\n';
                     auto& label = chart_draw().add_label(index);
                     label.size(label_data.get_ref_not_set("size", rjson::number{9}));
                     const auto offset_v = label_data.get_ref_not_set("offset", rjson::array{0, 1});
                     const auto& offset = static_cast<const rjson::array&>(offset_v);
-                    // std::cerr << "DEBUG: label offset: " << offset << '\n';
                     label.offset(offset[0], offset[1]);
-                    const std::string display_name = label_data.get_ref_not_set("display_name", rjson::string{});
-                    if (!display_name.empty())
+                    if (const std::string display_name = label_data.get_ref_not_set("display_name", rjson::string{}); !display_name.empty())
                         label.display_name(display_name);
                 }
                 catch (rjson::object::field_not_found&) { // no label
