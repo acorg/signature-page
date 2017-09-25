@@ -64,10 +64,10 @@ class AntigenicMapsLayoutDrawAce : public AntigenicMapsLayoutDraw
     inline AntigenicMapsLayoutDrawAce(AntigenicMapsDrawBase& aAntigenicMapsDraw)
         : AntigenicMapsLayoutDraw(aAntigenicMapsDraw), mHiDbSet(std::string{std::getenv("HOME")} + "/AD/data"), mHomologousAntigenForSeraFound(false) {}
 
-    virtual void draw_chart(Surface& aSurface, size_t aSectionIndex);
-    virtual void prepare_apply_mods();
-    virtual void prepare_chart_for_all_sections();
-    virtual void prepare_drawing_chart(size_t aSectionIndex);
+    void draw_chart(Surface& aSurface, size_t aSectionIndex) override;
+    void prepare_apply_mods() override;
+    void prepare_chart_for_all_sections() override;
+    void prepare_drawing_chart(size_t aSectionIndex, bool report_antigens_in_hz_sections) override;
 
  private:
     hidb::HiDbSet mHiDbSet;
@@ -79,7 +79,7 @@ class AntigenicMapsLayoutDrawAce : public AntigenicMapsLayoutDraw
     inline const ChartDraw& chart_draw() const { return chart_draw_interface().chart_draw(); }
     inline ChartDraw& chart_draw() { return chart_draw_interface().chart_draw(); }
 
-    void tracked_antigens(std::vector<size_t>& tracked_indices, size_t aSectionIndex) const;
+    void tracked_antigens(std::vector<size_t>& tracked_indices, size_t aSectionIndex, bool report_antigens_in_hz_sections) const;
     void tracked_sera(std::map<size_t, std::vector<size_t>>& tracked_indices, size_t aSectionIndex) const;
     void tracked_serum_circles(const AntigenicMapMod& mod, size_t aSectionIndex);
     void mark_vaccines(const AntigenicMapMod& mod);

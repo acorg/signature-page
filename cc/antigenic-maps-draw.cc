@@ -69,9 +69,9 @@ void AntigenicMapsDrawBase::init_settings()
 
 // ----------------------------------------------------------------------
 
-void AntigenicMapsDrawBase::draw(Surface& aMappedAntigensDrawSurface)
+void AntigenicMapsDrawBase::draw(Surface& aMappedAntigensDrawSurface, bool report_antigens_in_hz_sections)
 {
-    layout().draw(aMappedAntigensDrawSurface);
+    layout().draw(aMappedAntigensDrawSurface, report_antigens_in_hz_sections);
 
 } // AntigenicMapsDrawBase::draw
 

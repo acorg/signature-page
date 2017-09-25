@@ -161,7 +161,7 @@ void sdb::AntigenicMapsLayoutDraw::prepare_chart_for_all_sections()
 
 // ----------------------------------------------------------------------
 
-void sdb::AntigenicMapsLayoutDraw::prepare_drawing_chart(size_t /*aSectionIndex*/)
+void sdb::AntigenicMapsLayoutDraw::prepare_drawing_chart(size_t /*aSectionIndex*/, bool /*report_antigens_in_hz_sections*/)
 {
     auto& chart = dynamic_cast<sdb::AntigenicMapsDraw&>(antigenic_maps_draw()).chart_sdb();
 

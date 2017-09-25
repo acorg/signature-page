@@ -83,7 +83,7 @@ AntigenicMapsLayout::~AntigenicMapsLayout()
 
 // ----------------------------------------------------------------------
 
-void LabelledGridBase::draw(Surface& aMappedAntigensDrawSurface)
+void LabelledGridBase::draw(Surface& aMappedAntigensDrawSurface, bool report_antigens_in_hz_sections)
 {
     std::cerr << "INFO: AntigenicMapsLayoutDraw::draw" << std::endl;
 
@@ -103,7 +103,7 @@ void LabelledGridBase::draw(Surface& aMappedAntigensDrawSurface)
             std::cout << "===============================\nINFO: MAP " << section_index << ' ' << layout_draw().hz_sections().node_refs[section_index].index << ": " << map_surface << std::endl;
             // std::cerr << "Map " << map_surface << std::endl;
             // std::cerr << "origin_offset: " << map_surface.origin_offset() << "  scale: " << map_surface.scale() << std::endl;
-            layout_draw().prepare_drawing_chart(section_index);
+            layout_draw().prepare_drawing_chart(section_index, report_antigens_in_hz_sections);
             layout_draw().draw_chart(map_surface, section_index);
             draw_mapped_antigens_section(section_index, aMappedAntigensDrawSurface);
             ++column;

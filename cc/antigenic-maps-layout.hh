@@ -16,7 +16,7 @@ class AntigenicMapsLayoutDraw
     virtual void prepare();
     virtual void prepare_apply_mods() = 0;
     virtual void prepare_chart_for_all_sections() = 0;
-    virtual void prepare_drawing_chart(size_t aSectionIndex) = 0;
+    virtual void prepare_drawing_chart(size_t aSectionIndex, bool report_antigens_in_hz_sections) = 0;
     virtual void draw_chart(Surface& aSurface, size_t aSectionIndex) = 0;
 
     inline AntigenicMapsDrawBase& antigenic_maps_draw() { return mAntigenicMapsDraw; }
@@ -53,7 +53,7 @@ class AntigenicMapsLayout
 
     virtual AntigenicMapsLayoutDraw& layout_draw() = 0;
     virtual inline void prepare() { layout_draw().prepare(); }
-    virtual void draw(Surface& aMappedAntigensDrawSurface) = 0;
+    virtual void draw(Surface& aMappedAntigensDrawSurface, bool report_antigens_in_hz_sections) = 0;
 
 }; // class AntigenicMapsLayout
 
@@ -62,7 +62,7 @@ class AntigenicMapsLayout
 class LabelledGridBase : public AntigenicMapsLayout
 {
  public:
-    virtual void draw(Surface& aMappedAntigensDrawSurface);
+    void draw(Surface& aMappedAntigensDrawSurface, bool report_antigens_in_hz_sections) override;
 
  private:
     void draw_mapped_antigens_section(size_t aSectionIndex, Surface& aMappedAntigensDrawSurface);

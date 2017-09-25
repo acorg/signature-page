@@ -138,10 +138,10 @@ namespace sdb
         inline AntigenicMapsLayoutDraw(AntigenicMapsDrawBase& aAntigenicMapsDraw)
             : ::AntigenicMapsLayoutDraw(aAntigenicMapsDraw) {}
 
-        virtual void draw_chart(Surface& aSurface, size_t aSectionIndex);
-        virtual void prepare_apply_mods();
-        virtual void prepare_chart_for_all_sections();
-        virtual void prepare_drawing_chart(size_t aSectionIndex);
+        void draw_chart(Surface& aSurface, size_t aSectionIndex) override;
+        void prepare_apply_mods() override;
+        void prepare_chart_for_all_sections() override;
+        void prepare_drawing_chart(size_t aSectionIndex, bool report_antigens_in_hz_sections) override;
 
      protected:
         std::vector<const DrawPoint*> mDrawPoints;

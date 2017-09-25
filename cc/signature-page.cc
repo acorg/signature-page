@@ -310,7 +310,7 @@ void SignaturePageDraw::make_layout_tree_clades_ts_maps()
 
 // ----------------------------------------------------------------------
 
-void SignaturePageDraw::draw()
+void SignaturePageDraw::draw(bool report_antigens_in_hz_sections)
 {
     std::cout << std::endl << "INFO: DRAW signature page" << std::endl;
     mSurface->background("white");
@@ -324,7 +324,7 @@ void SignaturePageDraw::draw()
     if (mMappedAntigensDraw)
         mMappedAntigensDraw->draw();
     if (mAntigenicMapsDraw)
-        mAntigenicMapsDraw->draw(mMappedAntigensDraw->surface());
+        mAntigenicMapsDraw->draw(mMappedAntigensDraw->surface(), report_antigens_in_hz_sections);
     if (mTitleDraw)
         mTitleDraw->draw();
 
