@@ -1,4 +1,4 @@
-#include "acmacs-map-draw/vaccines.hh"
+#include "acmacs-map-draw/vaccine-matcher.hh"
 #include "ace-antigenic-maps-draw.hh"
 #include "tree-draw.hh"
 
@@ -277,32 +277,32 @@ void AntigenicMapsLayoutDrawAce::mark_vaccines(const AntigenicMapMod& vaccine_mo
         for (const auto& mod_v: vaccine_mod.mods()) {
             const rjson::object& mod = mod_v;
             const std::string type = mod.get_field("type", std::string{}), passage = mod.get_field("passage", std::string{}), name = mod.get_field("name", std::string{});
-            std::unique_ptr<VaccineMatcher> matcher{vaccs.match(name, type, passage)};
-              // std::cout << matcher->report(2) << '\n';
+            VaccineMatcher matcher(vaccs, VaccineMatchData{}.name(name).type(type).passage(passage));
+              // std::cout << matcher.report(2) << '\n';
             for (const auto& [item_key, item_value]: mod) {
                 const std::string field_name = item_key;
                 if (field_name == "size")
-                    matcher->size(item_value);
+                    matcher.size(item_value);
                 else if (field_name == "fill")
-                    matcher->fill(static_cast<std::string>(item_value));
+                    matcher.fill(static_cast<std::string>(item_value));
                 else if (field_name == "outline")
-                    matcher->outline(static_cast<std::string>(item_value));
+                    matcher.outline(static_cast<std::string>(item_value));
                 else if (field_name == "outline_width")
-                    matcher->outline_width(item_value);
+                    matcher.outline_width(item_value);
                 else if (field_name == "aspect")
-                    matcher->aspect(item_value);
+                    matcher.aspect(item_value);
                 else if (field_name == "rotation")
-                    matcher->rotation(item_value);
+                    matcher.rotation(item_value);
                 else if (field_name == "no")
-                    matcher->no(item_value); // size_t
+                    matcher.no(item_value); // size_t
                 else if (field_name == "show") {
                     const bool show = item_value;
-                    matcher->show(show);
+                    matcher.show(show);
                     if (!show)
-                        matcher->hide_label(chart_draw(), hidb.locdb());
+                        matcher.hide_label(chart_draw(), hidb.locdb());
                 }
                 else if (field_name == "label")
-                    add_label(std::shared_ptr<VaccineMatcherLabel>{matcher->label(chart_draw(), hidb.locdb())}, static_cast<const rjson::object&>(item_value));
+                    add_label(std::shared_ptr<VaccineMatcherLabel>{matcher.label(chart_draw(), hidb.locdb())}, static_cast<const rjson::object&>(item_value));
                 else if (field_name != "type" && field_name != "passage" && field_name != "name" && (field_name.empty() || (field_name.front() != '?' && field_name.back() != '?')))
                     std::cerr << "WARNING: mark_vaccines: unrecognized key \"" << field_name << '"' << std::endl;
             }
