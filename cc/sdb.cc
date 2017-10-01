@@ -470,63 +470,50 @@ const std::map<std::string, ChartInfoHandler::Keys> ChartInfoHandler::key_mapper
 class TransformationHandler : public HandlerBase
 {
  public:
-    inline TransformationHandler(Chart& aChart, Transformation& aField) : HandlerBase{aChart}, mField(aField), mNesting(0) { mField.clear(); }
+    inline TransformationHandler(Chart& aChart, Transformation& aField) : HandlerBase{aChart}, mField(aField), mElement(0) {}
 
     inline virtual HandlerBase* StartArray()
         {
-            switch (mNesting) {
-              case 0:
-              case 1:
-                  ++mNesting;
-                  break;
-              default:
-                  throw json_reader::Failure{};
-            }
+            if (mElement)
+                throw json_reader::Failure{};
             return nullptr;
         }
 
     inline virtual HandlerBase* EndArray()
         {
-            if (mNesting == 0)
+            if (mElement != 4)
                 throw json_reader::Failure{"Unexpected ] while reading transformation"};
-            if (--mNesting == 0) {
-                if (mField.size() == 4)
-                    throw json_reader::Pop();
-                else
-                    throw json_reader::Failure{"Not enough elements of transformation read"};
-            }
             return nullptr;
         }
 
     inline virtual HandlerBase* Double(double d)
         {
-            if (mNesting != 2 || mField.size() >= 4)
-                throw json_reader::Failure{};
-            mField.push_back(d);
+            switch (mElement) {
+              case 0:
+                  mField.a = d;
+                  break;
+              case 1:
+                  mField.b = d;
+                  break;
+              case 2:
+                  mField.c = d;
+                  break;
+              case 3:
+                  mField.d = d;
+                  break;
+              default:
+                  throw json_reader::Failure(typeid(*this).name() + std::string(": unexpected number event"));
+            }
+            ++mElement;
             return nullptr;
         }
 
-    inline virtual HandlerBase* Uint(unsigned u)
-        {
-            if (mNesting != 2 || mField.size() >= 4)
-                throw json_reader::Failure{};
-            mField.push_back(static_cast<double>(u));
-            return nullptr;
-        }
-
-    inline virtual HandlerBase* Int(int i)
-        {
-            if (mNesting != 2 || mField.size() >= 4)
-                throw json_reader::Failure{};
-            mField.push_back(static_cast<double>(i));
-            return nullptr;
-        }
-
-    inline virtual HandlerBase* EndObject() { throw json_reader::Failure(); }
+    inline virtual HandlerBase* Int(int i) { return Double(i); }
+    inline virtual HandlerBase* Uint(unsigned u) { return Double(u); }
 
  private:
     Transformation& mField;
-    size_t mNesting;
+    size_t mElement;
 };
 
 // ----------------------------------------------------------------------

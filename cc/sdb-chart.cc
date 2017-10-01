@@ -57,8 +57,8 @@ void Chart::apply_transformation()
       // std::cout << "INFO: [sdb] Chart::apply_transformation transformation: " << mTransformation << std::endl;
     for (auto& p: mPoints) {
         if (!p.coordinates.isnan()) {
-            const auto x = p.coordinates.x * mTransformation[0] + p.coordinates.y * mTransformation[2];
-            p.coordinates.y = p.coordinates.x * mTransformation[1] + p.coordinates.y * mTransformation[3];
+            const auto x = p.coordinates.x * mTransformation.a + p.coordinates.y * mTransformation.c;
+            p.coordinates.y = p.coordinates.x * mTransformation.b + p.coordinates.y * mTransformation.d;
             p.coordinates.x = x;
         }
     }
