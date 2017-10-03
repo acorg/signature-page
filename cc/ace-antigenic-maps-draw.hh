@@ -62,7 +62,7 @@ class AntigenicMapsLayoutDrawAce : public AntigenicMapsLayoutDraw
 {
  public:
     inline AntigenicMapsLayoutDrawAce(AntigenicMapsDrawBase& aAntigenicMapsDraw)
-        : AntigenicMapsLayoutDraw(aAntigenicMapsDraw), mHiDbSet(std::string{std::getenv("HOME")} + "/AD/data"), mHomologousAntigenForSeraFound(false) {}
+        : AntigenicMapsLayoutDraw(aAntigenicMapsDraw), mHomologousAntigenForSeraFound(false) {}
 
     void draw_chart(Surface& aSurface, size_t aSectionIndex) override;
     void prepare_apply_mods() override;
@@ -70,7 +70,6 @@ class AntigenicMapsLayoutDrawAce : public AntigenicMapsLayoutDraw
     void prepare_drawing_chart(size_t aSectionIndex, bool report_antigens_in_hz_sections) override;
 
  private:
-    hidb::HiDbSet mHiDbSet;
     mutable bool mHomologousAntigenForSeraFound;
 
     inline const ChartDrawInterface& chart_draw_interface() const { return dynamic_cast<const ChartDrawInterface&>(antigenic_maps_draw().chart()); }
