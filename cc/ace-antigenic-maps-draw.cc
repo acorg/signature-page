@@ -272,7 +272,7 @@ void AntigenicMapsLayoutDrawAce::mark_vaccines(const AntigenicMapMod& vaccine_mo
 {
     try {
         const auto& chart = static_cast<const Chart&>(chart_draw().chart());
-        Vaccines vaccs{chart, hidb::get(chart.chart_info().virus_type())};
+        Vaccines vaccs{chart};
         for (const auto& mod_v: vaccine_mod.mods()) {
             const rjson::object& mod = mod_v;
             const std::string type = mod.get_field("type", std::string{}), passage = mod.get_field("passage", std::string{}), name = mod.get_field("name", std::string{});
@@ -298,10 +298,10 @@ void AntigenicMapsLayoutDrawAce::mark_vaccines(const AntigenicMapMod& vaccine_mo
                     const bool show = item_value;
                     matcher.show(show);
                     if (!show)
-                        matcher.hide_label(chart_draw(), get_locdb());
+                        matcher.hide_label(chart_draw());
                 }
                 else if (field_name == "label")
-                    add_label(std::shared_ptr<VaccineMatcherLabel>{matcher.label(chart_draw(), get_locdb())}, static_cast<const rjson::object&>(item_value));
+                    add_label(std::shared_ptr<VaccineMatcherLabel>{matcher.label(chart_draw())}, static_cast<const rjson::object&>(item_value));
                 else if (field_name != "type" && field_name != "passage" && field_name != "name" && (field_name.empty() || (field_name.front() != '?' && field_name.back() != '?')))
                     std::cerr << "WARNING: mark_vaccines: unrecognized key \"" << field_name << '"' << std::endl;
             }
