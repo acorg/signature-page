@@ -19,7 +19,7 @@ int main(int argc, const char *argv[])
         if (argc > 2)
             output = argv[2];
         else
-            output = static_cast<std::string>(acmacs_base::TempFile{});
+            output = static_cast<std::string>(acmacs_base::TempFile{".json"});
         write_settings(settings, output);
           // std::cout << static_cast<std::string>(output) << std::endl;
         if (std::system((std::string{"/usr/bin/diff -b '"} + argv[1] + "' '" + static_cast<std::string>(output) + "'").c_str()))
