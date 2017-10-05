@@ -26,13 +26,13 @@ void AntigenicMapsLayoutDrawAce::prepare_apply_mods()
         try {
             const std::string name = mod.name();
             if (name == "rotate_degrees") {
-                chart_draw().rotate(mod.get("angle", 0.0) * M_PI / 180.0);
+                chart_draw().rotate(mod.get_or_default("angle", 0.0) * M_PI / 180.0);
             }
             else if (name == "rotate_radians") {
-                chart_draw().rotate(mod.get("angle", 0.0));
+                chart_draw().rotate(mod.get_or_default("angle", 0.0));
             }
             else if (name == "flip") {
-                const rjson::array& ar = mod.get_ref("value", rjson::array{0.0, 0.0});
+                const rjson::array& ar = mod.get_or_default("value", rjson::array{0.0, 0.0});
                 chart_draw().flip(ar[0], ar[1]);
             }
             else if (name == "viewport") {
@@ -40,14 +40,14 @@ void AntigenicMapsLayoutDrawAce::prepare_apply_mods()
             }
             else if (name == "title") {
                 chart_draw().title()
-                        .text_size(mod.get("text_size", 12.0))
+                        .text_size(mod.get_or_default("text_size", 12.0))
                         .text_color(mod.get_color("text_color", "black"))
-                        .weight(mod.get("weight", "normal"))
-                        .slant(mod.get("slant", "normal"))
-                        .font_family(mod.get("font_family", "san serif"))
+                        .weight(mod.get_or_default("weight", "normal"))
+                        .slant(mod.get_or_default("slant", "normal"))
+                        .font_family(mod.get_or_default("font_family", "san serif"))
                         .background("transparent")
                         .border_width(0)
-                        .padding(mod.get("padding", 3.0))
+                        .padding(mod.get_or_default("padding", 3.0))
                         .offset(mod.offset())
                         .remove_all_lines();
             }
@@ -74,23 +74,23 @@ void AntigenicMapsLayoutDrawAce::prepare_chart_for_all_sections()
     for (const auto& mod: settings().mods) {
         const std::string name = mod.name();
         if (name == "point_scale") {
-            chart_draw().scale_points(mod.get("scale", 1.0), mod.get("outline_scale", 1.0));
+            chart_draw().scale_points(mod.get_or_default("scale", 1.0), mod.get_or_default("outline_scale", 1.0));
         }
         if (name == "reference_antigens") {
             chart_draw().modify(chart().reference_antigen_indices(),
                               PointStyleDraw(PointStyle::Empty)
-                              .size(Pixels{mod.get("size", 5.0)})
+                              .size(Pixels{mod.get_or_default("size", 5.0)})
                               .fill(mod.get_color("fill", "transparent"))
                               .outline(mod.get_color("outline", "grey88"))
-                              .outline_width(Pixels{mod.get("outline_width", 0.5)}));
+                              .outline_width(Pixels{mod.get_or_default("outline_width", 0.5)}));
         }
         else if (name == "test_antigens") {
             chart_draw().modify(chart().test_antigen_indices(),
                               PointStyleDraw(PointStyle::Empty)
-                              .size(Pixels{mod.get("size", 3.0)})
+                              .size(Pixels{mod.get_or_default("size", 3.0)})
                               .fill(mod.get_color("fill", "grey88"))
                               .outline(mod.get_color("outline", "grey88"))
-                              .outline_width(Pixels{mod.get("outline_width", 0.5)}));
+                              .outline_width(Pixels{mod.get_or_default("outline_width", 0.5)}));
         }
     }
 
@@ -105,19 +105,19 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, boo
         const std::string name = mod.name();
         if (name == "sera") {
             chart_draw().modify_all_sera(PointStyleDraw(PointStyle::Empty)
-                                       .size(Pixels{mod.get("size", 5.0)})
+                                       .size(Pixels{mod.get_or_default("size", 5.0)})
                                        .outline(mod.get_color("outline", "grey88"))
-                                       .outline_width(Pixels{mod.get("outline_width", 0.5)}), PointDrawingOrder::Lower); // reset, lower sera
+                                       .outline_width(Pixels{mod.get_or_default("outline_width", 0.5)}), PointDrawingOrder::Lower); // reset, lower sera
         }
         else if (name == "sequenced_antigens") {      // mark sequenced antigens (removes old tracked antigens marking)
             std::vector<size_t> sequenced_indices(sequenced_antigens().size());
             std::transform(sequenced_antigens().begin(), sequenced_antigens().end(), sequenced_indices.begin(), [](const auto& src) -> size_t { return src.first; });
             chart_draw().modify(sequenced_indices.begin(), sequenced_indices.end(),
                               PointStyleDraw(PointStyle::Empty)
-                              .size(Pixels{mod.get("size", 3.0)})
+                              .size(Pixels{mod.get_or_default("size", 3.0)})
                               .fill(mod.get_color("fill", "grey63"))
                               .outline(mod.get_color("outline", "white"))
-                              .outline_width(Pixels{mod.get("outline_width", 0.5)}));
+                              .outline_width(Pixels{mod.get_or_default("outline_width", 0.5)}));
         }
         else if (name == "tracked_serum_circles") {
             chart_draw().remove_serum_circles();
@@ -131,10 +131,10 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, boo
             tracked_antigens(tracked_indices, aSectionIndex, report_antigens_in_hz_sections);
             chart_draw().modify(tracked_indices.begin(), tracked_indices.end(),
                                 PointStyleDraw(PointStyle::Empty)
-                                .size(Pixels{mod.get("size", 5.0)})
+                                .size(Pixels{mod.get_or_default("size", 5.0)})
                                 .fill(mod.get_color("fill", "grey63"))
                                 .outline(mod.get_color("outline", "white"))
-                                .outline_width(Pixels{mod.get("outline_width", 0.5)}), PointDrawingOrder::Raise);
+                                .outline_width(Pixels{mod.get_or_default("outline_width", 0.5)}), PointDrawingOrder::Raise);
         }
         else if (name == "tracked_sera") {
             std::map<size_t, std::vector<size_t>> tracked_indices;
@@ -144,9 +144,9 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, boo
                 chart_draw().modify_serum(
                     iter->first,
                     PointStyleDraw(PointStyle::Empty)
-                    .size(Pixels{mod.get("size", 5.0)})
+                    .size(Pixels{mod.get_or_default("size", 5.0)})
                     .outline(mod.get_color("outline", "black"))
-                    .outline_width(Pixels{mod.get("outline_width", 0.5)}), PointDrawingOrder::Raise);
+                    .outline_width(Pixels{mod.get_or_default("outline_width", 0.5)}), PointDrawingOrder::Raise);
         }
         else if (name == "tracked_serum_circles") {
             tracked_serum_circles(mod, aSectionIndex);
@@ -155,16 +155,16 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, boo
             mark_vaccines(mod);
         }
         else if (name == "antigens") {
-            const rjson::object& select = mod.get_ref("select", rjson::object{});
+            const rjson::object& select = mod.get_or_default("select", rjson::object{});
             try {
                 const auto index = select.get_ref("index");
                 chart_draw().modify(index,
                                     PointStyleDraw(PointStyle::Empty)
-                                    .size(Pixels{mod.get("size", 5.0)})
+                                    .size(Pixels{mod.get_or_default("size", 5.0)})
                                     .fill(mod.get_color("fill", "pink"))
                                     .outline(mod.get_color("outline", "white"))
-                                    .outline_width(Pixels{mod.get("outline_width", 0.5)}),
-                                    mod.get("raise_", true) ? PointDrawingOrder::Raise : PointDrawingOrder::NoChange);
+                                    .outline_width(Pixels{mod.get_or_default("outline_width", 0.5)}),
+                                    mod.get_or_default("raise_", true) ? PointDrawingOrder::Raise : PointDrawingOrder::NoChange);
                 try {
                     const rjson::object& label_data = const_cast<AntigenicMapMod&>(mod).get_ref_to_object("label");
                     auto& label = chart_draw().add_label(index);
@@ -175,10 +175,10 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, boo
                     if (const std::string display_name = label_data.get_ref_not_set("display_name", rjson::string{}); !display_name.empty())
                         label.display_name(display_name);
                 }
-                catch (rjson::object::field_not_found&) { // no label
+                catch (rjson::field_not_found&) { // no label
                 }
             }
-            catch (rjson::object::field_not_found&) {
+            catch (rjson::field_not_found&) {
                 std::cerr << "WARNING: Antigens: no index in " << select << '\n';
             }
         }
@@ -251,10 +251,10 @@ void AntigenicMapsLayoutDrawAce::tracked_serum_circles(const AntigenicMapMod& mo
             auto& serum_circle = chart_draw().serum_circle(serum_antigens.first, Scaled{*radius_p});
             serum_circle
                     .fill(mod.get_color("fill", "transparent"))
-                    .outline(mod.get_color("outline", "black"), mod.get("outline_width", 1.0))
-                    .radius_line(mod.get_color("radius_line", "transparent"), mod.get("radius_line_width", 1.0));
+                    .outline(mod.get_color("outline", "black"), mod.get_or_default("outline_width", 1.0))
+                    .radius_line(mod.get_color("radius_line", "transparent"), mod.get_or_default("radius_line_width", 1.0));
                       //.angles(mod.get["angle_degrees"][0] * math.pi / 180.0, mod.get["angle_degrees"][1] * math.pi / 180.0);
-            const std::string radius_line_dash = mod.get("radius_line_dash", "");
+            const std::string radius_line_dash = mod.get_or_default("radius_line_dash", "");
             if (radius_line_dash.empty() || radius_line_dash == "nodash")
                 serum_circle.radius_line_no_dash();
             else if (radius_line_dash == "dash1")

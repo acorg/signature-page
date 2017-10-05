@@ -218,30 +218,88 @@ class AntigenicMapMod : public rjson::array_field_container_child_element
  public:
     inline AntigenicMapMod(const rjson::value& aData) : rjson::array_field_container_child_element(aData) {}
 
-    inline std::string name() const { return get_ref("N", rjson::string{}); }
-    inline const rjson::array& mods() const { return get_ref("mods", rjson::array{}); }
-    inline Location offset() const { const rjson::array& ar = get_ref("offset", rjson::array{0.0, 0.0}); return {ar[0], ar[1]}; }
-    inline Color get_color(std::string aName, const char* aDefault) const { return static_cast<std::string>(get_ref(aName, rjson::string{aDefault})); }
-    inline double get(std::string aName, double aDefault) const { return get_ref(aName, rjson::number{aDefault}); }
-    inline bool get(std::string aName, bool aDefault) const { return get_ref(aName, rjson::boolean{aDefault}); }
-    inline std::string get(std::string aName, const char* aDefault) const { return get_ref(aName, rjson::string{aDefault}); }
+    template <typename Result> inline Result get_or_default(std::string aName, Result&& aDefault) const
+        {
+            try {
+                return operator[](aName);
+            }
+            catch (rjson::field_not_found&) {
+                return aDefault;
+            }
+        }
+
+    inline std::string get_or_default(std::string aName, const char* aDefault) const
+        {
+            return get_or_default<std::string>(aName, aDefault);
+        }
+
+    //$ inline std::string name() const { return get("N", rjson::string{}); }
+    //$ inline const rjson::array& mods() const { return get("mods", rjson::array{}); }
+    //$ inline Location offset() const { const rjson::array& ar = get("offset", rjson::array{0.0, 0.0}); return {ar[0], ar[1]}; }
+    //$ inline Color get_color(std::string aName, const char* aDefault) const { return static_cast<std::string>(get(aName, rjson::string{aDefault})); }
+    //$ inline double get(std::string aName, double aDefault) const { return get(aName, rjson::value{rjson::number{aDefault}}); }
+    //$ inline bool get(std::string aName, bool aDefault) const { return get(aName, rjson::value{rjson::boolean{aDefault}}); }
+    //$ inline std::string get(std::string aName, const char* aDefault) const { return get(aName, rjson::value{rjson::string{aDefault}}); }
+
+    //$ inline Location offset() const { const rjson::array& ar = get("offset", rjson::array{0.0, 0.0}); return {ar[0], ar[1]}; }
+    //$ inline double get(std::string aName, double aDefault) const { return get_or_default(aName, rjson::value{rjson::number{aDefault}}); }
+    //$ inline bool get(std::string aName, bool aDefault) const { return get(aName, rjson::value{rjson::boolean{aDefault}}); }
+    //$ inline std::string get(std::string aName, const char* aDefault) const { return get(aName, rjson::value{rjson::string{aDefault}}); }
+
+    inline std::string name() const { return get_or_default("N", std::string{}); }
+
+    inline const rjson::array& mods() const
+        {
+            try {
+                return operator[]("mods");
+            }
+            catch (rjson::field_not_found&) {
+                return rjson::sEmptyArray;
+            }
+        }
+
+    inline Color get_color(std::string aName, Color&& aDefault) const
+        {
+            try {
+                return static_cast<std::string>(operator[](aName));
+            }
+            catch (rjson::field_not_found&) {
+                return aDefault;
+            }
+        }
+
+    inline Location offset() const
+        {
+            try {
+                const rjson::array& ar = operator[]("offset");
+                return {ar[0], ar[1]};
+            }
+            catch (rjson::field_not_found&) {
+                return {};
+            }
+        }
 
     inline Viewport get_viewport() const
         {
             try {
-                const auto& ar = std::get<rjson::array>(get_ref("viewport", rjson::array{0.0, 0.0, 0.0}));
-                switch (ar.size()) {
-                  case 3:
-                      return {ar[0], ar[1], ar[2]};
-                  case 4:
-                      return {ar[0], ar[1], ar[2], ar[3]};
-                  default:
-                      throw std::exception{};
+                const rjson::array& ar = operator[]("viewport");
+                try {
+                    switch (ar.size()) {
+                      case 3:
+                          return {ar[0], ar[1], ar[2]};
+                      case 4:
+                          return {ar[0], ar[1], ar[2], ar[3]};
+                      default:
+                          throw std::exception{};
+                    }
+                }
+                catch (std::exception&) {
+                    std::cerr << "ERROR: cannot convert json to array (viewport): " << ar << '\n';
+                    throw;
                 }
             }
-            catch (std::exception&) {
-                std::cerr << "ERROR: cannot convert json to array (viewport): " << get_ref("viewport", rjson::array{}) << '\n';
-                throw;
+            catch (rjson::field_not_found&) {
+                return {};
             }
             return {};
         }

@@ -133,10 +133,10 @@ void sdb::AntigenicMapsLayoutDraw::prepare_apply_mods()
     for (const auto& mod: settings().mods) {
         const std::string name = mod.name();
         if (name == "rotate_degrees") {
-            chart.transformation().rotate(mod.get("angle", 0.0) * M_PI / 180.0);
+            chart.transformation().rotate(mod.get_or_default("angle", 0.0) * M_PI / 180.0);
         }
         else if (name == "rotate_radians") {
-            chart.transformation().rotate(mod.get("angle", 0.0));
+            chart.transformation().rotate(mod.get_or_default("angle", 0.0));
         }
         else if (name == "viewport") {
             chart.calculate_viewport();
@@ -233,7 +233,7 @@ void sdb::AntigenicMapsLayoutDraw::apply_mods_to_settings()
     for (const auto& mod: settings().mods) {
         const std::string name = mod.name();
         if (name == "point_scale") {
-            mDrawPointSettings.point_scale = mod.get("scale", 1.0);
+            mDrawPointSettings.point_scale = mod.get_or_default("scale", 1.0);
         }
     }
 

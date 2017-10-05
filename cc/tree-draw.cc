@@ -822,9 +822,15 @@ const AATransitionIndividualSettings& AATransitionPerBranchDrawSettings::setting
     if (scatter_label_offset > 0) {
         std::random_device rand;
         constexpr const auto rand_size = static_cast<double>(rand.max() - rand.min());
-        const rjson::array& old_label_offset = settings.get_ref("label_offset", rjson::array{0.0, 0.0});
-        settings.set_field("label_offset", rjson::array{static_cast<double>(rand()) * scatter_label_offset * 2 / rand_size - scatter_label_offset + static_cast<double>(old_label_offset[0]),
-                        static_cast<double>(rand()) * scatter_label_offset * 2 / rand_size - scatter_label_offset + static_cast<double>(old_label_offset[1])});
+        Location old_label_offset;
+        try {
+            const rjson::array& ar = settings["label_offset"];
+            old_label_offset.set(ar[0], ar[1]);
+        }
+        catch (rjson::field_not_found&) {
+        }
+        settings.set_field("label_offset", rjson::array{static_cast<double>(rand()) * scatter_label_offset * 2 / rand_size - scatter_label_offset + old_label_offset.x,
+                                                        static_cast<double>(rand()) * scatter_label_offset * 2 / rand_size - scatter_label_offset + old_label_offset.y});
     }
     return result;
 
