@@ -56,7 +56,7 @@ void AntigenicMapsLayoutDrawAce::prepare_apply_mods()
               // }
         }
         catch (std::bad_variant_access&) {
-            std::cerr << "MOD: " << mod.to_json() << DEBUG_LINE_FUNC << '\n';
+            std::cerr << "MOD: " << mod << DEBUG_LINE_FUNC << '\n';
             throw;
         }
     }
@@ -310,7 +310,7 @@ void AntigenicMapsLayoutDrawAce::mark_vaccines(const AntigenicMapMod& vaccine_mo
         vaccs.plot(chart_draw());
     }
     catch (std::bad_variant_access&) {
-        std::cerr << "WARNING: cannot mark vaccines: invalid vaccine settings: " << vaccine_mod.to_json() << std::endl;
+        std::cerr << "WARNING: cannot mark vaccines: invalid vaccine settings: " << vaccine_mod << std::endl;
     }
     catch (hidb::NoHiDb&) {
         std::cerr << "WARNING: cannot mark vaccines: no hidb for \"" << chart_draw().chart().chart_info().virus_type() << "\"" << std::endl;

@@ -118,7 +118,7 @@ void SignaturePageDraw::init_layout()
         mSettings->signature_page.mapped_antigens_margin_right = 10;
     }
 
-    // std::cerr << "init_layout signature_page " << mSettings->signature_page.to_json() << '\n';
+    // std::cerr << "init_layout signature_page " << mSettings->signature_page << '\n';
 
 } // SignaturePageDraw::init_layout
 
