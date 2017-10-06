@@ -20,6 +20,7 @@ namespace rjson
         virtual value& operator[](std::string aFieldName) = 0;
         // virtual const value& get(std::string aFieldName, value&& aDefault) const = 0;
         virtual value& get_or_add(std::string aFieldName, value&& aDefault) = 0;
+        virtual value& get_or_add(std::string aFieldName, const value& aDefault) = 0;
 
           //$
         virtual value& get_ref(const char* aFieldName, value&& aDefault) = 0;
@@ -43,6 +44,7 @@ namespace rjson
         inline value& operator[](std::string aFieldName) override { return mData[aFieldName]; }
         // inline const value& get(std::string aFieldName, value&& aDefault) const override { return mData.get(aFieldName, std::forward<value>(aDefault)); }
         inline value& get_or_add(std::string aFieldName, value&& aDefault) override { return mData.get_or_add(aFieldName, std::forward<value>(aDefault)); }
+        inline value& get_or_add(std::string aFieldName, const value& aDefault) override { return mData.get_or_add(aFieldName, aDefault); }
 
           //$
         inline value& get_ref(const char* aFieldName, value&& aDefault) override { return mData.get_or_add(aFieldName, std::forward<value>(aDefault)); }
@@ -72,6 +74,7 @@ namespace rjson
         inline value& operator[](std::string aFieldName) override { return mParent[mFieldName][aFieldName]; }
         // inline const value& get(std::string aFieldName, value&& aDefault) const override { return mParent[mFieldName].get(aFieldName, std::forward<value>(aDefault)); }
         inline value& get_or_add(std::string aFieldName, value&& aDefault) override { return mParent.get_or_add(mFieldName, rjson::object{}).get_or_add(aFieldName, std::forward<value>(aDefault)); }
+        inline value& get_or_add(std::string aFieldName, const value& aDefault) override { return mParent.get_or_add(mFieldName, rjson::object{}).get_or_add(aFieldName, aDefault); }
 
         inline object& get_ref_to_object() { return const_cast<object&>(static_cast<const object&>(mParent[mFieldName])); }
         inline const object& get_ref_to_object() const { return mParent[mFieldName]; }
@@ -170,6 +173,7 @@ namespace rjson
         inline value& operator[](std::string aFieldName) override { return const_cast<value&>(mData)[aFieldName]; }
         // inline const value& get(std::string aFieldName, value&& aDefault) const override { return mData.get(aFieldName, std::forward<value>(aDefault)); }
         inline value& get_or_add(std::string aFieldName, value&& aDefault) override { return const_cast<value&>(mData).get_or_add(aFieldName, std::forward<value>(aDefault)); }
+        inline value& get_or_add(std::string aFieldName, const value& aDefault) override { return const_cast<value&>(mData).get_or_add(aFieldName, aDefault); }
 
           // $
         inline value& get_ref(const char* aFieldName, value&& aDefault) override { return const_cast<value&>(mData).get_or_add(aFieldName, std::forward<value>(aDefault)); }
@@ -196,19 +200,8 @@ namespace rjson
     template <typename FValue> class field_get_set
     {
      public:
-        inline field_get_set(field_container_parent& aParent, std::string aFieldName, FValue&& aDefault, initialize_field aInitialize = initialize_field::no)
-            : mParent{aParent}, mFieldName{aFieldName}, mDefault{aDefault} // mDefault{std::move(aDefault)}
-            {
-                if (aInitialize == initialize_field::yes)
-                    get_or_add();
-            }
-
-        inline field_get_set(field_container_parent& aParent, std::string aFieldName, const FValue& aDefault, initialize_field aInitialize = initialize_field::no)
-            : mParent{aParent}, mFieldName{aFieldName}, mDefault{aDefault}
-            {
-                if (aInitialize == initialize_field::yes)
-                    get_or_add();
-            }
+        field_get_set(field_container_parent& aParent, std::string aFieldName, FValue&& aDefault, initialize_field aInitialize = initialize_field::no);
+        field_get_set(field_container_parent& aParent, std::string aFieldName, const FValue& aDefault, initialize_field aInitialize = initialize_field::no);
 
         inline const rjson_type<FValue>& get_value_ref() const
             {
@@ -274,10 +267,15 @@ namespace rjson
         }
     }
 
-    // template <> inline value to_value<Color>(const Color& aColor)
-    // {
-    //     return rjson::string{aColor.to_string()};
-    // }
+    template <> inline value to_value<Color>(const Color& aColor)
+    {
+        return rjson::string{aColor.to_string()};
+    }
+
+    template <> inline value to_value<Color>(Color&& aColor)
+    {
+        return rjson::string{aColor.to_string()};
+    }
 
     template <> inline value& field_get_set<Color>::get_or_add()
     {
@@ -302,10 +300,15 @@ namespace rjson
         }
     }
 
-    // template <> inline value to_value<Size>(const Size& aSize)
-    // {
-    //     return array{aSize.width, aSize.height};
-    // }
+    template <> inline value to_value<Size>(const Size& aSize)
+    {
+        return array{aSize.width, aSize.height};
+    }
+
+    template <> inline value to_value<Size>(Size&& aSize)
+    {
+        return array{aSize.width, aSize.height};
+    }
 
       // ----------------------------------------------------------------------
       // TextStyle
@@ -336,6 +339,11 @@ namespace rjson
             {"slant", string{aTextStyle.slant_as_stirng()}},
             {"weight", string{aTextStyle.weight_as_stirng()}}
         };
+    }
+
+    template <> inline value to_value<TextStyle>(TextStyle&& aTextStyle)
+    {
+        return to_value(const_cast<const TextStyle&>(aTextStyle));
     }
 
     // template <> inline value& field_get_set<TextStyle>::get_or_add()
@@ -371,9 +379,28 @@ namespace rjson
         return ar;
     }
 
+    template <> inline value to_value<std::vector<std::string>>(std::vector<std::string>&& aData)
+    {
+        return to_value(const_cast<const std::vector<std::string>&>(aData));
+    }
+
       // ----------------------------------------------------------------------
       // std::vector<std::string>
       // ----------------------------------------------------------------------
+
+    template <typename FValue> inline field_get_set<FValue>::field_get_set(field_container_parent& aParent, std::string aFieldName, FValue&& aDefault, initialize_field aInitialize)
+        : mParent{aParent}, mFieldName{aFieldName}, mDefault{static_cast<const rjson_type<FValue>&>(to_value(std::forward<FValue>(aDefault)))} // mDefault{to_value(const_cast<const FValue&>(aDefault))} //
+    {
+        if (aInitialize == initialize_field::yes)
+            get_or_add();
+    }
+
+    template <typename FValue> inline field_get_set<FValue>::field_get_set(field_container_parent& aParent, std::string aFieldName, const FValue& aDefault, initialize_field aInitialize)
+        : mParent{aParent}, mFieldName{aFieldName}, mDefault{static_cast<const rjson_type<FValue>&>(to_value(aDefault))}
+    {
+        if (aInitialize == initialize_field::yes)
+            get_or_add();
+    }
 
     // template <typename FValue> inline const value& field_get_set<FValue>::get() const
     // {

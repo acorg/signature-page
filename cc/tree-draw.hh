@@ -78,7 +78,7 @@ class AATransitionDrawSettings : public rjson::field_container_child
     AATransitionDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName);
 
     rjson::field_get_set<bool> show;
-    rjson::field_get_set<size_t> number_strains_threshold; // Do not show aa transition label if number_strains (leaf nodes) for the branch is less than this value.
+    rjson::field_get_set<unsigned> number_strains_threshold; // Do not show aa transition label if number_strains (leaf nodes) for the branch is less than this value.
     rjson::field_get_set<std::string> number_strains_threshold_help;
     rjson::field_get_set<bool> show_empty_left;
     AATransitionPerBranchDrawSettings per_branch;
@@ -178,6 +178,11 @@ namespace rjson
                   return string{"max-edge-length"};
             }
             return string{"number-of-leaves"};
+    }
+
+    template <> inline value to_value<Tree::LadderizeMethod>(Tree::LadderizeMethod&& aLadderizeMethod)
+    {
+        return to_value<Tree::LadderizeMethod>(const_cast<const Tree::LadderizeMethod&>(aLadderizeMethod));
     }
 }
 

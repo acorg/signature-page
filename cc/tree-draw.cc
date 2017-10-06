@@ -106,7 +106,7 @@ bool TreeDraw::apply_mods()
 {
     // std::cout << "TREE-mod: unhide" << std::endl;
     // unhide();                   // reset previous mods
-    for (const auto& mod: mSettings.mods) {
+    for (const auto& mod: const_cast<const TreeDrawSettings&>(mSettings).mods) { // const_cast to support situation when mods was not set
         const auto mod_mod = static_cast<std::string>(mod.mod);
         if (mod_mod == "root") {
             std::cout << "TREE-mod: " << mod_mod << " " << mod.s1 << std::endl;
