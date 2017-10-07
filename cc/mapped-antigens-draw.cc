@@ -1,3 +1,5 @@
+#include "acmacs-base/debug.hh"
+
 #include "mapped-antigens-draw.hh"
 #include "tree.hh"
 #include "tree-iterate.hh"
@@ -26,7 +28,10 @@ void MappedAntigensDraw::prepare()
     };
     tree::iterate_leaf(mTree, match_chart_antigens);
 
-    std::cout << "Tree sequences found in the chart: " << matched_names.size() << std::endl;
+    if (matched_names.size())
+        std::cout << "Tree sequences found in the chart: " << matched_names.size() << std::endl;
+    else
+        std::cerr << "WARNING: No tree sequences found in the chart" << DEBUG_LINE_FUNC << '\n';
 
     // std::cerr << "Matched names:" << std::endl << "  ";
     // std::copy(matched_names.begin(), matched_names.end(), polyfill::make_ostream_joiner(std::cerr, "\n  "));
