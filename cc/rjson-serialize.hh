@@ -208,7 +208,7 @@ namespace rjson
                 try {
                     const auto& val = mParent[mFieldName];
                     try {
-                        return std::get<rjson_type<FValue>>(val);
+                        return val;
                     }
                     catch (std::bad_variant_access&) {
                         std::cerr << "ERROR: cannot convert rjson::value to " <<  typeid(rjson_type<FValue>).name() << " (" << typeid(FValue).name() << "): " << val << '\n';
@@ -248,7 +248,15 @@ namespace rjson
       // double: can be extracted from rjson::number and rjson::integer
       // ----------------------------------------------------------------------
 
-    // template <> inline field_get_set<double>::operator double() const { return get_value_ref(); }
+    template <> inline field_get_set<double>::operator double() const
+    {
+        try {
+            return mParent[mFieldName];
+        }
+        catch (field_not_found&) {
+            return mDefault;
+        }
+    }
 
       // ----------------------------------------------------------------------
       // Color
