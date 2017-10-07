@@ -184,7 +184,7 @@ namespace rjson
         inline void remove_child(std::string aFieldName) override { try { std::get<object>(const_cast<value&>(mData)).delete_field(aFieldName); } catch (std::exception&) {} }
 
         // inline array_field_container_child_element& add(std::string aFieldName, const char* aValue) { return set_field(aFieldName, string{aValue}); }
-        template <typename T> inline array_field_container_child_element& add(std::string aFieldName, T&& aValue) { return set_field(aFieldName, to_value(aValue)); }
+        template <typename T> inline array_field_container_child_element& add(std::string aFieldName, T&& aValue) { return set_field(aFieldName, to_value(std::forward<T>(aValue))); }
 
         inline const value& data() const { return mData; }
         inline std::string to_json() const { return mData.to_json(); }
