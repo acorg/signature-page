@@ -130,7 +130,7 @@ namespace rjson
         inline array_field_container_child(field_container_parent& aParent, std::string aFieldName)
             : mParent{aParent}, mFieldName{aFieldName} {}
 
-        inline array& get_ref_to_array() { return mParent[mFieldName]; }
+        inline array& get_ref_to_array() { return mParent.get_or_add(mFieldName, array{}); }
         inline const array& get_ref_to_array() const { return std::get<array>(mParent.get_ref(mFieldName, array{})); }
         inline size_t size() const { return get_ref_to_array().size(); }
         inline bool empty() const { return get_ref_to_array().empty(); }
