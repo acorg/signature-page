@@ -18,16 +18,9 @@ namespace rjson
 
         virtual const value& operator[](std::string aFieldName) const = 0;
         virtual value& operator[](std::string aFieldName) = 0;
-        // virtual const value& get(std::string aFieldName, value&& aDefault) const = 0;
         virtual value& get_or_add(std::string aFieldName, value&& aDefault) = 0;
         virtual value& get_or_add(std::string aFieldName, const value& aDefault) = 0;
         virtual const value& get_or_empty_array(std::string aFieldName) const = 0;
-
-          //$
-        // virtual value& get_ref(const char* aFieldName, value&& aDefault) = 0;
-        // virtual value& get_ref(std::string aFieldName, value&& aDefault) = 0;
-        // // virtual const value& get_ref(std::string aFieldName, value&& aDefault) const = 0;
-        // virtual object& get_ref_to_object(std::string aFieldName) = 0;
 
         virtual field_container_parent& set_field(std::string aFieldName, value&& aValue) = 0;
         virtual void remove_child(std::string aFieldName) = 0;
@@ -44,16 +37,9 @@ namespace rjson
 
         inline const value& operator[](std::string aFieldName) const override { return mData[aFieldName]; }
         inline value& operator[](std::string aFieldName) override { return mData[aFieldName]; }
-        // inline const value& get(std::string aFieldName, value&& aDefault) const override { return mData.get(aFieldName, std::forward<value>(aDefault)); }
         inline value& get_or_add(std::string aFieldName, value&& aDefault) override { return mData.get_or_add(aFieldName, std::forward<value>(aDefault)); }
         inline value& get_or_add(std::string aFieldName, const value& aDefault) override { return mData.get_or_add(aFieldName, aDefault); }
         inline const value& get_or_empty_array(std::string aFieldName) const override { return mData.get_or_empty_array(aFieldName); }
-
-          //$
-        // inline value& get_ref(const char* aFieldName, value&& aDefault) override { return mData.get_or_add(aFieldName, std::forward<value>(aDefault)); }
-        // inline value& get_ref(std::string aFieldName, value&& aDefault) override { return mData.get_or_add(aFieldName, std::forward<value>(aDefault)); }
-        // // inline const value& get_ref(std::string aFieldName, value&& aDefault) const override { return mData.get(aFieldName, std::forward<value>(aDefault)); }
-        // inline object& get_ref_to_object(std::string aFieldName) override { return const_cast<object&>(static_cast<const object&>(mData[aFieldName])); }
 
         inline field_container_toplevel& set_field(std::string aFieldName, value&& aValue) override { mData.set_field(aFieldName, std::forward<value>(aValue)); return *this; }
         inline void remove_child(std::string aFieldName) override { try { std::get<object>(mData).delete_field(aFieldName); } catch (field_not_found&) {} }
@@ -76,18 +62,9 @@ namespace rjson
 
         inline const value& operator[](std::string aFieldName) const override { return mParent[mFieldName][aFieldName]; }
         inline value& operator[](std::string aFieldName) override { return mParent[mFieldName][aFieldName]; }
-        // inline const value& get(std::string aFieldName, value&& aDefault) const override { return mParent[mFieldName].get(aFieldName, std::forward<value>(aDefault)); }
         inline value& get_or_add(std::string aFieldName, value&& aDefault) override { return mParent.get_or_add(mFieldName, rjson::object{}).get_or_add(aFieldName, std::forward<value>(aDefault)); }
         inline value& get_or_add(std::string aFieldName, const value& aDefault) override { return mParent.get_or_add(mFieldName, rjson::object{}).get_or_add(aFieldName, aDefault); }
         inline const value& get_or_empty_array(std::string aFieldName) const override { return mParent[mFieldName].get_or_empty_array(aFieldName); }
-
-        // inline object& get_ref_to_object() { return const_cast<object&>(static_cast<const object&>(mParent[mFieldName])); }
-        // inline const object& get_ref_to_object() const { return mParent[mFieldName]; }
-        // inline object& get_ref_to_object(std::string aFieldName) override { return const_cast<object&>(static_cast<const object&>(mParent[mFieldName][aFieldName])); }
-
-        // inline value& get_ref(const char* aFieldName, value&& aDefault) override { return mParent[mFieldName].get_or_add(aFieldName, std::forward<value>(aDefault)); }
-        // inline value& get_ref(std::string aFieldName, value&& aDefault) override { return mParent[mFieldName].get_or_add(aFieldName, std::forward<value>(aDefault)); }
-        //   // inline const value& get_ref(std::string aFieldName, value&& aDefault) const override { return mParent[mFieldName].get(aFieldName, std::forward<value>(aDefault)); }
 
         inline void remove_child(std::string aFieldName) override { try { mParent[mFieldName].delete_field(aFieldName); } catch (field_not_found&) {} }
 
@@ -142,7 +119,6 @@ namespace rjson
         inline iterator end() const { return get_array().end(); }
         inline iterator begin() { return get_array().begin(); }
         inline iterator end() { return get_array().end(); }
-          //$ inline Element operator[](size_t index) const { return get_array()[index]; }
         inline Element operator[](size_t index) const { return mParent[mFieldName][index]; }
         inline Element emplace_back()
             {
@@ -178,21 +154,13 @@ namespace rjson
 
         inline const value& operator[](std::string aFieldName) const override { return mData[aFieldName]; }
         inline value& operator[](std::string aFieldName) override { return const_cast<value&>(mData)[aFieldName]; }
-        // inline const value& get(std::string aFieldName, value&& aDefault) const override { return mData.get(aFieldName, std::forward<value>(aDefault)); }
         inline value& get_or_add(std::string aFieldName, value&& aDefault) override { return const_cast<value&>(mData).get_or_add(aFieldName, std::forward<value>(aDefault)); }
         inline value& get_or_add(std::string aFieldName, const value& aDefault) override { return const_cast<value&>(mData).get_or_add(aFieldName, aDefault); }
         inline const value& get_or_empty_array(std::string aFieldName) const override { return mData.get_or_empty_array(aFieldName); }
 
-          // $
-        // inline value& get_ref(const char* aFieldName, value&& aDefault) override { return const_cast<value&>(mData).get_or_add(aFieldName, std::forward<value>(aDefault)); }
-        // inline value& get_ref(std::string aFieldName, value&& aDefault) override { return const_cast<value&>(mData).get_or_add(aFieldName, std::forward<value>(aDefault)); }
-        // // inline const value& get_ref(std::string aFieldName, value&& aDefault) const override { return const_cast<value&>(mData.get(aFieldName, std::forward<value>(aDefault))); }
-        // inline object& get_ref_to_object(std::string aFieldName) override { return const_cast<object&>(static_cast<const object&>(mData[aFieldName])); }
-
         inline array_field_container_child_element& set_field(std::string aFieldName, value&& aValue) override { const_cast<value&>(mData).set_field(aFieldName, std::forward<value>(aValue)); return *this; }
         inline void remove_child(std::string aFieldName) override { try { std::get<object>(const_cast<value&>(mData)).delete_field(aFieldName); } catch (std::exception&) {} }
 
-        // inline array_field_container_child_element& add(std::string aFieldName, const char* aValue) { return set_field(aFieldName, string{aValue}); }
         template <typename T> inline array_field_container_child_element& add(std::string aFieldName, T&& aValue) { return set_field(aFieldName, to_value(std::forward<T>(aValue))); }
 
         inline const value& data() const { return mData; }
@@ -418,16 +386,6 @@ namespace rjson
         if (aInitialize == initialize_field::yes)
             get_or_add();
     }
-
-    // template <typename FValue> inline const value& field_get_set<FValue>::get() const
-    // {
-    //     return mParent.get(mFieldName, to_value<std::decay_t<FValue>>(mDefault));
-    // }
-
-    //$ template <typename FValue> inline value& field_get_set<FValue>::get_or_add()
-    //$ {
-    //$     return mParent.get_or_add(mFieldName, to_value<std::decay_t<FValue>>(mDefault));
-    //$ }
 
 } // namespace rjson
 
