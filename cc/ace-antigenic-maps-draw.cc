@@ -157,7 +157,7 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, boo
         else if (name == "antigens") {
             const rjson::object& select = mod.get_or_default("select", rjson::object{});
             try {
-                const auto index = select.get_ref("index");
+                const auto index = select["index"];
                 chart_draw().modify(index,
                                     PointStyleDraw(PointStyle::Empty)
                                     .size(Pixels{mod.get_or_default("size", 5.0)})
@@ -166,13 +166,13 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, boo
                                     .outline_width(Pixels{mod.get_or_default("outline_width", 0.5)}),
                                     mod.get_or_default("raise_", true) ? PointDrawingOrder::Raise : PointDrawingOrder::NoChange);
                 try {
-                    const rjson::object& label_data = const_cast<AntigenicMapMod&>(mod).get_ref_to_object("label");
+                    const rjson::object& label_data = mod["label"];
                     auto& label = chart_draw().add_label(index);
-                    label.size(label_data.get_ref_not_set("size", rjson::number{9}));
-                    const auto offset_v = label_data.get_ref_not_set("offset", rjson::array{0, 1});
-                    const auto& offset = static_cast<const rjson::array&>(offset_v);
+                    label.size(label_data.get_or_default("size", 9.0));
+                    const auto offset_v = label_data.get_or_default("offset", rjson::array{0, 1});
+                    const rjson::array& offset = offset_v;
                     label.offset(offset[0], offset[1]);
-                    if (const std::string display_name = label_data.get_ref_not_set("display_name", rjson::string{}); !display_name.empty())
+                    if (const std::string display_name = label_data.get_or_default("display_name", rjson::string{}); !display_name.empty())
                         label.display_name(display_name);
                 }
                 catch (rjson::field_not_found&) { // no label
@@ -275,7 +275,7 @@ void AntigenicMapsLayoutDrawAce::mark_vaccines(const AntigenicMapMod& vaccine_mo
         Vaccines vaccs{chart};
         for (const auto& mod_v: vaccine_mod.mods()) {
             const rjson::object& mod = mod_v;
-            const std::string type = mod.get_field("type", std::string{}), passage = mod.get_field("passage", std::string{}), name = mod.get_field("name", std::string{});
+            const std::string type = mod.get_or_default("type", std::string{}), passage = mod.get_or_default("passage", std::string{}), name = mod.get_or_default("name", std::string{});
             VaccineMatcher matcher(vaccs, VaccineMatchData{}.name(name).type(type).passage(passage));
               // std::cout << matcher.report(2) << '\n';
             for (const auto& [item_key, item_value]: mod) {
