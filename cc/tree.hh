@@ -66,12 +66,11 @@ class NodeDrawData
     size_t line_no;
     size_t hz_section_index;
     double vertical_pos;
-    std::string vaccine_label;  // DELL
     Color mark_with_line;
     Pixels mark_with_line_width;
     size_t chart_antigen_index;
     bool mark_with_label;
-    
+
 }; // class NodeDrawData
 
 // ----------------------------------------------------------------------
@@ -150,7 +149,6 @@ class Tree : public Node
     void set_continents(const LocDb& locdb);
     void make_aa_transitions(); // for all positions
     void make_aa_transitions(const std::vector<size_t>& aPositions);
-    void add_vaccine(std::string aSeqId, std::string aLabel);
 
     inline void compute_cumulative_edge_length()
         {

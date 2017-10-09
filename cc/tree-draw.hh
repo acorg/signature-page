@@ -215,17 +215,6 @@ class TreeDrawSettings : public rjson::field_container_child
  public:
     TreeDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName);
 
-      // DELL
-    inline const TreeDrawVaccineSettings vaccine(std::string aName) const
-        {
-            auto p = std::find_if(vaccines.begin(), vaccines.end(), [&aName](const auto& e) { return static_cast<std::string>(e.name) == aName; });
-            if (p == vaccines.end())
-                p = std::find_if(vaccines.begin(), vaccines.end(), [](const auto& e) { return e.name.empty(); });
-            if (p == vaccines.end())
-                throw std::runtime_error("Invalid tree.vaccines settings: neither default entry (with empty name) nor entry with name " + aName);
-            return *p;
-        }
-
     rjson::field_get_set<Tree::LadderizeMethod> ladderize;
     rjson::field_get_set<std::string> ladderize_help;
     TreeDrawMods mods;
@@ -238,7 +227,6 @@ class TreeDrawSettings : public rjson::field_container_child
     rjson::field_get_set<double> name_offset;         // offset of the label from the line right end, in W widths
     rjson::field_get_set<std::string> color_nodes;    // black, continent, position number (e.g. 162)
     AATransitionDrawSettings aa_transition;
-    TreeDrawVaccines vaccines;  // DELL
     LegendSettings legend;
 
     void remove_for_signature_page_settings();
@@ -356,7 +344,6 @@ class TreeDraw
 
     void fit_labels_into_viewport();
     void calculate_name_offset();
-    void mark_vaccines();
 
     inline double text_width(std::string text) { return mSurface.text_size(text, mFontSize, mSettings.label_style).width; }
     double max_label_offset();

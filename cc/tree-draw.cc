@@ -72,7 +72,6 @@ void TreeDraw::prepare(const LocDb& aLocDb)
     mTree.set_continents(aLocDb);
     ladderize();
     mTree.make_aa_transitions();
-    mark_vaccines();
 
     size_t number_of_hz_sections = prepare_hz_sections();
     if (number_of_hz_sections == 0)
@@ -339,20 +338,6 @@ void TreeDraw::mark_with_label(const TreeDrawMod& aMod)
 
 // ----------------------------------------------------------------------
 
-// DELL
-void TreeDraw::mark_vaccines()
-{
-    for (const auto& vaccine: mSettings.vaccines) {
-        if (!vaccine.name.empty()) {
-            std::cerr << "DEBUG: add vaccine " << vaccine.name << '\n';
-            mTree.add_vaccine(vaccine.name, vaccine.name);
-        }
-    }
-
-} // TreeDraw::mark_vaccines
-
-// ----------------------------------------------------------------------
-
 void TreeDraw::mark_clade_with_line(std::string aClade, Color aColor, Pixels aLineWidth)
 {
     size_t marked = 0;
@@ -565,18 +550,6 @@ void TreeDraw::draw_node(const Node& aNode, double aOriginX, double& aVerticalGa
                 mSurface.line({mSurface.viewport().size.width - 10, text_origin.y}, {mSurface.viewport().size.width, text_origin.y}, aNode.draw.mark_with_line, aNode.draw.mark_with_line_width);
             }
             draw_mark_with_label(aNode, text_origin);
-
-              // DELL
-            if (!aNode.draw.vaccine_label.empty()) {
-                std::cerr << "DEBUG: draw vaccine " << aNode.draw.vaccine_label << '\n';
-                const auto& settings = mSettings.vaccine(aNode.draw.vaccine_label);
-                Size label_offset{-40, 20}; // TODO: settings
-                const Location label_origin = text_origin + label_offset;
-                mSurface.text(label_origin, aNode.draw.vaccine_label, settings.label_color, Pixels{settings.label_size}, settings.label_style);
-                const auto vlsize = mSurface.text_size(aNode.draw.vaccine_label, Pixels{settings.label_size}, settings.label_style);
-                const auto line_origin = label_origin + Size(vlsize.width / 2, label_offset.height > 0 ? - vlsize.height : 0);
-                mSurface.line(line_origin, text_origin, settings.line_color, Pixels{settings.line_width});
-            }
         }
         else {
             double top = -1, bottom = -1;

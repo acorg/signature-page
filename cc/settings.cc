@@ -268,7 +268,6 @@ TreeDrawSettings::TreeDrawSettings(rjson::field_container_parent& aParent, std::
       name_offset(*this, "name_offset", 0.3),
       color_nodes(*this, "color_nodes", "continent"),
       aa_transition(*this, "aa_transition"),
-      vaccines(*this, "vaccines"),
       legend(*this, "legend")
 {
 } // TreeDrawSettings::TreeDrawSettings

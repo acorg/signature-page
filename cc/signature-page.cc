@@ -205,8 +205,6 @@ void SignaturePageDraw::tree(std::string aTreeFilename, std::string aSeqdbFilena
         mTree->match_seqdb(*mSeqdb);
     }
 
-    mTree->add_vaccine("A/SOUTH%20AUCKLAND/17/2016__MDCK%3F/SIAT1", "A/SOUTH AUCKLAND/17/2016 C");
-
 } // SignaturePageDraw::tree
 
 // ----------------------------------------------------------------------
