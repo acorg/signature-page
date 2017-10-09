@@ -126,7 +126,14 @@ class TreeDrawMod : public rjson::array_field_container_child_element
           s2(*this,  "s2", std::string{}),
           clade(*this,  "clade", std::string{}),
           color(*this,  "color", std::string{}),
-          line_width(*this,  "line_width", -1.0)
+          line_width(*this,  "line_width", -1.0),
+          seq_id(*this, "seq_id", std::string{}),
+          label(*this, "label", std::string{}),
+          label_color(*this, "label_color", "black"),
+          label_size(*this, "label_size", 10.0),
+          line_color(*this, "line_color", "black"),
+          label_style(*this, "label_style", {}),
+          label_offset(*this, "label_offset", {20, 20})
         {}
 
     rjson::field_get_set<std::string> mod;            // root, hide_isolated_before, hide_if_cumulative_edge_length_bigger_than, hide_between, before2015-58P-or-146I-or-559I
@@ -135,7 +142,15 @@ class TreeDrawMod : public rjson::array_field_container_child_element
     rjson::field_get_set<std::string> s2;             // depends on mod
     rjson::field_get_set<std::string> clade;          // mark-clade-with-line mod
     rjson::field_get_set<std::string> color;          // mark-clade-with-line mod
-    rjson::field_get_set<double> line_width;          // in pixels, mark-clade-with-line
+    rjson::field_get_set<double> line_width;          // in pixels, mark-clade-with-line, mark-with-label
+
+    rjson::field_get_set<std::string> seq_id;      // mark-with-label
+    rjson::field_get_set<std::string> label;       // mark-with-label
+    rjson::field_get_set<std::string> label_color; // mark-with-label
+    rjson::field_get_set<double> label_size;       // mark-with-label
+    rjson::field_get_set<std::string> line_color;  // mark-with-label
+    rjson::field_get_set<TextStyle> label_style;   // mark-with-label
+    rjson::field_get_set<Size> label_offset;   // mark-with-label
 
 }; // class TreeDrawMod
 
@@ -143,7 +158,16 @@ class TreeDrawMods : public rjson::array_field_container_child<TreeDrawMod>
 {
  public:
     using rjson::array_field_container_child<TreeDrawMod>::array_field_container_child;
-};
+
+    inline const TreeDrawMod find_mark_with_label(std::string aSeqId) const // not reference returned, TreeDrawMod is a proxy
+        {
+            auto p = std::find_if(begin(), end(), [&](const auto& e) { return e.mod == "mark-with-label" && e.seq_id == aSeqId; });
+            if (p == end())
+                throw std::runtime_error("Invalid tree.mods settings: cannot find mark-with-label for " + aSeqId);
+            return *p;
+        }
+
+}; // class TreeDrawMods
 
 // ----------------------------------------------------------------------
 
@@ -191,6 +215,7 @@ class TreeDrawSettings : public rjson::field_container_child
  public:
     TreeDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName);
 
+      // DELL
     inline const TreeDrawVaccineSettings vaccine(std::string aName) const
         {
             auto p = std::find_if(vaccines.begin(), vaccines.end(), [&aName](const auto& e) { return static_cast<std::string>(e.name) == aName; });
@@ -213,31 +238,10 @@ class TreeDrawSettings : public rjson::field_container_child
     rjson::field_get_set<double> name_offset;         // offset of the label from the line right end, in W widths
     rjson::field_get_set<std::string> color_nodes;    // black, continent, position number (e.g. 162)
     AATransitionDrawSettings aa_transition;
-    TreeDrawVaccines vaccines;
+    TreeDrawVaccines vaccines;  // DELL
     LegendSettings legend;
 
     void remove_for_signature_page_settings();
-
-      // obsolete: v2
-    // std::string _root;           // re-root tree
-    // std::string _hide_isolated_before; // hide leaves isolated before the date (empty -> do not hide based on date)
-    // double _hide_if_cumulative_edge_length_bigger_than; // hide long branches
-    // std::string _hide_if;                               // built-in function to hide stains based on complicated criteria
-
-      // for json importer
-    // inline std::vector<TreeDrawVaccineSettings>& get_vaccines() { return vaccines; }
-    // inline std::vector<TreeDrawMod>& get_mods() { return mods; }
-
-    // inline std::string ladderize_to_string() const
-    //     {
-    //         switch (ladderize) {
-    //           case Tree::LadderizeMethod::NumberOfLeaves:
-    //               return "number-of-leaves";
-    //           case Tree::LadderizeMethod::MaxEdgeLength:
-    //               return "max-edge-length";
-    //         }
-    //         return "number-of-leaves";
-    //     }
 
 }; // class TreeDrawSettings
 
@@ -348,8 +352,11 @@ class TreeDraw
     void draw_node(const Node& aNode, double aOriginX, double& aVerticalGap, double aEdgeLength = -1);
     void draw_legend();
     void draw_aa_transition(const Node& aNode, const Location& aOrigin, double aRight);
+    void draw_mark_with_label(const Node& aNode, const Location& aTextOrigin);
+
     void fit_labels_into_viewport();
     void calculate_name_offset();
+    void mark_vaccines();
 
     inline double text_width(std::string text) { return mSurface.text_size(text, mFontSize, mSettings.label_style).width; }
     double max_label_offset();
@@ -364,6 +371,7 @@ class TreeDraw
     void hide_one(std::string aName);
     void mark_with_line(std::string aName, Color aColor, Pixels aLineWidth);
     void mark_clade_with_line(std::string aClade, Color aColor, Pixels aLineWidth);
+    void mark_with_label(const TreeDrawMod& aMod);
     static void hide_branch(Node& aNode);
 
 }; // class TreeDraw

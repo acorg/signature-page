@@ -49,7 +49,7 @@ class NodeData
  private:
     seqdb::SeqdbEntrySeq mSeqdbEntrySeq;
 
-};
+}; // class NodeData
 
 // ----------------------------------------------------------------------
 
@@ -60,17 +60,19 @@ class NodeDrawData
     constexpr static const size_t HzSectionNoIndex = static_cast<size_t>(-1);
 
     inline NodeDrawData()
-        : shown(true), line_no(0), hz_section_index(HzSectionNoIndex), vertical_pos(-1), mark_with_line{Color::NoChange}, mark_with_line_width{0} {}
+        : shown(true), line_no(0), hz_section_index(HzSectionNoIndex), vertical_pos(-1), mark_with_line{Color::NoChange}, mark_with_line_width{0}, mark_with_label{false} {}
 
     bool shown;
     size_t line_no;
     size_t hz_section_index;
     double vertical_pos;
-    std::string vaccine_label;
+    std::string vaccine_label;  // DELL
     Color mark_with_line;
     Pixels mark_with_line_width;
     size_t chart_antigen_index;
-};
+    bool mark_with_label;
+    
+}; // class NodeDrawData
 
 // ----------------------------------------------------------------------
 

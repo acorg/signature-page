@@ -72,6 +72,7 @@ void TreeDraw::prepare(const LocDb& aLocDb)
     mTree.set_continents(aLocDb);
     ladderize();
     mTree.make_aa_transitions();
+    mark_vaccines();
 
     size_t number_of_hz_sections = prepare_hz_sections();
     if (number_of_hz_sections == 0)
@@ -139,6 +140,9 @@ bool TreeDraw::apply_mods()
         else if (mod_mod == "mark-clade-with-line") {
             std::cout << "TREE-mod: " << mod_mod << " \"" << mod.clade << "\" \"" << mod.color << "\" " << mod.line_width << std::endl;
             mark_clade_with_line(mod.clade, static_cast<std::string>(mod.color), Pixels{mod.line_width});
+        }
+        else if (mod_mod == "mark-with-label") {
+            mark_with_label(mod);
         }
         else if (mod_mod.empty() || mod_mod[0] == '?') {
               // commented out mod
@@ -313,6 +317,39 @@ void TreeDraw::mark_with_line(std::string aName, Color aColor, Pixels aLineWidth
         std::cout << "leaf nodes marked: " << marked << std::endl;
 
 } // TreeDraw::mark_with_line
+
+// ----------------------------------------------------------------------
+
+void TreeDraw::mark_with_label(const TreeDrawMod& aMod)
+{
+    Node* node = mTree.find_leaf_by_seqid(aMod.seq_id);
+    if (node) {
+        if (node->draw.shown) {
+            node->draw.mark_with_label = true;
+            std::cout << "INFO: mark-with-label: " << aMod.seq_id << " \"" << aMod.label << "\" " << aMod.line_width << std::endl;        }
+        else {
+            std::cerr << "WARNING: cannot mark-with-label " << aMod.seq_id << ": node not shown\n";
+        }
+    }
+    else {
+        std::cerr << "WARNING: cannot mark-with-label " << aMod.seq_id << ": node not found\n";
+    }
+
+} // TreeDraw::mark_with_label
+
+// ----------------------------------------------------------------------
+
+// DELL
+void TreeDraw::mark_vaccines()
+{
+    for (const auto& vaccine: mSettings.vaccines) {
+        if (!vaccine.name.empty()) {
+            std::cerr << "DEBUG: add vaccine " << vaccine.name << '\n';
+            mTree.add_vaccine(vaccine.name, vaccine.name);
+        }
+    }
+
+} // TreeDraw::mark_vaccines
 
 // ----------------------------------------------------------------------
 
@@ -522,18 +559,23 @@ void TreeDraw::draw_node(const Node& aNode, double aOriginX, double& aVerticalGa
             if (text_origin.x < 0 || text_origin.y < 0) {
                 std::cerr << "WARNING: bad origin for a node label: " << text_origin << ' ' << text << " mNameOffset:" << mNameOffset << " aOriginX:" << aOriginX << '\n';
             }
+
+            if (!aNode.draw.mark_with_line.empty()) {
+                // mSurface.line({text_origin.x + tsize.width, text_origin.y}, {mSurface.viewport().size.width, text_origin.y}, aNode.draw.mark_with_line, aNode.draw.mark_with_line_width);
+                mSurface.line({mSurface.viewport().size.width - 10, text_origin.y}, {mSurface.viewport().size.width, text_origin.y}, aNode.draw.mark_with_line, aNode.draw.mark_with_line_width);
+            }
+            draw_mark_with_label(aNode, text_origin);
+
+              // DELL
             if (!aNode.draw.vaccine_label.empty()) {
+                std::cerr << "DEBUG: draw vaccine " << aNode.draw.vaccine_label << '\n';
                 const auto& settings = mSettings.vaccine(aNode.draw.vaccine_label);
-                Size label_offset{-20, 20}; // TODO: settings
+                Size label_offset{-40, 20}; // TODO: settings
                 const Location label_origin = text_origin + label_offset;
                 mSurface.text(label_origin, aNode.draw.vaccine_label, settings.label_color, Pixels{settings.label_size}, settings.label_style);
                 const auto vlsize = mSurface.text_size(aNode.draw.vaccine_label, Pixels{settings.label_size}, settings.label_style);
                 const auto line_origin = label_origin + Size(vlsize.width / 2, label_offset.height > 0 ? - vlsize.height : 0);
                 mSurface.line(line_origin, text_origin, settings.line_color, Pixels{settings.line_width});
-            }
-            if (!aNode.draw.mark_with_line.empty()) {
-                // mSurface.line({text_origin.x + tsize.width, text_origin.y}, {mSurface.viewport().size.width, text_origin.y}, aNode.draw.mark_with_line, aNode.draw.mark_with_line_width);
-                mSurface.line({mSurface.viewport().size.width - 10, text_origin.y}, {mSurface.viewport().size.width, text_origin.y}, aNode.draw.mark_with_line, aNode.draw.mark_with_line_width);
             }
         }
         else {
@@ -609,6 +651,24 @@ void TreeDraw::draw_aa_transition(const Node& aNode, const Location& aOrigin, do
     }
 
 } // TreeDraw::draw_aa_transition
+
+// ----------------------------------------------------------------------
+
+void TreeDraw::draw_mark_with_label(const Node& aNode, const Location& aTextOrigin)
+{
+    if (aNode.draw.mark_with_label) {
+        std::cerr << "DEBUG: draw mark_with_label " << aNode.seq_id << '\n';
+        const auto settings = mSettings.mods.find_mark_with_label(aNode.seq_id);
+
+        const Size label_offset = settings.label_offset;
+        const Location label_origin = aTextOrigin + label_offset;
+        mSurface.text(label_origin, settings.label, Color{settings.label_color}, Pixels{settings.label_size}, settings.label_style);
+        const auto vlsize = mSurface.text_size(settings.label, Pixels{settings.label_size}, TextStyle{});
+        const auto line_origin = label_origin + Size(vlsize.width / 2, label_offset.height > 0 ? - vlsize.height : 0);
+        mSurface.line(line_origin, aTextOrigin, Color{settings.line_color}, Pixels{settings.line_width});
+    }
+
+} // TreeDraw::draw_mark_with_label
 
 // ----------------------------------------------------------------------
 

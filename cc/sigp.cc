@@ -59,7 +59,7 @@ int main(int argc, const char *argv[])
                 signature_page.write_initialized_settings(options.init_settings_filename);
         }
         catch (std::exception& err) {
-            std::cerr << err.what() << std::endl;
+            std::cerr << "ERROR: " << err.what() << std::endl;
             exit_code = 1;
         }
     }
