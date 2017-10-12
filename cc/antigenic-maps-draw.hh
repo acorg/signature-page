@@ -220,6 +220,7 @@ class AntigenicMapMod : public rjson::array_field_container_child_element
 
     template <typename Result> inline Result get_or_default(std::string aName, Result&& aDefault) const
         {
+            static_assert(!std::is_same_v<Result, rjson::object> && !std::is_same_v<Result, rjson::array>, "get_or_default returns a copy, not a reference, use get_or_empty_object or get_or_empty_array");
             try {
                 return operator[](aName);
             }

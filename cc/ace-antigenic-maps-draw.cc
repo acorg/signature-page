@@ -32,8 +32,12 @@ void AntigenicMapsLayoutDrawAce::prepare_apply_mods()
                 chart_draw().rotate(mod.get_or_default("angle", 0.0));
             }
             else if (name == "flip") {
-                const rjson::array& ar = mod.get_or_default("value", rjson::array{0.0, 0.0});
-                chart_draw().flip(ar[0], ar[1]);
+                try {
+                    const rjson::array& ar = mod["value"];
+                    chart_draw().flip(ar[0], ar[1]);
+                }
+                catch (rjson::field_not_found&) {
+                }
             }
             else if (name == "viewport") {
                 chart_draw().viewport(mod.get_viewport());
@@ -155,7 +159,7 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, boo
             mark_vaccines(mod);
         }
         else if (name == "antigens") {
-            const rjson::object& select = mod.get_or_default("select", rjson::object{});
+            const auto& select = mod.get_or_empty_object("select");
             try {
                 const auto index = select["index"];
                 chart_draw().modify(index,
@@ -169,9 +173,13 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, boo
                     const rjson::object& label_data = mod["label"];
                     auto& label = chart_draw().add_label(index);
                     label.size(label_data.get_or_default("size", 9.0));
-                    const auto offset_v = label_data.get_or_default("offset", rjson::array{0, 1});
-                    const rjson::array& offset = offset_v;
-                    label.offset(offset[0], offset[1]);
+                    try {
+                        const rjson::array& offset = label_data["offset"];
+                        label.offset(offset[0], offset[1]);
+                    }
+                    catch (rjson::field_not_found&) {
+                        label.offset(0, 1);
+                    }
                     if (const std::string display_name = label_data.get_or_default("display_name", rjson::string{}); !display_name.empty())
                         label.display_name(display_name);
                 }
