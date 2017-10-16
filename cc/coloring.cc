@@ -46,7 +46,7 @@ Color ColoringByPos::color(const Node& aNode) const
 {
     Color c("pink");
     const auto amino_acids = aNode.data.amino_acids();
-    auto distinct_colors = Color::distinct_colors();
+    auto distinct_colors = Color::distinct();
     if (amino_acids.size() > mPos) {
         const char aa = amino_acids[mPos];
         try {
