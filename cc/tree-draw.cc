@@ -699,7 +699,7 @@ void HzSections::sort(const Tree& aTree)
     }
     assert(sections.size() == node_refs.size());
 
-    fill_with_indexes(section_order, node_refs.size());
+    acmacs::fill_with_indexes(section_order, node_refs.size());
     std::sort(section_order.begin(), section_order.end(), [this](const auto& a, const auto& b) -> bool { return node_refs[a].first->draw.line_no < node_refs[b].first->draw.line_no; });
 
       // if the first section does not start with the topmost node, prepend section list with the new section
