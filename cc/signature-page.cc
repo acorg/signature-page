@@ -326,7 +326,43 @@ void SignaturePageDraw::draw(bool report_antigens_in_hz_sections)
     if (mTitleDraw)
         mTitleDraw->draw();
 
+    draw_mods();
+
 } // SignaturePageDraw::draw
+
+// ----------------------------------------------------------------------
+
+void SignaturePageDraw::draw_mods()
+{
+    try {
+        for (const auto& mod: mSettings->get_or_empty_array("mods")) {
+            if (mod.exists("N")) {
+                const std::string mod_n = mod["N"];
+                if (mod_n == "text") {
+                    const std::string text = mod["text"];
+                    Size offset;
+                    try { const auto& settings_offset = mod["offset"]; offset.set(settings_offset[0], settings_offset[1]); } catch (rjson::field_not_found&) {}
+                    std::string color{"black"};
+                    try { color = static_cast<std::string>(mod["color"]); } catch (rjson::field_not_found&) {}
+                    Pixels size{14};
+                    try { size = mod["size"]; } catch (rjson::field_not_found&) {}
+                    TextStyle style;
+                    try { style.font_family(mod["family"]); } catch (rjson::field_not_found&) {}
+                    try { style.slant(mod["slant"]); } catch (rjson::field_not_found&) {}
+                    try { style.weight(mod["weight"]); } catch (rjson::field_not_found&) {}
+                    mSurface->text(offset, text, color, size, style);
+                }
+                else {
+                    std::cerr << "WARNING: unrecognized mod: " << mod << '\n';
+                }
+            }
+        }
+    }
+    catch (std::exception& err) {
+        std::cerr << "WARNING: cannot draw mods: " << err.what() << '\n';
+    }
+
+} // SignaturePageDraw::draw_mods
 
 // ----------------------------------------------------------------------
 /// Local Variables:

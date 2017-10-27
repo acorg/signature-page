@@ -94,6 +94,7 @@ class SignaturePageDraw
     SignaturePageDrawSettings::Layout detect_layout(bool init_settings) const;
     void make_layout_tree_ts_clades();
     void make_layout_tree_clades_ts_maps();
+    void draw_mods();
 
 }; // class SignaturePageDraw
 

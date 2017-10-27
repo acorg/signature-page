@@ -5,6 +5,7 @@
 #include "acmacs-base/read-file.hh"
 
 #include "settings.hh"
+using namespace std::string_literals;
 
 // ----------------------------------------------------------------------
 
@@ -233,7 +234,6 @@ void AntigenicMapsDrawSettings::viewport(const Viewport& aViewport)
         else
             return {rjson::number{aViewport.origin.x}, rjson::number{aViewport.origin.y}, rjson::number{aViewport.size.width}, rjson::number{aViewport.size.height}};
     };
-    using namespace std::string_literals;
       // std::cerr << "DEBUG: AntigenicMapsDrawSettings::viewport" << std::endl;
     auto vpmod = std::find_if(mods.begin(), mods.end(), [](const auto& mod) -> bool { return mod.name() == "viewport"; });
     if (vpmod == mods.end()) {
@@ -373,6 +373,15 @@ Settings::Settings()
       mapped_antigens(*this, "mapped_antigens"),
       antigenic_maps(*this, "antigenic_maps")
 {
+      // add sample text mod
+    set_field("mods", rjson::array(rjson::object{{{"?N", rjson::string{"text"}},
+                    {"color", rjson::string{"black"}},
+                    {"offset", rjson::array{100.0, 100.0}},
+                    {"size", rjson::number{12.0}},
+                    {"style", rjson::object{{{"family", rjson::string{}}, {"slant", rjson::string{"normal"}}, {"weight", rjson::string{"normal"}}}}},
+                    {"text", rjson::string{"Text to show"}}
+                }}));
+
     // std::cerr << "Settings: " << to_json_pp(2) << '\n';
 
 } // Settings::Settings
