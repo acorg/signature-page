@@ -5,7 +5,7 @@
 #include "signature-page.hh"
 #include "antigenic-maps-layout.hh"
 #include "ace-antigenic-maps-draw.hh"
-#include "sdb-antigenic-maps-draw.hh"
+// #include "sdb-antigenic-maps-draw.hh"
 
 // ----------------------------------------------------------------------
 
@@ -101,12 +101,12 @@ AntigenicMapsDrawBase* make_antigenic_maps_draw(std::string aChartFilename, Surf
     catch (AceChartReadError& err) {
         error = std::string("[Not ACE] ") + err.what();
     }
-    try {
-        return new sdb::AntigenicMapsDraw(aSurface, aTree, sdb::read_chart_from_sdb(aChartFilename), aHzSections, aSignaturePageDrawSettings, aSettings);
-    }
-    catch (ChartReadError& err) {
-        error += std::string("\n[Not SDB] ") + err.what();
-    }
+    // try {
+    //     return new sdb::AntigenicMapsDraw(aSurface, aTree, sdb::read_chart_from_sdb(aChartFilename), aHzSections, aSignaturePageDrawSettings, aSettings);
+    // }
+    // catch (ChartReadError& err) {
+    //     error += std::string("\n[Not SDB] ") + err.what();
+    // }
     throw ChartReadError(error);
 
 } // make_antigenic_maps_draw

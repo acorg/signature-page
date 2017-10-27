@@ -1,3 +1,5 @@
+#error Not supported since 2017-10-27
+
 #include <iostream>
 #include <string>
 // #include <cstdlib>
@@ -9,7 +11,7 @@
 
 #include "acmacs-draw/surface-cairo.hh"
 #include "chart-draw.hh"
-#include "sdb-antigenic-maps-draw.hh"
+// #include "sdb-antigenic-maps-draw.hh"
 
 // ----------------------------------------------------------------------
 

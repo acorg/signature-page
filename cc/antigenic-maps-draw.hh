@@ -280,30 +280,7 @@ class AntigenicMapMod : public rjson::array_field_container_child_element
             }
         }
 
-    inline Viewport get_viewport() const
-        {
-            try {
-                const rjson::array& ar = operator[]("viewport");
-                try {
-                    switch (ar.size()) {
-                      case 3:
-                          return {ar[0], ar[1], ar[2]};
-                      case 4:
-                          return {ar[0], ar[1], ar[2], ar[3]};
-                      default:
-                          throw std::exception{};
-                    }
-                }
-                catch (std::exception&) {
-                    std::cerr << "ERROR: cannot convert json to array (viewport): " << ar << '\n';
-                    throw;
-                }
-            }
-            catch (rjson::field_not_found&) {
-                return {};
-            }
-            return {};
-        }
+    Viewport get_viewport(const Viewport& aOrigViewport) const; // settings.cc
 
 }; // class AntigenicMapMod
 

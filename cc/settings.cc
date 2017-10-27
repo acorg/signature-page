@@ -191,7 +191,7 @@ AntigenicMapsDrawSettings::AntigenicMapsDrawSettings(rjson::field_container_pare
       mapped_antigens_section_line_width(*this, "mapped_antigens_section_line_width", 1, rjson::initialize_field::yes),
       mods(*this, "mods")
 {
-    mods.emplace_back().add("N", "?viewport").add("viewport", rjson::array{0, 0, 0});
+    mods.emplace_back().add("N", "viewport").add("rel", rjson::array{0, 0, 0});
     mods.emplace_back().add("N", "point_scale").add("scale", 1.0).add("outline_scale", 1.0);
     mods.emplace_back().add("N", "rotate_degrees").add("angle", 0.0);
     mods.emplace_back().add("N", "sera").add("outline", "grey88").add("outline_width", 0.5).add("size", 5.0);
@@ -245,6 +245,55 @@ void AntigenicMapsDrawSettings::viewport(const Viewport& aViewport)
         (*vpmod).set_field("viewport", make_setting_list());
 
 } // AntigenicMapsDrawSettings::viewport
+
+Viewport AntigenicMapMod::get_viewport(const Viewport& aOrigViewport) const
+{
+    Viewport result = aOrigViewport;
+
+    try {
+        const rjson::array& ar = operator[]("rel");
+        try {
+            switch (ar.size()) {
+              case 3:
+                  result.set(aOrigViewport.left() + static_cast<double>(ar[0]), aOrigViewport.top() + static_cast<double>(ar[1]), aOrigViewport.size.width + static_cast<double>(ar[2]));
+                  break;
+              default:
+                  throw std::exception{};
+            }
+        }
+        catch (std::exception&) {
+            std::cerr << "ERROR: cannot convert json to array (viewport rel): " << ar << '\n';
+            throw;
+        }
+    }
+    catch (rjson::field_not_found&) {
+    }
+
+    try {
+        const rjson::array& ar = operator[]("viewport");
+        try {
+            switch (ar.size()) {
+              case 3:
+                  result.set(ar[0], ar[1], ar[2]);
+                  break;
+              case 4:
+                  result.set(Location(ar[0], ar[1]), Size(ar[2], ar[3]));
+                  break;
+              default:
+                  throw std::exception{};
+            }
+        }
+        catch (std::exception&) {
+            std::cerr << "ERROR: cannot convert json to array (viewport): " << ar << '\n';
+            throw;
+        }
+    }
+    catch (rjson::field_not_found&) {
+    }
+
+    return result;
+
+} // AntigenicMapMod::get_viewport
 
 // ----------------------------------------------------------------------
 

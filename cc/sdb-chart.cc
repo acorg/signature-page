@@ -1,3 +1,5 @@
+#error Not supported since 2017-10-27
+
 #include "sdb-chart.hh"
 #include "antigenic-maps-draw.hh"
 #include "sdb-antigenic-maps-draw.hh"

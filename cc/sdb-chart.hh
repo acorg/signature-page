@@ -1,3 +1,5 @@
+#error Not supported since 2017-10-27
+
 #pragma once
 
 #include <string>

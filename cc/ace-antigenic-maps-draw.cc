@@ -40,7 +40,7 @@ void AntigenicMapsLayoutDrawAce::prepare_apply_mods()
                 }
             }
             else if (name == "viewport") {
-                chart_draw().viewport(mod.get_viewport());
+                chart_draw().viewport(mod.get_viewport(chart_draw().calculate_viewport(false)));
             }
             else if (name == "title") {
                 chart_draw().title()
