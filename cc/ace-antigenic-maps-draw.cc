@@ -189,6 +189,12 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, boo
             catch (rjson::field_not_found&) {
                 std::cerr << "WARNING: Antigens: no index in " << select << '\n';
             }
+            catch (std::out_of_range&) {
+                std::cerr << "WARNING: Antigens: invalid index in " << select << '\n';
+            }
+            catch (std::exception& err) {
+                std::cerr << "WARNING: Antigens: error: " << err.what() << " in " << select << '\n';
+            }
         }
     }
 
