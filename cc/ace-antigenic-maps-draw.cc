@@ -199,7 +199,8 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, boo
     const HzSection& section = hz_sections().sections[aSectionIndex];
     if (!section.label.empty())
         title += " " + static_cast<std::string>(section.label);
-    chart_draw().title().remove_all_lines().add_line(title);
+    // std::cerr << "DEBUG: map title: " << title << '\n';
+    chart_draw().title().remove_all_lines().show(true).add_line(title);
 
 } // AntigenicMapsLayoutDrawAce::prepare_drawing_chart
 
