@@ -1,0 +1,36 @@
+* Making tree image from fasta file
+** Source fasta file format
+Expected format corresponds to the gisaid output format:
+
+>name |  isolation date | passage |  lab id | lab name | virus type and subtype | lineage
+
+e.g.
+
+>B/Florida/56/2017 |  2017-06-03 | Original |  3025630379 | Centers for Disease Control and Prevention | B / H0N0 |  Victoria
+
+>A/South Australia/112/2017 |  2017-06-01 | SIAT1 |  1706116 VW82509 | WHO Collaborating Centre for Reference and Research on Influenza | A / H3N2 |
+
+If field value is unknown or not applicable, it may be left empty.
+Field separator must be surrounded by spaces: " |  "
+
+** Converting fasta file(s) into sequence database
+
+$ seqdb-create --db <seqdb.json.xz> --clades source1.fas source2.fas ...
+
+** Export aligned fasta file for making a tree
+
+$ seqdb-export --db <seqdb.json.xz> --flu <virus type: h1, h3, bvic, byam> --recent 4000 --hamming-distance-threshold 160 --tree-maker --base-seq <base-seq-name> tree-maker-source.fas
+
+base-seq-name - is an older name of the sequence in the sequence database that will become tree root.
+** Make tree
+You may use raxml, garli or any other program for making tree. The
+resulting tree must be in newick format or you need to convert the
+result to newick format yourself.
+** Convert newick tree to json
+$ newick-to-json tree.phy tree.json.xz
+** Drawing tree
+*** Init settings
+$ sigp --seqdb <seqdb.json.xz> --init-settings tree.settings.json tree.json.xz tree.pdf
+*** Edit tree.settings.json
+*** Generate resultsing tree
+$ sigp --seqdb <seqdb.json.xz> -s tree.settings.json tree.json.xz tree.pdf
