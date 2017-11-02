@@ -26,7 +26,7 @@ trap failed ERR
 
 # ======================================================================
 
-export LD_LIBRARY_PATH="$HOME"/AD/lib
+export LD_LIBRARY_PATH="$ACMACSD_ROOT"/lib
 cd "$TESTDIR"
 ../bin/test-copy ./newick.json.xz "$TDIR"/tree.json.xz
 ../bin/test-copy "$TDIR"/tree.json.xz "$TDIR"/tree2.json.xz
