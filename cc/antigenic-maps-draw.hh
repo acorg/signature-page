@@ -332,7 +332,7 @@ class MarkAntigenSettings
 //     std::string layout;
 //     size_t columns;
 //     double gap;
-//     Transformation transformation;
+//     acmacs::Transformation transformation;
 //     Viewport viewport;
 
 //     double border_width, grid_line_width;

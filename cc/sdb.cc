@@ -472,7 +472,7 @@ const std::map<std::string, ChartInfoHandler::Keys> ChartInfoHandler::key_mapper
 class TransformationHandler : public HandlerBase
 {
  public:
-    inline TransformationHandler(Chart& aChart, Transformation& aField) : HandlerBase{aChart}, mField(aField), mElement(0) {}
+    inline TransformationHandler(Chart& aChart, acmacs::Transformation& aField) : HandlerBase{aChart}, mField(aField), mElement(0) {}
 
     inline virtual HandlerBase* StartArray()
         {
@@ -514,7 +514,7 @@ class TransformationHandler : public HandlerBase
     inline virtual HandlerBase* Uint(unsigned u) { return Double(u); }
 
  private:
-    Transformation& mField;
+    acmacs::Transformation& mField;
     size_t mElement;
 };
 

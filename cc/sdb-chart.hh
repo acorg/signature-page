@@ -156,8 +156,8 @@ namespace sdb
         inline PlotStyle& plot_style() { return mPlot; }
         inline double stress() const { return mStress; }
         inline void stress(double aStress) { mStress = aStress; }
-        inline const Transformation& transformation() const { return mTransformation; }
-        inline Transformation& transformation() { return mTransformation; }
+        inline const acmacs::Transformation& transformation() const { return mTransformation; }
+        inline acmacs::Transformation& transformation() { return mTransformation; }
         inline const std::vector<double>& column_bases() const { return mColumnBases; }
         inline std::vector<double>& column_bases() { return mColumnBases; }
 
@@ -171,7 +171,7 @@ namespace sdb
         std::vector<Point> mPoints;
         std::string mMinimumColumnBasis;
         std::vector<double> mColumnBases;
-        Transformation mTransformation;
+        acmacs::Transformation mTransformation;
         std::vector<size_t> mDrawingOrder;
         PlotStyle mPlot;
 
