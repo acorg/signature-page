@@ -24,7 +24,7 @@ class AATransitionIndividualSettings : public rjson::array_field_container_child
  public:
     AATransitionIndividualSettings(const rjson::value& aData);
 
-    inline void set_label_disabled_offset(std::string aLabel, std::string aFirstLeafSeqid, Size&& aLabelOffset)
+    inline void set_label_disabled_offset(std::string aLabel, std::string aFirstLeafSeqid, acmacs::Size&& aLabelOffset)
         {
             label = aLabel;
             first_leaf_seq_id = aFirstLeafSeqid;
@@ -38,7 +38,7 @@ class AATransitionIndividualSettings : public rjson::array_field_container_child
     rjson::field_get_set<Color> color;
     rjson::field_get_set<TextStyle> style;
     rjson::field_get_set<double> interline;
-    rjson::field_get_set<Size> label_offset;
+    rjson::field_get_set<acmacs::Size> label_offset;
     rjson::field_get_set<double> label_connection_line_width;
     rjson::field_get_set<Color> label_connection_line_color;
     rjson::field_get_set<bool> _no_pp; // hidden field to avoid pretty printing this rjson object
@@ -57,7 +57,7 @@ class AATransitionPerBranchDrawSettings : public rjson::field_container_child
     rjson::field_get_set<Color> color;
     rjson::field_get_set<TextStyle> style;
     rjson::field_get_set<double> interline;
-    rjson::field_get_set<Size> label_offset;
+    rjson::field_get_set<acmacs::Size> label_offset;
     rjson::field_get_set<double> scatter_label_offset;
     rjson::field_get_set<std::string> scatter_label_offset_help;
     rjson::field_get_set<double> label_connection_line_width;
@@ -150,7 +150,7 @@ class TreeDrawMod : public rjson::array_field_container_child_element
     rjson::field_get_set<double> label_size;       // mark-with-label
     rjson::field_get_set<std::string> line_color;  // mark-with-label
     rjson::field_get_set<TextStyle> label_style;   // mark-with-label
-    rjson::field_get_set<Size> label_offset;   // mark-with-label
+    rjson::field_get_set<acmacs::Size> label_offset;   // mark-with-label
 
 }; // class TreeDrawMod
 
@@ -339,8 +339,8 @@ class TreeDraw
     size_t prepare_hz_sections();
     void draw_node(const Node& aNode, double aOriginX, double& aVerticalGap, double aEdgeLength = -1);
     void draw_legend();
-    void draw_aa_transition(const Node& aNode, const Location& aOrigin, double aRight);
-    void draw_mark_with_label(const Node& aNode, const Location& aTextOrigin);
+    void draw_aa_transition(const Node& aNode, const acmacs::Location& aOrigin, double aRight);
+    void draw_mark_with_label(const Node& aNode, const acmacs::Location& aTextOrigin);
 
     void fit_labels_into_viewport();
     void calculate_name_offset();

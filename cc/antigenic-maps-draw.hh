@@ -269,7 +269,7 @@ class AntigenicMapMod : public rjson::array_field_container_child_element
             }
         }
 
-    inline Location offset() const
+    inline acmacs::Offset offset() const
         {
             try {
                 const rjson::array& ar = operator[]("offset");
@@ -280,7 +280,7 @@ class AntigenicMapMod : public rjson::array_field_container_child_element
             }
         }
 
-    Viewport get_viewport(const Viewport& aOrigViewport) const; // settings.cc
+    acmacs::Viewport get_viewport(const acmacs::Viewport& aOrigViewport) const; // settings.cc
 
 }; // class AntigenicMapMod
 
@@ -297,7 +297,7 @@ class AntigenicMapsDrawSettings : public rjson::field_container_child
     rjson::array_field_container_child<AntigenicMapMod> mods;
 
     // inline std::vector<AntigenicMapMod>& get_mods() { return mods; }
-    void viewport(const Viewport& aViewport);
+    void viewport(const acmacs::Viewport& aViewport);
 
 }; // class AntigenicMapsDrawSettings
 

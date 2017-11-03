@@ -37,7 +37,7 @@ class CladeDrawSettings : public rjson::array_field_container_child_element
     rjson::field_get_set<Color> separator_color;
     rjson::field_get_set<double> separator_width;
     rjson::field_get_set<std::string> label_position; // middle, top, bottom
-    rjson::field_get_set<Size> label_offset;
+    rjson::field_get_set<acmacs::Size> label_offset;
     rjson::field_get_set<Color> label_color;
     rjson::field_get_set<double> label_size;
     rjson::field_get_set<TextStyle> label_style;

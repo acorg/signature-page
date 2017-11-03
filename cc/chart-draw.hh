@@ -16,7 +16,7 @@ class ChartDrawBase
     virtual inline ~ChartDrawBase() {}
 
     virtual void init_settings() = 0;
-    virtual const Viewport& viewport() const = 0;
+    virtual const acmacs::Viewport& viewport() const = 0;
     virtual void draw(Surface& aSurface) const = 0;
 
     virtual std::string lab() const = 0;

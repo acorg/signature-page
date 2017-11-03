@@ -147,7 +147,7 @@ void SignaturePageDraw::init_settings()
         mSettings->hz_sections.vertical_gap = 15;
         mSettings->clades.slot_width = 10;
         for (auto clade: mSettings->clades.clades) {
-            clade.label_offset = Size{1, 0};
+            clade.label_offset = acmacs::Size{1, 0};
         }
 
         if (mAntigenicMapsDraw)
@@ -162,7 +162,7 @@ void SignaturePageDraw::init_settings()
 
         mSettings->clades.slot_width = 10;
         for (auto clade: mSettings->clades.clades) {
-            clade.label_offset = Size{10, 0};
+            clade.label_offset = acmacs::Size{10, 0};
         }
         if (mTreeDraw)
             mTreeDraw->detect_hz_lines_for_clades(mCladesDraw ? mCladesDraw->clades() : nullptr, true);
@@ -250,7 +250,7 @@ void SignaturePageDraw::prepare()
 
 void SignaturePageDraw::make_layout_tree_ts_clades()
 {
-    const Size& page_size = mSurface->viewport().size;
+    const acmacs::Size& page_size = mSurface->viewport().size;
     const double section_height = page_size.height - (mSettings->signature_page.top + mSettings->signature_page.bottom);
 
     const double clades_width = mSettings->signature_page.clades_width;
@@ -260,10 +260,10 @@ void SignaturePageDraw::make_layout_tree_ts_clades()
     const double ts_left = mSettings->signature_page.left + tree_width + mSettings->signature_page.tree_margin_right;
     const double clades_left = ts_left + ts_width;
 
-    mTreeDraw->surface().move_resize_viewport({mSettings->signature_page.left, mSettings->signature_page.top}, tree_width, Size{1000 * tree_width / section_height, 1000});
-    mTimeSeriesDraw->surface().move_resize_viewport({ts_left, mSettings->signature_page.top}, ts_width, Size{1000 * ts_width / section_height, 1000});
-    mCladesDraw->surface().move_resize_viewport({clades_left, mSettings->signature_page.top}, clades_width, Size{1000 * clades_width / section_height, 1000});
-    mTitleDraw->surface().move_resize_viewport(Location{}, page_size.width, page_size);
+    mTreeDraw->surface().move_resize_viewport({mSettings->signature_page.left, mSettings->signature_page.top}, tree_width, acmacs::Size{1000 * tree_width / section_height, 1000});
+    mTimeSeriesDraw->surface().move_resize_viewport({ts_left, mSettings->signature_page.top}, ts_width, acmacs::Size{1000 * ts_width / section_height, 1000});
+    mCladesDraw->surface().move_resize_viewport({clades_left, mSettings->signature_page.top}, clades_width, acmacs::Size{1000 * clades_width / section_height, 1000});
+    mTitleDraw->surface().move_resize_viewport(acmacs::Location{}, page_size.width, page_size);
 
     std::cout << "Tree   " << mTreeDraw->surface() << std::endl;
     std::cout << "TS     " << mTimeSeriesDraw->surface() << std::endl;
@@ -275,7 +275,7 @@ void SignaturePageDraw::make_layout_tree_ts_clades()
 
 void SignaturePageDraw::make_layout_tree_clades_ts_maps()
 {
-    const Size& page_size = mSurface->viewport().size;
+    const acmacs::Size& page_size = mSurface->viewport().size;
     const double section_height = page_size.height - (mSettings->signature_page.top + mSettings->signature_page.bottom);
 
     const double antigic_maps_width = mSettings->signature_page.antigenic_maps_width;
@@ -291,12 +291,12 @@ void SignaturePageDraw::make_layout_tree_clades_ts_maps()
     const double mapped_antigens_left = ts_left + ts_width;
     const double antigic_maps_left = mapped_antigens_left + mapped_antigens_width + mSettings->signature_page.mapped_antigens_margin_right;
 
-    mTreeDraw->surface().move_resize_viewport({mSettings->signature_page.left, mSettings->signature_page.top}, tree_width, Size{1000 * tree_width / section_height, 1000});
-    mTimeSeriesDraw->surface().move_resize_viewport({ts_left, mSettings->signature_page.top}, ts_width, Size{1000 * ts_width / section_height, 1000});
-    mCladesDraw->surface().move_resize_viewport({clades_left, mSettings->signature_page.top}, clades_width, Size{1000 * clades_width / section_height, 1000});
-    mMappedAntigensDraw->surface().move_resize_viewport({mapped_antigens_left, mSettings->signature_page.top}, mapped_antigens_width, Size{1000 * mapped_antigens_width / section_height, 1000});
-    mAntigenicMapsDraw->surface().move_resize_viewport({antigic_maps_left, mSettings->signature_page.top}, antigic_maps_width, Size{1000 * antigic_maps_width / section_height, 1000});
-    mTitleDraw->surface().move_resize_viewport(Location{}, page_size.width, page_size);
+    mTreeDraw->surface().move_resize_viewport({mSettings->signature_page.left, mSettings->signature_page.top}, tree_width, acmacs::Size{1000 * tree_width / section_height, 1000});
+    mTimeSeriesDraw->surface().move_resize_viewport({ts_left, mSettings->signature_page.top}, ts_width, acmacs::Size{1000 * ts_width / section_height, 1000});
+    mCladesDraw->surface().move_resize_viewport({clades_left, mSettings->signature_page.top}, clades_width, acmacs::Size{1000 * clades_width / section_height, 1000});
+    mMappedAntigensDraw->surface().move_resize_viewport({mapped_antigens_left, mSettings->signature_page.top}, mapped_antigens_width, acmacs::Size{1000 * mapped_antigens_width / section_height, 1000});
+    mAntigenicMapsDraw->surface().move_resize_viewport({antigic_maps_left, mSettings->signature_page.top}, antigic_maps_width, acmacs::Size{1000 * antigic_maps_width / section_height, 1000});
+    mTitleDraw->surface().move_resize_viewport(acmacs::Location{}, page_size.width, page_size);
 
     std::cout << "Tree   " << mTreeDraw->surface() << std::endl;
     std::cout << "TS     " << mTimeSeriesDraw->surface() << std::endl;
@@ -340,7 +340,7 @@ void SignaturePageDraw::draw_mods()
                 const std::string mod_n = mod["N"];
                 if (mod_n == "text") {
                     const std::string text = mod["text"];
-                    Size offset;
+                    acmacs::Size offset;
                     try { const auto& settings_offset = mod["offset"]; offset.set(settings_offset[0], settings_offset[1]); } catch (rjson::field_not_found&) {}
                     std::string color{"black"};
                     try { color = static_cast<std::string>(mod["color"]); } catch (rjson::field_not_found&) {}

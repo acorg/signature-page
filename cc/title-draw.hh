@@ -21,7 +21,7 @@ class TitleDrawSettings : public rjson::field_container_child
     rjson::field_get_set<Color> color; // Color
     rjson::field_get_set<double> size;
     rjson::field_get_set<TextStyle> style;
-    rjson::field_get_set<Size> offset;
+    rjson::field_get_set<acmacs::Size> offset;
 
 }; // class TitleDrawSettings
 

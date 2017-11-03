@@ -11,7 +11,7 @@ void TitleDraw::init_settings()
         if (!title.empty())
             title += " ";
         title += mChart->lab();
-        mSettings.offset = Size{10, 10};
+        mSettings.offset = acmacs::Size{10, 10};
     }
     else {
         // mSettings.offset.set(10, 10 + mSettings.size);
@@ -32,7 +32,7 @@ void TitleDraw::prepare()
 
 void TitleDraw::draw()
 {
-    mSurface.text(static_cast<Size>(mSettings.offset), mSettings.title, mSettings.color, Pixels{mSettings.size}, mSettings.style);
+    mSurface.text(static_cast<acmacs::Size>(mSettings.offset), mSettings.title, mSettings.color, Pixels{mSettings.size}, mSettings.style);
 
 } // TitleDraw::draw
 

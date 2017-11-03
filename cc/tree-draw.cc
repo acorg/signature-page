@@ -533,13 +533,13 @@ double TreeDraw::max_label_offset()
 void TreeDraw::draw_node(const Node& aNode, double aOriginX, double& aVerticalGap, double aEdgeLength)
 {
     if (aNode.draw.shown) {
-        Size size{(aEdgeLength < 0.0 ? aNode.edge_length : aEdgeLength) * mHorizontalStep, 0};
+        acmacs::Size size{(aEdgeLength < 0.0 ? aNode.edge_length : aEdgeLength) * mHorizontalStep, 0};
         const double right = aOriginX + size.width;
 
         if (aNode.is_leaf()) {
             const std::string text = aNode.display_name();
             const auto tsize = mSurface.text_size(text, mFontSize, mSettings.label_style);
-            const Location text_origin{right + mNameOffset, aNode.draw.vertical_pos + tsize.height / 2};
+            const acmacs::Location text_origin{right + mNameOffset, aNode.draw.vertical_pos + tsize.height / 2};
             mSurface.text(text_origin, text, mColoring->color(aNode), mFontSize, mSettings.label_style);
             if (text_origin.x < 0 || text_origin.y < 0) {
                 std::cerr << "WARNING: bad origin for a node label: " << text_origin << ' ' << text << " mNameOffset:" << mNameOffset << " aOriginX:" << aOriginX << '\n';
@@ -572,7 +572,7 @@ void TreeDraw::draw_node(const Node& aNode, double aOriginX, double& aVerticalGa
 
 // ----------------------------------------------------------------------
 
-void TreeDraw::draw_aa_transition(const Node& aNode, const Location& aOrigin, double aRight)
+void TreeDraw::draw_aa_transition(const Node& aNode, const acmacs::Location& aOrigin, double aRight)
 {
     auto& settings = mSettings.aa_transition;
     const auto& first_leaf = find_first_leaf(aNode);
@@ -583,25 +583,25 @@ void TreeDraw::draw_aa_transition(const Node& aNode, const Location& aOrigin, do
                 const auto longest_label = std::max_element(labels.begin(), labels.end(), [](const auto& a, const auto& b) { return a.first.size() < b.first.size(); });
                 const auto longest_label_size = mSurface.text_size(longest_label->first, Pixels{branch_settings.size}, branch_settings.style);
                 const auto node_line_width = aRight - aOrigin.x;
-                Size offset(node_line_width > longest_label_size.width ? (node_line_width - longest_label_size.width) / 2 : (node_line_width - longest_label_size.width),
+                acmacs::Size offset(node_line_width > longest_label_size.width ? (node_line_width - longest_label_size.width) / 2 : (node_line_width - longest_label_size.width),
                             longest_label_size.height * branch_settings.interline);
                 offset += branch_settings.label_offset;
-                Location origin = aOrigin + offset;
+                acmacs::Location origin = aOrigin + offset;
                 for (const auto& label: labels) {
                     const auto label_width = mSurface.text_size(label.first, Pixels{branch_settings.size}, branch_settings.style).width;
-                    const Location label_xy(origin.x + (longest_label_size.width - label_width) / 2, origin.y);
+                    const acmacs::Location label_xy(origin.x + (longest_label_size.width - label_width) / 2, origin.y);
                     mSurface.text(label_xy, label.first, branch_settings.color, Pixels{branch_settings.size}, branch_settings.style);
                     if (settings.show_node_for_left_line && label.second) {
-                        mSurface.line(Location{},
-                                      Location(mHorizontalStep * label.second->data.cumulative_edge_length, mVerticalStep * label.second->draw.line_no),
+                        mSurface.line(acmacs::Location{},
+                                      acmacs::Location(mHorizontalStep * label.second->data.cumulative_edge_length, mVerticalStep * label.second->draw.line_no),
                                       settings.node_for_left_line_color, Pixels{settings.node_for_left_line_width});
                     }
                     origin.y += longest_label_size.height * branch_settings.interline;
                 }
 
-                const Location connection_line_start{(aOrigin.x + aRight) / 2, aOrigin.y};
-                Location connection_line_end;
-                const Size label_offset = branch_settings.label_offset;
+                const acmacs::Location connection_line_start{(aOrigin.x + aRight) / 2, aOrigin.y};
+                acmacs::Location connection_line_end;
+                const acmacs::Size label_offset = branch_settings.label_offset;
                 if (label_offset.height > 5)
                     connection_line_end.set(aOrigin.x + longest_label_size.width / 2 + offset.width, aOrigin.y - longest_label_size.height + offset.height);
                 else if (label_offset.height < -5)
@@ -627,17 +627,17 @@ void TreeDraw::draw_aa_transition(const Node& aNode, const Location& aOrigin, do
 
 // ----------------------------------------------------------------------
 
-void TreeDraw::draw_mark_with_label(const Node& aNode, const Location& aTextOrigin)
+void TreeDraw::draw_mark_with_label(const Node& aNode, const acmacs::Location& aTextOrigin)
 {
     if (aNode.draw.mark_with_label) {
         std::cerr << "DEBUG: draw mark_with_label " << aNode.seq_id << '\n';
         const auto settings = mSettings.mods.find_mark_with_label(aNode.seq_id);
 
-        const Size label_offset = settings.label_offset;
-        const Location label_origin = aTextOrigin + label_offset;
+        const acmacs::Size label_offset = settings.label_offset;
+        const acmacs::Location label_origin = aTextOrigin + label_offset;
         mSurface.text(label_origin, settings.label, Color{settings.label_color}, Pixels{settings.label_size}, settings.label_style);
         const auto vlsize = mSurface.text_size(settings.label, Pixels{settings.label_size}, TextStyle{});
-        const auto line_origin = label_origin + Size(vlsize.width / 2, label_offset.height > 0 ? - vlsize.height : 0);
+        const auto line_origin = label_origin + acmacs::Size(vlsize.width / 2, label_offset.height > 0 ? - vlsize.height : 0);
         mSurface.line(line_origin, aTextOrigin, Color{settings.line_color}, Pixels{settings.line_width});
     }
 
@@ -659,7 +659,7 @@ void TreeDraw::draw_legend()
 {
     const Legend* legend = coloring_legend();
     if (legend) {
-        Surface& legend_surface = mSurface.subsurface(static_cast<Size>(mSettings.legend.offset), Scaled{mSettings.legend.width}, legend->size(), false);
+        Surface& legend_surface = mSurface.subsurface(static_cast<acmacs::Size>(mSettings.legend.offset), Scaled{mSettings.legend.width}, legend->size(), false);
         legend->draw(legend_surface, mSettings.legend);
           // legend_surface->border("red", 1);
     }
@@ -855,7 +855,7 @@ const AATransitionIndividualSettings& AATransitionPerBranchDrawSettings::setting
     if (scatter_label_offset > 0) {
         std::random_device rand;
         constexpr const auto rand_size = static_cast<double>(rand.max() - rand.min());
-        Location old_label_offset;
+        acmacs::Location old_label_offset;
         try {
             const rjson::array& ar = settings["label_offset"];
             old_label_offset.set(ar[0], ar[1]);

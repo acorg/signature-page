@@ -10,7 +10,7 @@ class LegendSettings : public rjson::field_container_child
  public:
     LegendSettings(rjson::field_container_parent& aParent, std::string aFieldName);
 
-    rjson::field_get_set<Size> offset;  // in enclosing surface
+    rjson::field_get_set<acmacs::Size> offset;  // in enclosing surface
     rjson::field_get_set<double> width; // in enclosing surface scale
     rjson::field_get_set<TextStyle> title_style;
     rjson::field_get_set<double> title_size;
@@ -29,7 +29,7 @@ class Legend
     virtual inline ~Legend() = default;
 
     virtual void draw(Surface& aSurface, const LegendSettings& aSettings) const = 0;
-    virtual Size size() const = 0;
+    virtual acmacs::Size size() const = 0;
 
 }; // class Legend
 

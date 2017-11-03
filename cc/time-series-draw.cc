@@ -66,7 +66,7 @@ void TimeSeriesDraw::draw()
 
 void TimeSeriesDraw::draw_labels(double month_width)
 {
-    const Size& surface_size = mSurface.viewport().size;
+    const acmacs::Size& surface_size = mSurface.viewport().size;
     const double month_max_height = mSurface.text_size("May ", Pixels{mSettings.label_size}, mSettings.label_style).width;
     double x_bearing;
     const auto big_label_size = mSurface.text_size("May 99", Pixels{mSettings.label_size}, mSettings.label_style, &x_bearing);
@@ -80,7 +80,7 @@ void TimeSeriesDraw::draw_labels(double month_width)
 
 // ----------------------------------------------------------------------
 
-void TimeSeriesDraw::draw_labels_at_side(const Location& aOrigin, double month_width, double month_max_height)
+void TimeSeriesDraw::draw_labels_at_side(const acmacs::Location& aOrigin, double month_width, double month_max_height)
 {
     try {
         Date current_month{mSettings.begin};
@@ -119,7 +119,7 @@ void TimeSeriesDraw::draw_dashes(double month_width)
         if (aNode.draw.shown) {
             const int month_no = months_between_dates(Date{mSettings.begin}, Date{aNode.data.date()});
             if (month_no >= 0) {
-                const Location a{base_x + month_width * month_no, aNode.draw.vertical_pos};
+                const acmacs::Location a{base_x + month_width * month_no, aNode.draw.vertical_pos};
                 mSurface.line(a, {a.x + month_width * mSettings.dash_width, a.y}, coloring.color(aNode), Pixels{mSettings.dash_line_width}, Surface::LineCap::Round);
             }
         }
@@ -166,7 +166,7 @@ void TimeSeriesDraw::draw_hz_section_label(size_t aSectionIndex, double aY)
     const auto section_settings = mHzSections.sections[aSectionIndex];
     if (section_settings.show && section_settings.show_map) {
         std::string label = mHzSections.node_refs[aSectionIndex].index; // (1, 'A' + static_cast<char>(aSectionNo));
-        const Size tsize = mSurface.text_size(label, Pixels{mHzSections.ts_label_size}, mHzSections.ts_label_style);
+        const acmacs::Size tsize = mSurface.text_size(label, Pixels{mHzSections.ts_label_size}, mHzSections.ts_label_style);
         mSurface.text({mSurface.viewport().size.width - tsize.width * 1.2, aY + tsize.height * 1.2}, label, mHzSections.ts_label_color, Pixels{mHzSections.ts_label_size}, mHzSections.ts_label_style);
     }
 

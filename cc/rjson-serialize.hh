@@ -5,12 +5,14 @@
 #include "acmacs-base/rjson.hh"
 
 #include "acmacs-base/color.hh"
-#include "acmacs-draw/size.hh"
+#include "acmacs-base/size.hh"
 
 // ----------------------------------------------------------------------
 
 namespace rjson
 {
+    using Size = acmacs::Size;
+
     class field_container_parent
     {
      public:

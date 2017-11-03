@@ -25,7 +25,7 @@ class ColoringByContinentMapLegend : public Legend
             continent_map_draw(aSurface);
         }
 
-    virtual Size size() const
+    virtual acmacs::Size size() const
         {
             return continent_map_size();
         }
@@ -87,7 +87,7 @@ class ColoringByPosLegend : public Legend
         {
               // aSurface.border(0xA0FFA000, 1);
             const auto title_size = aSurface.text_size(mTitle, Pixels{aSettings.title_size}, aSettings.title_style);
-            Location origin{0, title_size.height};
+            acmacs::Location origin{0, title_size.height};
               //origin += Size((aSurface.text_size(mTitle, mFontSize, mStyle).width - label_size.width) / 2, label_size.height * mInterline);
             const auto text_size = aSurface.text_size("W", Pixels{aSettings.text_size}, aSettings.text_style);
             double max_width = 0;
@@ -100,7 +100,7 @@ class ColoringByPosLegend : public Legend
             aSurface.text({(max_width - title_size.width) / 2, title_size.height}, mTitle, "black", Pixels{aSettings.title_size}, aSettings.title_style);
         }
 
-    virtual Size size() const
+    virtual acmacs::Size size() const
         {
             return {mTitle.size() * 10.0, (mColoring.used_colors().size() + 1) * 10.0};
         }

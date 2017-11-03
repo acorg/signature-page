@@ -226,7 +226,7 @@ AntigenicMapsDrawSettings::AntigenicMapsDrawSettings(rjson::field_container_pare
        });
 }
 
-void AntigenicMapsDrawSettings::viewport(const Viewport& aViewport)
+void AntigenicMapsDrawSettings::viewport(const acmacs::Viewport& aViewport)
 {
     auto make_setting_list = [&aViewport]() -> rjson::array {
         if (float_equal(aViewport.size.width, aViewport.size.height))
@@ -246,9 +246,9 @@ void AntigenicMapsDrawSettings::viewport(const Viewport& aViewport)
 
 } // AntigenicMapsDrawSettings::viewport
 
-Viewport AntigenicMapMod::get_viewport(const Viewport& aOrigViewport) const
+acmacs::Viewport AntigenicMapMod::get_viewport(const acmacs::Viewport& aOrigViewport) const
 {
-    Viewport result = aOrigViewport;
+    acmacs::Viewport result = aOrigViewport;
 
     try {
         const rjson::array& ar = operator[]("rel");
@@ -277,7 +277,7 @@ Viewport AntigenicMapMod::get_viewport(const Viewport& aOrigViewport) const
                   result.set(ar[0], ar[1], ar[2]);
                   break;
               case 4:
-                  result.set(Location(ar[0], ar[1]), Size(ar[2], ar[3]));
+                  result.set(acmacs::Location(ar[0], ar[1]), acmacs::Size(ar[2], ar[3]));
                   break;
               default:
                   throw std::exception{};

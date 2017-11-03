@@ -17,7 +17,7 @@ void AntigenicMapsLayoutDraw::prepare()
 {
     find_sequenced_antigens();
     prepare_apply_mods();
-    const Viewport& viewport = mAntigenicMapsDraw.chart().viewport();
+    const acmacs::Viewport& viewport = mAntigenicMapsDraw.chart().viewport();
     settings().viewport(viewport);
     std::cout << "INFO: Using viewport: " << viewport << std::endl;
 
@@ -25,7 +25,7 @@ void AntigenicMapsLayoutDraw::prepare()
 
 // ----------------------------------------------------------------------
 
-const Viewport& AntigenicMapsLayoutDraw::viewport() const
+const acmacs::Viewport& AntigenicMapsLayoutDraw::viewport() const
 {
     return mAntigenicMapsDraw.chart().viewport();
 }
