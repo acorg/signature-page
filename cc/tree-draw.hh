@@ -36,7 +36,7 @@ class AATransitionIndividualSettings : public rjson::array_field_container_child
     rjson::field_get_set<bool> show;
     rjson::field_get_set<double> size;
     rjson::field_get_set<Color> color;
-    rjson::field_get_set<TextStyle> style;
+    rjson::field_get_set<acmacs::TextStyle> style;
     rjson::field_get_set<double> interline;
     rjson::field_get_set<acmacs::Size> label_offset;
     rjson::field_get_set<double> label_connection_line_width;
@@ -55,7 +55,7 @@ class AATransitionPerBranchDrawSettings : public rjson::field_container_child
     rjson::field_get_set<bool> show;
     rjson::field_get_set<double> size;
     rjson::field_get_set<Color> color;
-    rjson::field_get_set<TextStyle> style;
+    rjson::field_get_set<acmacs::TextStyle> style;
     rjson::field_get_set<double> interline;
     rjson::field_get_set<acmacs::Size> label_offset;
     rjson::field_get_set<double> scatter_label_offset;
@@ -101,7 +101,7 @@ class TreeDrawVaccineSettings : public rjson::array_field_container_child_elemen
     rjson::field_get_set<std::string> name_help;
     rjson::field_get_set<Color> label_color;
     rjson::field_get_set<double> label_size;
-    rjson::field_get_set<TextStyle> label_style;
+    rjson::field_get_set<acmacs::TextStyle> label_style;
     rjson::field_get_set<Color> line_color;
     rjson::field_get_set<double> line_width;
 
@@ -149,7 +149,7 @@ class TreeDrawMod : public rjson::array_field_container_child_element
     rjson::field_get_set<std::string> label_color; // mark-with-label
     rjson::field_get_set<double> label_size;       // mark-with-label
     rjson::field_get_set<std::string> line_color;  // mark-with-label
-    rjson::field_get_set<TextStyle> label_style;   // mark-with-label
+    rjson::field_get_set<acmacs::TextStyle> label_style;   // mark-with-label
     rjson::field_get_set<acmacs::Size> label_offset;   // mark-with-label
 
 }; // class TreeDrawMod
@@ -223,7 +223,7 @@ class TreeDrawSettings : public rjson::field_container_child
     rjson::field_get_set<double> line_width;
     rjson::field_get_set<double> root_edge;
     rjson::field_get_set<Color> line_color;
-    rjson::field_get_set<TextStyle> label_style;
+    rjson::field_get_set<acmacs::TextStyle> label_style;
     rjson::field_get_set<double> name_offset;         // offset of the label from the line right end, in W widths
     rjson::field_get_set<std::string> color_nodes;    // black, continent, position number (e.g. 162)
     AATransitionDrawSettings aa_transition;
@@ -267,7 +267,7 @@ class HzSections : public rjson::field_container_child
     rjson::field_get_set<Color> line_color;
     rjson::field_get_set<double> line_width;
     rjson::field_get_set<double> ts_label_size;
-    rjson::field_get_set<TextStyle> ts_label_style;
+    rjson::field_get_set<acmacs::TextStyle> ts_label_style;
     rjson::field_get_set<Color> ts_label_color;
     rjson::array_field_container_child<HzSection> sections;
     rjson::field_get_set<bool> show_labels_in_time_series_in_tree_mode;

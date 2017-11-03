@@ -23,7 +23,7 @@ class TimeSeriesDrawSettings : public rjson::field_container_child
     rjson::field_get_set<std::string> begin;
     rjson::field_get_set<std::string> end;
     rjson::field_get_set<double> label_size;
-    rjson::field_get_set<TextStyle> label_style;
+    rjson::field_get_set<acmacs::TextStyle> label_style;
     rjson::field_get_set<double> month_year_to_timeseries_gap;
     rjson::field_get_set<Color> month_separator_color;
     rjson::field_get_set<double> month_separator_width;

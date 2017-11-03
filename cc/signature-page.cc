@@ -346,7 +346,7 @@ void SignaturePageDraw::draw_mods()
                     try { color = static_cast<std::string>(mod["color"]); } catch (rjson::field_not_found&) {}
                     Pixels size{14};
                     try { size = mod["size"]; } catch (rjson::field_not_found&) {}
-                    TextStyle style;
+                    acmacs::TextStyle style;
                     try { style.font_family(mod["family"]); } catch (rjson::field_not_found&) {}
                     try { style.slant(mod["slant"]); } catch (rjson::field_not_found&) {}
                     try { style.weight(mod["weight"]); } catch (rjson::field_not_found&) {}

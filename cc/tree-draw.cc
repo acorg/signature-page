@@ -636,7 +636,7 @@ void TreeDraw::draw_mark_with_label(const Node& aNode, const acmacs::Location& a
         const acmacs::Size label_offset = settings.label_offset;
         const acmacs::Location label_origin = aTextOrigin + label_offset;
         mSurface.text(label_origin, settings.label, Color{settings.label_color}, Pixels{settings.label_size}, settings.label_style);
-        const auto vlsize = mSurface.text_size(settings.label, Pixels{settings.label_size}, TextStyle{});
+        const auto vlsize = mSurface.text_size(settings.label, Pixels{settings.label_size}, acmacs::TextStyle{});
         const auto line_origin = label_origin + acmacs::Size(vlsize.width / 2, label_offset.height > 0 ? - vlsize.height : 0);
         mSurface.line(line_origin, aTextOrigin, Color{settings.line_color}, Pixels{settings.line_width});
     }

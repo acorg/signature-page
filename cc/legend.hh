@@ -12,9 +12,9 @@ class LegendSettings : public rjson::field_container_child
 
     rjson::field_get_set<acmacs::Size> offset;  // in enclosing surface
     rjson::field_get_set<double> width; // in enclosing surface scale
-    rjson::field_get_set<TextStyle> title_style;
+    rjson::field_get_set<acmacs::TextStyle> title_style;
     rjson::field_get_set<double> title_size;
-    rjson::field_get_set<TextStyle> text_style;
+    rjson::field_get_set<acmacs::TextStyle> text_style;
     rjson::field_get_set<double> text_size;
     rjson::field_get_set<double> interline;
 

@@ -40,7 +40,7 @@ class CladeDrawSettings : public rjson::array_field_container_child_element
     rjson::field_get_set<acmacs::Size> label_offset;
     rjson::field_get_set<Color> label_color;
     rjson::field_get_set<double> label_size;
-    rjson::field_get_set<TextStyle> label_style;
+    rjson::field_get_set<acmacs::TextStyle> label_style;
     rjson::field_get_set<double> label_rotation;
     rjson::field_get_set<int> slot;
 

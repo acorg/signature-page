@@ -12,6 +12,7 @@
 namespace rjson
 {
     using Size = acmacs::Size;
+    using TextStyle = acmacs::TextStyle;
 
     class field_container_parent
     {
