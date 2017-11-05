@@ -310,9 +310,9 @@ namespace rjson
         try {
             const auto& obj = get_value_ref();
             TextStyle style;
-            try { style.font_family(obj["family"]); } catch (field_not_found&) {}
-            try { style.slant(obj["slant"]); } catch (field_not_found&) {}
-            try { style.weight(obj["weight"]); } catch (field_not_found&) {}
+            try { style.font_family = obj["family"]; } catch (field_not_found&) {}
+            try { style.slant = static_cast<std::string>(obj["slant"]); } catch (field_not_found&) {}
+            try { style.weight = static_cast<std::string>(obj["weight"]); } catch (field_not_found&) {}
             return style;
         }
         catch (std::exception&) {
@@ -324,9 +324,9 @@ namespace rjson
     template <> inline value to_value<TextStyle>(const TextStyle& aTextStyle)
     {
         return object{
-            {"family", string{aTextStyle.font_family()}},
-            {"slant", string{aTextStyle.slant_as_stirng()}},
-            {"weight", string{aTextStyle.weight_as_stirng()}}
+            {"family", string{aTextStyle.font_family}},
+            {"slant", string{*aTextStyle.slant}},
+            {"weight", string{*aTextStyle.weight}}
         };
     }
 
