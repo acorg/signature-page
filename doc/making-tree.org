@@ -11,6 +11,7 @@ e.g.
 >A/South Australia/112/2017 |  2017-06-01 | SIAT1 |  1706116 VW82509 | WHO Collaborating Centre for Reference and Research on Influenza | A / H3N2 |
 
 If field value is unknown or not applicable, it may be left empty.
+
 Field separator must be surrounded by spaces: " |  "
 
 ** Converting fasta file(s) into sequence database
@@ -27,7 +28,7 @@ You may use raxml, garli or any other program for making tree. The
 resulting tree must be in newick format or you need to convert the
 result to newick format yourself.
 ** Convert newick tree to json
-$ newick-to-json tree.phy tree.json.xz
+$ tree-newick-to-json <tree.phy | xz -9e >tree.json.xz
 ** Drawing tree
 *** Init settings
 $ sigp --seqdb <seqdb.json.xz> --init-settings tree.settings.json tree.json.xz tree.pdf
