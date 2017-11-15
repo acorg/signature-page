@@ -32,7 +32,7 @@ PYTHON_LD_LIB = $(shell $(PYTHON_CONFIG) --ldflags | sed -E 's/-Wl,-stack_size,[
 
 PKG_INCLUDES = $(shell pkg-config --cflags cairo) $(shell pkg-config --cflags liblzma) $(shell $(PYTHON_CONFIG) --includes)
 
-ACMACSD_LIBS = $(FS_LIB) -L$(AD_LIB) -lacmacsbase -lacmacschart -lacmacsdraw -lacmacsmapdraw -lseqdb -lhidb -llocationdb -lboost_date_time -lboost_program_options
+ACMACSD_LIBS = $(FS_LIB) $(AD_LIB)/$(call shared_lib_name,libacmacsbase,1,0) $(AD_LIB)/$(call shared_lib_name,libacmacschart,1,0) -L$(AD_LIB) -lacmacsdraw -lacmacsmapdraw -lseqdb -lhidb -llocationdb -lboost_date_time -lboost_program_options
 SETTINGS_CREATE_LDLIBS = $(ACMACSD_LIBS) $(shell pkg-config --libs liblzma)
 SIGP_LDLIBS = $(ACMACSD_LIBS) $(shell pkg-config --libs cairo) $(shell pkg-config --libs liblzma)
 
@@ -46,23 +46,23 @@ all: $(DIST)/signature_page_backend$(PYTHON_MODULE_SUFFIX) $(DIST)/sigp-settings
 #	$(CXX) $(LDFLAGS) -o $@ $^
 
 $(DIST)/signature_page_backend$(PYTHON_MODULE_SUFFIX):  $(patsubst %.cc,$(BUILD)/%.o,$(SIGNATURE_PAGE_PY_SOURCES)) | $(DIST) check-acmacsd-root
-	@echo "SHARED     " $@ # '<--' $^
+	@printf "%-16s %s\n" "SHARED" $@
 	@$(CXX) -shared $(LDFLAGS) -o $@ $^ $(SIGP_LDLIBS) $(PYTHON_LD_LIB)
 
 $(DIST)/sigp-settings-create: $(patsubst %.cc,$(BUILD)/%.o,$(SETTINGS_CREATE_SOURCES)) | $(DIST)
-	@echo "LINK       " $@ # '<--' $^
+	@printf "%-16s %s\n" "LINK" $@
 	@$(CXX) $(LDFLAGS) -o $@ $^ $(SETTINGS_CREATE_LDLIBS)
 
 $(DIST)/test-settings-copy: $(patsubst %.cc,$(BUILD)/%.o,$(TEST_SETTINGS_COPY_SOURCES)) | $(DIST)
-	@echo "LINK       " $@ # '<--' $^
+	@printf "%-16s %s\n" "LINK" $@
 	@$(CXX) $(LDFLAGS) -o $@ $^ $(SETTINGS_CREATE_LDLIBS)
 
 # $(DIST)/test-draw-chart: $(patsubst %.cc,$(BUILD)/%.o,$(TEST_DRAW_CHART_SOURCES)) | $(DIST)
-#	@echo "LINK       " $@ # '<--' $^
+#	@printf "%-16s %s\n" "LINK" $@
 #	@$(CXX) $(LDFLAGS) -o $@ $^ $(SIGP_LDLIBS)
 
 $(DIST)/sigp: $(patsubst %.cc,$(BUILD)/%.o,$(SIGP_SOURCES)) | $(DIST)
-	@echo "LINK       " $@ # '<--' $^
+	@printf "%-16s %s\n" "LINK" $@
 	@$(CXX) $(LDFLAGS) -o $@ $^ $(SIGP_LDLIBS)
 
 # ----------------------------------------------------------------------
