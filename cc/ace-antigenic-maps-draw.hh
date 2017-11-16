@@ -2,7 +2,7 @@
 
 #include <cstdlib>
 
-#include "acmacs-chart/chart.hh"
+#include "acmacs-chart-1/chart.hh"
 #include "hidb/hidb.hh"
 #include "acmacs-map-draw/draw.hh"
 #include "antigenic-maps-draw.hh"

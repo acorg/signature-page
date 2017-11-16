@@ -1,6 +1,6 @@
 #include <typeinfo>
 
-#include "acmacs-chart/ace.hh"
+#include "acmacs-chart-1/ace.hh"
 #include "tree-draw.hh"
 #include "signature-page.hh"
 #include "antigenic-maps-layout.hh"
