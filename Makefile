@@ -32,7 +32,12 @@ PYTHON_LD_LIB = $(shell $(PYTHON_CONFIG) --ldflags | sed -E 's/-Wl,-stack_size,[
 
 PKG_INCLUDES = $(shell pkg-config --cflags cairo) $(shell pkg-config --cflags liblzma) $(shell $(PYTHON_CONFIG) --includes)
 
-ACMACSD_LIBS = $(FS_LIB) $(AD_LIB)/$(call shared_lib_name,libacmacsbase,1,0) $(AD_LIB)/$(call shared_lib_name,libacmacschart,1,0) -L$(AD_LIB) -lacmacsdraw -lacmacsmapdraw -lseqdb -lhidb -llocationdb -lboost_date_time -lboost_program_options
+ACMACSD_LIBS = \
+	$(AD_LIB)/$(call shared_lib_name,libacmacsbase,1,0) \
+	$(AD_LIB)/$(call shared_lib_name,liblocationdb,1,0) \
+	$(AD_LIB)/$(call shared_lib_name,libacmacschart,1,0) \
+	-L$(AD_LIB) -lacmacsdraw -lacmacsmapdraw -lseqdb -lhidb -lboost_date_time -lboost_program_options $(FS_LIB)
+
 SETTINGS_CREATE_LDLIBS = $(ACMACSD_LIBS) $(shell pkg-config --libs liblzma)
 SIGP_LDLIBS = $(ACMACSD_LIBS) $(shell pkg-config --libs cairo) $(shell pkg-config --libs liblzma)
 
