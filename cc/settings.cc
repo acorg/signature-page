@@ -411,7 +411,7 @@ void Settings::upgrade()             // upgrade to the new version in case old v
 void write_settings(const Settings& aSettings, std::string aFilename, size_t aIndent)
 {
     std::cerr << "INFO: writing settings to " << aFilename << std::endl;
-    acmacs_base::write_file(aFilename, aSettings.to_json_pp(aIndent));
+    acmacs::file::write(aFilename, aSettings.to_json_pp(aIndent));
 
 } // write_settings
 
