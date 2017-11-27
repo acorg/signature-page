@@ -76,7 +76,7 @@ int main(int argc, const char *argv[])
             signature_page.write_initialized_settings(args["--init-settings"]);
 
         if (args["--open"])
-            acmacs::quicklook(args[1], 5);
+            acmacs::open(args[1], 2);
 
         return 0;
     }
