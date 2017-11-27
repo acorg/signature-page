@@ -2,15 +2,16 @@
 #include <cstdlib>
 #include <cmath>
 
-#include "signature-page.hh"
-#include "locationdb/locdb.hh"
+#include "acmacs-base/read-file.hh"
 #include "seqdb/seqdb.hh"
+#include "acmacs-draw/surface-cairo.hh"
+
+#include "signature-page.hh"
 #include "tree.hh"
 #include "tree-export.hh"
 #include "tree-draw.hh"
 #include "time-series-draw.hh"
 #include "settings.hh"
-#include "acmacs-draw/surface-cairo.hh"
 #include "mapped-antigens-draw.hh"
 #include "antigenic-maps-draw.hh"
 #include "title-draw.hh"
@@ -18,10 +19,13 @@
 // ----------------------------------------------------------------------
 
 SignaturePageDraw::SignaturePageDraw()
-    : mSettings{new Settings{}}, mLocdb{new LocDb{}}, mSeqdb{new seqdb::Seqdb{}},
-      mTree{new Tree{}}
+    : mSettings{new Settings{}}, mTree{new Tree{}}
 {
-    mLocdb->importFrom(std::getenv("ACMACSD_ROOT") + std::string("/data/locationdb.json.xz"));
+    try {
+        mSeqdb = &seqdb::get();
+    }
+    catch (seqdb::import_error&) {
+    }
 
 } // SignaturePageDraw::SignaturePageDraw
 
@@ -31,15 +35,6 @@ SignaturePageDraw::SignaturePageDraw()
 SignaturePageDraw::~SignaturePageDraw()
 {
 }
-
-// ----------------------------------------------------------------------
-
-void SignaturePageDraw::load_settings(const std::vector<std::string>& aFilenames)
-{
-    for (const auto& filename: aFilenames)
-        load_settings(filename);
-
-} // SignaturePageDraw::load_settings
 
 // ----------------------------------------------------------------------
 
@@ -197,13 +192,11 @@ void SignaturePageDraw::write_initialized_settings(std::string aFilename)
 
 // ----------------------------------------------------------------------
 
-void SignaturePageDraw::tree(std::string aTreeFilename, std::string aSeqdbFilename)
+void SignaturePageDraw::tree(std::string aTreeFilename)
 {
     tree_import(aTreeFilename, *mTree);
-    if (!aSeqdbFilename.empty()) {
-        mSeqdb->load(aSeqdbFilename);
+    if (mSeqdb)
         mTree->match_seqdb(*mSeqdb);
-    }
 
 } // SignaturePageDraw::tree
 
@@ -236,7 +229,7 @@ void SignaturePageDraw::prepare()
     if (mTitleDraw)
         mTitleDraw->prepare();
     if (mTreeDraw)
-        mTreeDraw->prepare(*mLocdb);
+        mTreeDraw->prepare();
     if (mTimeSeriesDraw)
         mTimeSeriesDraw->prepare();
     if (mCladesDraw)

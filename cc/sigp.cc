@@ -2,6 +2,7 @@
 #include <string>
 
 #include "acmacs-base/argc-argv.hh"
+#include "acmacs-base/quicklook.hh"
 #include "seqdb/seqdb.hh"
 
 #include "signature-page.hh"
@@ -26,6 +27,7 @@ int main(int argc, const char *argv[])
                 {"--no-draw", false}, // bool_switch(&aOptions.no_draw)->default_value(false), "do not generate pdf")
                 {"--chart", ""}, // value<std::string>(&aOptions.chart_filename), "path to a chart for the signature page")
 
+                {"--open", false},
                 {"-v", false},
                 {"--verbose", false},
                 {"-h", false},
@@ -40,10 +42,22 @@ int main(int argc, const char *argv[])
         }
         const bool verbose = args["-v"] || args["--verbose"];
         seqdb::setup_dbs(args["--db-dir"], verbose);
+        if (args["--seqdb"])
+            seqdb::setup(args["--seqdb"], verbose);
 
         SignaturePageDraw signature_page;
-        signature_page.load_settings(args["-s"]);
-        signature_page.tree(args[0], args["--seqdb"]);
+
+        auto load_settings = [&signature_page,verbose](argc_argv::strings aFilenames) {
+            for (auto fn: aFilenames) {
+                if (verbose)
+                    std::cerr << "DEBUG: reading settings from " << fn << '\n';
+                signature_page.load_settings(fn);
+            }
+        };
+        if (args["-s"])
+            load_settings(args["-s"]);
+
+        signature_page.tree(args[0]);
         if (args["--chart"])
             signature_page.chart(args["--chart"]); // before make_surface!
         signature_page.make_surface(args[1], args["--init-settings"], !args["--no-draw"]); // before init_layout!
@@ -60,6 +74,9 @@ int main(int argc, const char *argv[])
             signature_page.draw(args["--report-hz-section_antigens"]);
         if (args["--init-settings"])
             signature_page.write_initialized_settings(args["--init-settings"]);
+
+        if (args["--open"])
+            acmacs::quicklook(args[1], 5);
 
         return 0;
     }

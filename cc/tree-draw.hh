@@ -304,7 +304,7 @@ class TreeDraw
     TreeDraw(Surface& aSurface, Tree& aTree, TreeDrawSettings& aSettings, HzSections& aHzSections);
     ~TreeDraw();
 
-    void prepare(const LocDb& aLocDb);
+    void prepare();
     void draw();
 
     const Legend* coloring_legend() const;

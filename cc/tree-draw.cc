@@ -67,9 +67,9 @@ void TreeDraw::detect_hz_lines_for_clades(const Clades* aClades, bool aForce)
 
 // ----------------------------------------------------------------------
 
-void TreeDraw::prepare(const LocDb& aLocDb)
+void TreeDraw::prepare()
 {
-    mTree.set_continents(aLocDb);
+    mTree.set_continents();
     ladderize();
     mTree.make_aa_transitions();
 

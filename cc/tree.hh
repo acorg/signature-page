@@ -14,10 +14,6 @@
 
 // ----------------------------------------------------------------------
 
-class LocDb;
-
-// ----------------------------------------------------------------------
-
 // SeqDb and HiDb access data
 class NodeData
 {
@@ -33,7 +29,7 @@ class NodeData
     inline const std::vector<std::string>* hi_names() const { return mSeqdbEntrySeq ? &mSeqdbEntrySeq.seq().hi_names() : nullptr; }
 
     inline void assign(seqdb::SeqdbEntrySeq&& entry_seq) { mSeqdbEntrySeq.assign(std::forward<seqdb::SeqdbEntrySeq>(entry_seq)); }
-    void set_continent(const LocDb& locdb, std::string seq_id);
+    void set_continent(std::string seq_id);
 
     size_t number_strains;
     double ladderize_max_edge_length;
@@ -146,7 +142,7 @@ class Tree : public Node
     void ladderize(LadderizeMethod aLadderizeMethod);
 
     void set_number_strains();
-    void set_continents(const LocDb& locdb);
+    void set_continents();
     void make_aa_transitions(); // for all positions
     void make_aa_transitions(const std::vector<size_t>& aPositions);
 
