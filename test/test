@@ -28,9 +28,10 @@ trap failed ERR
 
 export LD_LIBRARY_PATH="$ACMACSD_ROOT"/lib
 cd "$TESTDIR"
-../bin/test-copy ./newick.json.xz "$TDIR"/tree.json.xz
-../bin/test-copy "$TDIR"/tree.json.xz "$TDIR"/tree2.json.xz
-xzdiff "$TDIR"/tree.json.xz "$TDIR"/tree2.json.xz
+
+#../bin/test-copy ./newick.json.xz "$TDIR"/tree.json.xz
+#../bin/test-copy "$TDIR"/tree.json.xz "$TDIR"/tree2.json.xz
+#xzdiff "$TDIR"/tree.json.xz "$TDIR"/tree2.json.xz
 
 SETTINGS="$TDIR/tree.settings.json"
 ../dist/sigp --tree ./newick.json.xz --init-settings "$SETTINGS" -o "$TDIR"/tree.pdf

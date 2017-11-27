@@ -2,8 +2,8 @@
 
 #include <cstdlib>
 
-#include "acmacs-chart-1/chart.hh"
-#include "hidb/hidb.hh"
+#include "acmacs-chart-2/chart.hh"
+#include "hidb-5/hidb.hh"
 #include "acmacs-map-draw/draw.hh"
 #include "antigenic-maps-draw.hh"
 #include "chart-draw.hh"
@@ -14,25 +14,25 @@
 class ChartDrawInterface : public ChartDrawBase
 {
  public:
-    inline ChartDrawInterface(Chart* aChart) : mChart(aChart), mChartDraw(*aChart, 0) {}
+    inline ChartDrawInterface(acmacs::chart::ChartP aChart) : mChart(aChart), mChartDraw(*aChart, 0) {}
 
     virtual void init_settings();
     virtual inline const acmacs::Viewport& viewport() const { return mChartDraw.viewport(); }
     virtual inline void viewport(const acmacs::Viewport& aViewport) { mChartDraw.viewport(aViewport); }
-    virtual inline std::string lab() const { return mChart->chart_info().lab(); }
+    virtual inline std::string lab() const { return mChart->info()->lab(); }
     virtual inline void draw(Surface& aSurface) const { mChartDraw.draw(aSurface); }
 
       // returns ChartDrawBase::AntigenNotFound if not found
-    virtual inline size_t find_antigen(std::string aName) const { return mChart->antigens().find_by_full_name(aName).value_or(ChartDrawBase::AntigenNotFound); }
+    virtual inline size_t find_antigen(std::string aName) const { return mChart->antigens()->find_by_full_name(aName).value_or(ChartDrawBase::AntigenNotFound); }
 
     void apply_mods(const std::vector<AntigenicMapMod>& aMods);
     // inline void calculate_viewport() { mChartDraw.calculate_viewport(); }
-    inline const Chart& chart() const { return *mChart; }
+    inline const acmacs::chart::Chart& chart() const { return *mChart; }
     inline ChartDraw& chart_draw() { return mChartDraw; }
     inline const ChartDraw& chart_draw() const { return mChartDraw; }
 
  private:
-    std::unique_ptr<Chart> mChart;
+    acmacs::chart::ChartP mChart;
     ChartDraw mChartDraw;
 
 }; // class ChartDrawInterface
@@ -42,7 +42,7 @@ class ChartDrawInterface : public ChartDrawBase
 class AntigenicMapsDraw : public AntigenicMapsDrawBase
 {
  public:
-    inline AntigenicMapsDraw(Surface& aSurface, Tree& aTree, Chart* aChart, HzSections& aHzSections, SignaturePageDrawSettings& aSignaturePageDrawSettings, AntigenicMapsDrawSettings& aSettings)
+    inline AntigenicMapsDraw(Surface& aSurface, Tree& aTree, acmacs::chart::ChartP aChart, HzSections& aHzSections, SignaturePageDrawSettings& aSignaturePageDrawSettings, AntigenicMapsDrawSettings& aSettings)
         : AntigenicMapsDrawBase(aSurface, aTree, aHzSections, aSignaturePageDrawSettings, aSettings), mChartDraw(aChart) {}
 
     virtual void make_layout();
@@ -74,7 +74,7 @@ class AntigenicMapsLayoutDrawAce : public AntigenicMapsLayoutDraw
 
     inline const ChartDrawInterface& chart_draw_interface() const { return dynamic_cast<const ChartDrawInterface&>(antigenic_maps_draw().chart()); }
     inline ChartDrawInterface& chart_draw_interface() { return dynamic_cast<ChartDrawInterface&>(antigenic_maps_draw().chart()); }
-    inline const Chart& chart() const { return chart_draw_interface().chart(); }
+    inline const acmacs::chart::Chart& chart() const { return chart_draw_interface().chart(); }
     inline const ChartDraw& chart_draw() const { return chart_draw_interface().chart_draw(); }
     inline ChartDraw& chart_draw() { return chart_draw_interface().chart_draw(); }
 

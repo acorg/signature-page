@@ -7,7 +7,6 @@ MAKEFLAGS = -w
 # ----------------------------------------------------------------------
 
 TARGETS = \
-	$(SIGNATURE_PAGE_PY_LIB) \
 	$(DIST)/sigp-settings-create \
 	$(DIST)/test-settings-copy \
 	$(DIST)/sigp
@@ -17,37 +16,30 @@ SIGNATURE_PAGE_SOURCES = tree.cc tree-export.cc \
 			 mapped-antigens-draw.cc antigenic-maps-layout.cc \
 			 antigenic-maps-draw.cc ace-antigenic-maps-draw.cc \
 			 title-draw.cc coloring.cc settings.cc
-SIGNATURE_PAGE_PY_SOURCES = py.cc $(SIGNATURE_PAGE_SOURCES)
 SIGP_SOURCES = sigp.cc $(SIGNATURE_PAGE_SOURCES)
 SETTINGS_CREATE_SOURCES = settings-create.cc settings.cc
 TEST_SETTINGS_COPY_SOURCES = test-settings-copy.cc settings.cc
 # TEST_DRAW_CHART_SOURCES = test-draw-chart.cc $(SIGNATURE_PAGE_SOURCES)
 
-SIGNATURE_PAGE_PY_LIB_MAJOR = 1
-SIGNATURE_PAGE_PY_LIB_MINOR = 0
-SIGNATURE_PAGE_PY_LIB_NAME = signature_page_backend
-SIGNATURE_PAGE_PY_LIB = $(DIST)/$(SIGNATURE_PAGE_PY_LIB_NAME)$(PYTHON_MODULE_SUFFIX)
-
 # ----------------------------------------------------------------------
 
 include $(ACMACSD_ROOT)/share/makefiles/Makefile.g++
-include $(ACMACSD_ROOT)/share/makefiles/Makefile.python
 include $(ACMACSD_ROOT)/share/makefiles/Makefile.dist-build.vars
 
 CXXFLAGS = -MMD -g $(OPTIMIZATION) $(PROFILE) -fPIC -std=$(STD) $(WARNINGS) -Icc -I$(AD_INCLUDE) $(PKG_INCLUDES)
 LDFLAGS = $(OPTIMIZATION) $(PROFILE)
 
-PKG_INCLUDES = $(shell pkg-config --cflags cairo) $(shell pkg-config --cflags liblzma) $(PYTHON_INCLUDES)
+PKG_INCLUDES = $(shell pkg-config --cflags cairo) $(shell pkg-config --cflags liblzma)
 
 ACMACSD_LIBS = \
 	$(AD_LIB)/$(call shared_lib_name,libacmacsbase,1,0) \
 	$(AD_LIB)/$(call shared_lib_name,liblocationdb,1,0) \
-	$(AD_LIB)/$(call shared_lib_name,libacmacschart,1,0) \
-	$(AD_LIB)/$(call shared_lib_name,libhidb,1,0) \
-	$(AD_LIB)/$(call shared_lib_name,libseqdb,1,0) \
+	$(AD_LIB)/$(call shared_lib_name,libacmacschart,2,0) \
+	$(AD_LIB)/$(call shared_lib_name,libhidb,5,0) \
+	$(AD_LIB)/$(call shared_lib_name,libseqdb,2,0) \
 	$(AD_LIB)/$(call shared_lib_name,libacmacsdraw,1,0) \
-	$(AD_LIB)/$(call shared_lib_name,libacmacsmapdraw,1,0) \
-	-L$(AD_LIB) -lboost_date_time -lboost_program_options $(FS_LIB)
+	$(AD_LIB)/$(call shared_lib_name,libacmacsmapdraw,2,0) \
+	-L$(AD_LIB) -lboost_date_time $(FS_LIB)
 
 SETTINGS_CREATE_LDLIBS = $(ACMACSD_LIBS) $(shell pkg-config --libs liblzma)
 LDLIBS = $(ACMACSD_LIBS) $(shell pkg-config --libs cairo) $(shell pkg-config --libs liblzma)

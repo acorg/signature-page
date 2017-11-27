@@ -1,11 +1,10 @@
 #include <typeinfo>
 
-#include "acmacs-chart-1/ace.hh"
+#include "acmacs-chart-2/factory-import.hh"
 #include "tree-draw.hh"
 #include "signature-page.hh"
 #include "antigenic-maps-layout.hh"
 #include "ace-antigenic-maps-draw.hh"
-// #include "sdb-antigenic-maps-draw.hh"
 
 // ----------------------------------------------------------------------
 
@@ -96,10 +95,10 @@ AntigenicMapsDrawBase* make_antigenic_maps_draw(std::string aChartFilename, Surf
 {
     std::string error;
     try {
-        return new AntigenicMapsDraw(aSurface, aTree, import_chart(aChartFilename), aHzSections, aSignaturePageDrawSettings, aSettings);
+        return new AntigenicMapsDraw(aSurface, aTree, acmacs::chart::import_factory(aChartFilename, acmacs::chart::Verify::None), aHzSections, aSignaturePageDrawSettings, aSettings);
     }
-    catch (AceChartReadError& err) {
-        error = std::string("[Not ACE] ") + err.what();
+    catch (acmacs::chart::import_error& err) {
+        error = err.what();
     }
     // try {
     //     return new sdb::AntigenicMapsDraw(aSurface, aTree, sdb::read_chart_from_sdb(aChartFilename), aHzSections, aSignaturePageDrawSettings, aSettings);
