@@ -354,7 +354,7 @@ SignaturePageDrawSettings::SignaturePageDrawSettings(rjson::field_container_pare
       mapped_antigens_margin_right(*this, "mapped_antigens_margin_right", 30, rjson::initialize_field::yes),
       time_series_width(*this, "time_series_width", 400, rjson::initialize_field::yes),
       clades_width(*this, "clades_width", 100, rjson::initialize_field::yes),
-      antigenic_maps_width(*this, "antigenic_maps_width", 500, rjson::initialize_field::yes),
+      antigenic_maps_width(*this, "antigenic_maps_width", 300, rjson::initialize_field::yes),
       _force_pp(*this, rjson::object::force_pp_key, true, rjson::initialize_field::yes)
 {
 }

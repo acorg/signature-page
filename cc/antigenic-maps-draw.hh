@@ -316,7 +316,7 @@ class MarkAntigenSettings
 //     std::string name, label;
 //     double scale, aspect, rotation, outline_width, label_line_width;
 //     Color fill_color, outline_color, label_color, label_line_color;
-//     Size label_offset;
+//     Offset label_offset;
 //     double label_size;
 
 // }; // class MarkAntigenSettings

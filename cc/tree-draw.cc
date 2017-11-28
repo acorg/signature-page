@@ -2,11 +2,12 @@
 #include <iomanip>
 #include <random>
 
+#include "acmacs-base/timeit.hh"
 #include "acmacs-base/range.hh"
+#include "acmacs-draw/surface.hh"
 #include "tree-draw.hh"
 #include "tree.hh"
 #include "tree-iterate.hh"
-#include "acmacs-draw/surface.hh"
 #include "coloring.hh"
 
 // ----------------------------------------------------------------------
@@ -499,10 +500,12 @@ void TreeDraw::fit_labels_into_viewport()
     mFontSize = mVerticalStep;
 
     const double canvas_width = mSurface.viewport().size.width;
+    std::cerr << "Viewport: " << mSurface.viewport() << '\n';
 
+    Timeit ti("TreeDraw::fit_labels_into_viewport: ");
     for (double label_offset = max_label_offset(); label_offset > canvas_width; label_offset = max_label_offset()) {
         const double scale = std::min(canvas_width / label_offset, 0.99); // to avoid too much looping
-          // std::cerr << "Canvas:" << canvas_width << " label_right:" << label_offset << " scale: " << scale << std::endl;
+        std::cerr << "Canvas:" << canvas_width << " label_right:" << label_offset << " scale: " << scale << std::endl;
         mHorizontalStep *= scale;
         mFontSize *= scale;
     }
@@ -523,6 +526,8 @@ double TreeDraw::max_label_offset()
             max_label_right = std::max(max_label_right, label_origin + this->text_width(node.display_name()));
         }
     };
+
+    // Timeit ti("TreeDraw::max_label_offset: ");
     tree::iterate_leaf(mTree, label_offset);
     return max_label_right;
 
@@ -583,7 +588,7 @@ void TreeDraw::draw_aa_transition(const Node& aNode, const acmacs::Location& aOr
                 const auto longest_label = std::max_element(labels.begin(), labels.end(), [](const auto& a, const auto& b) { return a.first.size() < b.first.size(); });
                 const auto longest_label_size = mSurface.text_size(longest_label->first, Pixels{branch_settings.size}, branch_settings.style);
                 const auto node_line_width = aRight - aOrigin.x;
-                acmacs::Size offset(node_line_width > longest_label_size.width ? (node_line_width - longest_label_size.width) / 2 : (node_line_width - longest_label_size.width),
+                acmacs::Offset offset(node_line_width > longest_label_size.width ? (node_line_width - longest_label_size.width) / 2 : (node_line_width - longest_label_size.width),
                             longest_label_size.height * branch_settings.interline);
                 offset += branch_settings.label_offset;
                 acmacs::Location origin = aOrigin + offset;
@@ -601,15 +606,15 @@ void TreeDraw::draw_aa_transition(const Node& aNode, const acmacs::Location& aOr
 
                 const acmacs::Location connection_line_start{(aOrigin.x + aRight) / 2, aOrigin.y};
                 acmacs::Location connection_line_end;
-                const acmacs::Size label_offset = branch_settings.label_offset;
-                if (label_offset.height > 5)
-                    connection_line_end.set(aOrigin.x + longest_label_size.width / 2 + offset.width, aOrigin.y - longest_label_size.height + offset.height);
-                else if (label_offset.height < -5)
-                    connection_line_end.set(aOrigin.x + longest_label_size.width / 2 + offset.width, aOrigin.y + offset.height);
-                else if (label_offset.width > 0)
-                    connection_line_end.set(aOrigin.x + offset.width, aOrigin.y + offset.height - longest_label_size.height / 2);
+                const acmacs::Offset label_offset = branch_settings.label_offset;
+                if (label_offset.y > 5)
+                    connection_line_end.set(aOrigin.x + longest_label_size.width / 2 + offset.x, aOrigin.y - longest_label_size.height + offset.y);
+                else if (label_offset.y < -5)
+                    connection_line_end.set(aOrigin.x + longest_label_size.width / 2 + offset.x, aOrigin.y + offset.y);
+                else if (label_offset.x > 0)
+                    connection_line_end.set(aOrigin.x + offset.x, aOrigin.y + offset.y - longest_label_size.height / 2);
                 else
-                    connection_line_end.set(aOrigin.x + longest_label_size.width + offset.width, aOrigin.y + offset.height - longest_label_size.height / 2);
+                    connection_line_end.set(aOrigin.x + longest_label_size.width + offset.x, aOrigin.y + offset.y - longest_label_size.height / 2);
                 if (distance(connection_line_start, connection_line_end) > 10) {
                     mSurface.line(connection_line_start, connection_line_end, branch_settings.label_connection_line_color, mLineWidth /*branch_settings.label_connection_line_width*/);
                 }
@@ -633,11 +638,11 @@ void TreeDraw::draw_mark_with_label(const Node& aNode, const acmacs::Location& a
         std::cerr << "DEBUG: draw mark_with_label " << aNode.seq_id << '\n';
         const auto settings = mSettings.mods.find_mark_with_label(aNode.seq_id);
 
-        const acmacs::Size label_offset = settings.label_offset;
+        const acmacs::Offset label_offset = settings.label_offset;
         const acmacs::Location label_origin = aTextOrigin + label_offset;
         mSurface.text(label_origin, settings.label, Color{settings.label_color}, Pixels{settings.label_size}, settings.label_style);
         const auto vlsize = mSurface.text_size(settings.label, Pixels{settings.label_size}, acmacs::TextStyle{});
-        const auto line_origin = label_origin + acmacs::Size(vlsize.width / 2, label_offset.height > 0 ? - vlsize.height : 0);
+        const auto line_origin = label_origin + acmacs::Offset(vlsize.width / 2, label_offset.y > 0 ? - vlsize.height : 0);
         mSurface.line(line_origin, aTextOrigin, Color{settings.line_color}, Pixels{settings.line_width});
     }
 
@@ -659,7 +664,7 @@ void TreeDraw::draw_legend()
 {
     const Legend* legend = coloring_legend();
     if (legend) {
-        Surface& legend_surface = mSurface.subsurface(static_cast<acmacs::Size>(mSettings.legend.offset), Scaled{mSettings.legend.width}, legend->size(), false);
+        Surface& legend_surface = mSurface.subsurface(static_cast<acmacs::Offset>(mSettings.legend.offset), Scaled{mSettings.legend.width}, legend->size(), false);
         legend->draw(legend_surface, mSettings.legend);
           // legend_surface->border("red", 1);
     }

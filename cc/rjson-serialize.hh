@@ -300,6 +300,34 @@ namespace rjson
     }
 
       // ----------------------------------------------------------------------
+      // Offset
+      // ----------------------------------------------------------------------
+
+    template <> struct content_type<acmacs::Offset> { using type = array; };
+
+    template <> inline field_get_set<acmacs::Offset>::operator acmacs::Offset() const
+    {
+        try {
+            const auto& ar = get_value_ref();
+            return {static_cast<double>(ar[0]), static_cast<double>(ar[1])};
+        }
+        catch (std::exception&) {
+            std::cerr << "ERROR: cannot convert json to Offset: " << get_value_ref() << '\n';
+            throw;
+        }
+    }
+
+    template <> inline value to_value<acmacs::Offset>(const acmacs::Offset& aOffset)
+    {
+        return array{aOffset.x, aOffset.y};
+    }
+
+    template <> inline value to_value<acmacs::Offset>(acmacs::Offset&& aOffset)
+    {
+        return array{aOffset.x, aOffset.y};
+    }
+
+      // ----------------------------------------------------------------------
       // TextStyle
       // ----------------------------------------------------------------------
 
