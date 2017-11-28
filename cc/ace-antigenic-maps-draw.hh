@@ -22,8 +22,7 @@ class ChartDrawInterface : public ChartDrawBase
     virtual inline std::string lab() const { return mChart->info()->lab(); }
     virtual inline void draw(Surface& aSurface) const { mChartDraw.draw(aSurface); }
 
-      // returns ChartDrawBase::AntigenNotFound if not found
-    virtual inline size_t find_antigen(std::string aName) const { return mChart->antigens()->find_by_full_name(aName).value_or(ChartDrawBase::AntigenNotFound); }
+    virtual inline std::optional<size_t> find_antigen(std::string aName) const { return mChart->antigens()->find_by_full_name(aName); }
 
     void apply_mods(const std::vector<AntigenicMapMod>& aMods);
     // inline void calculate_viewport() { mChartDraw.calculate_viewport(); }

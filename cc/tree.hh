@@ -64,7 +64,7 @@ class NodeDrawData
     double vertical_pos;
     Color mark_with_line;
     Pixels mark_with_line_width;
-    size_t chart_antigen_index;
+    std::optional<size_t> chart_antigen_index;
     bool mark_with_label;
 
 }; // class NodeDrawData

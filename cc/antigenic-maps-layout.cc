@@ -67,8 +67,8 @@ void AntigenicMapsLayoutDraw::find_sequenced_antigens()
     auto find_antigens = [this,&hz_section_index](const Node& aNode) {
         if (aNode.draw.hz_section_index != NodeDrawData::HzSectionNoIndex)
             hz_section_index = aNode.draw.hz_section_index;
-        if (aNode.draw.chart_antigen_index != ChartDrawBase::AntigenNotFound)
-            mSequencedAntigens[aNode.draw.chart_antigen_index] = hz_section_index;
+        if (aNode.draw.chart_antigen_index)
+            mSequencedAntigens[*aNode.draw.chart_antigen_index] = hz_section_index;
     };
 
     tree::iterate_leaf(mAntigenicMapsDraw.tree(), find_antigens);
