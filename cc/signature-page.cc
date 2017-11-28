@@ -147,7 +147,7 @@ void SignaturePageDraw::init_settings()
         mSettings->hz_sections.vertical_gap = 15;
         mSettings->clades.slot_width = 10;
         for (auto clade: mSettings->clades.clades) {
-            clade.label_offset = acmacs::Size{1, 0};
+            clade.label_offset = acmacs::Offset{1, 0};
         }
 
         if (mAntigenicMapsDraw)
@@ -162,7 +162,7 @@ void SignaturePageDraw::init_settings()
 
         mSettings->clades.slot_width = 10;
         for (auto clade: mSettings->clades.clades) {
-            clade.label_offset = acmacs::Size{10, 0};
+            clade.label_offset = acmacs::Offset{10, 0};
         }
         if (mTreeDraw)
             mTreeDraw->detect_hz_lines_for_clades(mCladesDraw ? mCladesDraw->clades() : nullptr, true);
@@ -340,7 +340,7 @@ void SignaturePageDraw::draw_mods()
                 const std::string mod_n = mod["N"];
                 if (mod_n == "text") {
                     const std::string text = mod["text"];
-                    acmacs::Size offset;
+                    acmacs::Offset offset;
                     try { const auto& settings_offset = mod["offset"]; offset.set(settings_offset[0], settings_offset[1]); } catch (rjson::field_not_found&) {}
                     std::string color{"black"};
                     try { color = static_cast<std::string_view>(mod["color"]); } catch (rjson::field_not_found&) {}
