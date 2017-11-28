@@ -248,7 +248,7 @@ namespace rjson
     template <> inline field_get_set<Color>::operator Color() const
     {
         try {
-            return static_cast<std::string>(get_value_ref());
+            return static_cast<std::string_view>(get_value_ref());
         }
         catch (std::exception&) {
             std::cerr << "ERROR: cannot convert json to Color: " << get_value_ref() << '\n';
@@ -311,8 +311,8 @@ namespace rjson
             const auto& obj = get_value_ref();
             TextStyle style;
             try { style.font_family = obj["family"]; } catch (field_not_found&) {}
-            try { style.slant = static_cast<std::string>(obj["slant"]); } catch (field_not_found&) {}
-            try { style.weight = static_cast<std::string>(obj["weight"]); } catch (field_not_found&) {}
+            try { style.slant = obj["slant"].str(); } catch (field_not_found&) {}
+            try { style.weight = obj["weight"].str(); } catch (field_not_found&) {}
             return style;
         }
         catch (std::exception&) {

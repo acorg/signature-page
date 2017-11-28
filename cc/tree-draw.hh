@@ -179,7 +179,7 @@ namespace rjson
     template <> inline field_get_set<Tree::LadderizeMethod>::operator Tree::LadderizeMethod() const
     {
         try {
-            auto method_s = static_cast<std::string>(get_value_ref());
+            const std::string_view method_s = get_value_ref();
             if (method_s == "number-of-leaves")
                 return Tree::LadderizeMethod::NumberOfLeaves;
             else if (method_s == "max-edge-length")
