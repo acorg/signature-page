@@ -298,9 +298,9 @@ void AntigenicMapsLayoutDrawAce::mark_vaccines(const AntigenicMapMod& vaccine_mo
                 if (field_name == "size")
                     matcher.size(item_value);
                 else if (field_name == "fill")
-                    matcher.fill(static_cast<std::string>(item_value));
+                    matcher.fill(static_cast<std::string_view>(item_value));
                 else if (field_name == "outline")
-                    matcher.outline(static_cast<std::string>(item_value));
+                    matcher.outline(static_cast<std::string_view>(item_value));
                 else if (field_name == "outline_width")
                     matcher.outline_width(item_value);
                 else if (field_name == "aspect")
@@ -342,7 +342,7 @@ void AntigenicMapsLayoutDrawAce::add_label(std::shared_ptr<VaccineMatcherLabel> 
         if (field_name == "size")
             label->size(item_value);
         else if (field_name == "color")
-            label->color(static_cast<std::string>(item_value));
+            label->color(static_cast<std::string_view>(item_value));
         else if (field_name == "font_family")
             label->font_family(item_value);
         else if (field_name == "name_type")

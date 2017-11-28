@@ -262,7 +262,7 @@ class AntigenicMapMod : public rjson::array_field_container_child_element
     inline Color get_color(std::string aName, Color&& aDefault) const
         {
             try {
-                return static_cast<std::string>(operator[](aName));
+                return static_cast<std::string_view>(operator[](aName));
             }
             catch (rjson::field_not_found&) {
                 return aDefault;

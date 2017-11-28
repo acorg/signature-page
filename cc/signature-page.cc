@@ -343,13 +343,13 @@ void SignaturePageDraw::draw_mods()
                     acmacs::Size offset;
                     try { const auto& settings_offset = mod["offset"]; offset.set(settings_offset[0], settings_offset[1]); } catch (rjson::field_not_found&) {}
                     std::string color{"black"};
-                    try { color = static_cast<std::string>(mod["color"]); } catch (rjson::field_not_found&) {}
+                    try { color = static_cast<std::string_view>(mod["color"]); } catch (rjson::field_not_found&) {}
                     Pixels size{14};
                     try { size = mod["size"]; } catch (rjson::field_not_found&) {}
                     acmacs::TextStyle style;
                     try { style.font_family = mod["family"]; } catch (rjson::field_not_found&) {}
-                    try { style.slant = static_cast<std::string>(mod["slant"]); } catch (rjson::field_not_found&) {}
-                    try { style.weight = static_cast<std::string>(mod["weight"]); } catch (rjson::field_not_found&) {}
+                    try { style.slant = mod["slant"].str(); } catch (rjson::field_not_found&) {}
+                    try { style.weight = mod["weight"].str(); } catch (rjson::field_not_found&) {}
                     mSurface->text(offset, text, color, size, style);
                 }
                 else {
