@@ -21,9 +21,7 @@ class ChartDrawBase
 
     virtual std::string lab() const = 0;
 
-    constexpr static const size_t AntigenNotFound = static_cast<size_t>(-1);
-      // returns AntigenNotFound if not found
-    virtual size_t find_antigen(std::string aName) const = 0;
+    virtual std::optional<size_t> find_antigen(std::string aName) const = 0;
 
 }; // class ChartDrawBase
 

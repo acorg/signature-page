@@ -11,7 +11,6 @@
 class Settings;
 class Tree;
 namespace seqdb { class Seqdb; }
-class LocDb;
 class TreeDraw;
 class TimeSeriesDraw;
 class CladesDraw;
@@ -64,13 +63,12 @@ class SignaturePageDraw
     ~SignaturePageDraw();
 
     void load_settings(std::string aFilename);
-    void load_settings(const std::vector<std::string>& aFilenames);
     void make_surface(std::string aFilename, bool init_settings, bool draw_map);
     void init_layout();
     void init_settings();
     void write_initialized_settings(std::string aFilename); // removes redundant settings entries depending on layout!
     inline Settings& settings() { return *mSettings; }
-    void tree(std::string aTreeFilename, std::string aSeqdbFilename);
+    void tree(std::string aTreeFilename);
     inline Tree& tree() { return *mTree; }
     inline void chart(std::string aChartFilename) { mChartFilename = aChartFilename; }
 
@@ -81,8 +79,7 @@ class SignaturePageDraw
     std::string mChartFilename;
     std::unique_ptr<Surface> mSurface;
     std::unique_ptr<Settings> mSettings;
-    std::unique_ptr<LocDb> mLocdb;
-    std::unique_ptr<seqdb::Seqdb> mSeqdb;
+    const seqdb::Seqdb* mSeqdb = nullptr;
     std::unique_ptr<Tree> mTree;
     std::unique_ptr<TreeDraw> mTreeDraw;
     std::unique_ptr<TimeSeriesDraw> mTimeSeriesDraw;

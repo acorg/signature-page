@@ -2,11 +2,12 @@
 #include <iomanip>
 #include <random>
 
+#include "acmacs-base/timeit.hh"
 #include "acmacs-base/range.hh"
+#include "acmacs-draw/surface.hh"
 #include "tree-draw.hh"
 #include "tree.hh"
 #include "tree-iterate.hh"
-#include "acmacs-draw/surface.hh"
 #include "coloring.hh"
 
 // ----------------------------------------------------------------------
@@ -67,9 +68,9 @@ void TreeDraw::detect_hz_lines_for_clades(const Clades* aClades, bool aForce)
 
 // ----------------------------------------------------------------------
 
-void TreeDraw::prepare(const LocDb& aLocDb)
+void TreeDraw::prepare()
 {
-    mTree.set_continents(aLocDb);
+    mTree.set_continents();
     ladderize();
     mTree.make_aa_transitions();
 
@@ -499,10 +500,12 @@ void TreeDraw::fit_labels_into_viewport()
     mFontSize = mVerticalStep;
 
     const double canvas_width = mSurface.viewport().size.width;
+    std::cerr << "Viewport: " << mSurface.viewport() << '\n';
 
+    Timeit ti("TreeDraw::fit_labels_into_viewport: ");
     for (double label_offset = max_label_offset(); label_offset > canvas_width; label_offset = max_label_offset()) {
         const double scale = std::min(canvas_width / label_offset, 0.99); // to avoid too much looping
-          // std::cerr << "Canvas:" << canvas_width << " label_right:" << label_offset << " scale: " << scale << std::endl;
+        std::cerr << "Canvas:" << canvas_width << " label_right:" << label_offset << " scale: " << scale << std::endl;
         mHorizontalStep *= scale;
         mFontSize *= scale;
     }
@@ -523,6 +526,8 @@ double TreeDraw::max_label_offset()
             max_label_right = std::max(max_label_right, label_origin + this->text_width(node.display_name()));
         }
     };
+
+    // Timeit ti("TreeDraw::max_label_offset: ");
     tree::iterate_leaf(mTree, label_offset);
     return max_label_right;
 
@@ -637,7 +642,7 @@ void TreeDraw::draw_mark_with_label(const Node& aNode, const acmacs::Location& a
         const acmacs::Location label_origin = aTextOrigin + label_offset;
         mSurface.text(label_origin, settings.label, Color{settings.label_color}, Pixels{settings.label_size}, settings.label_style);
         const auto vlsize = mSurface.text_size(settings.label, Pixels{settings.label_size}, acmacs::TextStyle{});
-        const auto line_origin = label_origin + acmacs::Size(vlsize.width / 2, label_offset.y > 0 ? - vlsize.height : 0);
+        const auto line_origin = label_origin + acmacs::Offset(vlsize.width / 2, label_offset.y > 0 ? - vlsize.height : 0);
         mSurface.line(line_origin, aTextOrigin, Color{settings.line_color}, Pixels{settings.line_width});
     }
 

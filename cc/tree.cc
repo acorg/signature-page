@@ -96,14 +96,11 @@ void Tree::set_number_strains()
 
 // ----------------------------------------------------------------------
 
-void Tree::set_continents(const LocDb& locdb)
+void Tree::set_continents()
 {
     std::cout << "TREE: set continents" << std::endl;
 
-    auto set_continents = [&locdb](Node& aNode) {
-        aNode.data.set_continent(locdb, aNode.seq_id);
-    };
-    tree::iterate_leaf(*this, set_continents);
+    tree::iterate_leaf(*this, [](Node& aNode) { aNode.data.set_continent(aNode.seq_id); });
 
 } // Tree::set_continents
 
@@ -121,14 +118,14 @@ size_t Tree::height() const
 
 // ----------------------------------------------------------------------
 
-void NodeData::set_continent(const LocDb& locdb, std::string seq_id)
+void NodeData::set_continent(std::string seq_id)
 {
     if (mSeqdbEntrySeq) {
         continent = mSeqdbEntrySeq.entry().continent();
     }
     if (continent.empty()) {
         try {
-            continent = locdb.continent(virus_name::location(name_decode(seq_id)), "UNKNOWN");
+            continent = get_locdb().continent(virus_name::location(name_decode(seq_id)), "UNKNOWN");
         }
         catch (virus_name::Unrecognized&) {
             continent = "UNKNOWN";
