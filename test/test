@@ -34,5 +34,5 @@ cd "$TESTDIR"
 #xzdiff "$TDIR"/tree.json.xz "$TDIR"/tree2.json.xz
 
 SETTINGS="$TDIR/tree.settings.json"
-../dist/sigp --tree ./newick.json.xz --init-settings "$SETTINGS" -o "$TDIR"/tree.pdf
-../dist/sigp --tree ./newick.json.xz -s "$SETTINGS" -o "$TDIR"/tree.pdf
+../dist/sigp --init-settings "$SETTINGS" ./newick.json.xz "$TDIR"/tree.pdf
+../dist/sigp -s "$SETTINGS" ./newick.json.xz "$TDIR"/tree.pdf
