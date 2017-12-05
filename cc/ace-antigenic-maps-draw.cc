@@ -72,7 +72,6 @@ void AntigenicMapsLayoutDrawAce::prepare_apply_mods()
 
 void AntigenicMapsLayoutDrawAce::prepare_chart_for_all_sections()
 {
-    chart_draw().prepare();
     chart_draw().mark_egg_antigens();
     chart_draw().mark_reassortant_antigens();
     for (const auto& mod: settings().mods) {
@@ -81,7 +80,7 @@ void AntigenicMapsLayoutDrawAce::prepare_chart_for_all_sections()
             chart_draw().scale_points(mod.get_or_default("scale", 1.0), mod.get_or_default("outline_scale", 1.0));
         }
         if (name == "reference_antigens") {
-            PointStyleDraw ref_antigen_style;
+            acmacs::PointStyle ref_antigen_style;
             ref_antigen_style.size = Pixels{mod.get_or_default("size", 5.0)};
             ref_antigen_style.fill = mod.get_color("fill", "transparent");
             ref_antigen_style.outline = mod.get_color("outline", "grey88");
@@ -89,7 +88,7 @@ void AntigenicMapsLayoutDrawAce::prepare_chart_for_all_sections()
             chart_draw().modify(chart().antigens()->reference_indexes(), ref_antigen_style);
         }
         else if (name == "test_antigens") {
-            PointStyleDraw test_antigen_style;
+            acmacs::PointStyle test_antigen_style;
             test_antigen_style.size = Pixels{mod.get_or_default("size", 3.0)};
             test_antigen_style.fill = mod.get_color("fill", "grey88");
             test_antigen_style.outline = mod.get_color("outline", "grey88");
@@ -108,7 +107,7 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, boo
     for (const auto& mod: settings().mods) {
         const std::string name = mod.name();
         if (name == "sera") {
-            PointStyleDraw serum_style;
+            acmacs::PointStyle serum_style;
             serum_style.size = Pixels{mod.get_or_default("size", 5.0)};
             serum_style.outline = mod.get_color("outline", "grey88");
             serum_style.outline_width = Pixels{mod.get_or_default("outline_width", 0.5)};
@@ -117,12 +116,12 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, boo
         else if (name == "sequenced_antigens") {      // mark sequenced antigens (removes old tracked antigens marking)
             std::vector<size_t> sequenced_indices(sequenced_antigens().size());
             std::transform(sequenced_antigens().begin(), sequenced_antigens().end(), sequenced_indices.begin(), [](const auto& src) -> size_t { return src.first; });
-            PointStyleDraw sequenced_antigen_style;
+            acmacs::PointStyle sequenced_antigen_style;
             sequenced_antigen_style.size = Pixels{mod.get_or_default("size", 3.0)};
             sequenced_antigen_style.fill = mod.get_color("fill", "grey88");
             sequenced_antigen_style.outline = mod.get_color("outline", "white");
             sequenced_antigen_style.outline_width = Pixels{mod.get_or_default("outline_width", 0.5)};
-            chart_draw().modify(sequenced_indices.begin(), sequenced_indices.end(), sequenced_antigen_style);
+            chart_draw().modify(sequenced_indices, sequenced_antigen_style);
         }
         else if (name == "tracked_serum_circles") {
             chart_draw().remove_serum_circles();
@@ -134,18 +133,18 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, boo
         if (name == "tracked_antigens") {
             std::vector<size_t> tracked_indices;
             tracked_antigens(tracked_indices, aSectionIndex, report_antigens_in_hz_sections);
-            PointStyleDraw tracked_antigen_style;
+            acmacs::PointStyle tracked_antigen_style;
             tracked_antigen_style.size = Pixels{mod.get_or_default("size", 5.0)};
             tracked_antigen_style.fill = mod.get_color("fill", "grey63");
             tracked_antigen_style.outline = mod.get_color("outline", "white");
             tracked_antigen_style.outline_width = Pixels{mod.get_or_default("outline_width", 0.5)};
-            chart_draw().modify(tracked_indices.begin(), tracked_indices.end(), tracked_antigen_style, PointDrawingOrder::Raise);
+            chart_draw().modify(tracked_indices, tracked_antigen_style, PointDrawingOrder::Raise);
         }
         else if (name == "tracked_sera") {
             std::map<size_t, std::vector<size_t>> tracked_indices;
             tracked_sera(tracked_indices, aSectionIndex);
             std::cerr << "INFO: tracked_sera: " << tracked_indices << std::endl;
-            PointStyleDraw tracked_serum_style;
+            acmacs::PointStyle tracked_serum_style;
             tracked_serum_style.size = Pixels{mod.get_or_default("size", 5.0)};
             tracked_serum_style.outline = mod.get_color("outline", "black");
             tracked_serum_style.outline_width = Pixels{mod.get_or_default("outline_width", 0.5)};
@@ -164,7 +163,7 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, boo
             const auto& select = mod.get_or_empty_object("select");
             try {
                 const auto index = select["index"];
-                PointStyleDraw antigen_style;
+                acmacs::PointStyle antigen_style;
                 antigen_style.size = Pixels{mod.get_or_default("size", 5.0)};
                 antigen_style.fill = mod.get_color("fill", "pink");
                 antigen_style.outline = mod.get_color("outline", "white");

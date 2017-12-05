@@ -2,7 +2,7 @@
 
 #include <cstdlib>
 
-#include "acmacs-chart-2/chart.hh"
+#include "acmacs-chart-2/chart-modify.hh"
 #include "hidb-5/hidb.hh"
 #include "acmacs-map-draw/draw.hh"
 #include "antigenic-maps-draw.hh"
@@ -14,24 +14,23 @@
 class ChartDrawInterface : public ChartDrawBase
 {
  public:
-    inline ChartDrawInterface(acmacs::chart::ChartP aChart) : mChart(aChart), mChartDraw(*aChart, 0) {}
+    inline ChartDrawInterface(acmacs::chart::ChartModifyP aChart) : mChartDraw(aChart, 0) {}
 
     virtual void init_settings();
     virtual inline const acmacs::Viewport& viewport() const { return mChartDraw.viewport(); }
     virtual inline void viewport(const acmacs::Viewport& aViewport) { mChartDraw.viewport(aViewport); }
-    virtual inline std::string lab() const { return mChart->info()->lab(); }
+    virtual inline std::string lab() const { return chart().info()->lab(); }
     virtual inline void draw(Surface& aSurface) const { mChartDraw.draw(aSurface); }
 
-    virtual inline std::optional<size_t> find_antigen(std::string aName) const { return mChart->antigens()->find_by_full_name(aName); }
+    virtual inline std::optional<size_t> find_antigen(std::string aName) const { return chart().antigens()->find_by_full_name(aName); }
 
     void apply_mods(const std::vector<AntigenicMapMod>& aMods);
     // inline void calculate_viewport() { mChartDraw.calculate_viewport(); }
-    inline const acmacs::chart::Chart& chart() const { return *mChart; }
+    inline const acmacs::chart::Chart& chart() const { return mChartDraw.chart(); }
     inline ChartDraw& chart_draw() { return mChartDraw; }
     inline const ChartDraw& chart_draw() const { return mChartDraw; }
 
  private:
-    acmacs::chart::ChartP mChart;
     ChartDraw mChartDraw;
 
 }; // class ChartDrawInterface
@@ -41,7 +40,7 @@ class ChartDrawInterface : public ChartDrawBase
 class AntigenicMapsDraw : public AntigenicMapsDrawBase
 {
  public:
-    inline AntigenicMapsDraw(Surface& aSurface, Tree& aTree, acmacs::chart::ChartP aChart, HzSections& aHzSections, SignaturePageDrawSettings& aSignaturePageDrawSettings, AntigenicMapsDrawSettings& aSettings)
+    inline AntigenicMapsDraw(Surface& aSurface, Tree& aTree, acmacs::chart::ChartModifyP aChart, HzSections& aHzSections, SignaturePageDrawSettings& aSignaturePageDrawSettings, AntigenicMapsDrawSettings& aSettings)
         : AntigenicMapsDrawBase(aSurface, aTree, aHzSections, aSignaturePageDrawSettings, aSettings), mChartDraw(aChart) {}
 
     virtual void make_layout();
