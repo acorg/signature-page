@@ -138,7 +138,7 @@ CladesDrawSettings::CladesDrawSettings(rjson::field_container_parent& aParent, s
       slot_width(*this, "slot_width", 10, rjson::initialize_field::yes)
 {
     clades.emplace_back();
-    for (const auto* n: {"gly", "no-gly", "DEL2017"}) {
+    for (const auto* n: {"GLY", "NO-GLY", "DEL2017"}) {
         auto cn = clades.emplace_back();
         cn.name = n;
         cn.show = false;
