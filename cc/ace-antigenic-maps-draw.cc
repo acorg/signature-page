@@ -180,8 +180,8 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, boo
                     catch (rjson::field_not_found&) {
                         label.offset(0, 1);
                     }
-                    if (const std::string display_name = label_data.get_or_default("display_name", rjson::string{}); !display_name.empty())
-                        label.display_name(display_name);
+                    if (const auto display_name = label_data.get<std::string>("display_name"); display_name)
+                        label.display_name(*display_name);
                 }
                 catch (rjson::field_not_found&) { // no label
                 }
