@@ -109,6 +109,7 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, boo
         if (name == "sera") {
             acmacs::PointStyle serum_style;
             serum_style.size = Pixels{mod.get_or_default("size", 5.0)};
+            serum_style.fill = mod.get_color("fill", "transparent");
             serum_style.outline = mod.get_color("outline", "grey88");
             serum_style.outline_width = Pixels{mod.get_or_default("outline_width", 0.5)};
             chart_draw().modify_all_sera(serum_style, PointDrawingOrder::Lower);
