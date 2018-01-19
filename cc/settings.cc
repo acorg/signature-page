@@ -194,7 +194,7 @@ AntigenicMapsDrawSettings::AntigenicMapsDrawSettings(rjson::field_container_pare
 {
     mods.emplace_back().add("N", "viewport").add("rel", rjson::array{0, 0, 0});
     mods.emplace_back().add("N", "point_scale").add("scale", 1.0).add("outline_scale", 1.0);
-    mods.emplace_back().add("N", "rotate_degrees").add("angle", 0.0);
+    mods.emplace_back().add("N", "rotate").add("degrees", 0.0);
     mods.emplace_back().add("N", "sera").add("outline", "grey88").add("outline_width", 0.5).add("size", 5.0);
     mods.emplace_back().add("N", "reference_antigens").add("fill", "transparent").add("outline", "grey88").add("outline_width", 0.5).add("size", 5.0);
     mods.emplace_back().add("N", "test_antigens").add("fill", "grey88").add("outline", "grey88").add("outline_width", 0.5).add("size", 3.0);

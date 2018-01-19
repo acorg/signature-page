@@ -32,12 +32,28 @@ void AntigenicMapsLayoutDrawAce::prepare_apply_mods()
             else if (name == "rotate_radians") {
                 chart_draw().rotate(mod.get_or_default("angle", 0.0));
             }
+            else if (name == "rotate") {
+                if (const double degrees = mod.get_or_default("degrees", 0.0); !float_zero(degrees))
+                    chart_draw().rotate(degrees * M_PI / 180.0);
+                else if (const double radians = mod.get_or_default("radians", 0.0); !float_zero(radians))
+                    chart_draw().rotate(radians);
+            }
             else if (name == "flip") {
-                try {
-                    const rjson::array& ar = mod["value"];
-                    chart_draw().flip(ar[0], ar[1]);
+                if (std::string direction = mod.get_or_default("direction", ""); !direction.empty()) {
+                    if (direction == "ns")
+                        chart_draw().flip(1, 0);
+                    else if (direction == "ew")
+                        chart_draw().flip(0, 1);
+                    else
+                        std::cerr << "ERROR: unrecognized flip value: " << mod << DEBUG_LINE_FUNC << '\n';
                 }
-                catch (rjson::field_not_found&) {
+                else {
+                    try {
+                        const rjson::array& ar = mod["value"];
+                        chart_draw().flip(ar[0], ar[1]);
+                    }
+                    catch (rjson::field_not_found&) {
+                    }
                 }
             }
             else if (name == "viewport") {
