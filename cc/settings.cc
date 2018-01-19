@@ -207,23 +207,56 @@ AntigenicMapsDrawSettings::AntigenicMapsDrawSettings(rjson::field_container_pare
     mods.emplace_back().add("N", "background").add("color", "white");
     mods.emplace_back().add("N", "grid").add("color", "grey80").add("line_width", 1.0);
     mods.emplace_back().add("N", "border").add("color", "black").add("line_width", 1.0);
-    mods.emplace_back().add("N", "vaccines").add("mods", rjson::array{
-            rjson::object{{"size", rjson::number{15}}, {"outline", rjson::string{"white"}}},
-            rjson::object{{"label", rjson::object{{"offset", rjson::array{0, 1}}, {"color", rjson::string{"black"}},
-                                                  {"weight", rjson::string{"normal"}}, {"slant", rjson::string{"normal"}},
-                                                  {"font_family", rjson::string{"helvetica neu"}}, {"size", rjson::number{9}},
-                                                  {"name_type", rjson::string{"abbreviated_location_with_passage_type"}}}}},
-            rjson::object{{"type", rjson::string{"previous"}}, {"passage", rjson::string{"cell"}}, {"fill", rjson::string{"blue"}}},
-            rjson::object{{"type", rjson::string{"previous"}}, {"passage", rjson::string{"egg"}}, {"fill", rjson::string{"blue"}}},
-            rjson::object{{"type", rjson::string{"previous"}}, {"passage", rjson::string{"reassortant"}}, {"fill", rjson::string{"blue"}}},
-            rjson::object{{"type", rjson::string{"current"}}, {"passage", rjson::string{"cell"}}, {"fill", rjson::string{"red"}}},
-            rjson::object{{"type", rjson::string{"current"}}, {"passage", rjson::string{"egg"}}, {"fill", rjson::string{"red"}}},
-            rjson::object{{"type", rjson::string{"current"}}, {"passage", rjson::string{"reassortant"}}, {"fill", rjson::string{"green"}}},
-            rjson::object{{"type", rjson::string{"surrogate"}}, {"passage", rjson::string{"cell"}}, {"fill", rjson::string{"pink"}}},
-            rjson::object{{"type", rjson::string{"surrogate"}}, {"passage", rjson::string{"egg"}}, {"fill", rjson::string{"pink"}}},
-            rjson::object{{"type", rjson::string{"surrogate"}}, {"passage", rjson::string{"reassortant"}}, {"fill", rjson::string{"pink"}}},
-            rjson::object{{"?name", rjson::string{"TEXAS"}}, {"?show", rjson::boolean{false}}},
-       });
+
+      // vaccine spec via acmacs-map-draw/ModAntigens, since 2018-01-19
+    mods.emplace_back().add("N", "antigens").add("select", rjson::object{{"vaccine", rjson::object{{"type", rjson::string{"previous"}}, {"passage", rjson::string{"cell"}}}}})
+            .add("fill", rjson::string{"blue"}).add("outline", rjson::string{"white"}).add("size", rjson::number{15}).add("order", rjson::string{"raise"}).add("report", false)
+            .add("label", rjson::object{{"offset", rjson::array{0, 1}}, {"name_type", rjson::string{"abbreviated_location_with_passage_type"}}, {"size", rjson::number{9}}});
+    mods.emplace_back().add("N", "antigens").add("select", rjson::object{{"vaccine", rjson::object{{"type", rjson::string{"previous"}}, {"passage", rjson::string{"egg"}}}}})
+            .add("fill", rjson::string{"blue"}).add("outline", rjson::string{"white"}).add("size", rjson::number{15}).add("order", rjson::string{"raise"}).add("report", false)
+            .add("label", rjson::object{{"offset", rjson::array{0, 1}}, {"name_type", rjson::string{"abbreviated_location_with_passage_type"}}, {"size", rjson::number{9}}});
+    mods.emplace_back().add("?N", "antigens").add("select", rjson::object{{"vaccine", rjson::object{{"type", rjson::string{"previous"}}, {"passage", rjson::string{"reassortant"}}}}})
+            .add("fill", rjson::string{"blue"}).add("outline", rjson::string{"white"}).add("size", rjson::number{15}).add("order", rjson::string{"raise"}).add("report", false)
+            .add("label", rjson::object{{"offset", rjson::array{0, 1}}, {"name_type", rjson::string{"abbreviated_location_with_passage_type"}}, {"size", rjson::number{9}}});
+
+    mods.emplace_back().add("N", "antigens").add("select", rjson::object{{"vaccine", rjson::object{{"type", rjson::string{"current"}}, {"passage", rjson::string{"cell"}}}}})
+            .add("fill", rjson::string{"red"}).add("outline", rjson::string{"white"}).add("size", rjson::number{15}).add("order", rjson::string{"raise"}).add("report", false)
+            .add("label", rjson::object{{"offset", rjson::array{0, 1}}, {"name_type", rjson::string{"abbreviated_location_with_passage_type"}}, {"size", rjson::number{9}}});
+    mods.emplace_back().add("N", "antigens").add("select", rjson::object{{"vaccine", rjson::object{{"type", rjson::string{"current"}}, {"passage", rjson::string{"egg"}}}}})
+            .add("fill", rjson::string{"red"}).add("outline", rjson::string{"white"}).add("size", rjson::number{15}).add("order", rjson::string{"raise"}).add("report", false)
+            .add("label", rjson::object{{"offset", rjson::array{0, 1}}, {"name_type", rjson::string{"abbreviated_location_with_passage_type"}}, {"size", rjson::number{9}}});
+    mods.emplace_back().add("N", "antigens").add("select", rjson::object{{"vaccine", rjson::object{{"type", rjson::string{"current"}}, {"passage", rjson::string{"reassortant"}}}}})
+            .add("fill", rjson::string{"green"}).add("outline", rjson::string{"white"}).add("size", rjson::number{15}).add("order", rjson::string{"raise"}).add("report", false)
+            .add("label", rjson::object{{"offset", rjson::array{0, 1}}, {"name_type", rjson::string{"abbreviated_location_with_passage_type"}}, {"size", rjson::number{9}}});
+
+    mods.emplace_back().add("N", "antigens").add("select", rjson::object{{"vaccine", rjson::object{{"type", rjson::string{"surrogate"}}, {"passage", rjson::string{"cell"}}}}})
+            .add("fill", rjson::string{"pink"}).add("outline", rjson::string{"white"}).add("size", rjson::number{15}).add("order", rjson::string{"raise"}).add("report", false)
+            .add("label", rjson::object{{"offset", rjson::array{0, 1}}, {"name_type", rjson::string{"abbreviated_location_with_passage_type"}}, {"size", rjson::number{9}}});
+    mods.emplace_back().add("N", "antigens").add("select", rjson::object{{"vaccine", rjson::object{{"type", rjson::string{"surrogate"}}, {"passage", rjson::string{"egg"}}}}})
+            .add("fill", rjson::string{"pink"}).add("outline", rjson::string{"white"}).add("size", rjson::number{15}).add("order", rjson::string{"raise"}).add("report", false)
+            .add("label", rjson::object{{"offset", rjson::array{0, 1}}, {"name_type", rjson::string{"abbreviated_location_with_passage_type"}}, {"size", rjson::number{9}}});
+    mods.emplace_back().add("N", "antigens").add("select", rjson::object{{"vaccine", rjson::object{{"type", rjson::string{"surrogate"}}, {"passage", rjson::string{"reassortant"}}}}})
+            .add("fill", rjson::string{"pink"}).add("outline", rjson::string{"white"}).add("size", rjson::number{15}).add("order", rjson::string{"raise"}).add("report", false)
+            .add("label", rjson::object{{"offset", rjson::array{0, 1}}, {"name_type", rjson::string{"abbreviated_location_with_passage_type"}}, {"size", rjson::number{9}}});
+
+    //   // old vaccine spec
+    // mods.emplace_back().add("N", "vaccines").add("mods", rjson::array{
+    //         rjson::object{{"size", rjson::number{15}}, {"outline", rjson::string{"white"}}},
+    //         rjson::object{{"label", rjson::object{{"offset", rjson::array{0, 1}}, {"color", rjson::string{"black"}},
+    //                                               {"weight", rjson::string{"normal"}}, {"slant", rjson::string{"normal"}},
+    //                                               {"font_family", rjson::string{"helvetica neu"}}, {"size", rjson::number{9}},
+    //                                               {"name_type", rjson::string{"abbreviated_location_with_passage_type"}}}}},
+    //         rjson::object{{"type", rjson::string{"previous"}}, {"passage", rjson::string{"cell"}}, {"fill", rjson::string{"blue"}}},
+    //         rjson::object{{"type", rjson::string{"previous"}}, {"passage", rjson::string{"egg"}}, {"fill", rjson::string{"blue"}}},
+    //         rjson::object{{"type", rjson::string{"previous"}}, {"passage", rjson::string{"reassortant"}}, {"fill", rjson::string{"blue"}}},
+    //         rjson::object{{"type", rjson::string{"current"}}, {"passage", rjson::string{"cell"}}, {"fill", rjson::string{"red"}}},
+    //         rjson::object{{"type", rjson::string{"current"}}, {"passage", rjson::string{"egg"}}, {"fill", rjson::string{"red"}}},
+    //         rjson::object{{"type", rjson::string{"current"}}, {"passage", rjson::string{"reassortant"}}, {"fill", rjson::string{"green"}}},
+    //         rjson::object{{"type", rjson::string{"surrogate"}}, {"passage", rjson::string{"cell"}}, {"fill", rjson::string{"pink"}}},
+    //         rjson::object{{"type", rjson::string{"surrogate"}}, {"passage", rjson::string{"egg"}}, {"fill", rjson::string{"pink"}}},
+    //         rjson::object{{"type", rjson::string{"surrogate"}}, {"passage", rjson::string{"reassortant"}}, {"fill", rjson::string{"pink"}}},
+    //         rjson::object{{"?name", rjson::string{"TEXAS"}}, {"?show", rjson::boolean{false}}},
+    //    });
 }
 
 void AntigenicMapsDrawSettings::viewport(const acmacs::Viewport& aViewport)
