@@ -1,4 +1,5 @@
 #include "acmacs-map-draw/vaccine-matcher.hh"
+#include "acmacs-map-draw/mod-applicator.hh"
 #include "ace-antigenic-maps-draw.hh"
 #include "tree-draw.hh"
 
@@ -161,41 +162,10 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, boo
             mark_vaccines(mod);
         }
         else if (name == "antigens") {
-            const auto& select = mod.get_or_empty_object("select");
-            try {
-                const auto index = select["index"];
-                acmacs::PointStyle antigen_style;
-                antigen_style.size = Pixels{mod.get_or_default("size", 5.0)};
-                antigen_style.fill = mod.get_color("fill", "pink");
-                antigen_style.outline = mod.get_color("outline", "white");
-                antigen_style.outline_width = Pixels{mod.get_or_default("outline_width", 0.5)};
-                chart_draw().modify(index, antigen_style, mod.get_or_default("raise_", true) ? PointDrawingOrder::Raise : PointDrawingOrder::NoChange);
-                try {
-                    const rjson::object& label_data = mod["label"];
-                    auto& label = chart_draw().add_label(index);
-                    label.size(label_data.get_or_default("size", 9.0));
-                    try {
-                        const rjson::array& offset = label_data["offset"];
-                        label.offset(offset[0], offset[1]);
-                    }
-                    catch (rjson::field_not_found&) {
-                        label.offset(0, 1);
-                    }
-                    if (const auto display_name = label_data.get<std::string>("display_name"); display_name)
-                        label.display_name(*display_name);
-                }
-                catch (rjson::field_not_found&) { // no label
-                }
-            }
-            catch (rjson::field_not_found&) {
-                std::cerr << "WARNING: Antigens: no index in " << select << '\n';
-            }
-            catch (std::out_of_range&) {
-                std::cerr << "WARNING: Antigens: invalid index in " << select << '\n';
-            }
-            catch (std::exception& err) {
-                std::cerr << "WARNING: Antigens: error: " << err.what() << " in " << select << '\n';
-            }
+            mark_antigens(mod);
+        }
+        else if (name == "antigens_old") {
+            mark_antigens_old(mod);
         }
     }
 
@@ -293,7 +263,7 @@ void AntigenicMapsLayoutDrawAce::mark_vaccines(const AntigenicMapMod& vaccine_mo
             const rjson::object& mod = mod_v;
             const std::string type = mod.get_or_default("type", std::string{}), passage = mod.get_or_default("passage", std::string{}), name = mod.get_or_default("name", std::string{});
             VaccineMatcher matcher(vaccs, VaccineMatchData{}.name(name).type(type).passage(passage));
-              // std::cout << matcher.report(2) << '\n';
+              // std::cerr << matcher.report(2) << '\n';
             for (const auto& [item_key, item_value]: mod) {
                 const std::string field_name = item_key;
                 if (field_name == "size")
@@ -322,7 +292,7 @@ void AntigenicMapsLayoutDrawAce::mark_vaccines(const AntigenicMapMod& vaccine_mo
                     std::cerr << "WARNING: mark_vaccines: unrecognized key \"" << field_name << '"' << std::endl;
             }
         }
-          // std::cerr << "DEBUG: Vaccines:" << std::endl << vaccs.report(2) << std::endl;
+        // std::cerr << "DEBUG: Vaccines:" << std::endl << vaccs.report(2) << std::endl;
         vaccs.plot(chart_draw());
     }
     catch (std::bad_variant_access&) {
@@ -330,6 +300,57 @@ void AntigenicMapsLayoutDrawAce::mark_vaccines(const AntigenicMapMod& vaccine_mo
     }
 
 } // AntigenicMapsLayoutDrawAce::mark_vaccines
+
+// ----------------------------------------------------------------------
+
+void AntigenicMapsLayoutDrawAce::mark_antigens(const AntigenicMapMod& mod)
+{
+    ModAntigens applicator(mod.data());
+    applicator.apply(chart_draw(), rjson::value{});
+
+} // AntigenicMapsLayoutDrawAce::mark_antigens
+
+// ----------------------------------------------------------------------
+
+void AntigenicMapsLayoutDrawAce::mark_antigens_old(const AntigenicMapMod& mod)
+{
+    const auto& select = mod.get_or_empty_object("select");
+    try {
+        const auto index = select["index"];
+        acmacs::PointStyle antigen_style;
+        antigen_style.size = Pixels{mod.get_or_default("size", 5.0)};
+        antigen_style.fill = mod.get_color("fill", "pink");
+        antigen_style.outline = mod.get_color("outline", "white");
+        antigen_style.outline_width = Pixels{mod.get_or_default("outline_width", 0.5)};
+        chart_draw().modify(index, antigen_style, mod.get_or_default("raise_", true) ? PointDrawingOrder::Raise : PointDrawingOrder::NoChange);
+        try {
+            const rjson::object& label_data = mod["label"];
+            auto& label = chart_draw().add_label(index);
+            label.size(label_data.get_or_default("size", 9.0));
+            try {
+                const rjson::array& offset = label_data["offset"];
+                label.offset(offset[0], offset[1]);
+            }
+            catch (rjson::field_not_found&) {
+                label.offset(0, 1);
+            }
+            if (const auto display_name = label_data.get<std::string>("display_name"); display_name)
+                label.display_name(*display_name);
+        }
+        catch (rjson::field_not_found&) { // no label
+        }
+    }
+    catch (rjson::field_not_found&) {
+        std::cerr << "WARNING: Antigens: no index in " << select << '\n';
+    }
+    catch (std::out_of_range&) {
+        std::cerr << "WARNING: Antigens: invalid index in " << select << '\n';
+    }
+    catch (std::exception& err) {
+        std::cerr << "WARNING: Antigens: error: " << err.what() << " in " << select << '\n';
+    }
+
+} // AntigenicMapsLayoutDrawAce::mark_antigens_old
 
 // ----------------------------------------------------------------------
 
