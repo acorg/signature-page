@@ -39,9 +39,9 @@ class SignaturePageDrawSettings : public rjson::field_container_child
         antigenic_maps_width;
     rjson::field_get_set<bool> _force_pp; // hidden field to force pretty printing this rjson object
 
-    inline Layout get_layout() const
+    Layout get_layout() const
         {
-            const std::string layout_s = layout;
+            const auto layout_s = layout.get_value_ref().strv();
             if (layout_s == "auto")
                 return Layout::Auto;
             else if (layout_s == "tree-ts-clades")
@@ -49,7 +49,7 @@ class SignaturePageDrawSettings : public rjson::field_container_child
             else if (layout_s == "tree-clades-ts-maps")
                 return Layout::TreeCladesTSMaps;
             else
-                throw std::runtime_error("Unrecognized layout: " + layout_s);
+                throw std::runtime_error("Unrecognized layout: " + std::string(layout_s));
         }
 
 }; // class SignaturePageDrawSettings
@@ -67,10 +67,10 @@ class SignaturePageDraw
     void init_layout();
     void init_settings();
     void write_initialized_settings(std::string aFilename); // removes redundant settings entries depending on layout!
-    inline Settings& settings() { return *mSettings; }
+    Settings& settings() { return *mSettings; }
     void tree(std::string aTreeFilename);
-    inline Tree& tree() { return *mTree; }
-    inline void chart(std::string aChartFilename) { mChartFilename = aChartFilename; }
+    Tree& tree() { return *mTree; }
+    void chart(std::string aChartFilename) { mChartFilename = aChartFilename; }
 
     void prepare();
     void draw(bool report_antigens_in_hz_sections);

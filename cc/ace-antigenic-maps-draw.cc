@@ -281,13 +281,13 @@ void AntigenicMapsLayoutDrawAce::mark_vaccines(const AntigenicMapMod& vaccine_mo
             VaccineMatcher matcher(vaccs, VaccineMatchData{}.name(name).type(type).passage(passage));
               // std::cerr << matcher.report(2) << '\n';
             for (const auto& [item_key, item_value]: mod) {
-                const std::string field_name = item_key;
+                const auto field_name = item_key.strv();
                 if (field_name == "size")
                     matcher.size(item_value);
                 else if (field_name == "fill")
-                    matcher.fill(static_cast<std::string_view>(item_value));
+                    matcher.fill(Color(item_value));
                 else if (field_name == "outline")
-                    matcher.outline(static_cast<std::string_view>(item_value));
+                    matcher.outline(Color(item_value));
                 else if (field_name == "outline_width")
                     matcher.outline_width(item_value);
                 else if (field_name == "aspect")
@@ -373,19 +373,19 @@ void AntigenicMapsLayoutDrawAce::mark_antigens_old(const AntigenicMapMod& mod)
 void AntigenicMapsLayoutDrawAce::add_label(std::shared_ptr<VaccineMatcherLabel> label, const rjson::object& data)
 {
     for (const auto& [item_key, item_value]: data) {
-        const std::string field_name = item_key;
+        const auto field_name = item_key.strv();
         if (field_name == "size")
             label->size(item_value);
         else if (field_name == "color")
-            label->color(static_cast<std::string_view>(item_value));
+            label->color(Color(item_value));
         else if (field_name == "font_family")
-            label->font_family(item_value);
+            label->font_family(item_value.str());
         else if (field_name == "name_type")
-            label->name_type(item_value);
+            label->name_type(item_value.str());
         else if (field_name == "slant")
-            label->slant(item_value);
+            label->slant(item_value.str());
         else if (field_name == "weight")
-            label->weight(item_value);
+            label->weight(item_value.str());
         else if (field_name == "offset") {
             const rjson::array& offset = item_value;
             label->offset(offset[0], offset[1]);

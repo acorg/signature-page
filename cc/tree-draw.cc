@@ -30,17 +30,17 @@ TreeDraw::~TreeDraw()
 
 void TreeDraw::make_coloring()
 {
-    const std::string color_nodes = mSettings.color_nodes.get_value_ref();
+    const auto color_nodes = mSettings.color_nodes.get_value_ref().strv();
     if (color_nodes == "black")
         mColoring = std::unique_ptr<Coloring>(new ColoringBlack());
     else if (color_nodes == "continent")
         mColoring = std::unique_ptr<Coloring>(new ColoringByContinent());
     else {
         try {
-            mColoring = std::unique_ptr<Coloring>(new ColoringByPos(std::stoul(color_nodes)));
+            mColoring = std::unique_ptr<Coloring>(new ColoringByPos(std::stoul(std::string(color_nodes))));
         }
         catch (std::exception&) {
-            throw std::runtime_error("Unrecognized TreeDrawSettings.color_nodes: " + color_nodes);
+            throw std::runtime_error("Unrecognized TreeDrawSettings.color_nodes: " + std::string(color_nodes));
         }
     }
 
@@ -135,11 +135,11 @@ bool TreeDraw::apply_mods()
         }
         else if (mod_mod == "mark-with-line") {
             std::cout << "TREE-mod: " << mod_mod << " \"" << mod.s1 << "\" \"" << mod.s2 << "\" " << mod.d1 << std::endl;
-            mark_with_line(mod.s1, static_cast<std::string>(mod.s2), Pixels{mod.d1});
+            mark_with_line(mod.s1, Color(mod.s2), Pixels{mod.d1});
         }
         else if (mod_mod == "mark-clade-with-line") {
             std::cout << "TREE-mod: " << mod_mod << " \"" << mod.clade << "\" \"" << mod.color << "\" " << mod.line_width << std::endl;
-            mark_clade_with_line(mod.clade, static_cast<std::string>(mod.color), Pixels{mod.line_width});
+            mark_clade_with_line(mod.clade, Color(mod.color), Pixels{mod.line_width});
         }
         else if (mod_mod == "mark-with-label") {
             mark_with_label(mod);

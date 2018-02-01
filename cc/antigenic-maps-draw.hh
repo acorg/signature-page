@@ -222,7 +222,10 @@ class AntigenicMapMod : public rjson::array_field_container_child_element
         {
             static_assert(!std::is_same_v<Result, rjson::object> && !std::is_same_v<Result, rjson::array>, "get_or_default returns a copy, not a reference, use get_or_empty_object or get_or_empty_array");
             try {
-                return operator[](aName);
+                if constexpr (std::is_same_v<Result, std::string>)
+                    return operator[](aName).str();
+                else
+                    return operator[](aName);
             }
             catch (rjson::field_not_found&) {
                 return aDefault;
@@ -262,7 +265,7 @@ class AntigenicMapMod : public rjson::array_field_container_child_element
     inline Color get_color(std::string aName, Color&& aDefault) const
         {
             try {
-                return static_cast<std::string_view>(operator[](aName));
+                return Color(operator[](aName));
             }
             catch (rjson::field_not_found&) {
                 return aDefault;

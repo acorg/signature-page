@@ -210,7 +210,7 @@ namespace rjson
         inline bool empty() const { return static_cast<FValue>(*this).empty(); }
 
           // to be specialized for complex types
-        inline operator FValue() const { return get_value_ref(); }
+        inline operator FValue() const { if constexpr (std::is_same_v<FValue, std::string>) return get_value_ref().str(); else return get_value_ref(); }
 
      private:
         field_container_parent& mParent;
@@ -248,7 +248,7 @@ namespace rjson
     template <> inline field_get_set<Color>::operator Color() const
     {
         try {
-            return static_cast<std::string_view>(get_value_ref());
+            return Color(get_value_ref());
         }
         catch (std::exception&) {
             std::cerr << "ERROR: cannot convert json to Color: " << get_value_ref() << '\n';
@@ -338,7 +338,7 @@ namespace rjson
         try {
             const auto& obj = get_value_ref();
             TextStyle style;
-            try { style.font_family = obj["family"]; } catch (field_not_found&) {}
+            try { style.font_family = obj["family"].str(); } catch (field_not_found&) {}
             try { style.slant = obj["slant"].str(); } catch (field_not_found&) {}
             try { style.weight = obj["weight"].str(); } catch (field_not_found&) {}
             return style;
@@ -379,7 +379,7 @@ namespace rjson
         try {
             const auto& ar = get_value_ref();
             std::vector<std::string> result{ar.size()};
-            std::transform(ar.begin(), ar.end(), result.begin(), [](const rjson::value& elt) -> std::string { return std::get<rjson::string>(elt); });
+            std::transform(ar.begin(), ar.end(), result.begin(), [](const rjson::value& elt) -> std::string { return std::get<rjson::string>(elt).str(); });
             return result;
         }
         catch (std::exception&) {
