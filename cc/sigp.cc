@@ -45,35 +45,37 @@ int main(int argc, const char *argv[])
         if (args["--seqdb"])
             seqdb::setup(args["--seqdb"], verbose);
 
-        SignaturePageDraw signature_page;
+        {
+            SignaturePageDraw signature_page;
 
-        auto load_settings = [&signature_page,verbose](argc_argv::strings aFilenames) {
-            for (auto fn: aFilenames) {
-                if (verbose)
-                    std::cerr << "DEBUG: reading settings from " << fn << '\n';
-                signature_page.load_settings(fn);
+            auto load_settings = [&signature_page,verbose](argc_argv::strings aFilenames) {
+                                     for (auto fn: aFilenames) {
+                                         if (verbose)
+                                             std::cerr << "DEBUG: reading settings from " << fn << '\n';
+                                         signature_page.load_settings(fn);
+                                     }
+                                 };
+            if (args["-s"])
+                load_settings(args["-s"]);
+
+            signature_page.tree(args[0]);
+            if (args["--chart"])
+                signature_page.chart(args["--chart"]); // before make_surface!
+            signature_page.make_surface(args[1], args["--init-settings"], !args["--no-draw"]); // before init_layout!
+            if (args["--init-settings"]) {
+                signature_page.init_layout();
+                signature_page.init_settings();
             }
-        };
-        if (args["-s"])
-            load_settings(args["-s"]);
-
-        signature_page.tree(args[0]);
-        if (args["--chart"])
-            signature_page.chart(args["--chart"]); // before make_surface!
-        signature_page.make_surface(args[1], args["--init-settings"], !args["--no-draw"]); // before init_layout!
-        if (args["--init-settings"]) {
-            signature_page.init_layout();
-            signature_page.init_settings();
+            signature_page.prepare();
+            if (args["--report-cumulative"])
+                signature_page.tree().report_cumulative_edge_length(std::cout);
+            if (args["--list-ladderized"])
+                signature_page.tree().list_strains(std::cout);
+            if (!args["--no-draw"])
+                signature_page.draw(args["--report-hz-section_antigens"]);
+            if (args["--init-settings"])
+                signature_page.write_initialized_settings(args["--init-settings"]);
         }
-        signature_page.prepare();
-        if (args["--report-cumulative"])
-            signature_page.tree().report_cumulative_edge_length(std::cout);
-        if (args["--list-ladderized"])
-            signature_page.tree().list_strains(std::cout);
-        if (!args["--no-draw"])
-            signature_page.draw(args["--report-hz-section_antigens"]);
-        if (args["--init-settings"])
-            signature_page.write_initialized_settings(args["--init-settings"]);
 
         if (args["--open"])
             acmacs::open(args[1], 2);
