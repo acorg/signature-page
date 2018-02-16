@@ -56,7 +56,7 @@ class NodeDrawData
     constexpr static const size_t HzSectionNoIndex = static_cast<size_t>(-1);
 
     inline NodeDrawData()
-        : shown(true), line_no(0), hz_section_index(HzSectionNoIndex), vertical_pos(-1), mark_with_line{Color::NoChange}, mark_with_line_width{0}, mark_with_label{false} {}
+        : shown(true), line_no(0), hz_section_index(HzSectionNoIndex), vertical_pos(-1), mark_with_line{ColorNoChange}, mark_with_line_width{0}, mark_with_label{false} {}
 
     bool shown;
     size_t line_no;
