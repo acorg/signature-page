@@ -245,7 +245,7 @@ void AntigenicMapsLayoutDrawAce::tracked_serum_circles(const AntigenicMapMod& mo
     tracked_sera(tracked_indices, aSectionIndex);
     for (auto serum_antigens: tracked_indices) {
         std::vector<double> radii(serum_antigens.second.size());
-        std::transform(serum_antigens.second.begin(), serum_antigens.second.end(), radii.begin(), [&](size_t ag_no) -> double { return chart().serum_circle_radius(ag_no, serum_antigens.first, 0, false); });
+        std::transform(serum_antigens.second.begin(), serum_antigens.second.end(), radii.begin(), [&](size_t ag_no) -> double { return chart().serum_circle_radius_empirical(ag_no, serum_antigens.first, 0, false); });
         std::sort(radii.begin(), radii.end());
         const auto radius_p = std::find_if(radii.begin(), radii.end(), [](double r) -> bool { return r >= 0.0; });
         if (radius_p != radii.end()) {
