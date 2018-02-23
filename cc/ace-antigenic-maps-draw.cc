@@ -218,7 +218,7 @@ void AntigenicMapsLayoutDrawAce::tracked_sera(std::map<size_t, std::vector<size_
 {
     const auto& chrt = chart();
     if (!mHomologousAntigenForSeraFound) {
-        chrt.set_homologous(true);
+        chrt.set_homologous(acmacs::chart::Chart::find_homologous_for_big_chart::yes);
         mHomologousAntigenForSeraFound = true;
     }
 
