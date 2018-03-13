@@ -76,8 +76,8 @@ class AntigenicMapsLayoutDrawAce : public AntigenicMapsLayoutDraw
     inline const ChartDraw& chart_draw() const { return chart_draw_interface().chart_draw(); }
     inline ChartDraw& chart_draw() { return chart_draw_interface().chart_draw(); }
 
-    void tracked_antigens(std::vector<size_t>& tracked_indices, size_t aSectionIndex, bool report_antigens_in_hz_sections) const;
-    void tracked_sera(std::map<size_t, std::vector<size_t>>& tracked_indices, size_t aSectionIndex) const;
+    acmacs::chart::PointIndexList tracked_antigens(size_t aSectionIndex, bool report_antigens_in_hz_sections) const;
+    std::map<size_t, acmacs::chart::PointIndexList> tracked_sera(size_t aSectionIndex) const;
     void tracked_serum_circles(const AntigenicMapMod& mod, size_t aSectionIndex);
     void mark_vaccines(const AntigenicMapMod& mod);
     void mark_antigens(const AntigenicMapMod& mod);

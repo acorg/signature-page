@@ -149,8 +149,7 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, boo
     for (const auto& mod: settings().mods) {
         const std::string name = mod.name();
         if (name == "tracked_antigens") {
-            std::vector<size_t> tracked_indices;
-            tracked_antigens(tracked_indices, aSectionIndex, report_antigens_in_hz_sections);
+            const auto tracked_indices = tracked_antigens(aSectionIndex, report_antigens_in_hz_sections);
             acmacs::PointStyle tracked_antigen_style;
             tracked_antigen_style.size = Pixels{mod.get_or_default("size", 5.0)};
             tracked_antigen_style.fill = mod.get_color("fill", "grey63");
@@ -159,8 +158,7 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, boo
             chart_draw().modify(tracked_indices, tracked_antigen_style, PointDrawingOrder::Raise);
         }
         else if (name == "tracked_sera") {
-            std::map<size_t, std::vector<size_t>> tracked_indices;
-            tracked_sera(tracked_indices, aSectionIndex);
+            const auto tracked_indices = tracked_sera(aSectionIndex);
             std::cerr << "INFO: tracked_sera: " << tracked_indices << std::endl;
             acmacs::PointStyle tracked_serum_style;
             tracked_serum_style.size = Pixels{mod.get_or_default("size", 5.0)};
@@ -199,22 +197,24 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, boo
 
 // ----------------------------------------------------------------------
 
-void AntigenicMapsLayoutDrawAce::tracked_antigens(std::vector<size_t>& tracked_indices, size_t aSectionIndex, bool report_antigens_in_hz_sections) const
+acmacs::chart::PointIndexList AntigenicMapsLayoutDrawAce::tracked_antigens(size_t aSectionIndex, bool report_antigens_in_hz_sections) const
 {
+    acmacs::chart::PointIndexList tracked_indices;
     for (const auto& sequenced_section: sequenced_antigens()) {
         if (sequenced_section.second == aSectionIndex) {
-            tracked_indices.push_back(sequenced_section.first);
+            tracked_indices.insert(sequenced_section.first);
             if (report_antigens_in_hz_sections) {
                 std::cout << aSectionIndex << ' ' << sequenced_section.first << ' ' << chart().antigen(sequenced_section.first)->full_name() << '\n';
             }
         }
     }
+    return tracked_indices;
 
 } // AntigenicMapsLayoutDrawAce::tracked_antigens
 
 // ----------------------------------------------------------------------
 
-void AntigenicMapsLayoutDrawAce::tracked_sera(std::map<size_t, std::vector<size_t>>& tracked_indices, size_t aSectionIndex) const
+std::map<size_t, acmacs::chart::PointIndexList> AntigenicMapsLayoutDrawAce::tracked_sera(size_t aSectionIndex) const
 {
     const auto& chrt = chart();
     if (!mHomologousAntigenForSeraFound) {
@@ -222,18 +222,18 @@ void AntigenicMapsLayoutDrawAce::tracked_sera(std::map<size_t, std::vector<size_
         mHomologousAntigenForSeraFound = true;
     }
 
-    std::vector<size_t> tracked_antigen_indices;
-    tracked_antigens(tracked_antigen_indices, aSectionIndex, false);
-
+    const auto tracked_antigen_indices = tracked_antigens(aSectionIndex, false);
+    std::map<size_t, acmacs::chart::PointIndexList> tracked_indices;
     for (size_t serum_no = 0; serum_no < chrt.number_of_sera(); ++serum_no) {
         const auto homologous_antigens_for_serum = chrt.serum(serum_no)->homologous_antigens();
         for (size_t antigen_no: homologous_antigens_for_serum) {
-            if (std::find(tracked_antigen_indices.begin(), tracked_antigen_indices.end(), antigen_no) != tracked_antigen_indices.end()) {
+            if (tracked_antigen_indices.contains(antigen_no)) {
                 tracked_indices[serum_no] = homologous_antigens_for_serum;
                 break;
             }
         }
     }
+    return tracked_indices;
 
 } // AntigenicMapsLayoutDrawAce::tracked_sera
 
@@ -241,9 +241,7 @@ void AntigenicMapsLayoutDrawAce::tracked_sera(std::map<size_t, std::vector<size_
 
 void AntigenicMapsLayoutDrawAce::tracked_serum_circles(const AntigenicMapMod& mod, size_t aSectionIndex)
 {
-    std::map<size_t, std::vector<size_t>> tracked_indices;
-    tracked_sera(tracked_indices, aSectionIndex);
-    for (auto serum_antigens: tracked_indices) {
+    for (auto serum_antigens: tracked_sera(aSectionIndex)) {
         std::vector<double> radii(serum_antigens.second.size());
         std::transform(serum_antigens.second.begin(), serum_antigens.second.end(), radii.begin(), [&](size_t ag_no) -> double { return chart().serum_circle_radius_empirical(ag_no, serum_antigens.first, 0, false); });
         std::sort(radii.begin(), radii.end());
@@ -332,7 +330,7 @@ void AntigenicMapsLayoutDrawAce::mark_antigens_old(const AntigenicMapMod& mod)
 {
     const auto& select = mod.get_or_empty_object("select");
     try {
-        const auto index = select["index"];
+        const size_t index = select["index"];
         acmacs::PointStyle antigen_style;
         antigen_style.size = Pixels{mod.get_or_default("size", 5.0)};
         antigen_style.fill = mod.get_color("fill", "pink");
