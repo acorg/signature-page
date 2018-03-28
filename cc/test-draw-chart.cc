@@ -67,7 +67,7 @@ int main(int argc, const char *argv[])
             settings.serum_outline_color.from_string("black");
 
             double width = 600;
-            auto surface = std::make_unique<PdfCairo>(options.output_filename, width, width);
+            auto surface = std::make_unique<acmacs::surface::PdfCairo>(options.output_filename, width, width);
             surface->viewport(viewport);
             surface->background("white");
             surface->grid(Scaled{1}, "grey80", Pixels{0.5});

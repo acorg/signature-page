@@ -70,7 +70,7 @@ void SignaturePageDraw::make_surface(std::string aFilename, bool init_settings, 
           width = std::floor(height * (210.0 / 297.0));
           break;
     }
-    mSurface = std::make_unique<PdfCairo>(draw_map ? aFilename : std::string{}, width, height);
+    mSurface = std::make_unique<acmacs::surface::PdfCairo>(draw_map ? aFilename : std::string{}, width, height);
     std::cerr << "INFO: Surface: " << width << " x " << height << std::endl;
 
     mTreeDraw = std::make_unique<TreeDraw>(mSurface->subsurface(false), *mTree, mSettings->tree_draw, mSettings->hz_sections);
