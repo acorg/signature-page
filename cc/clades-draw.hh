@@ -125,18 +125,18 @@ std::ostream& operator << (std::ostream& out, const CladeData& clade);
 class CladesDraw
 {
  public:
-    inline CladesDraw(Surface& aSurface, Tree& aTree, const TreeDraw& aTreeDraw, const TimeSeriesDraw& aTimeSeriesDraw, CladesDrawSettings& aSettings)
+    inline CladesDraw(acmacs::surface::Surface& aSurface, Tree& aTree, const TreeDraw& aTreeDraw, const TimeSeriesDraw& aTimeSeriesDraw, CladesDrawSettings& aSettings)
         : mSurface(aSurface), mTree(aTree), mTreeDraw(aTreeDraw), mTimeSeriesDraw(aTimeSeriesDraw), mSettings(aSettings) {}
 
     void prepare();
     void draw();
 
     void init_settings();
-    inline Surface& surface() { return mSurface; }
+    inline acmacs::surface::Surface& surface() { return mSurface; }
     inline const Clades* clades() const { return &mClades; }
 
  private:
-    Surface& mSurface;
+    acmacs::surface::Surface& mSurface;
     Tree& mTree;
     const TreeDraw& mTreeDraw;
     const TimeSeriesDraw& mTimeSeriesDraw;

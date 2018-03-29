@@ -20,7 +20,7 @@ class ColoringByContinentMapLegend : public Legend
  public:
     inline ColoringByContinentMapLegend() = default;
 
-    virtual void draw(Surface& aSurface, const LegendSettings& /*aSettings*/) const
+    virtual void draw(acmacs::surface::Surface& aSurface, const LegendSettings& /*aSettings*/) const
         {
             continent_map_draw(aSurface);
         }
@@ -83,7 +83,7 @@ class ColoringByPosLegend : public Legend
     inline ColoringByPosLegend(const ColoringByPos& aColoring)
         : Legend(), mColoring(aColoring), mTitle(std::to_string(mColoring.pos() + 1)) {}
 
-    virtual void draw(Surface& aSurface, const LegendSettings& aSettings) const
+    virtual void draw(acmacs::surface::Surface& aSurface, const LegendSettings& aSettings) const
         {
               // aSurface.border(0xA0FFA000, 1);
             const auto title_size = aSurface.text_size(mTitle, Pixels{aSettings.title_size}, aSettings.title_style);

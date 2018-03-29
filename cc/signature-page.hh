@@ -77,7 +77,7 @@ class SignaturePageDraw
 
  private:
     std::string mChartFilename;
-    std::unique_ptr<Surface> mSurface;
+    std::unique_ptr<acmacs::surface::Surface> mSurface;
     std::unique_ptr<Settings> mSettings;
     const seqdb::Seqdb* mSeqdb = nullptr;
     std::unique_ptr<Tree> mTree;

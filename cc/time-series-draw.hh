@@ -37,7 +37,7 @@ class TimeSeriesDrawSettings : public rjson::field_container_child
 class TimeSeriesDraw
 {
  public:
-    inline TimeSeriesDraw(Surface& aSurface, Tree& aTree, const TreeDraw& aTreeDraw, HzSections& aHzSections, TimeSeriesDrawSettings& aSettings)
+    inline TimeSeriesDraw(acmacs::surface::Surface& aSurface, Tree& aTree, const TreeDraw& aTreeDraw, HzSections& aHzSections, TimeSeriesDrawSettings& aSettings)
         : mSurface(aSurface), mTree(aTree), mTreeDraw(aTreeDraw), mSettings(aSettings), mHzSections(aHzSections), mTreeMode(false) {}
 
     void prepare();
@@ -47,12 +47,12 @@ class TimeSeriesDraw
     inline const acmacs::Location& origin_in_parent() const { return mSurface.origin_in_parent(); }
 
     void init_settings();
-    inline Surface& surface() { return mSurface; }
+    inline acmacs::surface::Surface& surface() { return mSurface; }
     inline void tree_mode(bool aTreeMode) { mTreeMode = aTreeMode; }
     // void hide_hz_section_labels_in_time_series();
 
  private:
-    Surface& mSurface;
+    acmacs::surface::Surface& mSurface;
     Tree& mTree;
     const TreeDraw& mTreeDraw;
     TimeSeriesDrawSettings& mSettings;

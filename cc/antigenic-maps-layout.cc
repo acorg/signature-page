@@ -32,7 +32,7 @@ const acmacs::Viewport& AntigenicMapsLayoutDraw::viewport() const
 
 // ----------------------------------------------------------------------
 
-void AntigenicMapsLayoutDraw::apply_mods_before(Surface& aSurface)
+void AntigenicMapsLayoutDraw::apply_mods_before(acmacs::surface::Surface& aSurface)
 {
     for (const auto& mod: settings().mods) {
         const std::string name = mod.name();
@@ -48,7 +48,7 @@ void AntigenicMapsLayoutDraw::apply_mods_before(Surface& aSurface)
 
 // ----------------------------------------------------------------------
 
-void AntigenicMapsLayoutDraw::apply_mods_after(Surface& aSurface)
+void AntigenicMapsLayoutDraw::apply_mods_after(acmacs::surface::Surface& aSurface)
 {
     for (const auto& mod: settings().mods) {
         const std::string name = mod.name();
@@ -83,13 +83,13 @@ AntigenicMapsLayout::~AntigenicMapsLayout()
 
 // ----------------------------------------------------------------------
 
-void LabelledGridBase::draw(Surface& aMappedAntigensDrawSurface, bool report_antigens_in_hz_sections)
+void LabelledGridBase::draw(acmacs::surface::Surface& aMappedAntigensDrawSurface, bool report_antigens_in_hz_sections)
 {
     std::cerr << "INFO: AntigenicMapsLayoutDraw::draw" << std::endl;
 
     layout_draw().prepare_chart_for_all_sections();
     const AntigenicMapsDrawSettings& settings = layout_draw().settings();
-    Surface& surface = layout_draw().surface();
+    acmacs::surface::Surface& surface = layout_draw().surface();
     // std::cerr << "Maps " << surface << std::endl;
 
     const double map_width = (surface.viewport().size.width - (settings.columns - 1) * settings.gap) / settings.columns;
@@ -98,7 +98,7 @@ void LabelledGridBase::draw(Surface& aMappedAntigensDrawSurface, bool report_ant
     for (const auto section_index: layout_draw().hz_sections().section_order) {
         const auto& section = layout_draw().hz_sections().sections[section_index];
         if (section.show && section.show_map) {
-            Surface& map_surface = surface.subsurface({column * (map_width + settings.gap), row * (map_width + settings.gap)},
+            acmacs::surface::Surface& map_surface = surface.subsurface({column * (map_width + settings.gap), row * (map_width + settings.gap)},
                                                       Scaled{map_width}, layout_draw().viewport(), true);
             std::cout << "===============================\nINFO: MAP " << section_index << ' ' << layout_draw().hz_sections().node_refs[section_index].index << ": " << map_surface << std::endl;
             // std::cerr << "Map " << map_surface << std::endl;
@@ -140,16 +140,16 @@ void LabelledGridBase::draw(Surface& aMappedAntigensDrawSurface, bool report_ant
 
 // ----------------------------------------------------------------------
 
-void LabelledGridBase::draw_mapped_antigens_section(size_t aSectionIndex, Surface& aMappedAntigensDrawSurface)
+void LabelledGridBase::draw_mapped_antigens_section(size_t aSectionIndex, acmacs::surface::Surface& aMappedAntigensDrawSurface)
 {
     const AntigenicMapsDrawSettings& settings = layout_draw().settings();
     const auto& section = layout_draw().hz_sections().node_refs[aSectionIndex];
 
     const double left = 0, right = aMappedAntigensDrawSurface.viewport().size.width;
     const double top = section.first->draw.vertical_pos, bottom = section.last->draw.vertical_pos;
-    aMappedAntigensDrawSurface.line({left, top}, {right, top}, settings.mapped_antigens_section_line_color, Pixels{settings.mapped_antigens_section_line_width}, Surface::LineCap::Square);
-    aMappedAntigensDrawSurface.line({left, bottom}, {right, bottom}, settings.mapped_antigens_section_line_color, Pixels{settings.mapped_antigens_section_line_width}, Surface::LineCap::Square);
-    aMappedAntigensDrawSurface.line({right, top}, {right, bottom}, settings.mapped_antigens_section_line_color, Pixels{settings.mapped_antigens_section_line_width}, Surface::LineCap::Square);
+    aMappedAntigensDrawSurface.line({left, top}, {right, top}, settings.mapped_antigens_section_line_color, Pixels{settings.mapped_antigens_section_line_width}, acmacs::surface::Surface::LineCap::Square);
+    aMappedAntigensDrawSurface.line({left, bottom}, {right, bottom}, settings.mapped_antigens_section_line_color, Pixels{settings.mapped_antigens_section_line_width}, acmacs::surface::Surface::LineCap::Square);
+    aMappedAntigensDrawSurface.line({right, top}, {right, bottom}, settings.mapped_antigens_section_line_color, Pixels{settings.mapped_antigens_section_line_width}, acmacs::surface::Surface::LineCap::Square);
 
 } // LabelledGridBase::draw_mapped_antigens_section
 

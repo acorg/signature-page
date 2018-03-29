@@ -28,17 +28,17 @@ class AntigenicMapsLayout;
 class AntigenicMapsDrawBase
 {
  public:
-    AntigenicMapsDrawBase(Surface& aSurface, Tree& aTree, HzSections& aHzSections, SignaturePageDrawSettings& aSignaturePageDrawSettings, AntigenicMapsDrawSettings& aSettings);
+    AntigenicMapsDrawBase(acmacs::surface::Surface& aSurface, Tree& aTree, HzSections& aHzSections, SignaturePageDrawSettings& aSignaturePageDrawSettings, AntigenicMapsDrawSettings& aSettings);
     virtual ~AntigenicMapsDrawBase();
 
     virtual void init_settings();
     virtual void prepare();
-    virtual void draw(Surface& aMappedAntigensDrawSurface, bool report_antigens_in_hz_sections);
+    virtual void draw(acmacs::surface::Surface& aMappedAntigensDrawSurface, bool report_antigens_in_hz_sections);
     virtual ChartDrawBase& chart() = 0;
     virtual const ChartDrawBase& chart() const = 0;
     virtual void make_layout() = 0;
 
-    inline Surface& surface() { return mSurface; }
+    inline acmacs::surface::Surface& surface() { return mSurface; }
     inline const Tree& tree() const { return mTree; }
     inline const HzSections& hz_sections() const { return mHzSections; }
     inline SignaturePageDrawSettings& signature_page_settings() { return mSignaturePageDrawSettings; }
@@ -53,7 +53,7 @@ class AntigenicMapsDrawBase
     void layout(AntigenicMapsLayout* aLayout);
 
  private:
-    Surface& mSurface;
+    acmacs::surface::Surface& mSurface;
     Tree& mTree;
     HzSections& mHzSections;
     // MappedAntigensDraw& mMappedAntigensDraw;
@@ -65,7 +65,7 @@ class AntigenicMapsDrawBase
 
 // ----------------------------------------------------------------------
 
-AntigenicMapsDrawBase* make_antigenic_maps_draw(std::string aChartFilename, Surface& aSurface, Tree& aTree, HzSections& aHzSections, SignaturePageDrawSettings& aSignaturePageDrawSettings, AntigenicMapsDrawSettings& aSettings);
+AntigenicMapsDrawBase* make_antigenic_maps_draw(std::string aChartFilename, acmacs::surface::Surface& aSurface, Tree& aTree, HzSections& aHzSections, SignaturePageDrawSettings& aSignaturePageDrawSettings, AntigenicMapsDrawSettings& aSettings);
 
 // ----------------------------------------------------------------------
 

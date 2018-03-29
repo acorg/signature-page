@@ -396,7 +396,7 @@ void AntigenicMapsLayoutDrawAce::add_label(std::shared_ptr<VaccineMatcherLabel> 
 
 // ----------------------------------------------------------------------
 
-void AntigenicMapsLayoutDrawAce::draw_chart(Surface& aSurface, size_t /*aSectionIndex*/)
+void AntigenicMapsLayoutDrawAce::draw_chart(acmacs::surface::Surface& aSurface, size_t /*aSectionIndex*/)
 {
     apply_mods_before(aSurface);
 

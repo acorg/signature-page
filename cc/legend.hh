@@ -28,7 +28,7 @@ class Legend
     inline Legend() {}
     virtual inline ~Legend() = default;
 
-    virtual void draw(Surface& aSurface, const LegendSettings& aSettings) const = 0;
+    virtual void draw(acmacs::surface::Surface& aSurface, const LegendSettings& aSettings) const = 0;
     virtual acmacs::Size size() const = 0;
 
 }; // class Legend

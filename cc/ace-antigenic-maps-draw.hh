@@ -20,7 +20,7 @@ class ChartDrawInterface : public ChartDrawBase
     virtual inline const acmacs::Viewport& viewport() const { return mChartDraw.viewport(); }
     virtual inline void viewport(const acmacs::Viewport& aViewport) { mChartDraw.viewport(aViewport); }
     virtual inline std::string lab() const { return chart().info()->lab(); }
-    virtual inline void draw(Surface& aSurface) const { mChartDraw.draw(aSurface); }
+    virtual inline void draw(acmacs::surface::Surface& aSurface) const { mChartDraw.draw(aSurface); }
 
     virtual inline std::optional<size_t> find_antigen(std::string aName) const { return chart().antigens()->find_by_full_name(aName); }
 
@@ -40,7 +40,7 @@ class ChartDrawInterface : public ChartDrawBase
 class AntigenicMapsDraw : public AntigenicMapsDrawBase
 {
  public:
-    inline AntigenicMapsDraw(Surface& aSurface, Tree& aTree, acmacs::chart::ChartModifyP aChart, HzSections& aHzSections, SignaturePageDrawSettings& aSignaturePageDrawSettings, AntigenicMapsDrawSettings& aSettings)
+    inline AntigenicMapsDraw(acmacs::surface::Surface& aSurface, Tree& aTree, acmacs::chart::ChartModifyP aChart, HzSections& aHzSections, SignaturePageDrawSettings& aSignaturePageDrawSettings, AntigenicMapsDrawSettings& aSettings)
         : AntigenicMapsDrawBase(aSurface, aTree, aHzSections, aSignaturePageDrawSettings, aSettings), mChartDraw(aChart) {}
 
     virtual void make_layout();
@@ -62,7 +62,7 @@ class AntigenicMapsLayoutDrawAce : public AntigenicMapsLayoutDraw
     inline AntigenicMapsLayoutDrawAce(AntigenicMapsDrawBase& aAntigenicMapsDraw)
         : AntigenicMapsLayoutDraw(aAntigenicMapsDraw), mHomologousAntigenForSeraFound(false) {}
 
-    void draw_chart(Surface& aSurface, size_t aSectionIndex) override;
+    void draw_chart(acmacs::surface::Surface& aSurface, size_t aSectionIndex) override;
     void prepare_apply_mods() override;
     void prepare_chart_for_all_sections() override;
     void prepare_drawing_chart(size_t aSectionIndex, bool report_antigens_in_hz_sections) override;

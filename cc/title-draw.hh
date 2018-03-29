@@ -30,17 +30,17 @@ class TitleDrawSettings : public rjson::field_container_child
 class TitleDraw
 {
  public:
-    inline TitleDraw(Surface& aSurface, const Tree& aTree, const ChartDrawBase* aChart, TitleDrawSettings& aSettings)
+    inline TitleDraw(acmacs::surface::Surface& aSurface, const Tree& aTree, const ChartDrawBase* aChart, TitleDrawSettings& aSettings)
         : mSurface(aSurface), mTree(aTree), mChart(aChart), mSettings(aSettings) {}
 
     void init_settings();
     void prepare();
     void draw();
 
-    inline Surface& surface() { return mSurface; }
+    inline acmacs::surface::Surface& surface() { return mSurface; }
 
  private:
-    Surface& mSurface;
+    acmacs::surface::Surface& mSurface;
     const Tree& mTree;
     const ChartDrawBase* mChart;
     TitleDrawSettings& mSettings;

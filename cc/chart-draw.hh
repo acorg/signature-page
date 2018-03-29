@@ -6,7 +6,7 @@
 // ----------------------------------------------------------------------
 
 class AntigenicMapsDrawSettings;
-class Surface;
+namespace acmacs::surface { class Surface; }
 
 // ----------------------------------------------------------------------
 
@@ -17,7 +17,7 @@ class ChartDrawBase
 
     virtual void init_settings() = 0;
     virtual const acmacs::Viewport& viewport() const = 0;
-    virtual void draw(Surface& aSurface) const = 0;
+    virtual void draw(acmacs::surface::Surface& aSurface) const = 0;
 
     virtual std::string lab() const = 0;
 

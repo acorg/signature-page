@@ -30,16 +30,16 @@ class MappedAntigensDrawSettings : public rjson::field_container_child
 class MappedAntigensDraw
 {
  public:
-    inline MappedAntigensDraw(Surface& aSurface, Tree& aTree, /* const TreeDraw& aTreeDraw, */ const ChartDrawBase& aChart, MappedAntigensDrawSettings& aSettings)
+    inline MappedAntigensDraw(acmacs::surface::Surface& aSurface, Tree& aTree, /* const TreeDraw& aTreeDraw, */ const ChartDrawBase& aChart, MappedAntigensDrawSettings& aSettings)
         : mSurface(aSurface), mTree(aTree), /* mTreeDraw(aTreeDraw), */ mChart(aChart), mSettings(aSettings) {}
 
     void prepare();
     void draw();
 
-    inline Surface& surface() { return mSurface; }
+    inline acmacs::surface::Surface& surface() { return mSurface; }
 
  private:
-    Surface& mSurface;
+    acmacs::surface::Surface& mSurface;
     Tree& mTree;
     // const TreeDraw& mTreeDraw;
     const ChartDrawBase& mChart;

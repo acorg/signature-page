@@ -12,7 +12,7 @@
 
 // ----------------------------------------------------------------------
 
-TreeDraw::TreeDraw(Surface& aSurface, Tree& aTree, TreeDrawSettings& aSettings, HzSections& aHzSections)
+TreeDraw::TreeDraw(acmacs::surface::Surface& aSurface, Tree& aTree, TreeDrawSettings& aSettings, HzSections& aHzSections)
     : mSurface(aSurface), mTree(aTree), mSettings(aSettings), mHzSections(aHzSections)
 {
     make_coloring();
@@ -567,7 +567,7 @@ void TreeDraw::draw_node(const Node& aNode, double aOriginX, double& aVerticalGa
                         bottom = node.draw.vertical_pos;
                 }
             }
-            mSurface.line({right, top}, {right, bottom}, mSettings.line_color, mLineWidth, Surface::LineCap::Square);
+            mSurface.line({right, top}, {right, bottom}, mSettings.line_color, mLineWidth, acmacs::surface::Surface::LineCap::Square);
         }
         mSurface.line({aOriginX, aNode.draw.vertical_pos}, {right, aNode.draw.vertical_pos}, mSettings.line_color, mLineWidth);
         draw_aa_transition(aNode, {aOriginX, aNode.draw.vertical_pos}, right);
@@ -664,7 +664,7 @@ void TreeDraw::draw_legend()
 {
     const Legend* legend = coloring_legend();
     if (legend) {
-        Surface& legend_surface = mSurface.subsurface(static_cast<acmacs::Offset>(mSettings.legend.offset), Scaled{mSettings.legend.width}, legend->size(), false);
+        acmacs::surface::Surface& legend_surface = mSurface.subsurface(static_cast<acmacs::Offset>(mSettings.legend.offset), Scaled{mSettings.legend.width}, legend->size(), false);
         legend->draw(legend_surface, mSettings.legend);
           // legend_surface->border("red", 1);
     }

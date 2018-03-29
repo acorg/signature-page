@@ -8,7 +8,7 @@
 
 // ----------------------------------------------------------------------
 
-AntigenicMapsDrawBase::AntigenicMapsDrawBase(Surface& aSurface, Tree& aTree, HzSections& aHzSections, SignaturePageDrawSettings& aSignaturePageDrawSettings, AntigenicMapsDrawSettings& aSettings)
+AntigenicMapsDrawBase::AntigenicMapsDrawBase(acmacs::surface::Surface& aSurface, Tree& aTree, HzSections& aHzSections, SignaturePageDrawSettings& aSignaturePageDrawSettings, AntigenicMapsDrawSettings& aSettings)
     : mSurface(aSurface), mTree(aTree), mHzSections(aHzSections),
       mSignaturePageDrawSettings(aSignaturePageDrawSettings), mSettings(aSettings)
 {
@@ -68,7 +68,7 @@ void AntigenicMapsDrawBase::init_settings()
 
 // ----------------------------------------------------------------------
 
-void AntigenicMapsDrawBase::draw(Surface& aMappedAntigensDrawSurface, bool report_antigens_in_hz_sections)
+void AntigenicMapsDrawBase::draw(acmacs::surface::Surface& aMappedAntigensDrawSurface, bool report_antigens_in_hz_sections)
 {
     layout().draw(aMappedAntigensDrawSurface, report_antigens_in_hz_sections);
 
@@ -91,7 +91,7 @@ void AntigenicMapsDrawBase::prepare()
 
 // ----------------------------------------------------------------------
 
-AntigenicMapsDrawBase* make_antigenic_maps_draw(std::string aChartFilename, Surface& aSurface, Tree& aTree, HzSections& aHzSections, SignaturePageDrawSettings& aSignaturePageDrawSettings, AntigenicMapsDrawSettings& aSettings)
+AntigenicMapsDrawBase* make_antigenic_maps_draw(std::string aChartFilename, acmacs::surface::Surface& aSurface, Tree& aTree, HzSections& aHzSections, SignaturePageDrawSettings& aSignaturePageDrawSettings, AntigenicMapsDrawSettings& aSettings)
 {
     std::string error;
     try {

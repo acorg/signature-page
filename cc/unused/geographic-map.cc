@@ -5,7 +5,7 @@
 
 // ----------------------------------------------------------------------
 
-void ColoringByGeographyMapLegend::draw(Surface& aSurface) const
+void ColoringByGeographyMapLegend::draw(acmacs::surface::Surface& aSurface) const
 {
     Color geographic_map_outline_color = 0;
     double geographic_map_outline_width = 1;
@@ -30,7 +30,7 @@ Size ColoringByGeographyMapLegend::size() const
 
 // ----------------------------------------------------------------------
 
-// cairo_path_t* ColoringByGeographyMapLegend::outline(Surface& aSurface, const std::vector<GeographicMapPathElement>& aPath) const
+// cairo_path_t* ColoringByGeographyMapLegend::outline(acmacs::surface::Surface& aSurface, const std::vector<GeographicMapPathElement>& aPath) const
 // {
 //     aSurface.new_path();
 //     for (const auto& element: aPath) {

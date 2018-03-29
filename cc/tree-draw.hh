@@ -301,7 +301,7 @@ class HzSections : public rjson::field_container_child
 class TreeDraw
 {
  public:
-    TreeDraw(Surface& aSurface, Tree& aTree, TreeDrawSettings& aSettings, HzSections& aHzSections);
+    TreeDraw(acmacs::surface::Surface& aSurface, Tree& aTree, TreeDrawSettings& aSettings, HzSections& aHzSections);
     ~TreeDraw();
 
     void prepare();
@@ -315,12 +315,12 @@ class TreeDraw
     void ladderize();
     void detect_hz_lines_for_clades(const Clades* aClades, bool aForce = true);
     void set_line_no();
-    inline Surface& surface() { return mSurface; }
+    inline acmacs::surface::Surface& surface() { return mSurface; }
 
     static constexpr const size_t sFirstLineNo = 1; // line of the first node is 1, we have 1 line space at the top and bottom of the tree
 
  private:
-    Surface& mSurface;
+    acmacs::surface::Surface& mSurface;
     Tree& mTree;
     TreeDrawSettings& mSettings;
     HzSections& mHzSections;
