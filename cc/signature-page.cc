@@ -304,7 +304,8 @@ void SignaturePageDraw::make_layout_tree_clades_ts_maps()
 void SignaturePageDraw::draw(bool report_antigens_in_hz_sections)
 {
     std::cout << std::endl << "INFO: DRAW signature page" << std::endl;
-    mSurface->background("white");
+    const auto& v = mSurface->viewport();
+    mSurface->rectangle_filled(v.origin, v.size, WHITE, Pixels{0}, WHITE);
 
     if (mTreeDraw)
         mTreeDraw->draw();

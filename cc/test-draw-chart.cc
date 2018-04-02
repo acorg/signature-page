@@ -69,7 +69,7 @@ int main(int argc, const char *argv[])
             double width = 600;
             auto surface = std::make_unique<acmacs::surface::PdfCairo>(options.output_filename, width, width);
             surface->viewport(viewport);
-            surface->background("white");
+            aSurface.rectangle_filled(viewport.origin, viewport.size, WHITE, Pixels{0}, WHITE);
             surface->grid(Scaled{1}, "grey80", Pixels{0.5});
 
             size_t drawn = 0;
@@ -82,7 +82,7 @@ int main(int argc, const char *argv[])
                 }
             }
 
-            surface->border("black", Pixels{1});
+            aSurface.rectangle(viewport.origin, viewport.size, BLACK, Pixels{2});
         }
         catch (std::exception& err) {
             std::cerr << err.what() << std::endl;
