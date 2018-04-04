@@ -567,7 +567,7 @@ void TreeDraw::draw_node(const Node& aNode, double aOriginX, double& aVerticalGa
                         bottom = node.draw.vertical_pos;
                 }
             }
-            mSurface.line({right, top}, {right, bottom}, mSettings.line_color, mLineWidth, acmacs::surface::Surface::LineCap::Square);
+            mSurface.line({right, top}, {right, bottom}, mSettings.line_color, mLineWidth, acmacs::surface::LineCap::Square);
         }
         mSurface.line({aOriginX, aNode.draw.vertical_pos}, {right, aNode.draw.vertical_pos}, mSettings.line_color, mLineWidth);
         draw_aa_transition(aNode, {aOriginX, aNode.draw.vertical_pos}, right);
