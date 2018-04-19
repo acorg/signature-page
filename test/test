@@ -3,7 +3,7 @@
 if [ -f /Volumes/rdisk/ramdisk-id ]; then
     TDIR=$(mktemp -d /Volumes/rdisk/ad-test.XXXXXX)
 else
-    TDIR=$(mktemp -d)
+    TDIR=$(mktemp -d -t XXXXXX)
 fi
 TESTDIR=$(dirname $0)
 
