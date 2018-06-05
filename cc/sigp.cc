@@ -41,9 +41,9 @@ int main(int argc, const char *argv[])
             throw std::runtime_error("Usage: "s + args.program() + " [options] <tree.json> <output.pdf>\n" + args.usage_options());
         }
         const bool verbose = args["-v"] || args["--verbose"];
-        seqdb::setup_dbs(args["--db-dir"], verbose);
+        seqdb::setup_dbs(args["--db-dir"], verbose ? seqdb::report::yes : seqdb::report::no);
         if (args["--seqdb"])
-            seqdb::setup(args["--seqdb"], verbose);
+            seqdb::setup(args["--seqdb"], verbose ? seqdb::report::yes : seqdb::report::no);
 
         {
             SignaturePageDraw signature_page;
