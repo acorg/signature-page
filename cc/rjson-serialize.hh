@@ -319,12 +319,12 @@ namespace rjson
 
     template <> inline value to_value<acmacs::Offset>(const acmacs::Offset& aOffset)
     {
-        return array{aOffset.x, aOffset.y};
+        return array{aOffset.x(), aOffset.y()};
     }
 
     template <> inline value to_value<acmacs::Offset>(acmacs::Offset&& aOffset)
     {
-        return array{aOffset.x, aOffset.y};
+        return array{aOffset.x(), aOffset.y()};
     }
 
       // ----------------------------------------------------------------------

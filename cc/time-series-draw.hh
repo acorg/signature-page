@@ -44,7 +44,7 @@ class TimeSeriesDraw
     void draw();
 
     inline const acmacs::Size& size() const { return mSurface.viewport().size; }
-    inline const acmacs::Location& origin_in_parent() const { return mSurface.origin_in_parent(); }
+    inline acmacs::Location2D origin_in_parent() const { return mSurface.origin_in_parent(); }
 
     void init_settings();
     inline acmacs::surface::Surface& surface() { return mSurface; }
@@ -61,7 +61,7 @@ class TimeSeriesDraw
     bool mTreeMode;
 
     void draw_labels(double month_width);
-    void draw_labels_at_side(const acmacs::Location& aOrigin, double month_width, double month_max_height);
+    void draw_labels_at_side(acmacs::Location2D aOrigin, double month_width, double month_max_height);
     void draw_month_separators(double month_width);
     void draw_dashes(double month_width);
     void draw_hz_section_lines();

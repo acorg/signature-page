@@ -256,7 +256,7 @@ void SignaturePageDraw::make_layout_tree_ts_clades()
     mTreeDraw->surface().move_resize_viewport({mSettings->signature_page.left, mSettings->signature_page.top}, tree_width, acmacs::Size{1000 * tree_width / section_height, 1000});
     mTimeSeriesDraw->surface().move_resize_viewport({ts_left, mSettings->signature_page.top}, ts_width, acmacs::Size{1000 * ts_width / section_height, 1000});
     mCladesDraw->surface().move_resize_viewport({clades_left, mSettings->signature_page.top}, clades_width, acmacs::Size{1000 * clades_width / section_height, 1000});
-    mTitleDraw->surface().move_resize_viewport(acmacs::Location{}, page_size.width, page_size);
+    mTitleDraw->surface().move_resize_viewport(acmacs::Location2D{}, page_size.width, page_size);
 
     std::cout << "Tree   " << mTreeDraw->surface() << std::endl;
     std::cout << "TS     " << mTimeSeriesDraw->surface() << std::endl;
@@ -289,7 +289,7 @@ void SignaturePageDraw::make_layout_tree_clades_ts_maps()
     mCladesDraw->surface().move_resize_viewport({clades_left, mSettings->signature_page.top}, clades_width, acmacs::Size{1000 * clades_width / section_height, 1000});
     mMappedAntigensDraw->surface().move_resize_viewport({mapped_antigens_left, mSettings->signature_page.top}, mapped_antigens_width, acmacs::Size{1000 * mapped_antigens_width / section_height, 1000});
     mAntigenicMapsDraw->surface().move_resize_viewport({antigic_maps_left, mSettings->signature_page.top}, antigic_maps_width, acmacs::Size{1000 * antigic_maps_width / section_height, 1000});
-    mTitleDraw->surface().move_resize_viewport(acmacs::Location{}, page_size.width, page_size);
+    mTitleDraw->surface().move_resize_viewport(acmacs::Location2D{}, page_size.width, page_size);
 
     std::cout << "Tree   " << mTreeDraw->surface() << std::endl;
     std::cout << "TS     " << mTimeSeriesDraw->surface() << std::endl;
@@ -335,7 +335,7 @@ void SignaturePageDraw::draw_mods()
                 if (mod_n == "text") {
                     const auto text = mod["text"].str();
                     acmacs::Offset offset;
-                    try { const auto& settings_offset = mod["offset"]; offset.set(settings_offset[0], settings_offset[1]); } catch (rjson::field_not_found&) {}
+                    try { const auto& settings_offset = mod["offset"]; offset = acmacs::Offset{settings_offset[0], settings_offset[1]}; } catch (rjson::field_not_found&) {}
                     Color color{BLACK};
                     try { color = Color(mod["color"]); } catch (rjson::field_not_found&) {}
                     Pixels size{14};

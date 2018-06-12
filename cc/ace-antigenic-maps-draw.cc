@@ -343,10 +343,10 @@ void AntigenicMapsLayoutDrawAce::mark_antigens_old(const AntigenicMapMod& mod)
             label.size(label_data.get_or_default("size", 9.0));
             try {
                 const rjson::array& offset = label_data["offset"];
-                label.offset(offset[0], offset[1]);
+                label.offset({offset[0], offset[1]});
             }
             catch (rjson::field_not_found&) {
-                label.offset(0, 1);
+                label.offset({0, 1});
             }
             if (const auto display_name = label_data.get<std::string>("display_name"); display_name)
                 label.display_name(*display_name);
@@ -386,7 +386,7 @@ void AntigenicMapsLayoutDrawAce::add_label(std::shared_ptr<VaccineMatcherLabel> 
             label->weight(item_value.str());
         else if (field_name == "offset") {
             const rjson::array& offset = item_value;
-            label->offset(offset[0], offset[1]);
+            label->offset({offset[0], offset[1]});
         }
         else if (field_name.empty() || (field_name.front() != '?' && field_name.back() != '?'))
             std::cerr << "WARNING: mark_vaccines label: unrecognized key \"" << field_name << '"' << std::endl;

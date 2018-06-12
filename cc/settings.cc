@@ -263,9 +263,9 @@ void AntigenicMapsDrawSettings::viewport(const acmacs::Viewport& aViewport)
 {
     auto make_setting_list = [&aViewport]() -> rjson::array {
         if (float_equal(aViewport.size.width, aViewport.size.height))
-            return {rjson::number{aViewport.origin.x}, rjson::number{aViewport.origin.y}, rjson::number{aViewport.size.width}};
+            return {rjson::number{aViewport.origin.x()}, rjson::number{aViewport.origin.y()}, rjson::number{aViewport.size.width}};
         else
-            return {rjson::number{aViewport.origin.x}, rjson::number{aViewport.origin.y}, rjson::number{aViewport.size.width}, rjson::number{aViewport.size.height}};
+            return {rjson::number{aViewport.origin.x()}, rjson::number{aViewport.origin.y()}, rjson::number{aViewport.size.width}, rjson::number{aViewport.size.height}};
     };
       // std::cerr << "DEBUG: AntigenicMapsDrawSettings::viewport" << std::endl;
     auto vpmod = std::find_if(mods.begin(), mods.end(), [](const auto& mod) -> bool { return mod.name() == "viewport"; });
@@ -288,7 +288,7 @@ acmacs::Viewport AntigenicMapMod::get_viewport(const acmacs::Viewport& aOrigView
         try {
             switch (ar.size()) {
               case 3:
-                  result.set(aOrigViewport.left() + static_cast<double>(ar[0]), aOrigViewport.top() + static_cast<double>(ar[1]), aOrigViewport.size.width + static_cast<double>(ar[2]));
+                  result.set({aOrigViewport.left() + static_cast<double>(ar[0]), aOrigViewport.top() + static_cast<double>(ar[1])}, aOrigViewport.size.width + static_cast<double>(ar[2]));
                   break;
               default:
                   throw std::exception{};
@@ -307,10 +307,10 @@ acmacs::Viewport AntigenicMapMod::get_viewport(const acmacs::Viewport& aOrigView
         try {
             switch (ar.size()) {
               case 3:
-                  result.set(ar[0], ar[1], ar[2]);
+                  result.set({ar[0], ar[1]}, ar[2]);
                   break;
               case 4:
-                  result.set(acmacs::Location(ar[0], ar[1]), acmacs::Size(ar[2], ar[3]));
+                  result.set(acmacs::Location2D{ar[0], ar[1]}, acmacs::Size{ar[2], ar[3]});
                   break;
               default:
                   throw std::exception{};

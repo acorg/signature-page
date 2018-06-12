@@ -339,8 +339,8 @@ class TreeDraw
     size_t prepare_hz_sections();
     void draw_node(const Node& aNode, double aOriginX, double& aVerticalGap, double aEdgeLength = -1);
     void draw_legend();
-    void draw_aa_transition(const Node& aNode, const acmacs::Location& aOrigin, double aRight);
-    void draw_mark_with_label(const Node& aNode, const acmacs::Location& aTextOrigin);
+    void draw_aa_transition(const Node& aNode, acmacs::Location2D aOrigin, double aRight);
+    void draw_mark_with_label(const Node& aNode, acmacs::Location2D aTextOrigin);
 
     void fit_labels_into_viewport();
     void calculate_name_offset();
