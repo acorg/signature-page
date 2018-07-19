@@ -2,6 +2,8 @@
 #include "acmacs-base/json-reader.hh"
 namespace jsw = json_writer;
 
+#include "acmacs-base/enumerate.hh"
+#include "acmacs-base/read-file.hh"
 #include "tree-export.hh"
 #include "tree.hh"
 
@@ -42,11 +44,11 @@ template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writ
 
 // ----------------------------------------------------------------------
 
-void tree_export_to_json(std::string aFilename, const Tree& aTree, size_t aIndent)
+void tree::export_to_json(std::string aFilename, const Tree& aTree, size_t aIndent)
 {
     jsw::export_to_json(aTree, aFilename, aIndent);
 
-} // tree_export_to_json
+} // tree::export_to_json
 
 // ----------------------------------------------------------------------
 
@@ -255,11 +257,45 @@ class TreeRootHandler : public HandlerBase
 
 // ----------------------------------------------------------------------
 
-void tree_import(std::string aFilename, Tree& aTree)
+void tree::tree_import(std::string aFilename, Tree& aTree)
 {
     json_reader::read_from_file<Node, TreeRootHandler>(aFilename, aTree);
       // aTree.set_number_strains();
 }
+
+// ----------------------------------------------------------------------
+
+// https://en.wikipedia.org/wiki/Newick_format
+void tree::export_to_newick(std::string aFilename, const Tree& aTree, size_t aIndent) {
+    std::string result;
+    std::function<void(const Node &, bool, size_t)> export_node;
+    export_node = [&result, &export_node, aIndent](const Node& node, bool comma, size_t indent) {
+        result.append(indent, ' ');
+        if (node.subtree.empty()) {
+            result.append(node.seq_id);
+        }
+        else {
+            result.append(1, '(');
+            result.append(1, '\n');
+            for (auto [no, subnode] : acmacs::enumerate(node.subtree))
+                export_node(subnode, no != (node.subtree.size() - 1), indent + aIndent);
+            result.append(indent, ' ');
+            result.append(1, ')');
+        }
+        if (!float_zero(node.edge_length)) {
+            result.append(1, ':');
+            result.append(acmacs::to_string(node.edge_length));
+        }
+        if (comma)
+            result.append(1, ',');
+        result.append(1, '\n');
+    };
+
+    export_node(aTree, false, 0);
+    result.append(1, ';');
+    acmacs::file::write(aFilename, result);
+
+} // tree::export_to_newick
 
 // ----------------------------------------------------------------------
 /// Local Variables:

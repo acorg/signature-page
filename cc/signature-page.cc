@@ -194,7 +194,7 @@ void SignaturePageDraw::write_initialized_settings(std::string aFilename)
 
 void SignaturePageDraw::tree(std::string aTreeFilename)
 {
-    tree_import(aTreeFilename, *mTree);
+    tree::tree_import(aTreeFilename, *mTree);
     if (mSeqdb)
         mTree->match_seqdb(*mSeqdb);
 

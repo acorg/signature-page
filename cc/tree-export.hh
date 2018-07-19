@@ -7,8 +7,12 @@
 
 class Tree;
 
-void tree_export_to_json(std::string aFilename, const Tree& aTree, size_t aIndent);
-void tree_import(std::string aFilename, Tree& aTree);
+namespace tree
+{
+    void export_to_json(std::string aFilename, const Tree& aTree, size_t aIndent);
+    void export_to_newick(std::string aFilename, const Tree& aTree, size_t aIndent);
+    void tree_import(std::string aFilename, Tree& aTree);
+}
 
 // ----------------------------------------------------------------------
 /// Local Variables:

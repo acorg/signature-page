@@ -25,7 +25,7 @@ int main(int argc, const char* const* argv)
 
         const auto seqdb = seqdb::get();
         Tree tree;
-        tree_import(source_tree_file, tree);
+        tree::tree_import(source_tree_file, tree);
           // tree.match_seqdb(seqdb);
 
         auto chart = acmacs::chart::import_from_file(source_chart); // , acmacs::chart::Verify::None, report_time::No
@@ -72,7 +72,7 @@ int main(int argc, const char* const* argv)
                 node.seq_id = "s-" + std::to_string(++tree_node_id);
         });
 
-        tree_export_to_json(target_tree_file, tree, 2);
+        tree::export_to_newick(target_tree_file, tree, 2);
     }
     else {
         std::cerr << "Usage: " << argv[0] << " tree.json[.xz] chart.ace data.csv tree.newick\n";
