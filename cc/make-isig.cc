@@ -8,6 +8,7 @@
 #include "acmacs-chart-2/factory-import.hh"
 #include "signature-page/tree.hh"
 #include "signature-page/tree-export.hh"
+#include "signature-page/tree-iterate.hh"
 
 // ----------------------------------------------------------------------
 
@@ -66,6 +67,10 @@ int main(int argc, const char* const* argv)
 
           // rename rest of tree nodes
         size_t tree_node_id = layout->number_of_points();
+        tree::iterate_leaf(tree, [&tree_node_id](Node& node) {
+            if (node.seq_id.substr(0, 2) != "s-")
+                node.seq_id = "s-" + std::to_string(++tree_node_id);
+        });
 
         tree_export_to_json(target_tree_file, tree, 2);
     }
