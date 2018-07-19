@@ -10,7 +10,8 @@ TARGETS = \
 	$(DIST)/sigp-settings-create \
 	$(DIST)/test-settings-copy \
 	$(DIST)/sigp \
-	$(DIST)/make-isig
+	$(DIST)/make-isig \
+	$(DIST)/tree-aa-info
 
 SIGNATURE_PAGE_SOURCES = tree.cc tree-export.cc \
 			 signature-page.cc tree-draw.cc time-series-draw.cc clades-draw.cc \
@@ -23,6 +24,7 @@ TEST_SETTINGS_COPY_SOURCES = test-settings-copy.cc settings.cc
 # TEST_DRAW_CHART_SOURCES = test-draw-chart.cc $(SIGNATURE_PAGE_SOURCES)
 
 MAKE_ISIG_SOURCES = make-isig.cc tree.cc tree-export.cc
+TREE_AA_INFO_SOURCES = tree-aa-info.cc tree.cc tree-export.cc
 
 # ----------------------------------------------------------------------
 
@@ -57,6 +59,7 @@ install: $(TARGETS)
 	@#ln -sf $(abspath bin)/sigp-* $(AD_BIN)
 	ln -sf $(DIST)/sigp $(AD_BIN)
 	ln -sf $(DIST)/make-isig $(AD_BIN)
+	ln -sf $(DIST)/tree-aa-info $(AD_BIN)
 	ln -sf $(abspath py)/* $(AD_PY)
 
 test: install $(DIST)/sigp
@@ -87,6 +90,10 @@ $(DIST)/sigp: $(patsubst %.cc,$(BUILD)/%.o,$(SIGP_SOURCES)) | $(DIST)
 	@$(CXX) $(LDFLAGS) -o $@ $^ $(LDLIBS) $(AD_RPATH)
 
 $(DIST)/make-isig: $(patsubst %.cc,$(BUILD)/%.o,$(MAKE_ISIG_SOURCES)) | $(DIST)
+	@printf "%-16s %s\n" "LINK" $@
+	@$(CXX) $(LDFLAGS) -o $@ $^ $(LDLIBS) $(AD_RPATH)
+
+$(DIST)/tree-aa-info: $(patsubst %.cc,$(BUILD)/%.o,$(TREE_AA_INFO_SOURCES)) | $(DIST)
 	@printf "%-16s %s\n" "LINK" $@
 	@$(CXX) $(LDFLAGS) -o $@ $^ $(LDLIBS) $(AD_RPATH)
 
