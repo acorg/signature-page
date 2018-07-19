@@ -9,7 +9,8 @@ MAKEFLAGS = -w
 TARGETS = \
 	$(DIST)/sigp-settings-create \
 	$(DIST)/test-settings-copy \
-	$(DIST)/sigp
+	$(DIST)/sigp \
+	$(DIST)/make-isig
 
 SIGNATURE_PAGE_SOURCES = tree.cc tree-export.cc \
 			 signature-page.cc tree-draw.cc time-series-draw.cc clades-draw.cc \
@@ -20,6 +21,8 @@ SIGP_SOURCES = sigp.cc $(SIGNATURE_PAGE_SOURCES)
 SETTINGS_CREATE_SOURCES = settings-create.cc settings.cc
 TEST_SETTINGS_COPY_SOURCES = test-settings-copy.cc settings.cc
 # TEST_DRAW_CHART_SOURCES = test-draw-chart.cc $(SIGNATURE_PAGE_SOURCES)
+
+MAKE_ISIG_SOURCES = make-isig.cc tree.cc tree-export.cc
 
 # ----------------------------------------------------------------------
 
@@ -53,6 +56,7 @@ install: $(TARGETS)
 	$(call install_py_lib,$(SIGNATURE_PAGE_PY_LIB))
 	@#ln -sf $(abspath bin)/sigp-* $(AD_BIN)
 	ln -sf $(DIST)/sigp $(AD_BIN)
+	ln -sf $(DIST)/make-isig $(AD_BIN)
 	ln -sf $(abspath py)/* $(AD_PY)
 
 test: install $(DIST)/sigp
@@ -79,6 +83,10 @@ $(DIST)/test-settings-copy: $(patsubst %.cc,$(BUILD)/%.o,$(TEST_SETTINGS_COPY_SO
 	@$(CXX) $(LDFLAGS) -o $@ $^ $(SETTINGS_CREATE_LDLIBS) $(AD_RPATH)
 
 $(DIST)/sigp: $(patsubst %.cc,$(BUILD)/%.o,$(SIGP_SOURCES)) | $(DIST)
+	@printf "%-16s %s\n" "LINK" $@
+	@$(CXX) $(LDFLAGS) -o $@ $^ $(LDLIBS) $(AD_RPATH)
+
+$(DIST)/make-isig: $(patsubst %.cc,$(BUILD)/%.o,$(MAKE_ISIG_SOURCES)) | $(DIST)
 	@printf "%-16s %s\n" "LINK" $@
 	@$(CXX) $(LDFLAGS) -o $@ $^ $(LDLIBS) $(AD_RPATH)
 
