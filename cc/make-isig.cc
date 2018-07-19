@@ -25,7 +25,7 @@ int main(int argc, const char* const* argv)
         const auto seqdb = seqdb::get();
         Tree tree;
         tree_import(source_tree_file, tree);
-        tree.match_seqdb(seqdb);
+          // tree.match_seqdb(seqdb);
 
         auto chart = acmacs::chart::import_from_file(source_chart); // , acmacs::chart::Verify::None, report_time::No
         auto antigens = chart->antigens();
@@ -36,6 +36,7 @@ int main(int argc, const char* const* argv)
         const auto number_of_dimensions = layout->number_of_dimensions();
         std::string data_csv;
         using DF = acmacs::DataFormatterCSV;
+        size_t antigens_in_tree = 0;
         for (auto [ag_no, antigen] : acmacs::enumerate(*antigens)) {
             DF::first_field(data_csv, ag_no);
             for (auto dim : acmacs::range(number_of_dimensions))
@@ -44,9 +45,15 @@ int main(int argc, const char* const* argv)
             DF::second_field(data_csv, antigen->full_name());
             const auto& entry = per_antigen[ag_no];
             if (entry) {
+                // std::cout << "entry " << entry.entry().name() << " -- " << antigen->full_name() << '\n';
                 const auto seq = entry.seq().amino_acids(true);
                 for (auto bp : sBjornPos)
                     DF::second_field(data_csv, seq[bp - 1]);
+                if (auto node = tree.find_leaf_by_seqid(entry.seq_id(seqdb::SeqdbEntrySeq::encoded_t::yes)); node) {
+                      // std::cout << ag_no << ' ' << node->seq_id << '\n';
+                    node->seq_id = "s-" + std::to_string(ag_no); // rename node according to isig spec
+                    ++antigens_in_tree;
+                }
             }
             else {
                 for ([[maybe_unused ]] auto bp : sBjornPos)
@@ -55,6 +62,12 @@ int main(int argc, const char* const* argv)
             DF::end_of_record(data_csv);
         }
         acmacs::file::write(target_csv, data_csv);
+        std::cerr << "INFO: antigens of chart found in the tree: " << antigens_in_tree << '\n';
+
+          // rename rest of tree nodes
+        size_t tree_node_id = layout->number_of_points();
+
+        tree_export_to_json(target_tree_file, tree, 2);
     }
     else {
         std::cerr << "Usage: " << argv[0] << " tree.json[.xz] chart.ace data.csv tree.newick\n";

@@ -42,11 +42,11 @@ template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writ
 
 // ----------------------------------------------------------------------
 
-void tree_export(std::string aFilename, const Tree& aTree, size_t aIndent)
+void tree_export_to_json(std::string aFilename, const Tree& aTree, size_t aIndent)
 {
     jsw::export_to_json(aTree, aFilename, aIndent);
 
-} // tree_export
+} // tree_export_to_json
 
 // ----------------------------------------------------------------------
 
