@@ -1,4 +1,5 @@
 #include <numeric>
+#include <map>
 
 #include "acmacs-base/stream.hh"
 #include "seqdb/seqdb.hh"
@@ -8,8 +9,28 @@
 
 // ----------------------------------------------------------------------
 
+using AADiff = std::vector<std::string>;
+
+struct DiffEntry
+{
+    const Node* previous;
+    const Node* current;
+    AADiff with_other;
+};
+
+inline std::ostream& operator<<(std::ostream& s, const DiffEntry& c)
+{
+    return s << c.previous->seq_id << " -> " << c.current->seq_id << ' ' << c.with_other;
+}
+
+using AllDiffs = std::map<AADiff, std::vector<DiffEntry>>;
+
+// ----------------------------------------------------------------------
+
 static size_t hamming_distance(std::string seq1, std::string seq2);
-static std::vector<std::string> diff_sequence(std::string seq1, std::string seq2);
+static AADiff diff_sequence(std::string seq1, std::string seq2);
+static AllDiffs collect(const Tree& tree);
+static void compute_entries_diffs(AllDiffs& diffs);
 
 // ----------------------------------------------------------------------
 
@@ -27,16 +48,14 @@ int main(int argc, const char* const* argv)
         tree.ladderize(Tree::LadderizeMethod::NumberOfLeaves);
         tree.compute_cumulative_edge_length();
 
-        Node* previous = nullptr;
-        tree::iterate_leaf(tree, [&previous](Node& node) {
-            if (previous) {
-                // const auto dist = hamming_distance(previous->data.amino_acids(), node.data.amino_acids());
-                // std::cout << std::setw(3) << std::right << dist << ' ' << node.seq_id << '\n';
-                const auto diff = diff_sequence(previous->data.amino_acids(), node.data.amino_acids());
-                std::cout << diff << " -- " << node.seq_id << " -- " << previous->seq_id << '\n';
+        auto diffs = collect(tree);
+        compute_entries_diffs(diffs);
+        for (const auto& entry : diffs) {
+            std::cout << entry.first << '\n';
+            for (const auto& diff : entry.second) {
+                std::cout << "  " << diff << '\n';
             }
-            previous = &node;
-        });
+        }
     }
     else {
         std::cerr << "Usage: " << argv[0] << " tree.json[.xz]\n";
@@ -44,6 +63,48 @@ int main(int argc, const char* const* argv)
     }
     return exit_code;
 }
+
+// ----------------------------------------------------------------------
+
+void compute_entries_diffs(AllDiffs& diffs)
+{
+    for (auto& entry : diffs) {
+        DiffEntry* prev = nullptr;
+        for (auto& ee : entry.second) {
+            if (prev) {
+                ee.with_other = diff_sequence(prev->current->data.amino_acids(), ee.current->data.amino_acids());
+            }
+            prev = &ee;
+        }
+    }
+
+} // compute_entries_diffs
+
+// ----------------------------------------------------------------------
+
+AllDiffs collect(const Tree &tree)
+{
+    AllDiffs diffs;
+    const Node *previous = nullptr;
+    tree::iterate_leaf(tree, [&previous, &diffs](const Node &node) {
+        if (previous) {
+            // const auto dist = hamming_distance(previous->data.amino_acids(), node.data.amino_acids());
+            // std::cout << std::setw(3) << std::right << dist << ' ' << node.seq_id << '\n';
+            const auto diff = diff_sequence(previous->data.amino_acids(), node.data.amino_acids());
+            if (!diff.empty()) {
+                auto found = diffs.find(diff);
+                if (found == diffs.end())
+                    diffs.emplace(diff, std::vector<DiffEntry>{DiffEntry{previous, &node, {}}});
+                else
+                    found->second.push_back(DiffEntry{previous, &node, {}});
+                // std::cout << diff << " -- " << node.seq_id << " -- " << previous->seq_id << '\n';
+            }
+        }
+        previous = &node;
+    });
+    return diffs;
+
+} // collect
 
 // ----------------------------------------------------------------------
 
@@ -60,9 +121,9 @@ size_t hamming_distance(std::string seq1, std::string seq2)
 
 // ----------------------------------------------------------------------
 
-std::vector<std::string> diff_sequence(std::string seq1, std::string seq2)
+AADiff diff_sequence(std::string seq1, std::string seq2)
 {
-    std::vector<std::string> result;
+    AADiff result;
     for (size_t pos = 0; pos < std::min(seq1.size(), seq2.size()); ++pos) {
         if (seq1[pos] != seq2[pos])
             result.push_back(seq1[pos] + std::to_string(pos + 1) + seq2[pos]);
