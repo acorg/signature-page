@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <string>
 
 #include "acmacs-base/argc-argv.hh"
@@ -21,9 +22,9 @@ int main(int argc, const char *argv[])
 
                 {"-s", argc_argv::strings{}}, //value<std::vector<std::string>>(&aOptions.settings_filename), "signature page drawing settings (json) filename")
                 {"--init-settings", ""}, // value<std::string>(&aOptions.init_settings_filename), "initialize signature page drawing settings (json) filename")
-                {"--report-cumulative", false}, // bool_switch(&aOptions.report_cumulative)->default_value(false), "report cumulative edge lengths for leaf nodes of the tree")
+                {"--report-cumulative", ""},
                 {"--report-hz-section_antigens", false}, // bool_switch(&aOptions.report_antigens_in_hz_sections)->default_value(false), "report antigens in each hz section")
-                {"--list-ladderized", false}, // bool_switch(&aOptions.list_ladderized)->default_value(false), "list strain names after ladderizing")
+                {"--list-ladderized", ""},
                 {"--no-draw", false}, // bool_switch(&aOptions.no_draw)->default_value(false), "do not generate pdf")
                 {"--chart", ""}, // value<std::string>(&aOptions.chart_filename), "path to a chart for the signature page")
 
@@ -67,10 +68,14 @@ int main(int argc, const char *argv[])
                 signature_page.init_settings();
             }
             signature_page.prepare();
-            if (args["--report-cumulative"])
-                signature_page.tree().report_cumulative_edge_length(std::cout);
-            if (args["--list-ladderized"])
-                signature_page.tree().list_strains(std::cout);
+            if (args["--report-cumulative"]) {
+                std::ofstream out(args["--report-cumulative"]);
+                signature_page.tree().report_cumulative_edge_length(out);
+            }
+            if (args["--list-ladderized"]) {
+                std::ofstream out(args["--list-ladderized"]);
+                signature_page.tree().list_strains(out);
+            }
             if (!args["--no-draw"])
                 signature_page.draw(args["--report-hz-section_antigens"]);
             if (args["--init-settings"])

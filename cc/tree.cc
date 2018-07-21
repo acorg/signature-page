@@ -187,9 +187,9 @@ void Tree::report_cumulative_edge_length(std::ostream& out)
 
 void Tree::list_strains(std::ostream& out)
 {
-    auto report = [&out](const Node& aNode) {
-        out << aNode.seq_id << std::endl;
-    };
+    out << "Strains in order in the tree, distance to previous\n";
+    compute_distance_from_previous();
+    auto report = [&out](const Node& aNode) { out << aNode.seq_id << ' ' << aNode.data.distance_from_previous << std::endl; };
     tree::iterate_leaf(*this, report);
 
 } // Tree::list_strains
