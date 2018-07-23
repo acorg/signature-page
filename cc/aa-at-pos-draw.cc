@@ -37,13 +37,19 @@ void AAAtPosDraw::draw()
         const auto section_width = surface_width / mSettings.positions.size();
         const auto line_length = section_width * mSettings.line_length;
 
-        auto draw_dash = [&,this](const Node& aNode) {
+        auto draw_dash = [&, this](const Node& aNode) {
+            const auto aas = aNode.data.amino_acids();
             for (size_t section_no = 0; section_no < mSettings.positions.size(); ++section_no) {
-                const auto pos = this->mSettings.positions[section_no];
-                const auto base_x = section_width * section_no + (section_width - line_length) / 2;
-                if (const auto aas = aNode.data.amino_acids(); pos < aas.size()) {
-                    if (const auto found = this->mColors[pos].find(aas[pos-1]); found != mColors[pos].end())
-                        mSurface.line({base_x, aNode.draw.vertical_pos}, {base_x + line_length, aNode.draw.vertical_pos}, found->second, Pixels{this->mSettings.line_width}, acmacs::surface::LineCap::Round);
+                if (const auto pos = this->mSettings.positions[section_no]; (pos - 1) < aas.size()) {
+                    const auto aa = aas[pos - 1];
+                    if (const auto found = this->mColors[pos].find(aa); found != mColors[pos].end()) {
+                        const auto base_x = section_width * section_no + (section_width - line_length) / 2;
+                        const std::string aa_s(1, aa);
+                        const auto aa_width = mSurface.text_size(aa_s, Pixels{this->mSettings.line_width}).width * 2;
+                        mSurface.text({base_x, aNode.draw.vertical_pos + this->mSettings.line_width / 2}, aa_s, 0 /* found->second */, Pixels{this->mSettings.line_width});
+                        mSurface.line({base_x + aa_width, aNode.draw.vertical_pos}, {base_x + line_length - aa_width, aNode.draw.vertical_pos}, found->second, Pixels{this->mSettings.line_width},
+                                      acmacs::surface::LineCap::Round);
+                    }
                 }
             }
         };
