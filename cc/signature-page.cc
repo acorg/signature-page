@@ -317,7 +317,7 @@ void SignaturePageDraw::draw(bool report_antigens_in_hz_sections)
 
     if (mTreeDraw)
         mTreeDraw->draw();
-    if (mAAAtPosDraw && mSettings->aa_at_pos.width > 0)
+    if (mAAAtPosDraw)
         mAAAtPosDraw->draw();
     if (mTimeSeriesDraw)
         mTimeSeriesDraw->draw();

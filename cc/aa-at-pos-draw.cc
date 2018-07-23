@@ -32,7 +32,7 @@ void AAAtPosDraw::prepare()
 
 void AAAtPosDraw::draw()
 {
-    if (!mSettings.positions.empty()) {
+    if (!mSettings.positions.empty() && mSettings.width > 0) {
         const auto surface_width = mSurface.viewport().size.width;
         const auto section_width = surface_width / mSettings.positions.size();
         const auto line_length = section_width * mSettings.line_length;
