@@ -76,6 +76,7 @@ void SignaturePageDraw::make_surface(std::string aFilename, bool init_settings, 
     mTreeDraw = std::make_unique<TreeDraw>(mSurface->subsurface(false), *mTree, mSettings->tree_draw, mSettings->hz_sections);
     mTimeSeriesDraw = std::make_unique<TimeSeriesDraw>(mSurface->subsurface(false), *mTree, *mTreeDraw, mSettings->hz_sections, mSettings->time_series);
     mCladesDraw = std::make_unique<CladesDraw>(mSurface->subsurface(false), *mTree, *mTreeDraw, *mTimeSeriesDraw, mSettings->clades);
+    mAAAtPosDraw = std::make_unique<AAAtPosDraw>(mSurface->subsurface(false), *mTree, mSettings->aa_at_pos);
 
     if (!mChartFilename.empty()) {
         mAntigenicMapsDraw = std::unique_ptr<AntigenicMapsDrawBase>(make_antigenic_maps_draw(mChartFilename, mSurface->subsurface(false), *mTree, mSettings->hz_sections, mSettings->signature_page, mSettings->antigenic_maps));
@@ -226,6 +227,8 @@ void SignaturePageDraw::prepare()
 
     if (mMappedAntigensDraw)
         mMappedAntigensDraw->prepare();
+    if (mAAAtPosDraw)
+        mAAAtPosDraw->prepare();
     if (mTitleDraw)
         mTitleDraw->prepare();
     if (mTreeDraw)
@@ -246,21 +249,26 @@ void SignaturePageDraw::make_layout_tree_ts_clades()
     const acmacs::Size& page_size = mSurface->viewport().size;
     const double section_height = page_size.height - (mSettings->signature_page.top + mSettings->signature_page.bottom);
 
+    const double aa_at_pos_width = mSettings->aa_at_pos.width + mSettings->aa_at_pos.right_margin;
     const double clades_width = mSettings->signature_page.clades_width;
     const double ts_width = mSettings->signature_page.time_series_width;
-    const double tree_width = page_size.width - (mSettings->signature_page.left + mSettings->signature_page.tree_margin_right + ts_width + clades_width + mSettings->signature_page.right);
+    const double tree_width = page_size.width - (mSettings->signature_page.left + mSettings->signature_page.tree_margin_right + ts_width + clades_width + aa_at_pos_width + mSettings->signature_page.right);
 
-    const double ts_left = mSettings->signature_page.left + tree_width + mSettings->signature_page.tree_margin_right;
+    const double aa_at_pos_left = mSettings->signature_page.left + tree_width + mSettings->signature_page.tree_margin_right;
+    const double ts_left = aa_at_pos_left + aa_at_pos_width;
     const double clades_left = ts_left + ts_width;
 
     mTreeDraw->surface().move_resize_viewport({mSettings->signature_page.left, mSettings->signature_page.top}, tree_width, acmacs::Size{1000 * tree_width / section_height, 1000});
+    if (mSettings->aa_at_pos.width > 0)
+        mAAAtPosDraw->surface().move_resize_viewport({aa_at_pos_left, mSettings->signature_page.top}, mSettings->aa_at_pos.width, acmacs::Size{1000 * mSettings->aa_at_pos.width / section_height, 1000});
     mTimeSeriesDraw->surface().move_resize_viewport({ts_left, mSettings->signature_page.top}, ts_width, acmacs::Size{1000 * ts_width / section_height, 1000});
     mCladesDraw->surface().move_resize_viewport({clades_left, mSettings->signature_page.top}, clades_width, acmacs::Size{1000 * clades_width / section_height, 1000});
     mTitleDraw->surface().move_resize_viewport(acmacs::Location2D{}, page_size.width, page_size);
 
-    std::cout << "Tree   " << mTreeDraw->surface() << std::endl;
-    std::cout << "TS     " << mTimeSeriesDraw->surface() << std::endl;
-    std::cout << "Clades " << mCladesDraw->surface() << std::endl;
+    std::cout << "Tree    " << mTreeDraw->surface() << std::endl;
+    std::cout << "AAatPos " << mAAAtPosDraw->surface() << std::endl;
+    std::cout << "TS      " << mTimeSeriesDraw->surface() << std::endl;
+    std::cout << "Clades  " << mCladesDraw->surface() << std::endl;
 
 } // SignaturePageDraw::make_layout_tree_ts_clades
 
@@ -309,6 +317,8 @@ void SignaturePageDraw::draw(bool report_antigens_in_hz_sections)
 
     if (mTreeDraw)
         mTreeDraw->draw();
+    if (mAAAtPosDraw && mSettings->aa_at_pos.width > 0)
+        mAAAtPosDraw->draw();
     if (mTimeSeriesDraw)
         mTimeSeriesDraw->draw();
     if (mCladesDraw)

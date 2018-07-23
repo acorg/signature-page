@@ -181,6 +181,18 @@ MappedAntigensDrawSettings::MappedAntigensDrawSettings(rjson::field_container_pa
 {
 }
 
+AAAtPosDrawSettings::AAAtPosDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
+    : rjson::field_container_child(aParent, aFieldName),
+      width(*this, "width", 0, rjson::initialize_field::yes),
+      right_margin(*this, "right_margin", 0, rjson::initialize_field::yes),
+      line_width(*this, "line_width", 0.15, rjson::initialize_field::yes),
+      line_length(*this, "line_length", 0.5, rjson::initialize_field::yes),
+      positions(*this, "positions")
+{
+    positions.push_back(235);
+
+} // AAAtPosDrawSettings::AAAtPosDrawSettings
+
 // ----------------------------------------------------------------------
 
 AntigenicMapsDrawSettings::AntigenicMapsDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
@@ -404,6 +416,7 @@ Settings::Settings()
       clades(*this, "clades"),
       hz_sections(*this, "hz_sections"),
       mapped_antigens(*this, "mapped_antigens"),
+      aa_at_pos(*this, "aa_at_pos"),
       antigenic_maps(*this, "antigenic_maps")
 {
       // add sample text mod

@@ -136,6 +136,18 @@ namespace rjson
                 }
             }
 
+        void push_back(size_t value)
+            {
+                try {
+                    rjson::array& ar = mParent.get_or_add(mFieldName, array{});
+                    ar.insert(rjson::integer{value});
+                }
+                catch (std::exception&) {
+                    std::cerr << "Not array? " << mFieldName << ": " << mParent.get_or_empty_array(mFieldName) << '\n';
+                    throw;
+                }
+            }
+
         inline void erase(size_t index) { get_array().erase(index); }
         inline void clear() { get_array().clear(); }
 

@@ -5,6 +5,7 @@
 #include "time-series-draw.hh"
 #include "clades-draw.hh"
 #include "mapped-antigens-draw.hh"
+#include "aa-at-pos-draw.hh"
 #include "antigenic-maps-draw.hh"
 #include "title-draw.hh"
 #include "rjson-serialize.hh"
@@ -24,6 +25,7 @@ class Settings : public rjson::field_container_toplevel
     CladesDrawSettings clades;
     HzSections hz_sections;
     MappedAntigensDrawSettings mapped_antigens;
+    AAAtPosDrawSettings aa_at_pos;
     AntigenicMapsDrawSettings antigenic_maps;
 
     void upgrade();             // upgrade to the new version in case old version data provided
