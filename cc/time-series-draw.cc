@@ -116,11 +116,16 @@ void TimeSeriesDraw::draw_dashes(double month_width)
     const Coloring& coloring = mTreeDraw.coloring();
 
     auto draw_dash = [&](const Node& aNode) {
-        if (aNode.draw.shown) {
-            const int month_no = months_between_dates(Date{mSettings.begin}, Date{aNode.data.date()});
-            if (month_no >= 0) {
-                const acmacs::Location2D a{base_x + month_width * month_no, aNode.draw.vertical_pos};
-                mSurface.line(a, {a.x() + month_width * mSettings.dash_width, a.y()}, coloring.color(aNode), Pixels{mSettings.dash_line_width}, acmacs::surface::LineCap::Round);
+        if (aNode.draw.shown && !aNode.data.date().empty()) {
+            try {
+                const int month_no = months_between_dates(Date{mSettings.begin}, Date{aNode.data.date()});
+                if (month_no >= 0) {
+                    const acmacs::Location2D a{base_x + month_width * month_no, aNode.draw.vertical_pos};
+                    mSurface.line(a, {a.x() + month_width * mSettings.dash_width, a.y()}, coloring.color(aNode), Pixels{mSettings.dash_line_width}, acmacs::surface::LineCap::Round);
+                }
+            }
+            catch (std::exception& err) {
+                std::cerr << "WARNING: " << err.what() << " (TimeSeriesDraw::draw_dashes) Date: " << aNode.data.date() << "\n";
             }
         }
     };
