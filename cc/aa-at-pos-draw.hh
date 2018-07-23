@@ -44,7 +44,7 @@ class AAAtPosDraw
     acmacs::surface::Surface& mSurface;
     Tree& mTree;
     AAAtPosDrawSettings& mSettings;
-    std::map<char, Color> mColors;
+    std::map<size_t, std::map<char, Color>> mColors;
 
 }; // class AAAtPosDraw
 

@@ -9,15 +9,20 @@
 void AAAtPosDraw::prepare()
 {
     if (!mSettings.positions.empty()) {
-        std::set<char> aa_present;
+        std::map<size_t, std::set<char>> aa_present;
         auto collect_aa = [&, this](const Node& aNode) {
             const auto aas = aNode.data.amino_acids();
-            if (const size_t pos = this->mSettings.positions[0] - 1; pos  < aas.size() && aas[pos] != 'X')
-                aa_present.insert(aas[pos]);
+            for (auto pos : this->mSettings.positions) {
+                if ((pos - 1)  < aas.size() && aas[pos-1] != 'X')
+                    aa_present[pos].insert(aas[pos-1]);
+            }
         };
         tree::iterate_leaf(mTree, collect_aa);
-        for (auto [no, aa] : acmacs::enumerate(aa_present))
-            mColors.emplace(aa, Color::distinct(no));
+        std::cout << "INFO: AAAtPosDraw: " << aa_present << '\n';
+        for (auto pos : this->mSettings.positions) {
+            for (auto [no, aa] : acmacs::enumerate(aa_present[pos]))
+                mColors[pos].emplace(aa, Color::distinct(no));
+        }
         std::cout << "INFO: AAAtPosDraw: " << mColors << '\n';
     }
 
@@ -27,20 +32,28 @@ void AAAtPosDraw::prepare()
 
 void AAAtPosDraw::draw()
 {
-    const double surface_width = mSurface.viewport().size.width;
-    const double line_length = surface_width * mSettings.line_length;
-    const double base_x = (surface_width - line_length) / 2;
+    if (!mSettings.positions.empty()) {
+        const auto surface_width = mSurface.viewport().size.width;
+        const auto section_width = surface_width / mSettings.positions.size();
+        const auto line_length = section_width * mSettings.line_length;
 
-    auto draw_dash = [&](const Node& aNode) {
-        const auto aas = aNode.data.amino_acids();
-        if (const size_t pos = this->mSettings.positions[0] - 1; pos < aas.size()) {
-            if (const auto found = mColors.find(aas[pos]); found != mColors.end())
-                mSurface.line({base_x, aNode.draw.vertical_pos}, {base_x + line_length, aNode.draw.vertical_pos}, found->second, Pixels{mSettings.line_width}, acmacs::surface::LineCap::Round);
+        auto draw_dash = [&,this](const Node& aNode) {
+            for (size_t section_no = 0; section_no < mSettings.positions.size(); ++section_no) {
+                const auto pos = this->mSettings.positions[section_no];
+                const auto base_x = section_width * section_no + (section_width - line_length) / 2;
+                if (const auto aas = aNode.data.amino_acids(); pos < aas.size()) {
+                    if (const auto found = this->mColors[pos].find(aas[pos-1]); found != mColors[pos].end())
+                        mSurface.line({base_x, aNode.draw.vertical_pos}, {base_x + line_length, aNode.draw.vertical_pos}, found->second, Pixels{this->mSettings.line_width}, acmacs::surface::LineCap::Round);
+                }
+            }
+        };
+        tree::iterate_leaf(mTree, draw_dash);
+
+        for (size_t section_no = 0; section_no < mSettings.positions.size(); ++section_no) {
+            const auto pos = mSettings.positions[section_no];
+            mSurface.text({section_width * section_no, mSurface.viewport().size.height + 10}, std::to_string(pos), 0, Pixels{8}, acmacs::TextStyle{}, Rotation{M_PI_2});
         }
-    };
-    tree::iterate_leaf(mTree, draw_dash);
-
-    mSurface.text({0, mSurface.viewport().size.height + 5}, std::to_string(mSettings.positions[0]), 0, Pixels{8}, acmacs::TextStyle{}, Rotation{M_PI_2});
+    }
 
 } // AAAtPosDraw::draw
 
