@@ -23,7 +23,7 @@ void AAAtPosDraw::prepare()
             for (auto [no, aa] : acmacs::enumerate(aa_present[pos]))
                 mColors[pos].emplace(aa, Color::distinct(no));
         }
-        std::cout << "INFO: AAAtPosDraw: " << mColors << '\n';
+        // std::cout << "INFO: AAAtPosDraw: " << mColors << '\n';
     }
 
 } // AAAtPosDraw::prepare
@@ -57,7 +57,7 @@ void AAAtPosDraw::draw()
 
         for (size_t section_no = 0; section_no < mSettings.positions.size(); ++section_no) {
             const auto pos = mSettings.positions[section_no];
-            mSurface.text({section_width * section_no, mSurface.viewport().size.height + 10}, std::to_string(pos), 0, Pixels{8}, acmacs::TextStyle{}, Rotation{M_PI_2});
+            mSurface.text({section_width * section_no, mSurface.viewport().size.height + 10}, std::to_string(pos), 0, Pixels{line_length}, acmacs::TextStyle{}, Rotation{M_PI_2});
         }
     }
 
