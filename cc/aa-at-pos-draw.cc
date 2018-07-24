@@ -102,36 +102,41 @@ void AAAtPosDraw::set_colors()
 
 // ----------------------------------------------------------------------
 
+struct AAPosSection
+{
+    const Node* first;
+    const Node* last;
+    char aa;
+    size_t num_nodes;
+};
+
 void AAAtPosDraw::report_aa_pos_sections() const
 {
     if (!positions_.empty()) {
         std::cout << "\nINFO: sections for positions\n";
-        auto report_section = [](char aa, std::string first, std::string last, size_t num_seqs) {
-            std::cout << "   " << aa << ' ' << std::setw(4) << std::right << num_seqs << ' ' << first << " -- " << last << '\n';
-        };
         for (auto pos : positions_) {
-            std::cout << ' ' << std::setw(3) << std::right << (pos + 1) << '\n';
-            char current_aa = 0;
-            std::string first;
-            std::string previous;
-            size_t num_seqs = 0;
-            auto report = [&](const Node& node) {
+            std::vector<AAPosSection> sections;
+            tree::iterate_leaf(mTree, [&](const Node& node) {
                 if (const auto sequence = node.data.amino_acids(); pos < sequence.size()) {
                     const auto aa = sequence[pos];
-                    if (aa != current_aa) {
-                        if (!first.empty() && current_aa)
-                            report_section(current_aa, first, previous, num_seqs);
-                        first = node.seq_id;
-                        current_aa = aa;
-                        num_seqs = 0;
+                    if (sections.empty() || sections.back().aa != aa) {
+                        sections.emplace_back(AAPosSection{&node, &node, aa, 1});
+                    }
+                    else {
+                        ++sections.back().num_nodes;
+                        sections.back().last = &node;
                     }
                 }
-                previous = node.seq_id;
-                ++num_seqs;
-            };
-            tree::iterate_leaf(mTree, report);
-            if (!first.empty() && current_aa)
-                report_section(current_aa, first, find_last_leaf(mTree).seq_id, num_seqs);
+                else {
+                    std::cerr << "AAAtPosDraw::report_aa_pos_sections: sequence " << node.seq_id << " is too short: " << sequence.size() << " pos: " << pos << '\n';
+                }
+            });
+
+            std::cout << ' ' << std::setw(3) << std::right << (pos + 1) << '\n';
+            for (const auto& section : sections)
+                std::cout << "   " << section.aa << ' ' << std::setw(4) << std::right << section.num_nodes << ' ' << section.first->seq_id << " -- " << section.last->seq_id << '\n';
+
+              // remove small sections and then merge adjacent
         }
         std::cout << '\n';
     }
