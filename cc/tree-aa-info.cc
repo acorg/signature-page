@@ -1,7 +1,9 @@
 #include <numeric>
 #include <map>
+#include <cmath>
 
 #include "acmacs-base/stream.hh"
+#include "acmacs-base/enumerate.hh"
 #include "seqdb/seqdb.hh"
 #include "signature-page/tree.hh"
 #include "signature-page/tree-export.hh"
@@ -56,6 +58,41 @@ int main(int argc, const char* const* argv)
                 std::cout << "  " << diff << '\n';
             }
         }
+
+        std::map<size_t, std::map<char, size_t>> aa_per_pos;
+        auto collect_aa_per_pos = [&](const Node& node) {
+            const auto sequence = node.data.amino_acids();
+            for (auto [pos, aa] : acmacs::enumerate(sequence)) {
+                if (aa != 'X')
+                    ++aa_per_pos[pos][aa];
+            }
+        };
+        tree::iterate_leaf(tree, collect_aa_per_pos);
+        for (auto it = aa_per_pos.begin(); it != aa_per_pos.end();) {
+            if (it->second.size() < 2)
+                it = aa_per_pos.erase(it);
+            else
+                ++it;
+        }
+        // std::cout << "======================================================================\n";
+        // for (const auto& pos_e : aa_per_pos)
+        //     std::cout << std::setw(3) << std::right << (pos_e.first + 1) << ' ' << pos_e.second << '\n';
+
+          // https://en.wikipedia.org/wiki/Diversity_index
+        using all_pos_t = std::pair<size_t, ssize_t>;
+        std::vector <all_pos_t> all_pos(aa_per_pos.size());
+        std::transform(aa_per_pos.begin(), aa_per_pos.end(), all_pos.begin(), [](const auto& src) -> all_pos_t {
+            const auto sum = std::accumulate(src.second.begin(), src.second.end(), 0UL, [](auto accum, const auto& entry) { return accum + entry.second; });
+            const auto shannon_index = -std::accumulate(src.second.begin(), src.second.end(), 0.0, [sum = double(sum)](auto accum, const auto& entry) {
+                const double p = entry.second / sum;
+                return accum + p * std::log(p);
+            });
+            return {src.first, std::lround(shannon_index * 100)};
+        });
+        std::sort(std::begin(all_pos), std::end(all_pos), [](const auto& p1, const auto& p2) { return p1.second > p2.second; });
+        std::cout << "======================================================================\n";
+        for (const auto& pos_e : all_pos)
+            std::cout << std::setw(3) << std::right << (pos_e.first + 1) << ' ' << aa_per_pos[pos_e.first] << '\n';
     }
     else {
         std::cerr << "Usage: " << argv[0] << " tree.json[.xz]\n";
