@@ -8,41 +8,78 @@
 
 void AAAtPosDraw::prepare()
 {
-    if (!mSettings.positions.empty()) {
-        std::map<size_t, std::set<char>> aa_present;
-        auto collect_aa = [&, this](const Node& aNode) {
-            const auto aas = aNode.data.amino_acids();
-            for (auto pos : this->mSettings.positions) {
-                if ((pos - 1)  < aas.size() && aas[pos-1] != 'X')
-                    aa_present[pos].insert(aas[pos-1]);
-            }
-        };
-        tree::iterate_leaf(mTree, collect_aa);
-        std::cout << "INFO: AAAtPosDraw: " << aa_present << '\n';
-        for (auto pos : this->mSettings.positions) {
-            for (auto [no, aa] : acmacs::enumerate(aa_present[pos]))
-                mColors[pos].emplace(aa, Color::distinct(no));
+    if (mSettings.width > 0) {
+        if (!mSettings.positions.empty()) {
+            positions_.resize(mSettings.positions.size());
+            std::transform(mSettings.positions.begin(), mSettings.positions.end(), positions_.begin(), [](size_t pos_based_1) { return pos_based_1 - 1; });
+            collect_aa_per_pos();
         }
-        // std::cout << "INFO: AAAtPosDraw: " << mColors << '\n';
+        else if (mSettings.most_diverse_positions > 0) {
+            find_most_diverse_positions();
+        }
+        if (!positions_.empty()) {
+            for (auto pos : positions_) {
+                const auto& aa_freq = aa_per_pos_[pos];
+                std::vector<char> aas(aa_freq.size());
+                std::transform(aa_freq.begin(), aa_freq.end(), aas.begin(), [](const auto& entry) { return entry.first; });
+                std::sort(aas.begin(), aas.end(), [&](char aa1, char aa2) { return aa_freq.find(aa1)->second > aa_freq.find(aa2)->second; }); // most frequent aa first
+                std::cout << pos << ' ' << aas << ' ' << aa_freq << '\n';
+                for (size_t no = 1; no < aas.size(); ++no) // no color for the most frequent aa
+                    colors_[pos].emplace(aas[no], Color::distinct(no));
+            }
+        }
     }
 
 } // AAAtPosDraw::prepare
 
 // ----------------------------------------------------------------------
 
+void AAAtPosDraw::collect_aa_per_pos()
+{
+    auto update = [this](size_t pos, char aa) {
+        if (aa != 'X')
+            ++this->aa_per_pos_[pos][aa];
+    };
+    auto collect = [&, this](const Node& node) {
+        const auto sequence = node.data.amino_acids();
+        if (this->positions_.empty()) {
+            for (auto [pos, aa] : acmacs::enumerate(sequence))
+                update(pos, aa);
+        }
+        else {
+            for (auto pos : this->positions_) {
+                if (pos < sequence.size())
+                    update(pos, sequence[pos]);
+            }
+        }
+    };
+    tree::iterate_leaf(mTree, collect);
+
+} // AAAtPosDraw::collect_aa_per_pos
+
+// ----------------------------------------------------------------------
+
+void AAAtPosDraw::find_most_diverse_positions()
+{
+    collect_aa_per_pos();
+
+} // AAAtPosDraw::find_most_diverse_positions
+
+// ----------------------------------------------------------------------
+
 void AAAtPosDraw::draw()
 {
-    if (!mSettings.positions.empty() && mSettings.width > 0) {
+    if (!positions_.empty()) {
         const auto surface_width = mSurface.viewport().size.width;
-        const auto section_width = surface_width / mSettings.positions.size();
+        const auto section_width = surface_width / positions_.size();
         const auto line_length = section_width * mSettings.line_length;
 
         auto draw_dash = [&, this](const Node& aNode) {
             const auto aas = aNode.data.amino_acids();
-            for (size_t section_no = 0; section_no < mSettings.positions.size(); ++section_no) {
-                if (const auto pos = this->mSettings.positions[section_no]; (pos - 1) < aas.size()) {
-                    const auto aa = aas[pos - 1];
-                    if (const auto found = this->mColors[pos].find(aa); found != mColors[pos].end()) {
+            for (size_t section_no = 0; section_no < positions_.size(); ++section_no) {
+                if (const auto pos = this->positions_[section_no]; pos < aas.size()) {
+                    const auto aa = aas[pos];
+                    if (const auto found = this->colors_[pos].find(aa); found != colors_[pos].end()) {
                         const auto base_x = section_width * section_no + (section_width - line_length) / 2;
                         const std::string aa_s(1, aa);
                         const auto aa_width = mSurface.text_size(aa_s, Pixels{this->mSettings.line_width}).width * 2;
@@ -56,9 +93,9 @@ void AAAtPosDraw::draw()
         tree::iterate_leaf(mTree, draw_dash);
 
         // const auto pos_text_height = mSurface.text_size("8", Pixels{}).height;
-        for (size_t section_no = 0; section_no < mSettings.positions.size(); ++section_no) {
-            const auto pos = mSettings.positions[section_no];
-            mSurface.text({section_width * section_no + section_width / 4, mSurface.viewport().size.height + 10}, std::to_string(pos), 0, Pixels{line_length}, acmacs::TextStyle{}, Rotation{M_PI_2});
+        for (size_t section_no = 0; section_no < positions_.size(); ++section_no) {
+            const auto pos = positions_[section_no];
+            mSurface.text({section_width * section_no + section_width / 4, mSurface.viewport().size.height + 10}, std::to_string(pos + 1), 0, Pixels{line_length}, acmacs::TextStyle{}, Rotation{M_PI_2});
         }
     }
 

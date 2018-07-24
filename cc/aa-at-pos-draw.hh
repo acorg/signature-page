@@ -23,6 +23,7 @@ class AAAtPosDrawSettings : public rjson::field_container_child
     rjson::field_get_set<double> right_margin;
     rjson::field_get_set<double> line_width;
     rjson::field_get_set<double> line_length;         // fraction of the surface width
+    rjson::field_get_set<size_t> most_diverse_positions;
     rjson::array_field_container_child<size_t> positions;
 
 }; // class AAAtPosDrawSettings
@@ -44,7 +45,12 @@ class AAAtPosDraw
     acmacs::surface::Surface& mSurface;
     Tree& mTree;
     AAAtPosDrawSettings& mSettings;
-    std::map<size_t, std::map<char, Color>> mColors;
+    std::vector<size_t> positions_;
+    std::map<size_t, std::map<char, size_t>> aa_per_pos_;
+    std::map<size_t, std::map<char, Color>> colors_;
+
+    void collect_aa_per_pos();
+    void find_most_diverse_positions();
 
 }; // class AAAtPosDraw
 
