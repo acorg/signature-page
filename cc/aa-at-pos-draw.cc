@@ -63,6 +63,23 @@ void AAAtPosDraw::find_most_diverse_positions()
 {
     collect_aa_per_pos();
 
+    // https://en.wikipedia.org/wiki/Diversity_index
+    using all_pos_t = std::pair<size_t, ssize_t>; // position, shannon_index
+    std::vector<all_pos_t> all_pos(aa_per_pos_.size());
+    std::transform(aa_per_pos_.begin(), aa_per_pos_.end(), all_pos.begin(), [](const auto& src) -> all_pos_t {
+        const auto sum = std::accumulate(src.second.begin(), src.second.end(), 0UL, [](auto accum, const auto& entry) { return accum + entry.second; });
+        const auto shannon_index = -std::accumulate(src.second.begin(), src.second.end(), 0.0, [sum = double(sum)](auto accum, const auto& entry) {
+            const double p = entry.second / sum;
+            return accum + p * std::log(p);
+        });
+        return {src.first, std::lround(shannon_index * 100)};
+                                                                            });
+      // sort all_pos by shannon_index, more diverse first
+    std::sort(std::begin(all_pos), std::end(all_pos), [](const auto& p1, const auto& p2) { return p1.second > p2.second; });
+
+    positions_.resize(std::min(static_cast<size_t>(mSettings.most_diverse_positions), all_pos.size()));
+    std::transform(all_pos.begin(), all_pos.begin() + static_cast<ssize_t>(positions_.size()), positions_.begin(), [](const all_pos_t& entry) { return entry.first; });
+
 } // AAAtPosDraw::find_most_diverse_positions
 
 // ----------------------------------------------------------------------
