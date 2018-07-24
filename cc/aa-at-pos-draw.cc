@@ -23,7 +23,7 @@ void AAAtPosDraw::prepare()
                 std::vector<char> aas(aa_freq.size());
                 std::transform(aa_freq.begin(), aa_freq.end(), aas.begin(), [](const auto& entry) { return entry.first; });
                 std::sort(aas.begin(), aas.end(), [&](char aa1, char aa2) { return aa_freq.find(aa1)->second > aa_freq.find(aa2)->second; }); // most frequent aa first
-                std::cout << pos << ' ' << aas << ' ' << aa_freq << '\n';
+                // std::cout << pos << ' ' << aas << ' ' << aa_freq << '\n';
                 for (size_t no = 1; no < aas.size(); ++no) // no color for the most frequent aa
                     colors_[pos].emplace(aas[no], Color::distinct(no));
             }
@@ -79,6 +79,13 @@ void AAAtPosDraw::find_most_diverse_positions()
 
     positions_.resize(std::min(static_cast<size_t>(mSettings.most_diverse_positions), all_pos.size()));
     std::transform(all_pos.begin(), all_pos.begin() + static_cast<ssize_t>(positions_.size()), positions_.begin(), [](const all_pos_t& entry) { return entry.first; });
+
+    std::cout << "\nINFO: most diverse positions" << '\n';
+    for (const auto& pos_index : all_pos) {
+        if (pos_index.second > 0)
+            std::cout << std::setw(3) << std::right << (pos_index.first + 1) << ' ' << std::setw(4) << std::right << pos_index.second << ' ' << aa_per_pos_[pos_index.first] << '\n';
+    }
+    std::cout << '\n';
 
 } // AAAtPosDraw::find_most_diverse_positions
 
