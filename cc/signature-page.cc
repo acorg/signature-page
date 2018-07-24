@@ -61,6 +61,7 @@ void SignaturePageDraw::make_surface(std::string aFilename, bool init_settings, 
     double width = 300, height = 300;
     switch (detect_layout(init_settings)) {
       case SignaturePageDrawSettings::Layout::TreeCladesTSMaps:
+      case SignaturePageDrawSettings::Layout::TreeAATSClades:
           width = 1360;         // ratio 1.6
           height = 850;
           break;
@@ -183,6 +184,7 @@ void SignaturePageDraw::write_initialized_settings(std::string aFilename)
           settings().hz_sections.remove();
           break;
       case SignaturePageDrawSettings::Layout::TreeTSClades:
+      case SignaturePageDrawSettings::Layout::TreeAATSClades:
           settings().antigenic_maps.remove();
           settings().mapped_antigens.remove();
           break;
@@ -208,6 +210,7 @@ void SignaturePageDraw::prepare()
     std::cout << std::endl << "PREPARE:" << std::endl;
     switch (detect_layout(false)) {
       case SignaturePageDrawSettings::Layout::TreeTSClades:
+      case SignaturePageDrawSettings::Layout::TreeAATSClades:
       case SignaturePageDrawSettings::Layout::Auto:
           make_layout_tree_ts_clades();
           if (mTimeSeriesDraw)

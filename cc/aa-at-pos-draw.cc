@@ -55,9 +55,10 @@ void AAAtPosDraw::draw()
         };
         tree::iterate_leaf(mTree, draw_dash);
 
+        // const auto pos_text_height = mSurface.text_size("8", Pixels{}).height;
         for (size_t section_no = 0; section_no < mSettings.positions.size(); ++section_no) {
             const auto pos = mSettings.positions[section_no];
-            mSurface.text({section_width * section_no, mSurface.viewport().size.height + 10}, std::to_string(pos), 0, Pixels{line_length}, acmacs::TextStyle{}, Rotation{M_PI_2});
+            mSurface.text({section_width * section_no + section_width / 4, mSurface.viewport().size.height + 10}, std::to_string(pos), 0, Pixels{line_length}, acmacs::TextStyle{}, Rotation{M_PI_2});
         }
     }
 

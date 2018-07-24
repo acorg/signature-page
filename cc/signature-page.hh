@@ -23,7 +23,7 @@ class TitleDraw;
 class SignaturePageDrawSettings : public rjson::field_container_child
 {
  public:
-    enum class Layout { Auto, TreeTSClades, TreeCladesTSMaps };
+    enum class Layout { Auto, TreeTSClades, TreeCladesTSMaps, TreeAATSClades };
 
     SignaturePageDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName);
 
@@ -47,6 +47,8 @@ class SignaturePageDrawSettings : public rjson::field_container_child
                 return Layout::Auto;
             else if (layout_s == "tree-ts-clades")
                 return Layout::TreeTSClades;
+            else if (layout_s == "tree-aa-ts-clades")
+                return Layout::TreeAATSClades;
             else if (layout_s == "tree-clades-ts-maps")
                 return Layout::TreeCladesTSMaps;
             else
