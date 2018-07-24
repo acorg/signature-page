@@ -15,7 +15,7 @@ void AAAtPosDraw::prepare()
             std::transform(mSettings.positions.begin(), mSettings.positions.end(), positions_.begin(), [](size_t pos_based_1) { return pos_based_1 - 1; });
             collect_aa_per_pos();
         }
-        else if (mSettings.most_diverse_positions > 0) {
+        else if (mSettings.diverse_index_threshold > 0) {
             find_most_diverse_positions();
         }
         if (!positions_.empty()) {
@@ -65,7 +65,7 @@ void AAAtPosDraw::find_most_diverse_positions()
     collect_aa_per_pos();
 
     // https://en.wikipedia.org/wiki/Diversity_index
-    using all_pos_t = std::pair<size_t, ssize_t>; // position, shannon_index
+    using all_pos_t = std::pair<size_t, size_t>; // position, shannon_index
     std::vector<all_pos_t> all_pos(aa_per_pos_.size());
     std::transform(aa_per_pos_.begin(), aa_per_pos_.end(), all_pos.begin(), [](const auto& src) -> all_pos_t {
         const auto sum = std::accumulate(src.second.begin(), src.second.end(), 0UL, [](auto accum, const auto& entry) { return accum + entry.second; });
@@ -73,13 +73,13 @@ void AAAtPosDraw::find_most_diverse_positions()
             const double p = entry.second / sum;
             return accum + p * std::log(p);
         });
-        return {src.first, std::lround(shannon_index * 100)};
-                                                                            });
-      // sort all_pos by shannon_index, more diverse first
-    std::sort(std::begin(all_pos), std::end(all_pos), [](const auto& p1, const auto& p2) { return p1.second > p2.second; });
-
-    positions_.resize(std::min(static_cast<size_t>(mSettings.most_diverse_positions), all_pos.size()));
-    std::transform(all_pos.begin(), all_pos.begin() + static_cast<ssize_t>(positions_.size()), positions_.begin(), [](const all_pos_t& entry) { return entry.first; });
+        return {src.first, static_cast<size_t>(std::lround(shannon_index * 100))};
+    });
+    // sort all_pos by shannon_index, more diverse first
+    std::sort(all_pos.begin(), all_pos.end(), [](const auto& p1, const auto& p2) { return p1.second > p2.second; });
+    const auto last = std::find_if(all_pos.begin(), all_pos.end(), [this](const auto& entry) { return entry.second < this->mSettings.diverse_index_threshold; });
+    positions_.resize(static_cast<size_t>(last - all_pos.begin()));
+    std::transform(all_pos.begin(), last, positions_.begin(), [](const all_pos_t& entry) { return entry.first; });
 
     std::cout << "\nINFO: most diverse positions" << '\n';
     for (const auto& pos_index : all_pos) {
@@ -101,15 +101,17 @@ void AAAtPosDraw::draw()
 
         auto draw_dash = [&, this](const Node& aNode) {
             const auto aas = aNode.data.amino_acids();
-            for (size_t section_no = 0; section_no < positions_.size(); ++section_no) {
-                if (const auto pos = this->positions_[section_no]; pos < aas.size()) {
+            // for (size_t section_no = 0; section_no < positions_.size(); ++section_no) {
+            //     if (const auto pos = this->positions_[section_no]; pos < aas.size()) {
+            for (auto [section_no, pos] : acmacs::enumerate(this->positions_)) {
+                if (pos < aas.size()) {
                     const auto aa = aas[pos];
-                    if (const auto found = this->colors_[pos].find(aa); found != colors_[pos].end()) {
-                        const auto base_x = section_width * section_no + (section_width - line_length) / 2;
-                        const std::string aa_s(1, aa);
+                    const auto base_x = section_width * section_no + (section_width - line_length) / 2;
+                    const std::string aa_s(1, aa);
+                    mSurface.text({base_x, aNode.draw.vertical_pos + this->mSettings.line_width / 2}, aa_s, 0 /* found->second */, Pixels{this->mSettings.line_width});
+                    if (const auto color_p = this->colors_[pos].find(aa); color_p != colors_[pos].end()) {
                         const auto aa_width = mSurface.text_size(aa_s, Pixels{this->mSettings.line_width}).width * 2;
-                        mSurface.text({base_x, aNode.draw.vertical_pos + this->mSettings.line_width / 2}, aa_s, 0 /* found->second */, Pixels{this->mSettings.line_width});
-                        mSurface.line({base_x + aa_width, aNode.draw.vertical_pos}, {base_x + line_length - aa_width, aNode.draw.vertical_pos}, found->second, Pixels{this->mSettings.line_width},
+                        mSurface.line({base_x + aa_width, aNode.draw.vertical_pos}, {base_x + line_length - aa_width, aNode.draw.vertical_pos}, color_p->second, Pixels{this->mSettings.line_width},
                                       acmacs::surface::LineCap::Round);
                     }
                 }
@@ -120,7 +122,8 @@ void AAAtPosDraw::draw()
         // const auto pos_text_height = mSurface.text_size("8", Pixels{}).height;
         for (size_t section_no = 0; section_no < positions_.size(); ++section_no) {
             const auto pos = positions_[section_no];
-            mSurface.text({section_width * section_no + section_width / 4, mSurface.viewport().size.height + 10}, std::to_string(pos + 1), 0, Pixels{line_length}, acmacs::TextStyle{}, Rotation{M_PI_2});
+            mSurface.text({section_width * section_no + section_width / 4, mSurface.viewport().size.height + 10}, std::to_string(pos + 1), 0, Pixels{line_length}, acmacs::TextStyle{},
+                          Rotation{M_PI_2});
         }
 
         draw_hz_section_lines();

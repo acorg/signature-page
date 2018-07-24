@@ -24,7 +24,7 @@ class AAAtPosDrawSettings : public rjson::field_container_child
     rjson::field_get_set<double> right_margin;
     rjson::field_get_set<double> line_width;
     rjson::field_get_set<double> line_length;         // fraction of the surface width
-    rjson::field_get_set<size_t> most_diverse_positions;
+    rjson::field_get_set<size_t> diverse_index_threshold;
     rjson::array_field_container_child<size_t> positions;
 
 }; // class AAAtPosDrawSettings
