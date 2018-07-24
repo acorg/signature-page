@@ -3,6 +3,7 @@
 #include "aa-at-pos-draw.hh"
 #include "tree.hh"
 #include "tree-iterate.hh"
+#include "tree-draw.hh"
 
 // ----------------------------------------------------------------------
 
@@ -121,12 +122,31 @@ void AAAtPosDraw::draw()
             const auto pos = positions_[section_no];
             mSurface.text({section_width * section_no + section_width / 4, mSurface.viewport().size.height + 10}, std::to_string(pos + 1), 0, Pixels{line_length}, acmacs::TextStyle{}, Rotation{M_PI_2});
         }
+
+        draw_hz_section_lines();
     }
 
 } // AAAtPosDraw::draw
 
 // ----------------------------------------------------------------------
 
+void AAAtPosDraw::draw_hz_section_lines()
+{
+    double previous_vertical_pos = -1e-8;
+    auto draw = [&](const Node& node) {
+        if (node.draw.shown) {
+            if (node.draw.hz_section_index != NodeDrawData::HzSectionNoIndex) {
+                if (mHzSections.sections[node.draw.hz_section_index].show_line) {
+                    const auto y = (previous_vertical_pos + node.draw.vertical_pos) / 2;
+                    mSurface.line({0, y}, {mSurface.viewport().size.width, y}, mHzSections.line_color, Pixels{mHzSections.line_width}, acmacs::surface::Dash::Dash3);
+                }
+            }
+            previous_vertical_pos = node.draw.vertical_pos;
+        }
+    };
+    tree::iterate_leaf(mTree, draw);
+
+} // AAAtPosDraw::draw_hz_section_lines
 
 // ----------------------------------------------------------------------
 /// Local Variables:

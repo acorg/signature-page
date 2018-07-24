@@ -11,6 +11,7 @@
 class Tree;
 class TreeDraw;
 class ChartDrawBase;
+class HzSections;
 
 // ----------------------------------------------------------------------
 
@@ -33,8 +34,8 @@ class AAAtPosDrawSettings : public rjson::field_container_child
 class AAAtPosDraw
 {
  public:
-    inline AAAtPosDraw(acmacs::surface::Surface& aSurface, Tree& aTree, AAAtPosDrawSettings& aSettings)
-        : mSurface(aSurface), mTree(aTree), mSettings(aSettings) {}
+    AAAtPosDraw(acmacs::surface::Surface& aSurface, const Tree& aTree, const HzSections& aHzSections, AAAtPosDrawSettings& aSettings)
+        : mSurface(aSurface), mTree(aTree), mHzSections(aHzSections), mSettings(aSettings) {}
 
     void prepare();
     void draw();
@@ -43,7 +44,8 @@ class AAAtPosDraw
 
  private:
     acmacs::surface::Surface& mSurface;
-    Tree& mTree;
+    const Tree& mTree;
+    const HzSections& mHzSections;
     AAAtPosDrawSettings& mSettings;
     std::vector<size_t> positions_;
     std::map<size_t, std::map<char, size_t>> aa_per_pos_;
@@ -51,6 +53,7 @@ class AAAtPosDraw
 
     void collect_aa_per_pos();
     void find_most_diverse_positions();
+    void draw_hz_section_lines();
 
 }; // class AAAtPosDraw
 
