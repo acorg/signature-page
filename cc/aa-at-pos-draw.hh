@@ -26,6 +26,7 @@ class AAAtPosDrawSettings : public rjson::field_container_child
     rjson::field_get_set<double> line_length;         // fraction of the surface width
     rjson::field_get_set<size_t> diverse_index_threshold;
     rjson::array_field_container_child<size_t> positions;
+    rjson::field_get_set<bool> report_most_diverse_positions;
 
 }; // class AAAtPosDrawSettings
 
@@ -53,7 +54,9 @@ class AAAtPosDraw
 
     void collect_aa_per_pos();
     void find_most_diverse_positions();
-    void draw_hz_section_lines();
+    void set_colors();
+    void draw_hz_section_lines() const;
+    void report_aa_pos_sections() const;
 
 }; // class AAAtPosDraw
 

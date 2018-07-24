@@ -18,17 +18,7 @@ void AAAtPosDraw::prepare()
         else if (mSettings.diverse_index_threshold > 0) {
             find_most_diverse_positions();
         }
-        if (!positions_.empty()) {
-            for (auto pos : positions_) {
-                const auto& aa_freq = aa_per_pos_[pos];
-                std::vector<char> aas(aa_freq.size());
-                std::transform(aa_freq.begin(), aa_freq.end(), aas.begin(), [](const auto& entry) { return entry.first; });
-                std::sort(aas.begin(), aas.end(), [&](char aa1, char aa2) { return aa_freq.find(aa1)->second > aa_freq.find(aa2)->second; }); // most frequent aa first
-                // std::cout << pos << ' ' << aas << ' ' << aa_freq << '\n';
-                for (size_t no = 1; no < aas.size(); ++no) // no color for the most frequent aa
-                    colors_[pos].emplace(aas[no], Color::distinct(no));
-            }
-        }
+        set_colors();
     }
 
 } // AAAtPosDraw::prepare
@@ -81,31 +71,88 @@ void AAAtPosDraw::find_most_diverse_positions()
     positions_.resize(static_cast<size_t>(last - all_pos.begin()));
     std::transform(all_pos.begin(), last, positions_.begin(), [](const all_pos_t& entry) { return entry.first; });
 
-    std::cout << "\nINFO: most diverse positions" << '\n';
-    for (const auto& pos_index : all_pos) {
-        if (pos_index.second > 0)
-            std::cout << std::setw(3) << std::right << (pos_index.first + 1) << ' ' << std::setw(4) << std::right << pos_index.second << ' ' << aa_per_pos_[pos_index.first] << '\n';
+    if (mSettings.report_most_diverse_positions) {
+        std::cout << "\nINFO: most diverse positions" << '\n';
+        for (const auto& pos_index : all_pos) {
+            if (pos_index.second > 0)
+                std::cout << std::setw(3) << std::right << (pos_index.first + 1) << ' ' << std::setw(4) << std::right << pos_index.second << ' ' << aa_per_pos_[pos_index.first] << '\n';
+        }
+        std::cout << '\n';
     }
-    std::cout << '\n';
 
 } // AAAtPosDraw::find_most_diverse_positions
+
+// ----------------------------------------------------------------------
+
+void AAAtPosDraw::set_colors()
+{
+    if (!positions_.empty()) {
+        for (auto pos : positions_) {
+            const auto& aa_freq = aa_per_pos_[pos];
+            std::vector<char> aas(aa_freq.size());
+            std::transform(aa_freq.begin(), aa_freq.end(), aas.begin(), [](const auto& entry) { return entry.first; });
+            std::sort(aas.begin(), aas.end(), [&](char aa1, char aa2) { return aa_freq.find(aa1)->second > aa_freq.find(aa2)->second; }); // most frequent aa first
+            // std::cout << pos << ' ' << aas << ' ' << aa_freq << '\n';
+            for (size_t no = 1; no < aas.size(); ++no) // no color for the most frequent aa
+                colors_[pos].emplace(aas[no], Color::distinct(no));
+        }
+    }
+
+} // AAAtPosDraw::set_colors
+
+// ----------------------------------------------------------------------
+
+void AAAtPosDraw::report_aa_pos_sections() const
+{
+    if (!positions_.empty()) {
+        std::cout << "\nINFO: sections for positions\n";
+        auto report_section = [](char aa, std::string first, std::string last, size_t num_seqs) {
+            std::cout << "   " << aa << ' ' << std::setw(4) << std::right << num_seqs << ' ' << first << " -- " << last << '\n';
+        };
+        for (auto pos : positions_) {
+            std::cout << ' ' << std::setw(3) << std::right << (pos + 1) << '\n';
+            char current_aa = 0;
+            std::string first;
+            std::string previous;
+            size_t num_seqs = 0;
+            auto report = [&](const Node& node) {
+                if (const auto sequence = node.data.amino_acids(); pos < sequence.size()) {
+                    const auto aa = sequence[pos];
+                    if (aa != current_aa) {
+                        if (!first.empty() && current_aa)
+                            report_section(current_aa, first, previous, num_seqs);
+                        first = node.seq_id;
+                        current_aa = aa;
+                        num_seqs = 0;
+                    }
+                }
+                previous = node.seq_id;
+                ++num_seqs;
+            };
+            tree::iterate_leaf(mTree, report);
+            if (!first.empty() && current_aa)
+                report_section(current_aa, first, find_last_leaf(mTree).seq_id, num_seqs);
+        }
+        std::cout << '\n';
+    }
+
+} // AAAtPosDraw::report_aa_pos_sections
 
 // ----------------------------------------------------------------------
 
 void AAAtPosDraw::draw()
 {
     if (!positions_.empty()) {
+        report_aa_pos_sections(); // report must be here, after ladderrizing
         const auto surface_width = mSurface.viewport().size.width;
         const auto section_width = surface_width / positions_.size();
         const auto line_length = section_width * mSettings.line_length;
 
         auto draw_dash = [&, this](const Node& aNode) {
-            const auto aas = aNode.data.amino_acids();
-            // for (size_t section_no = 0; section_no < positions_.size(); ++section_no) {
-            //     if (const auto pos = this->positions_[section_no]; pos < aas.size()) {
+            const auto sequence = aNode.data.amino_acids();
             for (auto [section_no, pos] : acmacs::enumerate(this->positions_)) {
-                if (pos < aas.size()) {
-                    const auto aa = aas[pos];
+                if (pos < sequence.size()) {
+                    const auto aa = sequence[pos];
                     const auto base_x = section_width * section_no + (section_width - line_length) / 2;
                     const std::string aa_s(1, aa);
                     mSurface.text({base_x, aNode.draw.vertical_pos + this->mSettings.line_width / 2}, aa_s, 0 /* found->second */, Pixels{this->mSettings.line_width});
@@ -133,7 +180,7 @@ void AAAtPosDraw::draw()
 
 // ----------------------------------------------------------------------
 
-void AAAtPosDraw::draw_hz_section_lines()
+void AAAtPosDraw::draw_hz_section_lines() const
 {
     double previous_vertical_pos = -1e-8;
     auto draw = [&](const Node& node) {
