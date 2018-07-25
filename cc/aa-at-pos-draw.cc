@@ -110,7 +110,7 @@ struct AAPosSection
     size_t num_nodes;
 };
 
-void AAAtPosDraw::report_aa_pos_sections() const
+void AAAtPosDraw::make_aa_pos_sections() const
 {
     if (!positions_.empty()) {
         std::cout << "\nINFO: sections for positions\n";
@@ -128,7 +128,7 @@ void AAAtPosDraw::report_aa_pos_sections() const
                     }
                 }
                 else {
-                    std::cerr << "WARNING: AAAtPosDraw::report_aa_pos_sections: sequence " << node.seq_id << " is too short: " << sequence.size() << " pos: " << pos << '\n';
+                    std::cerr << "WARNING: AAAtPosDraw::make_aa_pos_sections: sequence " << node.seq_id << " is too short: " << sequence.size() << " pos: " << pos << '\n';
                 }
             });
 
@@ -136,15 +136,12 @@ void AAAtPosDraw::report_aa_pos_sections() const
             // for (const auto& section : sections)
             //     std::cout << "   " << section.aa << ' ' << std::setw(4) << std::right << section.num_nodes << ' ' << section.first->seq_id << " -- " << section.last->seq_id << '\n';
 
-              // remove small sections
-            for (auto section_it = sections.begin(); section_it != sections.end(); /* no increment! */) {
-                if (section_it->num_nodes <= mSettings.small_section_threshold)
-                    section_it = sections.erase(section_it);
-                else
-                    ++section_it;
-            }
+            // remove small sections
+            sections.erase(
+                std::remove_if(sections.begin(), sections.end(), [threshold = static_cast<size_t>(mSettings.small_section_threshold)](const auto& section) { return section.num_nodes <= threshold; }),
+                sections.end());
 
-              // merge adjacent sections
+            // merge adjacent sections
             for (auto section_it = sections.begin(); section_it != sections.end(); /* no increment! */) {
                 if (section_it != sections.begin() && (section_it - 1)->aa == section_it->aa) {
                     (section_it - 1)->last = section_it->last;
@@ -155,22 +152,28 @@ void AAAtPosDraw::report_aa_pos_sections() const
                     ++section_it;
             }
 
-            std::cout << ' ' << std::setw(3) << std::right << (pos + 1) << " (small sections eliminated and adjacent sections merged)\n";
+            // remove sections for the most frequent AA
+            std::map<char, size_t> aa_freq;
+            for (const auto& section : sections)
+                aa_freq[section.aa] += section.num_nodes;
+            const auto most_freq_aa = std::max_element(aa_freq.begin(), aa_freq.end(), [](const auto& e1, const auto& e2) { return e1.second < e2.second; })->first;
+            sections.erase(std::remove_if(sections.begin(), sections.end(), [most_freq_aa](const auto& section) { return section.aa == most_freq_aa; }), sections.end());
+
+            std::cout << ' ' << std::setw(3) << std::right << (pos + 1) << " (small sections eliminated, adjacent sections merged, most frequent AA sections removed)\n";
             for (const auto& section : sections)
                 std::cout << "   " << section.aa << ' ' << std::setw(4) << std::right << section.num_nodes << ' ' << section.first->seq_id << " -- " << section.last->seq_id << '\n';
-
         }
         std::cout << '\n';
     }
 
-} // AAAtPosDraw::report_aa_pos_sections
+} // AAAtPosDraw::make_aa_pos_sections
 
 // ----------------------------------------------------------------------
 
 void AAAtPosDraw::draw()
 {
     if (!positions_.empty()) {
-        report_aa_pos_sections(); // report must be here, after ladderrizing
+        make_aa_pos_sections(); // must be here, after ladderrizing
         const auto surface_width = mSurface.viewport().size.width;
         const auto section_width = surface_width / positions_.size();
         const auto line_length = section_width * mSettings.line_length;
