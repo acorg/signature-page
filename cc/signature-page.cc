@@ -72,7 +72,7 @@ void SignaturePageDraw::make_surface(std::string aFilename, bool init_settings, 
           break;
     }
     mSurface = std::make_unique<acmacs::surface::PdfCairo>(draw_map ? aFilename : std::string{}, width, height);
-    std::cerr << "INFO: Surface: " << width << " x " << height << std::endl;
+    std::cout << "INFO: Surface: " << width << " x " << height << std::endl;
 
     mTreeDraw = std::make_unique<TreeDraw>(mSurface->subsurface(false), *mTree, mSettings->tree_draw, mSettings->hz_sections);
     mTimeSeriesDraw = std::make_unique<TimeSeriesDraw>(mSurface->subsurface(false), *mTree, *mTreeDraw, mSettings->hz_sections, mSettings->time_series);
@@ -115,7 +115,7 @@ void SignaturePageDraw::init_layout()
         mSettings->signature_page.mapped_antigens_margin_right = 10;
     }
 
-    // std::cerr << "init_layout signature_page " << mSettings->signature_page << '\n';
+    // std::cerr << "DEBUG: init_layout signature_page " << mSettings->signature_page << '\n';
 
 } // SignaturePageDraw::init_layout
 
@@ -123,10 +123,9 @@ void SignaturePageDraw::init_layout()
 
 void SignaturePageDraw::init_settings()
 {
-    std::cerr << std::endl << "INFO: INIT:" << std::endl;
-    std::cerr << "signature_page.top " << mSettings->signature_page.top << '\n';
     mSettings->signature_page.bottom = mSettings->signature_page.top;
-    std::cerr << "signature_page.bottom " << mSettings->signature_page.bottom << '\n';
+
+    std::cout << "\nINFO: INIT:\n  signature_page.top " << mSettings->signature_page.top << "\n  signature_page.bottom " << mSettings->signature_page.bottom << '\n';
 
     if (mTitleDraw)
         mTitleDraw->init_settings();

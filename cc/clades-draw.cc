@@ -82,7 +82,7 @@ void CladesDraw::collect()
             clade.second.remove_small_sections(mSettings.for_clade(clade.first).section_exclusion_tolerance);
 
         for (const auto& [name, data]: mClades) {
-            std::cerr << "Clade: " << name << data << " inclusion:" << mSettings.for_clade(name).section_inclusion_tolerance << " exclusion:" << mSettings.for_clade(name).section_exclusion_tolerance << '\n';
+            std::cout << "INFO: Clade: " << name << data << " inclusion:" << mSettings.for_clade(name).section_inclusion_tolerance << " exclusion:" << mSettings.for_clade(name).section_exclusion_tolerance << '\n';
         }
 
         assign_slots();

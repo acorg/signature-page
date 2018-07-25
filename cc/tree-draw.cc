@@ -479,7 +479,7 @@ size_t TreeDraw::prepare_hz_sections()
     }
     // if (number_of_hz_sections == 0)
     //     number_of_hz_sections = 1;
-    std::cerr << "HZ sections: " << number_of_hz_sections << std::endl;
+    std::cout << "INFO: HZ sections: " << number_of_hz_sections << std::endl;
     return number_of_hz_sections;
 
 } // TreeDraw::prepare_hz_sections
@@ -500,12 +500,12 @@ void TreeDraw::fit_labels_into_viewport()
     mFontSize = mVerticalStep;
 
     const double canvas_width = mSurface.viewport().size.width;
-    std::cerr << "Viewport: " << mSurface.viewport() << '\n';
+    std::cout << "INFO: viewport: " << mSurface.viewport() << '\n';
 
     Timeit ti("TreeDraw::fit_labels_into_viewport: ");
     for (double label_offset = max_label_offset(); label_offset > canvas_width; label_offset = max_label_offset()) {
         const double scale = std::min(canvas_width / label_offset, 0.99); // to avoid too much looping
-        std::cerr << "Canvas:" << canvas_width << " label_right:" << label_offset << " scale: " << scale << std::endl;
+        std::cout << "INFO: canvas:" << canvas_width << " label_right:" << label_offset << " scale: " << scale << std::endl;
         mHorizontalStep *= scale;
         mFontSize *= scale;
     }
@@ -635,7 +635,7 @@ void TreeDraw::draw_aa_transition(const Node& aNode, acmacs::Location2D aOrigin,
 void TreeDraw::draw_mark_with_label(const Node& aNode, acmacs::Location2D aTextOrigin)
 {
     if (aNode.draw.mark_with_label) {
-        std::cerr << "DEBUG: draw mark_with_label " << aNode.seq_id << '\n';
+          // std::cerr << "DEBUG: draw mark_with_label " << aNode.seq_id << '\n';
         const auto settings = mSettings.mods.find_mark_with_label(aNode.seq_id);
 
         const acmacs::Offset label_offset = settings.label_offset;
@@ -817,7 +817,7 @@ void HzSections::detect_hz_lines_for_clades(Tree& aTree, const Clades* aClades, 
             for (const auto& clade: *aClades) {
                 if (clade.second.shown()) {
                     for (const auto& s: clade.second.seq_ids()) {
-                        std::cerr << "DEBUG: clade: " << clade.first << ' ' << s << DEBUG_LINE_FUNC << '\n';
+                          // std::cerr << "DEBUG: clade: " << clade.first << ' ' << s << DEBUG_LINE_FUNC << '\n';
                         auto sec2 = sections.emplace_back();
                         sec2.name = s.first;
                         sec2.show_line = false;

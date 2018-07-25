@@ -40,11 +40,11 @@ void MappedAntigensDraw::prepare()
     else
         std::cerr << "WARNING: No tree sequences found in the chart" << DEBUG_LINE_FUNC << '\n';
 
-    // std::cerr << "Matched names:" << std::endl << "  ";
+    // std::cerr << "DEBUG: Matched names:" << std::endl << "  ";
     // std::copy(matched_names.begin(), matched_names.end(), polyfill::make_ostream_joiner(std::cerr, "\n  "));
     // std::cerr << std::endl << std::endl;
 
-    // std::cerr << "Not matched names:" << std::endl;
+    // std::cerr << "DEBUG: Not matched names:" << std::endl;
     // for (const auto& point: mChart.points()) {
     //     if (point.attributes.antigen && matched_names.find(point.name) == matched_names.end())
     //         std::cerr << "  " << point.name << std::endl;

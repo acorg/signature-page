@@ -128,13 +128,13 @@ void AAAtPosDraw::report_aa_pos_sections() const
                     }
                 }
                 else {
-                    std::cerr << "AAAtPosDraw::report_aa_pos_sections: sequence " << node.seq_id << " is too short: " << sequence.size() << " pos: " << pos << '\n';
+                    std::cerr << "WARNING: AAAtPosDraw::report_aa_pos_sections: sequence " << node.seq_id << " is too short: " << sequence.size() << " pos: " << pos << '\n';
                 }
             });
 
-            std::cout << ' ' << std::setw(3) << std::right << (pos + 1) << '\n';
-            for (const auto& section : sections)
-                std::cout << "   " << section.aa << ' ' << std::setw(4) << std::right << section.num_nodes << ' ' << section.first->seq_id << " -- " << section.last->seq_id << '\n';
+            // std::cout << ' ' << std::setw(3) << std::right << (pos + 1) << '\n';
+            // for (const auto& section : sections)
+            //     std::cout << "   " << section.aa << ' ' << std::setw(4) << std::right << section.num_nodes << ' ' << section.first->seq_id << " -- " << section.last->seq_id << '\n';
 
               // remove small sections
             for (auto section_it = sections.begin(); section_it != sections.end(); /* no increment! */) {
@@ -155,7 +155,7 @@ void AAAtPosDraw::report_aa_pos_sections() const
                     ++section_it;
             }
 
-            std::cout << ' ' << std::setw(3) << std::right << (pos + 1) << '\n';
+            std::cout << ' ' << std::setw(3) << std::right << (pos + 1) << " (small sections eliminated and adjacent sections merged)\n";
             for (const auto& section : sections)
                 std::cout << "   " << section.aa << ' ' << std::setw(4) << std::right << section.num_nodes << ' ' << section.first->seq_id << " -- " << section.last->seq_id << '\n';
 

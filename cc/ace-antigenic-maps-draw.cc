@@ -77,7 +77,7 @@ void AntigenicMapsLayoutDrawAce::prepare_apply_mods()
               // }
         }
         catch (std::bad_variant_access&) {
-            std::cerr << "MOD: " << mod << DEBUG_LINE_FUNC << '\n';
+            std::cerr << "WARNING: MOD: " << mod << DEBUG_LINE_FUNC << '\n';
             throw;
         }
     }
@@ -159,7 +159,7 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, boo
         }
         else if (name == "tracked_sera") {
             const auto tracked_indices = tracked_sera(aSectionIndex);
-            std::cerr << "INFO: tracked_sera: " << tracked_indices << std::endl;
+            std::cout << "INFO: tracked_sera: " << tracked_indices << std::endl;
             acmacs::PointStyle tracked_serum_style;
             tracked_serum_style.size = Pixels{mod.get_or_default("size", 5.0)};
             tracked_serum_style.outline = mod.get_color("outline", "black");
@@ -247,7 +247,7 @@ void AntigenicMapsLayoutDrawAce::tracked_serum_circles(const AntigenicMapMod& mo
         std::sort(radii.begin(), radii.end());
         const auto radius_p = std::find_if(radii.begin(), radii.end(), [](double r) -> bool { return r >= 0.0; });
         if (radius_p != radii.end()) {
-            std::cerr << "INFO: serum_circle for " << serum_antigens.first << ' ' << chart().serum(serum_antigens.first)->full_name() << " radius: " << *radius_p << std::endl;
+            std::cout << "INFO: serum_circle for " << serum_antigens.first << ' ' << chart().serum(serum_antigens.first)->full_name() << " radius: " << *radius_p << std::endl;
             auto& serum_circle = chart_draw().serum_circle(serum_antigens.first, Scaled{*radius_p});
             serum_circle
                     .fill(mod.get_color("fill", "transparent"))

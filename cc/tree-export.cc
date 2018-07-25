@@ -215,7 +215,7 @@ class TreeRootHandler : public HandlerBase
                       mTreeType = TreeType::PhylogeneticV2;
                   }
                   else {
-                      std::cerr << "Unsupported version: \"" << std::string(str, length) << '"' << std::endl;
+                      std::cerr << "ERROR: Unsupported version: \"" << std::string(str, length) << '"' << std::endl;
                       throw json_reader::Failure();
                   }
                   break;
