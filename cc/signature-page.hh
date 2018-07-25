@@ -66,8 +66,8 @@ class SignaturePageDraw
     ~SignaturePageDraw();
 
     void load_settings(std::string aFilename);
-    void make_surface(std::string aFilename, bool init_settings, bool draw_map);
-    void init_layout();
+    void make_surface(std::string aFilename, bool init_settings, bool show_aa_at_pos, bool draw_map);
+    void init_layout(bool show_aa_at_pos);
     void init_settings();
     void write_initialized_settings(std::string aFilename); // removes redundant settings entries depending on layout!
     Settings& settings() { return *mSettings; }
@@ -92,7 +92,7 @@ class SignaturePageDraw
     std::unique_ptr<AntigenicMapsDrawBase> mAntigenicMapsDraw;
     std::unique_ptr<TitleDraw> mTitleDraw;
 
-    SignaturePageDrawSettings::Layout detect_layout(bool init_settings) const;
+    SignaturePageDrawSettings::Layout detect_layout(bool init_settings, bool show_aa_at_pos) const;
     void make_layout_tree_ts_clades();
     void make_layout_tree_clades_ts_maps();
     void draw_mods();

@@ -24,6 +24,7 @@ int main(int argc, const char *argv[])
                 {"--init-settings", ""}, // value<std::string>(&aOptions.init_settings_filename), "initialize signature page drawing settings (json) filename")
                 {"--report-cumulative", ""},
                 {"--report-hz-section_antigens", false}, // bool_switch(&aOptions.report_antigens_in_hz_sections)->default_value(false), "report antigens in each hz section")
+                {"--show-aa-at-pos", false, "show aa_at_pos section if --init-settings was used"},
                 {"--list-ladderized", ""},
                 {"--no-draw", false}, // bool_switch(&aOptions.no_draw)->default_value(false), "do not generate pdf")
                 {"--chart", ""}, // value<std::string>(&aOptions.chart_filename), "path to a chart for the signature page")
@@ -62,9 +63,9 @@ int main(int argc, const char *argv[])
             signature_page.tree(args[0]);
             if (args["--chart"])
                 signature_page.chart(args["--chart"]); // before make_surface!
-            signature_page.make_surface(args[1], args["--init-settings"], !args["--no-draw"]); // before init_layout!
+            signature_page.make_surface(args[1], args["--init-settings"], args["--show-aa-at-pos"], !args["--no-draw"]); // before init_layout!
             if (args["--init-settings"]) {
-                signature_page.init_layout();
+                signature_page.init_layout(args["--show-aa-at-pos"]);
                 signature_page.init_settings();
             }
             signature_page.prepare();

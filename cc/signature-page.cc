@@ -47,19 +47,30 @@ void SignaturePageDraw::load_settings(std::string aFilename)
 
 // ----------------------------------------------------------------------
 
-SignaturePageDrawSettings::Layout SignaturePageDraw::detect_layout(bool init_settings) const
+SignaturePageDrawSettings::Layout SignaturePageDraw::detect_layout(bool init_settings, bool show_aa_at_pos) const
 {
     const auto layout = mSettings->signature_page.get_layout();
-    return (layout == SignaturePageDrawSettings::Layout::Auto || init_settings) ? (mChartFilename.empty() ? SignaturePageDrawSettings::Layout::TreeTSClades : SignaturePageDrawSettings::Layout::TreeCladesTSMaps) : layout;
+    if (layout == SignaturePageDrawSettings::Layout::Auto || init_settings) {
+        if (mChartFilename.empty()) {
+            if (show_aa_at_pos)
+                return SignaturePageDrawSettings::Layout::TreeAATSClades;
+            else
+                return SignaturePageDrawSettings::Layout::TreeTSClades;
+        }
+        else
+            return SignaturePageDrawSettings::Layout::TreeCladesTSMaps;
+    }
+    else
+        return layout;
 
 } // SignaturePageDraw::detect_layout
 
 // ----------------------------------------------------------------------
 
-void SignaturePageDraw::make_surface(std::string aFilename, bool init_settings, bool draw_map)
+void SignaturePageDraw::make_surface(std::string aFilename, bool init_settings, bool show_aa_at_pos, bool draw_map)
 {
     double width = 300, height = 300;
-    switch (detect_layout(init_settings)) {
+    switch (detect_layout(init_settings, show_aa_at_pos)) {
       case SignaturePageDrawSettings::Layout::TreeCladesTSMaps:
       case SignaturePageDrawSettings::Layout::TreeAATSClades:
           width = 1360;         // ratio 1.6
@@ -92,19 +103,9 @@ void SignaturePageDraw::make_surface(std::string aFilename, bool init_settings, 
 
 // ----------------------------------------------------------------------
 
-void SignaturePageDraw::init_layout()
+void SignaturePageDraw::init_layout(bool show_aa_at_pos)
 {
-    if (mChartFilename.empty()) {
-        mSettings->signature_page.top = 60;
-        mSettings->signature_page.bottom = 60;
-        mSettings->signature_page.left = 50;
-        mSettings->signature_page.right = 0;
-        mSettings->signature_page.layout = "tree-ts-clades";
-        mSettings->signature_page.time_series_width = 300;
-        mSettings->signature_page.clades_width = 100;
-        mSettings->signature_page.tree_margin_right = 10;
-    }
-    else {
+    if (!mChartFilename.empty()) {
         mSettings->signature_page.top = 23;
         mSettings->signature_page.bottom = 23;
         mSettings->signature_page.left = 10;
@@ -113,6 +114,27 @@ void SignaturePageDraw::init_layout()
         mSettings->signature_page.clades_width = 20;
         mSettings->signature_page.tree_margin_right = 10;
         mSettings->signature_page.mapped_antigens_margin_right = 10;
+    }
+    else if (show_aa_at_pos) {
+        mSettings->signature_page.top = 60;
+        mSettings->signature_page.bottom = 60;
+        mSettings->signature_page.left = 50;
+        mSettings->signature_page.right = 0;
+        mSettings->signature_page.layout = "tree-aa-ts-clades";
+        mSettings->signature_page.time_series_width = 150;
+        mSettings->signature_page.clades_width = 50;
+        mSettings->signature_page.tree_margin_right = 10;
+        mSettings->aa_at_pos.width = 500;
+    }
+    else {
+        mSettings->signature_page.top = 60;
+        mSettings->signature_page.bottom = 60;
+        mSettings->signature_page.left = 50;
+        mSettings->signature_page.right = 0;
+        mSettings->signature_page.layout = "tree-ts-clades";
+        mSettings->signature_page.time_series_width = 300;
+        mSettings->signature_page.clades_width = 100;
+        mSettings->signature_page.tree_margin_right = 10;
     }
 
     // std::cerr << "DEBUG: init_layout signature_page " << mSettings->signature_page << '\n';
@@ -138,7 +160,7 @@ void SignaturePageDraw::init_settings()
     if (mTimeSeriesDraw)
         mTimeSeriesDraw->init_settings();
 
-    if (mSurface->aspect() > 1) { // with maps
+    if (!mChartFilename.empty() && mSurface->aspect() > 1) { // with maps
         mSettings->tree_draw.legend.width = 100;
         mSettings->hz_sections.vertical_gap = 15;
         mSettings->clades.slot_width = 10;
@@ -148,6 +170,12 @@ void SignaturePageDraw::init_settings()
 
         if (mAntigenicMapsDraw)
             mAntigenicMapsDraw->init_settings();
+    }
+    else if (mSettings->aa_at_pos.width > 0) { // tree and aa-at-pos
+        mSettings->tree_draw.legend.width = 100;
+        mSettings->hz_sections.vertical_gap = 15;
+        // if (mTreeDraw)
+        //     mTreeDraw->detect_hz_lines_from_aa_at_pos(mAAAtPosDraw);
     }
     else {                      // just tree
         mSettings->tree_draw.legend.width = 180;
@@ -207,7 +235,7 @@ void SignaturePageDraw::tree(std::string aTreeFilename)
 void SignaturePageDraw::prepare()
 {
     std::cout << std::endl << "PREPARE:" << std::endl;
-    switch (detect_layout(false)) {
+    switch (detect_layout(false, false)) {
       case SignaturePageDrawSettings::Layout::TreeTSClades:
       case SignaturePageDrawSettings::Layout::TreeAATSClades:
       case SignaturePageDrawSettings::Layout::Auto:
