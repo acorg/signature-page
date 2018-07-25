@@ -27,6 +27,7 @@ class AAAtPosDrawSettings : public rjson::field_container_child
     rjson::field_get_set<size_t> diverse_index_threshold;
     rjson::array_field_container_child<size_t> positions;
     rjson::field_get_set<bool> report_most_diverse_positions;
+    rjson::field_get_set<size_t> small_section_threshold; // remove sections having this or fewer number of sequences
 
 }; // class AAAtPosDrawSettings
 

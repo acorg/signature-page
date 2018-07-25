@@ -136,7 +136,29 @@ void AAAtPosDraw::report_aa_pos_sections() const
             for (const auto& section : sections)
                 std::cout << "   " << section.aa << ' ' << std::setw(4) << std::right << section.num_nodes << ' ' << section.first->seq_id << " -- " << section.last->seq_id << '\n';
 
-              // remove small sections and then merge adjacent
+              // remove small sections
+            for (auto section_it = sections.begin(); section_it != sections.end(); /* no increment! */) {
+                if (section_it->num_nodes <= mSettings.small_section_threshold)
+                    section_it = sections.erase(section_it);
+                else
+                    ++section_it;
+            }
+
+              // merge adjacent sections
+            for (auto section_it = sections.begin(); section_it != sections.end(); /* no increment! */) {
+                if (section_it != sections.begin() && (section_it - 1)->aa == section_it->aa) {
+                    (section_it - 1)->last = section_it->last;
+                    (section_it - 1)->num_nodes += section_it->num_nodes;
+                    section_it = sections.erase(section_it);
+                }
+                else
+                    ++section_it;
+            }
+
+            std::cout << ' ' << std::setw(3) << std::right << (pos + 1) << '\n';
+            for (const auto& section : sections)
+                std::cout << "   " << section.aa << ' ' << std::setw(4) << std::right << section.num_nodes << ' ' << section.first->seq_id << " -- " << section.last->seq_id << '\n';
+
         }
         std::cout << '\n';
     }

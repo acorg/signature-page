@@ -189,7 +189,8 @@ AAAtPosDrawSettings::AAAtPosDrawSettings(rjson::field_container_parent& aParent,
       line_length(*this, "line_length", 0.5, rjson::initialize_field::yes),
       diverse_index_threshold(*this, "diverse_index_threshold", 3, rjson::initialize_field::yes),
       positions(*this, "positions"),
-      report_most_diverse_positions(*this, "report_most_diverse_positions", false, rjson::initialize_field::yes)
+      report_most_diverse_positions(*this, "report_most_diverse_positions", false, rjson::initialize_field::yes),
+      small_section_threshold(*this, "small_section_threshold", 3, rjson::initialize_field::yes)
 {
 
 } // AAAtPosDrawSettings::AAAtPosDrawSettings
