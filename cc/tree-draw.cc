@@ -809,24 +809,14 @@ void HzSections::detect_hz_lines_for_clades(Tree& aTree, const Clades* aClades, 
     if (aForce)
         sections.clear();
     if (sections.empty()) {
-        auto sec = sections.emplace_back();
-        sec.name = find_first_leaf(aTree).seq_id;
-        sec.show_line = false;
+        add(find_first_leaf(aTree), false);
 
         if (aClades) {
             for (const auto& clade: *aClades) {
                 if (clade.second.shown()) {
-                    for (const auto& s: clade.second.seq_ids()) {
+                    for (const auto& sect: clade.second.sections) {
                           // std::cerr << "DEBUG: clade: " << clade.first << ' ' << s << DEBUG_LINE_FUNC << '\n';
-                        auto sec2 = sections.emplace_back();
-                        sec2.name = s.first;
-                        sec2.show_line = false;
-                        const Node* last_node_of_clade = aTree.find_leaf_by_seqid(s.second);
-                        if (const Node* next_node = aTree.find_leaf_by_line_no(last_node_of_clade->draw.line_no + 1); next_node) {
-                            auto sec3 = sections.emplace_back();
-                            sec3.name = next_node->seq_id;
-                            sec3.show_line = false;
-                        }
+                        add(aTree, *sect.first, *sect.last, false);
                     }
                 }
             }
@@ -834,6 +824,34 @@ void HzSections::detect_hz_lines_for_clades(Tree& aTree, const Clades* aClades, 
     }
 
 } // HzSections::detect_hz_lines_for_clades
+
+// ----------------------------------------------------------------------
+
+void HzSections::add(std::string seq_id, bool show_line)
+{
+    auto sec = sections.emplace_back();
+    sec.name = seq_id;
+    sec.show_line = show_line;
+
+} // HzSections::add
+
+// ----------------------------------------------------------------------
+
+void HzSections::add(const Node& node, bool show_line)
+{
+    add(node.seq_id, show_line);
+
+} // HzSections::add
+
+// ----------------------------------------------------------------------
+
+void HzSections::add(const Tree& tree, const Node& first, const Node& last, bool show_line)
+{
+    add(first.seq_id, show_line);
+    if (const Node* next_node = tree.find_leaf_by_line_no(last.draw.line_no + 1); next_node)
+        add(*next_node, show_line);
+
+} // HzSections::add
 
 // ----------------------------------------------------------------------
 

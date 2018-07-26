@@ -288,6 +288,9 @@ class HzSections : public rjson::field_container_child
     void sort(const Tree& aTree);
     // void auto_detect(Tree& aTree, const Clades* aClades);
     void detect_hz_lines_for_clades(Tree& aTree, const Clades* aClades, bool aForce);
+    void add(std::string seq_id, bool show_line);
+    void add(const Node& node, bool show_line);
+    void add(const Tree& tree, const Node& first, const Node& last, bool show_line);
 
     inline size_t shown_maps() const
         {

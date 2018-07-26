@@ -50,7 +50,7 @@ class AAAtPosDrawSettings : public rjson::field_container_child
 class AAAtPosDraw
 {
  public:
-    AAAtPosDraw(acmacs::surface::Surface& aSurface, const Tree& aTree, const HzSections& aHzSections, AAAtPosDrawSettings& aSettings)
+    AAAtPosDraw(acmacs::surface::Surface& aSurface, const Tree& aTree, HzSections& aHzSections, AAAtPosDrawSettings& aSettings)
         : mSurface(aSurface), mTree(aTree), mHzSections(aHzSections), mSettings(aSettings) {}
 
     void prepare();
@@ -61,7 +61,7 @@ class AAAtPosDraw
  private:
     acmacs::surface::Surface& mSurface;
     const Tree& mTree;
-    const HzSections& mHzSections;
+    HzSections& mHzSections;
     AAAtPosDrawSettings& mSettings;
     std::vector<size_t> positions_;
     std::map<size_t, std::map<char, size_t>> aa_per_pos_;

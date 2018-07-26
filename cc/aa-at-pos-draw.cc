@@ -113,7 +113,7 @@ struct AAPosSection
 void AAAtPosDraw::make_aa_pos_sections(bool init_settings)
 {
     if (!positions_.empty()) {
-        std::cout << "\nINFO: sections for positions\n";
+        std::cout << "\nINFO: sections for positions (small sections eliminated, adjacent sections merged, most frequent AA sections removed)\n";
         for (auto pos : positions_) {
             std::vector<AAPosSection> sections;
             tree::iterate_leaf(mTree, [&](const Node& node) {
@@ -170,11 +170,14 @@ void AAAtPosDraw::make_aa_pos_sections(bool init_settings)
                     if (section.last)
                         sect.last = section.last->seq_id;
                 }
-                  // if (mTreeDraw)
-                  //     mTreeDraw->detect_hz_lines_from_aa_at_pos(mAAAtPosDraw);
+
+                for (const auto& section : sections) {
+                    if (section.num_nodes >= mSettings.hz_section_threshold)
+                        mHzSections.add(mTree, *section.first, *section.last, true);
+                }
             }
 
-            std::cout << ' ' << std::setw(3) << std::right << (pos + 1) << " (small sections eliminated, adjacent sections merged, most frequent AA sections removed)\n";
+            std::cout << ' ' << std::setw(3) << std::right << (pos + 1) << '\n';
             for (const auto& section : sections)
                 std::cout << "   " << section.aa << ' ' << std::setw(4) << std::right << section.num_nodes << ' ' << section.first->seq_id << " -- " << section.last->seq_id << '\n';
         }
