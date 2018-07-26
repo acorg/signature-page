@@ -110,7 +110,7 @@ struct AAPosSection
     size_t num_nodes;
 };
 
-void AAAtPosDraw::make_aa_pos_sections(bool init_settings)
+void AAAtPosDraw::make_aa_pos_sections(bool init_settings, size_t hz_section_threshold)
 {
     if (!positions_.empty()) {
         std::cout << "\nINFO: sections for positions (small sections eliminated, adjacent sections merged, most frequent AA sections removed)\n";
@@ -172,8 +172,10 @@ void AAAtPosDraw::make_aa_pos_sections(bool init_settings)
                 }
 
                 for (const auto& section : sections) {
-                    if (section.num_nodes >= mSettings.hz_section_threshold)
+                    if (section.num_nodes >= hz_section_threshold) {
+                          // std::cerr << "DEBUG: aa-at-pos - add hz section: " << section.num_nodes << ' ' << section.first->seq_id << ' ' << section.last->seq_id << '\n';
                         mHzSections.add(mTree, *section.first, *section.last, true);
+                    }
                 }
             }
 
@@ -188,10 +190,10 @@ void AAAtPosDraw::make_aa_pos_sections(bool init_settings)
 
 // ----------------------------------------------------------------------
 
-void AAAtPosDraw::draw(bool init_settings)
+void AAAtPosDraw::draw(bool init_settings, size_t hz_section_threshold)
 {
     if (!positions_.empty()) {
-        make_aa_pos_sections(init_settings); // must be here, after ladderrizing
+        make_aa_pos_sections(init_settings, hz_section_threshold); // must be here, after ladderrizing
         const auto surface_width = mSurface.viewport().size.width;
         const auto section_width = surface_width / positions_.size();
         const auto line_length = section_width * mSettings.line_length;

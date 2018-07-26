@@ -201,7 +201,6 @@ AAAtPosDrawSettings::AAAtPosDrawSettings(rjson::field_container_parent& aParent,
       positions(*this, "positions"),
       report_most_diverse_positions(*this, "report_most_diverse_positions", false, rjson::initialize_field::yes),
       small_section_threshold(*this, "small_section_threshold", 3, rjson::initialize_field::yes),
-      hz_section_threshold(*this, "hz_section_threshold", 100, rjson::initialize_field::yes),
       sections(*this, "?sections")
 {
 } // AAAtPosDrawSettings::AAAtPosDrawSettings

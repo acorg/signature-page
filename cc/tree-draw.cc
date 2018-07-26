@@ -829,9 +829,12 @@ void HzSections::detect_hz_lines_for_clades(Tree& aTree, const Clades* aClades, 
 
 void HzSections::add(std::string seq_id, bool show_line)
 {
-    auto sec = sections.emplace_back();
-    sec.name = seq_id;
-    sec.show_line = show_line;
+    if (std::find_if(sections.begin(), sections.end(), [&seq_id](const auto& sect) { return sect.name == seq_id; }) == sections.end()) { // avoid duplicates
+          // std::cerr << "DEBUG: add hz section: " << seq_id << '\n';
+        auto sec = sections.emplace_back();
+        sec.name = seq_id;
+        sec.show_line = show_line;
+    }
 
 } // HzSections::add
 

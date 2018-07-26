@@ -40,7 +40,6 @@ class AAAtPosDrawSettings : public rjson::field_container_child
     rjson::array_field_container_child<size_t> positions;
     rjson::field_get_set<bool> report_most_diverse_positions;
     rjson::field_get_set<size_t> small_section_threshold; // remove sections having this or fewer number of sequences
-    rjson::field_get_set<size_t> hz_section_threshold; // if section is for not the most frequent AA and has this or more number of sequences, make HZ section for it
     rjson::array_field_container_child<AAAtPosSection> sections;
 
 }; // class AAAtPosDrawSettings
@@ -54,7 +53,7 @@ class AAAtPosDraw
         : mSurface(aSurface), mTree(aTree), mHzSections(aHzSections), mSettings(aSettings) {}
 
     void prepare();
-    void draw(bool init_settings);
+    void draw(bool init_settings, size_t hz_section_threshold);
 
     acmacs::surface::Surface& surface() { return mSurface; }
 
@@ -71,7 +70,7 @@ class AAAtPosDraw
     void find_most_diverse_positions();
     void set_colors();
     void draw_hz_section_lines() const;
-    void make_aa_pos_sections(bool init_settings);
+    void make_aa_pos_sections(bool init_settings, size_t hz_section_threshold);
 
 }; // class AAAtPosDraw
 

@@ -339,7 +339,7 @@ void SignaturePageDraw::make_layout_tree_clades_ts_maps()
 
 // ----------------------------------------------------------------------
 
-void SignaturePageDraw::draw(bool report_antigens_in_hz_sections, bool init_settings)
+void SignaturePageDraw::draw(bool report_antigens_in_hz_sections, bool init_settings, size_t hz_section_threshold)
 {
     std::cout << "\nINFO: DRAW signature page\n";
     const auto& v = mSurface->viewport();
@@ -348,7 +348,7 @@ void SignaturePageDraw::draw(bool report_antigens_in_hz_sections, bool init_sett
     if (mTreeDraw)
         mTreeDraw->draw();
     if (mAAAtPosDraw)
-        mAAAtPosDraw->draw(init_settings);
+        mAAAtPosDraw->draw(init_settings, hz_section_threshold);
     if (mTimeSeriesDraw)
         mTimeSeriesDraw->draw();
     if (mCladesDraw)
