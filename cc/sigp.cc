@@ -78,7 +78,7 @@ int main(int argc, const char *argv[])
                 signature_page.tree().list_strains(out);
             }
             if (!args["--no-draw"])
-                signature_page.draw(args["--report-hz-section_antigens"]);
+                signature_page.draw(args["--report-hz-section_antigens"], args["--init-settings"]);
             if (args["--init-settings"])
                 signature_page.write_initialized_settings(args["--init-settings"]);
         }

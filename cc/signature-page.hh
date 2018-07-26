@@ -76,7 +76,7 @@ class SignaturePageDraw
     void chart(std::string aChartFilename) { mChartFilename = aChartFilename; }
 
     void prepare();
-    void draw(bool report_antigens_in_hz_sections);
+    void draw(bool report_antigens_in_hz_sections, bool init_settings);
 
  private:
     std::string mChartFilename;

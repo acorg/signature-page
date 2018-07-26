@@ -181,6 +181,16 @@ MappedAntigensDrawSettings::MappedAntigensDrawSettings(rjson::field_container_pa
 {
 }
 
+AAAtPosSection::AAAtPosSection(const rjson::value& aData)
+    : rjson::array_field_container_child_element(aData),
+      pos(*this, "_pos", 0),
+      aa(*this, "aa", ""),
+      num(*this, "num", 0),
+      first(*this, "first", ""),
+      last(*this, "last", "")
+{
+} // AAAtPosSection::AAAtPosSection
+
 AAAtPosDrawSettings::AAAtPosDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
     : rjson::field_container_child(aParent, aFieldName),
       width(*this, "width", 0, rjson::initialize_field::yes),
@@ -191,9 +201,9 @@ AAAtPosDrawSettings::AAAtPosDrawSettings(rjson::field_container_parent& aParent,
       positions(*this, "positions"),
       report_most_diverse_positions(*this, "report_most_diverse_positions", false, rjson::initialize_field::yes),
       small_section_threshold(*this, "small_section_threshold", 3, rjson::initialize_field::yes),
-      hz_section_threshold(*this, "hz_section_threshold", 100, rjson::initialize_field::yes)
+      hz_section_threshold(*this, "hz_section_threshold", 100, rjson::initialize_field::yes),
+      sections(*this, "?sections")
 {
-
 } // AAAtPosDrawSettings::AAAtPosDrawSettings
 
 // ----------------------------------------------------------------------

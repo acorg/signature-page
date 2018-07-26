@@ -110,7 +110,7 @@ struct AAPosSection
     size_t num_nodes;
 };
 
-void AAAtPosDraw::make_aa_pos_sections() const
+void AAAtPosDraw::make_aa_pos_sections(bool init_settings)
 {
     if (!positions_.empty()) {
         std::cout << "\nINFO: sections for positions\n";
@@ -159,6 +159,21 @@ void AAAtPosDraw::make_aa_pos_sections() const
             const auto most_freq_aa = std::max_element(aa_freq.begin(), aa_freq.end(), [](const auto& e1, const auto& e2) { return e1.second < e2.second; })->first;
             sections.erase(std::remove_if(sections.begin(), sections.end(), [most_freq_aa](const auto& section) { return section.aa == most_freq_aa; }), sections.end());
 
+            if (init_settings) {
+                for (const auto& section : sections) {
+                    auto sect = mSettings.sections.emplace_back();
+                    sect.pos = pos + 1;
+                    sect.aa = std::string(1, section.aa);
+                    sect.num = section.num_nodes;
+                    if (section.first)
+                        sect.first = section.first->seq_id;
+                    if (section.last)
+                        sect.last = section.last->seq_id;
+                }
+                  // if (mTreeDraw)
+                  //     mTreeDraw->detect_hz_lines_from_aa_at_pos(mAAAtPosDraw);
+            }
+
             std::cout << ' ' << std::setw(3) << std::right << (pos + 1) << " (small sections eliminated, adjacent sections merged, most frequent AA sections removed)\n";
             for (const auto& section : sections)
                 std::cout << "   " << section.aa << ' ' << std::setw(4) << std::right << section.num_nodes << ' ' << section.first->seq_id << " -- " << section.last->seq_id << '\n';
@@ -170,10 +185,10 @@ void AAAtPosDraw::make_aa_pos_sections() const
 
 // ----------------------------------------------------------------------
 
-void AAAtPosDraw::draw()
+void AAAtPosDraw::draw(bool init_settings)
 {
     if (!positions_.empty()) {
-        make_aa_pos_sections(); // must be here, after ladderrizing
+        make_aa_pos_sections(init_settings); // must be here, after ladderrizing
         const auto surface_width = mSurface.viewport().size.width;
         const auto section_width = surface_width / positions_.size();
         const auto line_length = section_width * mSettings.line_length;
