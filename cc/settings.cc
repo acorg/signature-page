@@ -143,6 +143,13 @@ CladesDrawSettings::CladesDrawSettings(rjson::field_container_parent& aParent, s
         cn.name = n;
         cn.show = false;
     }
+    for (const auto* n: {"3C2A1A", "3C2A1B", "3C2A1", "3C2A2", "3C2A3", "3C2A4"}) {
+        auto cn = clades.emplace_back();
+        cn.name = n;
+        cn.section_inclusion_tolerance = 15;
+        cn.section_exclusion_tolerance = 10;
+        cn.slot = static_cast<int>(cn.name.get_value_ref().str().size() - 4);
+    }
 }
 
 HzSection::HzSection(const rjson::value& aData)
@@ -152,7 +159,8 @@ HzSection::HzSection(const rjson::value& aData)
       show_label_in_time_series(*this, "show_label_in_time_series", true, rjson::initialize_field::yes),
       show_map(*this, "show_map", true, rjson::initialize_field::yes),
       name(*this, "name", "", rjson::initialize_field::yes),
-      label(*this, "label", "", rjson::initialize_field::yes)
+      label(*this, "label", "", rjson::initialize_field::yes),
+      reason(*this, "reason", "", rjson::initialize_field::yes)
       // first(nullptr),
       // last(nullptr),
       // index("?")

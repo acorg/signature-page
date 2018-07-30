@@ -727,14 +727,26 @@ void HzSections::sort(const Tree& aTree)
 
     size_t section_no = 0;
     for (auto section_index: section_order) {
-        const auto section = sections[section_index];
-        if (section.show and section.show_map) {
+        const auto& section = sections[section_index];
+        if (section.show && section.show_map) {
             node_refs[section_index].index.assign(1, 'A' + static_cast<char>(section_no));
             ++section_no;
         }
     }
 
 } // HzSections::sort
+
+// ----------------------------------------------------------------------
+
+void HzSections::report(std::ostream& out)
+{
+    out << "INFO: hz sections\n";
+    for (auto section_index: section_order) {
+        out << "  " << std::setw(4) << std::right << node_refs[section_index].first->draw.line_no << ' ' << sections[section_index].reason << '\n';
+        // const auto& section = sections[section_index];
+    }
+
+} // HzSections::report
 
 // ----------------------------------------------------------------------
 
@@ -809,14 +821,14 @@ void HzSections::detect_hz_lines_for_clades(Tree& aTree, const Clades* aClades, 
     if (aForce)
         sections.clear();
     if (sections.empty()) {
-        add(find_first_leaf(aTree), false);
+        add(find_first_leaf(aTree), false, "first-leaf");
 
         if (aClades) {
             for (const auto& clade: *aClades) {
                 if (clade.second.shown()) {
                     for (const auto& sect: clade.second.sections) {
                           // std::cerr << "DEBUG: clade: " << clade.first << ' ' << s << DEBUG_LINE_FUNC << '\n';
-                        add(aTree, *sect.first, *sect.last, false);
+                        add(aTree, *sect.first, *sect.last, false, "clade:" + clade.first);
                     }
                 }
             }
@@ -827,32 +839,36 @@ void HzSections::detect_hz_lines_for_clades(Tree& aTree, const Clades* aClades, 
 
 // ----------------------------------------------------------------------
 
-void HzSections::add(std::string seq_id, bool show_line)
+void HzSections::add(std::string seq_id, bool show_line, std::string reason)
 {
-    if (std::find_if(sections.begin(), sections.end(), [&seq_id](const auto& sect) { return sect.name == seq_id; }) == sections.end()) { // avoid duplicates
+    if (auto found = std::find_if(sections.begin(), sections.end(), [&seq_id](const auto& sect) { return sect.name == seq_id; }); found == sections.end()) {
           // std::cerr << "DEBUG: add hz section: " << seq_id << '\n';
         auto sec = sections.emplace_back();
         sec.name = seq_id;
         sec.show_line = show_line;
+        sec.reason = reason;
+    }
+    else {
+        (*found).reason = static_cast<std::string>((*found).reason) + " + " + reason;
     }
 
 } // HzSections::add
 
 // ----------------------------------------------------------------------
 
-void HzSections::add(const Node& node, bool show_line)
+void HzSections::add(const Node& node, bool show_line, std::string reason)
 {
-    add(node.seq_id, show_line);
+    add(node.seq_id, show_line, reason);
 
 } // HzSections::add
 
 // ----------------------------------------------------------------------
 
-void HzSections::add(const Tree& tree, const Node& first, const Node& last, bool show_line)
+void HzSections::add(const Tree& tree, const Node& first, const Node& last, bool show_line, std::string reason)
 {
-    add(first.seq_id, show_line);
+    add(first.seq_id, show_line, reason);
     if (const Node* next_node = tree.find_leaf_by_line_no(last.draw.line_no + 1); next_node)
-        add(*next_node, show_line);
+        add(*next_node, show_line, reason + " :last");
 
 } // HzSections::add
 

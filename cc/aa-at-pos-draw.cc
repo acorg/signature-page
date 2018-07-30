@@ -173,8 +173,8 @@ void AAAtPosDraw::make_aa_pos_sections(bool init_settings, size_t hz_section_thr
 
                 for (const auto& section : sections) {
                     if (section.num_nodes >= hz_section_threshold) {
-                          // std::cerr << "DEBUG: aa-at-pos - add hz section: " << section.num_nodes << ' ' << section.first->seq_id << ' ' << section.last->seq_id << '\n';
-                        mHzSections.add(mTree, *section.first, *section.last, true);
+                          // std::cout << "INFO: aa-at-pos - add hz section: " << std::setw(4) << std::right << (pos + 1) << ' ' << std::setw(4) << std::right << section.num_nodes << ' ' << section.first->seq_id << ':' << section.first->draw.line_no << ' ' << section.last->seq_id << '\n';
+                        mHzSections.add(mTree, *section.first, *section.last, true, "aa-at:" + std::to_string(pos + 1) + " nodes:" + std::to_string(section.num_nodes));
                     }
                 }
             }
@@ -185,6 +185,9 @@ void AAAtPosDraw::make_aa_pos_sections(bool init_settings, size_t hz_section_thr
         }
         std::cout << '\n';
     }
+
+    mHzSections.sort(mTree);
+    mHzSections.report(std::cout);
 
 } // AAAtPosDraw::make_aa_pos_sections
 
