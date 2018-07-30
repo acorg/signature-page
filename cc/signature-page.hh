@@ -75,7 +75,7 @@ class SignaturePageDraw
     Tree& tree() { return *mTree; }
     void chart(std::string aChartFilename) { mChartFilename = aChartFilename; }
 
-    void prepare();
+    void prepare(bool show_hz_sections);
     void draw(bool report_antigens_in_hz_sections, bool init_settings, size_t hz_section_threshold);
 
  private:

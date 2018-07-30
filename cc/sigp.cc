@@ -26,6 +26,7 @@ int main(int argc, const char *argv[])
                 {"--report-hz-section_antigens", false}, // bool_switch(&aOptions.report_antigens_in_hz_sections)->default_value(false), "report antigens in each hz section")
                 {"--show-aa-at-pos", false, "show aa_at_pos section if --init-settings was used"},
                 {"--aa-at-pos-hz-section-threshold", 100, "if --init-settings and --show-aa-at-pos, detect hz sections with this threshold"},
+                {"--not-show-hz-sections", false},
                 {"--list-ladderized", ""},
                 {"--no-draw", false}, // bool_switch(&aOptions.no_draw)->default_value(false), "do not generate pdf")
                 {"--chart", ""}, // value<std::string>(&aOptions.chart_filename), "path to a chart for the signature page")
@@ -69,7 +70,7 @@ int main(int argc, const char *argv[])
                 signature_page.init_layout(args["--show-aa-at-pos"]);
                 signature_page.init_settings();
             }
-            signature_page.prepare();
+            signature_page.prepare(!args["--not-show-hz-sections"]);
             if (args["--report-cumulative"]) {
                 std::ofstream out(args["--report-cumulative"]);
                 signature_page.tree().report_cumulative_edge_length(out);

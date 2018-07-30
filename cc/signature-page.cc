@@ -230,9 +230,10 @@ void SignaturePageDraw::tree(std::string aTreeFilename)
 
 // ----------------------------------------------------------------------
 
-void SignaturePageDraw::prepare()
+void SignaturePageDraw::prepare(bool show_hz_sections)
 {
     std::cout << "\nINFO: PREPARE:\n";
+    settings().hz_sections.show = show_hz_sections;
     switch (detect_layout(false, false)) {
       case SignaturePageDrawSettings::Layout::TreeTSClades:
       case SignaturePageDrawSettings::Layout::TreeAATSClades:

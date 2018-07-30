@@ -285,6 +285,7 @@ class HzSections : public rjson::field_container_child
     };
     std::vector<NodeRef> node_refs;
     std::vector<size_t> section_order;
+    bool show = true;
 
     void sort(const Tree& aTree);
     void report(std::ostream& out);

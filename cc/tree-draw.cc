@@ -75,7 +75,7 @@ void TreeDraw::prepare()
     mTree.make_aa_transitions();
 
     size_t number_of_hz_sections = prepare_hz_sections();
-    if (number_of_hz_sections == 0)
+    if (number_of_hz_sections == 0 || !mHzSections.show)
         number_of_hz_sections = 1;
     const auto& canvas_size = mSurface.viewport().size;
     mHorizontalStep = canvas_size.width / mTree.width();
@@ -422,7 +422,7 @@ void TreeDraw::set_vertical_pos()
     bool topmost_node = true;
     auto set_leaf_vertical_pos = [&](Node& aNode) {
         if (aNode.draw.shown) {
-            if (aNode.draw.hz_section_index != NodeDrawData::HzSectionNoIndex && mHzSections.sections[aNode.draw.hz_section_index].show) {
+            if (aNode.draw.hz_section_index != NodeDrawData::HzSectionNoIndex && mHzSections.show && mHzSections.sections[aNode.draw.hz_section_index].show) {
                 std::cout << "TREE-hz-section: " << aNode.draw.hz_section_index << " " << aNode.seq_id << std::endl;
                 if (!topmost_node)
                     vertical_pos += mHzSections.vertical_gap;
