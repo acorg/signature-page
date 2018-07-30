@@ -340,11 +340,14 @@ void SignaturePageDraw::make_layout_tree_clades_ts_maps()
 
 // ----------------------------------------------------------------------
 
-void SignaturePageDraw::draw(bool report_antigens_in_hz_sections, bool init_settings, size_t hz_section_threshold)
+void SignaturePageDraw::draw(bool report_antigens_in_hz_sections, bool init_settings, size_t hz_section_threshold, size_t aa_small_section_threshold)
 {
     std::cout << "\nINFO: DRAW signature page\n";
     const auto& v = mSurface->viewport();
     mSurface->rectangle_filled(v.origin, v.size, WHITE, Pixels{0}, WHITE);
+
+    if (init_settings)
+        mSettings->aa_at_pos.small_section_threshold = aa_small_section_threshold;
 
     if (mTreeDraw)
         mTreeDraw->draw();

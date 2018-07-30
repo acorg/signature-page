@@ -26,6 +26,7 @@ int main(int argc, const char *argv[])
                 {"--report-hz-section_antigens", false}, // bool_switch(&aOptions.report_antigens_in_hz_sections)->default_value(false), "report antigens in each hz section")
                 {"--show-aa-at-pos", false, "show aa_at_pos section if --init-settings was used"},
                 {"--aa-at-pos-hz-section-threshold", 100, "if --init-settings and --show-aa-at-pos, detect hz sections with this threshold"},
+                {"--aa-at-pos-small-section-threshold", 3, "if --init-settings and --show-aa-at-pos, elminate small sections having no more leaf nodes than this value"},
                 {"--not-show-hz-sections", false},
                 {"--list-ladderized", ""},
                 {"--no-draw", false}, // bool_switch(&aOptions.no_draw)->default_value(false), "do not generate pdf")
@@ -80,7 +81,7 @@ int main(int argc, const char *argv[])
                 signature_page.tree().list_strains(out);
             }
             if (!args["--no-draw"])
-                signature_page.draw(args["--report-hz-section_antigens"], args["--init-settings"], args["--aa-at-pos-hz-section-threshold"]);
+                signature_page.draw(args["--report-hz-section_antigens"], args["--init-settings"], args["--aa-at-pos-hz-section-threshold"], args["--aa-at-pos-small-section-threshold"]);
             if (args["--init-settings"])
                 signature_page.write_initialized_settings(args["--init-settings"]);
         }

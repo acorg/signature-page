@@ -160,7 +160,8 @@ HzSection::HzSection(const rjson::value& aData)
       show_map(*this, "show_map", true, rjson::initialize_field::yes),
       name(*this, "name", "", rjson::initialize_field::yes),
       label(*this, "label", "", rjson::initialize_field::yes),
-      reason(*this, "reason", "", rjson::initialize_field::yes)
+      triggering_clades(*this, "triggering_clades"),
+      triggering_aa_pos(*this, "triggering_aa_pos")
       // first(nullptr),
       // last(nullptr),
       // index("?")

@@ -251,9 +251,11 @@ class HzSection : public rjson::array_field_container_child_element
     rjson::field_get_set<bool> show_map;
     rjson::field_get_set<std::string> name;           // first seq_id
     rjson::field_get_set<std::string> label;          // antigenic map label, empty - generate automatically
-    rjson::field_get_set<std::string> reason;         // why section was added
 
-    // not stored in settings
+    rjson::array_field_container_child<std::string> triggering_clades; // clades that trigger this hz line
+    rjson::array_field_container_child<size_t> triggering_aa_pos;      // aa pos triggering this line
+
+      // not stored in settings
     // const Node* first;
     // const Node* last;
     // std::string index;
@@ -291,9 +293,9 @@ class HzSections : public rjson::field_container_child
     void report(std::ostream& out);
     // void auto_detect(Tree& aTree, const Clades* aClades);
     void detect_hz_lines_for_clades(Tree& aTree, const Clades* aClades, bool aForce);
-    void add(std::string seq_id, bool show_line, std::string reason);
-    void add(const Node& node, bool show_line, std::string reason);
-    void add(const Tree& tree, const Node& first, const Node& last, bool show_line, std::string reason);
+    void add(std::string seq_id, bool show_line, std::string clade, size_t aa_pos);
+    void add(const Node& node, bool show_line, std::string clade, size_t aa_pos);
+    void add(const Tree& tree, const Node& first, const Node& last, bool show_line, std::string clade, size_t aa_pos);
 
     inline size_t shown_maps() const
         {
