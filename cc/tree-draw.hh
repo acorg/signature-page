@@ -290,7 +290,7 @@ class HzSections : public rjson::field_container_child
     bool show = true;
 
     void sort(const Tree& aTree);
-    void report(std::ostream& out);
+    void report(std::ostream& out) const;
     // void auto_detect(Tree& aTree, const Clades* aClades);
     void detect_hz_lines_for_clades(Tree& aTree, const Clades* aClades, bool aForce);
     void add(std::string seq_id, bool show_line, std::string clade, size_t aa_pos);
@@ -323,7 +323,8 @@ class TreeDraw
     void ladderize();
     void detect_hz_lines_for_clades(const Clades* aClades, bool aForce = true);
     void set_line_no();
-    inline acmacs::surface::Surface& surface() { return mSurface; }
+    acmacs::surface::Surface& surface() { return mSurface; }
+    const HzSections& hz_sections() const { return mHzSections; }
 
     static constexpr const size_t sFirstLineNo = 1; // line of the first node is 1, we have 1 line space at the top and bottom of the tree
 

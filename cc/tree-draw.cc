@@ -738,7 +738,7 @@ void HzSections::sort(const Tree& aTree)
 
 // ----------------------------------------------------------------------
 
-void HzSections::report(std::ostream& out)
+void HzSections::report(std::ostream& out) const
 {
     out << "INFO: hz sections\n";
     for (auto section_index: section_order) {

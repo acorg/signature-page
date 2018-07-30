@@ -28,6 +28,7 @@ int main(int argc, const char *argv[])
                 {"--aa-at-pos-hz-section-threshold", 100, "if --init-settings and --show-aa-at-pos, detect hz sections with this threshold"},
                 {"--aa-at-pos-small-section-threshold", 3, "if --init-settings and --show-aa-at-pos, elminate small sections having no more leaf nodes than this value"},
                 {"--not-show-hz-sections", false},
+                {"--hz-sections-report", false},
                 {"--list-ladderized", ""},
                 {"--no-draw", false}, // bool_switch(&aOptions.no_draw)->default_value(false), "do not generate pdf")
                 {"--chart", ""}, // value<std::string>(&aOptions.chart_filename), "path to a chart for the signature page")
@@ -84,6 +85,8 @@ int main(int argc, const char *argv[])
                 signature_page.draw(args["--report-hz-section_antigens"], args["--init-settings"], args["--aa-at-pos-hz-section-threshold"], args["--aa-at-pos-small-section-threshold"]);
             if (args["--init-settings"])
                 signature_page.write_initialized_settings(args["--init-settings"]);
+            if (args["--hz-sections-report"])
+                signature_page.tree_draw().hz_sections().report(std::cout);
         }
 
         if (args["--open"])

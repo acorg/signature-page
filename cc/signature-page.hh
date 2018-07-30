@@ -73,6 +73,7 @@ class SignaturePageDraw
     Settings& settings() { return *mSettings; }
     void tree(std::string aTreeFilename);
     Tree& tree() { return *mTree; }
+    const TreeDraw& tree_draw() const { return *mTreeDraw; }
     void chart(std::string aChartFilename) { mChartFilename = aChartFilename; }
 
     void prepare(bool show_hz_sections);

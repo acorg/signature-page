@@ -188,7 +188,7 @@ void AAAtPosDraw::make_aa_pos_sections(bool init_settings, size_t hz_section_thr
     }
 
     mHzSections.sort(mTree);
-    mHzSections.report(std::cout);
+      // mHzSections.report(std::cout);
 
 } // AAAtPosDraw::make_aa_pos_sections
 
