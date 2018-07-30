@@ -248,7 +248,7 @@ void AAAtPosDraw::draw_hz_section_lines() const
                     mSurface.text({-20, y}, std::to_string(node.draw.line_no), BLACK, Pixels{6});
                     for (auto aa_pos : section.triggering_aa_pos) {
                         const auto section_no = std::find(positions_.begin(), positions_.end(), (aa_pos - 1)) - positions_.begin();
-                        mSurface.line({section_width * section_no, y}, {section_width * (section_no + 1), y}, BLACK, Pixels{mHzSections.line_width * 2});
+                        mSurface.line({section_width * section_no + section_width * 0.25, y}, {section_width * (section_no + 1) - section_width * 0.25, y}, BLACK, Pixels{mHzSections.line_width * 2});
                         // std::cerr << "DEBUG: " << node.draw.line_no << " triggering_aa_pos: " << aa_pos << ' ' << section_no << '\n';
                     }
                 }

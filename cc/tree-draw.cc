@@ -1,3 +1,4 @@
+#include <fstream>
 #include <algorithm>
 #include <iomanip>
 #include <random>
@@ -754,6 +755,17 @@ void HzSections::report(std::ostream& out) const
     }
 
 } // HzSections::report
+
+// ----------------------------------------------------------------------
+
+void HzSections::report_html(std::string filename) const
+{
+    std::ofstream out(filename.c_str());
+    out << "<!DOCTYPE html>\n<html>\n<head>\n<meta charset=\"utf-8\" />\n<title>HZ sections report</title>\n</head>\n<body>\n"
+        << "\n"
+        << "</body>\n</html>\n";
+
+} // HzSections::report_html
 
 // ----------------------------------------------------------------------
 

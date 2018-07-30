@@ -29,6 +29,7 @@ int main(int argc, const char *argv[])
                 {"--aa-at-pos-small-section-threshold", 3, "if --init-settings and --show-aa-at-pos, elminate small sections having no more leaf nodes than this value"},
                 {"--not-show-hz-sections", false},
                 {"--hz-sections-report", false},
+                // {"--hz-sections-report-html", "", "html file to generate hz sections report to"},
                 {"--list-ladderized", ""},
                 {"--no-draw", false}, // bool_switch(&aOptions.no_draw)->default_value(false), "do not generate pdf")
                 {"--chart", ""}, // value<std::string>(&aOptions.chart_filename), "path to a chart for the signature page")
@@ -87,6 +88,8 @@ int main(int argc, const char *argv[])
                 signature_page.write_initialized_settings(args["--init-settings"]);
             if (args["--hz-sections-report"])
                 signature_page.tree_draw().hz_sections().report(std::cout);
+            // if (args["--hz-sections-report-html"])
+            //     signature_page.tree_draw().hz_sections().report_html(args["--hz-sections-report-html"]);
         }
 
         if (args["--open"])

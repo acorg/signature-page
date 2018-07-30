@@ -291,6 +291,7 @@ class HzSections : public rjson::field_container_child
 
     void sort(const Tree& aTree);
     void report(std::ostream& out) const;
+    void report_html(std::string filename) const;
     // void auto_detect(Tree& aTree, const Clades* aClades);
     void detect_hz_lines_for_clades(Tree& aTree, const Clades* aClades, bool aForce);
     void add(std::string seq_id, bool show_line, std::string clade, size_t aa_pos);
