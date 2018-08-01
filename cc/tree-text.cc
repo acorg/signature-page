@@ -23,6 +23,7 @@ int main(int argc, const char* argv[])
                            {"--seqdb", ""},
                            {"--chart", ""},
                            {"--max-leaf-offset", 80},
+                           {"--leaves-only", false},
 
                            {"-v", false},
                            {"--verbose", false},
@@ -54,8 +55,10 @@ int main(int argc, const char* argv[])
         // std::cout << "mm: " << min_edge << ' ' << max_edge << '\n';
         const auto step = max_edge / static_cast<size_t>(args["--max-leaf-offset"]);
 
-        print_tree(tree, step);
-          // print_tree_leaves(tree, step);
+        if (args["--leaves-only"])
+            print_tree_leaves(tree, step);
+        else
+            print_tree(tree, step);
 
         return 0;
     }
@@ -69,6 +72,15 @@ int main(int argc, const char* argv[])
 
 void print_tree(const Tree& tree, double step)
 {
+    auto count_antigens = [](const Node& node) -> size_t {
+        size_t count = 0;
+        tree::iterate_leaf(node, [&count](const Node& node2) {
+            if (node2.draw.chart_antigen_index)
+                ++count;
+        });
+        return count;
+    };
+
     auto print_prefix = [step](const Node& node) {
         const auto edge = node.data.cumulative_edge_length / step;
         std::cout << std::string(static_cast<size_t>(std::lround(edge)), ' ');
@@ -87,8 +99,8 @@ void print_tree(const Tree& tree, double step)
 
     auto print_node = [&](const Node& node) {
         print_prefix(node);
-        std::cout << '+';
-          // print_cumul(node);
+        std::cout << "+  ags:" << count_antigens(node);
+        // print_cumul(node);
         std::cout << '\n';
     };
 
