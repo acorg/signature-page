@@ -99,7 +99,9 @@ void print_tree(const Tree& tree, double step)
 
     auto print_node = [&](const Node& node) {
         print_prefix(node);
-        std::cout << "+  ags:" << count_antigens(node);
+        std::cout << '+';
+        if (const auto ags = count_antigens(node); ags)
+            std::cout << "  ags:" << ags;
         // print_cumul(node);
         std::cout << '\n';
     };

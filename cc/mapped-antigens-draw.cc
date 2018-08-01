@@ -12,7 +12,7 @@ void MappedAntigensDraw::prepare()
 {
     const auto matched_names = mTree.match(mChart.chart());
     if (matched_names)
-        std::cout << "Tree sequences found in the chart: " << matched_names << std::endl;
+        std::cout << "INFO: tree sequences found in the chart: " << matched_names << std::endl;
     // else
     //     std::cerr << "WARNING: No tree sequences found in the chart" << DEBUG_LINE_FUNC << '\n';
 
