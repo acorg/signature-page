@@ -2,7 +2,6 @@
 #include "chart-draw.hh"
 //#include "tree.hh"
 #include "tree-draw.hh"
-#include "tree-iterate.hh"
 #include "signature-page.hh"
 
 // ----------------------------------------------------------------------

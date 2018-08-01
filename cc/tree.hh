@@ -11,6 +11,7 @@
 #include "acmacs-base/size-scale.hh"
 #include "seqdb/seqdb.hh"
 #include "aa_transitions.hh"
+#include "tree-iterate.hh"
 
 // ----------------------------------------------------------------------
 
@@ -18,25 +19,23 @@
 class NodeData
 {
  public:
-    inline NodeData()
-        : number_strains(1), ladderize_max_edge_length(0), distance_from_previous(-1)
-        {}
+    NodeData() = default;
 
-    inline std::string date() const { return mSeqdbEntrySeq ? mSeqdbEntrySeq.entry().date() : std::string{}; }
-    inline std::string amino_acids() const { return mSeqdbEntrySeq ? mSeqdbEntrySeq.seq().amino_acids(true) : std::string{}; }
-    inline const std::vector<std::string>* clades() const { return mSeqdbEntrySeq ? &mSeqdbEntrySeq.seq().clades() : nullptr; }
-    inline bool has_clade(std::string aClade) const { const auto* cld = clades(); return cld ? std::find(cld->begin(), cld->end(), aClade) != cld->end() : false; }
-    inline const std::vector<std::string>* hi_names() const { return mSeqdbEntrySeq ? &mSeqdbEntrySeq.seq().hi_names() : nullptr; }
+    std::string date() const { return mSeqdbEntrySeq ? mSeqdbEntrySeq.entry().date() : std::string{}; }
+    std::string amino_acids() const { return mSeqdbEntrySeq ? mSeqdbEntrySeq.seq().amino_acids(true) : std::string{}; }
+    const std::vector<std::string>* clades() const { return mSeqdbEntrySeq ? &mSeqdbEntrySeq.seq().clades() : nullptr; }
+    bool has_clade(std::string aClade) const { const auto* cld = clades(); return cld ? std::find(cld->begin(), cld->end(), aClade) != cld->end() : false; }
+    const std::vector<std::string>* hi_names() const { return mSeqdbEntrySeq ? &mSeqdbEntrySeq.seq().hi_names() : nullptr; }
 
-    inline void assign(seqdb::SeqdbEntrySeq&& entry_seq) { mSeqdbEntrySeq.assign(std::forward<seqdb::SeqdbEntrySeq>(entry_seq)); }
+    void assign(seqdb::SeqdbEntrySeq&& entry_seq) { mSeqdbEntrySeq.assign(std::forward<seqdb::SeqdbEntrySeq>(entry_seq)); }
     void set_continent(std::string seq_id);
 
-    size_t number_strains;
-    double ladderize_max_edge_length;
+    size_t number_strains = 1;
+    double ladderize_max_edge_length = 0;
     std::string ladderize_max_date;
     std::string ladderize_max_name_alphabetically;
-    double cumulative_edge_length;
-    double distance_from_previous; // for hz sections auto-detection
+    double cumulative_edge_length = -1;
+    double distance_from_previous = -1; // for hz sections auto-detection
     std::string continent;
 
     std::string aa_at;          // see make_aa_at()
@@ -55,17 +54,16 @@ class NodeDrawData
  public:
     constexpr static const size_t HzSectionNoIndex = static_cast<size_t>(-1);
 
-    inline NodeDrawData()
-        : shown(true), line_no(0), hz_section_index(HzSectionNoIndex), vertical_pos(-1), mark_with_line{ColorNoChange}, mark_with_line_width{0}, mark_with_label{false} {}
+    NodeDrawData() = default;
 
-    bool shown;
-    size_t line_no;
-    size_t hz_section_index;
-    double vertical_pos;
-    Color mark_with_line;
-    Pixels mark_with_line_width;
+    bool shown = true;
+    size_t line_no = 0;
+    size_t hz_section_index = HzSectionNoIndex;
+    double vertical_pos = -1;
+    Color mark_with_line = ColorNoChange;
+    Pixels mark_with_line_width{0};
     std::optional<size_t> chart_antigen_index;
-    bool mark_with_label;
+    bool mark_with_label = false;
 
 }; // class NodeDrawData
 
@@ -74,22 +72,22 @@ class NodeDrawData
 class Node
 {
  public:
-    typedef std::vector<Node> Subtree;
+    using Subtree = std::vector<Node>;
 
-    inline Node() : edge_length(0) {}
-      // inline Node(std::string aSigId, double aEdgeLength, const Date& aDate = Date()) : edge_length(aEdgeLength), sig_id(aSigId) {}
-    // inline Node(Node&&) = default;
-    // inline Node(const Node&) = default;
-    // inline Node& operator=(Node&&) = default; // needed for swap needed for sort
+    Node() = default;
+      // Node(std::string aSigId, double aEdgeLength, const Date& aDate = Date()) : edge_length(aEdgeLength), sig_id(aSigId) {}
+    // Node(Node&&) = default;
+    // Node(const Node&) = default;
+    // Node& operator=(Node&&) = default; // needed for swap needed for sort
 
-    double edge_length;              // indent of node or subtree
+    double edge_length = 0;              // indent of node or subtree
     std::string seq_id;                // node name or branch annotation
     Subtree subtree;
 
     NodeData data;
     mutable NodeDrawData draw;
 
-    inline bool is_leaf() const { return subtree.empty() && !seq_id.empty(); }
+    bool is_leaf() const { return subtree.empty() && !seq_id.empty(); }
     std::string display_name() const;
 
     //   // leaf part
@@ -136,7 +134,7 @@ class Tree : public Node
  public:
     enum class LadderizeMethod { MaxEdgeLength, NumberOfLeaves };
 
-    inline Tree() : Node(), mMaxCumulativeEdgeLength(-1) {}
+    Tree() = default;
 
     void match_seqdb(const seqdb::Seqdb& seqdb);
     void ladderize(LadderizeMethod aLadderizeMethod);
@@ -146,7 +144,7 @@ class Tree : public Node
     void make_aa_transitions(); // for all positions
     void make_aa_transitions(const std::vector<size_t>& aPositions);
 
-    inline void compute_cumulative_edge_length()
+    void compute_cumulative_edge_length()
         {
             const double was = mMaxCumulativeEdgeLength;
             mMaxCumulativeEdgeLength = -1;
@@ -157,33 +155,33 @@ class Tree : public Node
     void compute_distance_from_previous();
 
     size_t height() const; // number of lines in the tree
-    inline double width() { return mMaxCumulativeEdgeLength; }
+    double width() { return mMaxCumulativeEdgeLength; }
     // double width(double ignore_if_cumulative_edge_length_bigger_than);
 
     void report_cumulative_edge_length(std::ostream& out);
     void list_strains(std::ostream& out);
 
-    inline void leaf_nodes_sorted_by_cumulative_edge_length(std::vector<const Node*>& nodes)
+    std::vector<const Node*> leaf_nodes_sorted_by_cumulative_edge_length()
         {
               // compute_cumulative_edge_length();
-            leaf_nodes_sorted_by(nodes, [](const Node* a, const Node* b) -> bool { return a->data.cumulative_edge_length > b->data.cumulative_edge_length; });
+            return leaf_nodes_sorted_by([](const Node* a, const Node* b) -> bool { return a->data.cumulative_edge_length > b->data.cumulative_edge_length; });
         }
 
-    inline void leaf_nodes_sorted_by_date(std::vector<const Node*>& nodes) const
+    std::vector<const Node*> leaf_nodes_sorted_by_date() const
         {
-            leaf_nodes_sorted_by(nodes, [](const Node* a, const Node* b) -> bool { return a->data.date() < b->data.date(); });
+            return leaf_nodes_sorted_by([](const Node* a, const Node* b) -> bool { return a->data.date() < b->data.date(); });
         }
 
-    inline void leaf_nodes_sorted_by_distance_from_previous(std::vector<const Node*>& nodes)
+    std::vector<const Node*> leaf_nodes_sorted_by_distance_from_previous()
         {
             compute_distance_from_previous();
-            leaf_nodes_sorted_by(nodes, [](const Node* a, const Node* b) -> bool { return a->data.distance_from_previous > b->data.distance_from_previous; });
+            return leaf_nodes_sorted_by([](const Node* a, const Node* b) -> bool { return a->data.distance_from_previous > b->data.distance_from_previous; });
         }
 
-    // inline leaf_nodes_sorted_by_edge_length_to_next(std::vector<const Node*>& nodes) const // longest first!
+    // std::vector<const Node*> leaf_nodes_sorted_by_edge_length_to_next() const // longest first!
     //     {
     //         compute_cumulative_edge_length();
-    //         leaf_nodes_sorted_by(nodes, [](const Node* a, const Node* b) -> bool { return b->data.edge_length_to_next < a->data.edge_length_to_next; });
+    //         return leaf_nodes_sorted_by([](const Node* a, const Node* b) -> bool { return b->data.edge_length_to_next < a->data.edge_length_to_next; });
     //     }
 
     // returns nullptr if not found
@@ -199,11 +197,18 @@ class Tree : public Node
     void re_root(std::string aName);
 
  private:
-    double mMaxCumulativeEdgeLength;
+    double mMaxCumulativeEdgeLength = -1;
 
     size_t longest_aa() const;
     void make_aa_at(const std::vector<size_t>& aPositions);
-    void leaf_nodes_sorted_by(std::vector<const Node*>& nodes, const std::function<bool(const Node*,const Node*)>& cmp) const;
+
+    template <typename Cmp> std::vector<const Node*> leaf_nodes_sorted_by(Cmp&& cmp) const // Cmp: [](const Node*, const Node*) -> bool
+        {
+            std::vector<const Node*> result;
+            tree::iterate_leaf(*this, [&result](const Node& aNode) -> void { result.push_back(&aNode); });
+            std::sort(result.begin(), result.end(), cmp);
+            return result;
+        }
 
 }; // class Tree
 

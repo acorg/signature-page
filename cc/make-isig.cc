@@ -8,7 +8,6 @@
 #include "acmacs-chart-2/factory-import.hh"
 #include "signature-page/tree.hh"
 #include "signature-page/tree-export.hh"
-#include "signature-page/tree-iterate.hh"
 
 // ----------------------------------------------------------------------
 

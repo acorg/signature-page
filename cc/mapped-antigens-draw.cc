@@ -4,7 +4,6 @@
 
 #include "mapped-antigens-draw.hh"
 #include "tree.hh"
-#include "tree-iterate.hh"
 #include "chart-draw.hh"
 
 // ----------------------------------------------------------------------

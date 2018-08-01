@@ -3,7 +3,6 @@
 #include "clades-draw.hh"
 #include "tree-draw.hh"
 #include "time-series-draw.hh"
-#include "tree-iterate.hh"
 
 // ----------------------------------------------------------------------
 

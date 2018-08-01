@@ -1,7 +1,6 @@
 #include <iomanip>
 
 #include "tree.hh"
-#include "tree-iterate.hh"
 #include "acmacs-base/float.hh"
 #include "acmacs-base/virus-name.hh"
 #include "locationdb/locdb.hh"
@@ -165,21 +164,15 @@ std::string Node::display_name() const
 
 // ----------------------------------------------------------------------
 
-void Tree::leaf_nodes_sorted_by(std::vector<const Node*>& nodes, const std::function<bool(const Node*,const Node*)>& cmp) const
-{
-    tree::iterate_leaf(*this, [&nodes](const Node& aNode) -> void { nodes.push_back(&aNode); });
-    std::sort(nodes.begin(), nodes.end(), cmp);
-
-} // Tree::leaf_nodes_sorted_by
-
-// ----------------------------------------------------------------------
-
 void Tree::report_cumulative_edge_length(std::ostream& out)
 {
-    std::vector<const Node*> nodes;
-    leaf_nodes_sorted_by_cumulative_edge_length(nodes);
-    for (const auto& node: nodes)
-        out << std::fixed << std::setprecision(8) << std::setw(10) << node->data.cumulative_edge_length << ' ' << node->seq_id << std::endl;
+    const auto nodes = leaf_nodes_sorted_by_cumulative_edge_length();
+    const auto min_edge_length = nodes.back()->data.cumulative_edge_length;
+    for (const auto& node: nodes) {
+        out << std::fixed << std::setprecision(8) << std::setw(10) << node->data.cumulative_edge_length
+            << " (" << std::fixed << std::setprecision(2) << std::setw(5) << (node->data.cumulative_edge_length / min_edge_length) << ") "
+            << node->seq_id << std::endl;
+    }
 
 } // Tree::report_cumulative_edge_length
 
@@ -302,8 +295,7 @@ void Tree::make_aa_transitions(const std::vector<size_t>& aPositions)
 {
     make_aa_at(aPositions);
 
-    std::vector<const Node*> leaf_nodes;
-    leaf_nodes_sorted_by_cumulative_edge_length(leaf_nodes);
+    const auto leaf_nodes = leaf_nodes_sorted_by_cumulative_edge_length();
 
       // add left part to aa transitions (Derek's algorithm)
     auto add_left_part = [&](Node& aNode) {

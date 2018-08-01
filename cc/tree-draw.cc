@@ -8,7 +8,6 @@
 #include "acmacs-draw/surface.hh"
 #include "tree-draw.hh"
 #include "tree.hh"
-#include "tree-iterate.hh"
 #include "coloring.hh"
 
 // ----------------------------------------------------------------------
@@ -799,8 +798,7 @@ void HzSections::report_html(std::string filename) const
 
 //         const size_t number_of_sections_to_detect = sections.size() + 5;
 
-//         std::vector<const Node*> nodes;
-//         aTree.leaf_nodes_sorted_by_distance_from_previous(nodes);
+//         const auto nodes = aTree.leaf_nodes_sorted_by_distance_from_previous();
 
 //           // size_t i = 0;
 //           // std::cout << "HZ lines detection (distance_from_previous):" << std::endl;

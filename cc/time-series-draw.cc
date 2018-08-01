@@ -2,7 +2,6 @@
 
 #include "time-series-draw.hh"
 #include "tree.hh"
-#include "tree-iterate.hh"
 #include "tree-draw.hh"
 #include "coloring.hh"
 

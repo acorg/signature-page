@@ -2,7 +2,6 @@
 #include "acmacs-base/enumerate.hh"
 #include "aa-at-pos-draw.hh"
 #include "tree.hh"
-#include "tree-iterate.hh"
 #include "tree-draw.hh"
 
 // ----------------------------------------------------------------------
