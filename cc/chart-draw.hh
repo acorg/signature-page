@@ -7,6 +7,7 @@
 
 class AntigenicMapsDrawSettings;
 namespace acmacs::surface { class Surface; }
+namespace acmacs::chart { class Chart; }
 
 // ----------------------------------------------------------------------
 
@@ -22,6 +23,8 @@ class ChartDrawBase
     virtual std::string lab() const = 0;
 
     virtual std::optional<size_t> find_antigen(std::string aName) const = 0;
+
+    virtual const acmacs::chart::Chart& chart() const = 0;
 
 }; // class ChartDrawBase
 

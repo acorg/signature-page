@@ -16,6 +16,10 @@
 
 // ----------------------------------------------------------------------
 
+namespace acmacs::chart { class Chart; }
+
+// ----------------------------------------------------------------------
+
 // SeqDb and HiDb access data
 class NodeData
 {
@@ -210,6 +214,9 @@ class Tree : public Node
     void re_root(const std::vector<const Node*>& aNewRoot);
     // re-roots tree making the parent of the leaf node with the passed name root
     void re_root(std::string aName);
+
+      // returns number of matched antigen names
+    size_t match(const acmacs::chart::Chart& chart);
 
   private:
     double mMaxCumulativeEdgeLength = -1;

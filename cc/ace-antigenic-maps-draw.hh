@@ -14,21 +14,21 @@
 class ChartDrawInterface : public ChartDrawBase
 {
  public:
-    inline ChartDrawInterface(acmacs::chart::ChartModifyP aChart) : mChartDraw(aChart, 0) {}
+    ChartDrawInterface(acmacs::chart::ChartModifyP aChart) : mChartDraw(aChart, 0) {}
 
-    virtual void init_settings();
-    virtual inline const acmacs::Viewport& viewport() const { return mChartDraw.viewport(); }
-    virtual inline void viewport(const acmacs::Viewport& aViewport) { mChartDraw.viewport(aViewport); }
-    virtual inline std::string lab() const { return chart().info()->lab(); }
-    virtual inline void draw(acmacs::surface::Surface& aSurface) const { mChartDraw.draw(aSurface); }
+    void init_settings() override;
+    const acmacs::Viewport& viewport() const override { return mChartDraw.viewport(); }
+    virtual void viewport(const acmacs::Viewport& aViewport) { mChartDraw.viewport(aViewport); }
+    std::string lab() const override { return chart().info()->lab(); }
+    void draw(acmacs::surface::Surface& aSurface) const override { mChartDraw.draw(aSurface); }
 
-    virtual inline std::optional<size_t> find_antigen(std::string aName) const { return chart().antigens()->find_by_full_name(aName); }
+    std::optional<size_t> find_antigen(std::string aName) const override { return chart().antigens()->find_by_full_name(aName); }
 
     void apply_mods(const std::vector<AntigenicMapMod>& aMods);
     // inline void calculate_viewport() { mChartDraw.calculate_viewport(); }
-    inline const acmacs::chart::Chart& chart() const { return mChartDraw.chart(); }
-    inline ChartDraw& chart_draw() { return mChartDraw; }
-    inline const ChartDraw& chart_draw() const { return mChartDraw; }
+    const acmacs::chart::Chart& chart() const override { return mChartDraw.chart(); }
+    ChartDraw& chart_draw() { return mChartDraw; }
+    const ChartDraw& chart_draw() const { return mChartDraw; }
 
  private:
     ChartDraw mChartDraw;
@@ -40,12 +40,12 @@ class ChartDrawInterface : public ChartDrawBase
 class AntigenicMapsDraw : public AntigenicMapsDrawBase
 {
  public:
-    inline AntigenicMapsDraw(acmacs::surface::Surface& aSurface, Tree& aTree, acmacs::chart::ChartModifyP aChart, HzSections& aHzSections, SignaturePageDrawSettings& aSignaturePageDrawSettings, AntigenicMapsDrawSettings& aSettings)
+    AntigenicMapsDraw(acmacs::surface::Surface& aSurface, Tree& aTree, acmacs::chart::ChartModifyP aChart, HzSections& aHzSections, SignaturePageDrawSettings& aSignaturePageDrawSettings, AntigenicMapsDrawSettings& aSettings)
         : AntigenicMapsDrawBase(aSurface, aTree, aHzSections, aSignaturePageDrawSettings, aSettings), mChartDraw(aChart) {}
 
-    virtual void make_layout();
-    virtual inline const ChartDrawBase& chart() const { return mChartDraw; }
-    virtual inline ChartDrawBase& chart() { return mChartDraw; }
+    void make_layout() override;
+    const ChartDrawBase& chart() const override { return mChartDraw; }
+    ChartDrawBase& chart() override { return mChartDraw; }
 
  private:
     ChartDrawInterface mChartDraw;
@@ -59,7 +59,7 @@ class VaccineMatcherLabel;
 class AntigenicMapsLayoutDrawAce : public AntigenicMapsLayoutDraw
 {
  public:
-    inline AntigenicMapsLayoutDrawAce(AntigenicMapsDrawBase& aAntigenicMapsDraw)
+    AntigenicMapsLayoutDrawAce(AntigenicMapsDrawBase& aAntigenicMapsDraw)
         : AntigenicMapsLayoutDraw(aAntigenicMapsDraw), mHomologousAntigenForSeraFound(false) {}
 
     void draw_chart(acmacs::surface::Surface& aSurface, size_t aSectionIndex) override;
@@ -70,11 +70,11 @@ class AntigenicMapsLayoutDrawAce : public AntigenicMapsLayoutDraw
  private:
     mutable bool mHomologousAntigenForSeraFound;
 
-    inline const ChartDrawInterface& chart_draw_interface() const { return dynamic_cast<const ChartDrawInterface&>(antigenic_maps_draw().chart()); }
-    inline ChartDrawInterface& chart_draw_interface() { return dynamic_cast<ChartDrawInterface&>(antigenic_maps_draw().chart()); }
-    inline const acmacs::chart::Chart& chart() const { return chart_draw_interface().chart(); }
-    inline const ChartDraw& chart_draw() const { return chart_draw_interface().chart_draw(); }
-    inline ChartDraw& chart_draw() { return chart_draw_interface().chart_draw(); }
+    const ChartDrawInterface& chart_draw_interface() const { return dynamic_cast<const ChartDrawInterface&>(antigenic_maps_draw().chart()); }
+    ChartDrawInterface& chart_draw_interface() { return dynamic_cast<ChartDrawInterface&>(antigenic_maps_draw().chart()); }
+    const acmacs::chart::Chart& chart() const { return chart_draw_interface().chart(); }
+    const ChartDraw& chart_draw() const { return chart_draw_interface().chart_draw(); }
+    ChartDraw& chart_draw() { return chart_draw_interface().chart_draw(); }
 
     acmacs::chart::PointIndexList tracked_antigens(size_t aSectionIndex, bool report_antigens_in_hz_sections) const;
     std::map<size_t, acmacs::chart::PointIndexList> tracked_sera(size_t aSectionIndex) const;
@@ -91,9 +91,9 @@ class AntigenicMapsLayoutDrawAce : public AntigenicMapsLayoutDraw
 class LabelledGrid : public LabelledGridBase
 {
  public:
-    inline LabelledGrid(AntigenicMapsDrawBase& aAntigenicMapsDraw) : mLayoutDraw(aAntigenicMapsDraw) {}
+    LabelledGrid(AntigenicMapsDrawBase& aAntigenicMapsDraw) : mLayoutDraw(aAntigenicMapsDraw) {}
 
-    virtual inline AntigenicMapsLayoutDraw& layout_draw() { return mLayoutDraw; }
+    AntigenicMapsLayoutDraw& layout_draw() override { return mLayoutDraw; }
 
  private:
     AntigenicMapsLayoutDrawAce mLayoutDraw;

@@ -3,6 +3,7 @@
 #include "tree.hh"
 #include "acmacs-base/float.hh"
 #include "acmacs-base/virus-name.hh"
+#include "acmacs-chart-2/chart.hh"
 #include "locationdb/locdb.hh"
 
 // ----------------------------------------------------------------------
@@ -529,6 +530,33 @@ void Tree::re_root(std::string aName)
     re_root(path);
 
 } // Tree::re_root
+
+// ----------------------------------------------------------------------
+
+size_t Tree::match(const acmacs::chart::Chart& chart)
+{
+    size_t matched_names = 0;
+    auto antigens = chart.antigens();
+    auto match_chart_antigens = [&](Node& node) {
+        node.draw.chart_antigen_index.reset();
+        if (const std::vector<std::string>* hi_names = node.data.hi_names(); hi_names) {
+            for (const auto& name: *hi_names) {
+                if (const auto antigen_index = antigens->find_by_full_name(name); antigen_index) {
+                    node.draw.chart_antigen_index = antigen_index;
+                    ++matched_names;
+                    break;
+                }
+            }
+        }
+    };
+
+    tree::iterate_leaf(*this, match_chart_antigens);
+    if (matched_names == 0)
+        std::cerr << "WARNING: No tree sequences found in the chart" << DEBUG_LINE_FUNC << '\n';
+
+    return matched_names;
+
+} // Tree::match
 
 // ----------------------------------------------------------------------
 

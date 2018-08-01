@@ -4,6 +4,7 @@
 #include "acmacs-base/argc-argv.hh"
 #include "acmacs-base/stream.hh"
 #include "seqdb/seqdb.hh"
+#include "acmacs-chart-2/factory-import.hh"
 #include "tree.hh"
 #include "tree-export.hh"
 
@@ -37,21 +38,27 @@ int main(int argc, const char* argv[])
         Tree tree;
         tree::tree_import(args[0], tree);
         tree.match_seqdb(seqdb::get());
-        // if (args["--chart"]) {
-        //     auto chart = acmacs::chart::import_from_file(args["--chart"], acmacs::chart::Verify::None, report_time::No);
-        // }
+        if (args["--chart"]) {
+            auto chart = acmacs::chart::import_from_file(args["--chart"], acmacs::chart::Verify::None, report_time::No);
+            const auto matched_names = tree.match(*chart);
+            if (matched_names)
+                std::cout << "Tree sequences found in the chart: " << matched_names << std::endl;
+        }
         tree.set_number_strains();
         tree.ladderize(Tree::LadderizeMethod::NumberOfLeaves);
         tree.compute_cumulative_edge_length();
         const auto [min_edge, max_edge] = tree.cumulative_edge_minmax();
-          // std::cout << "mm: " << min_edge << ' ' << max_edge << '\n';
+        // std::cout << "mm: " << min_edge << ' ' << max_edge << '\n';
         const auto step = max_edge / static_cast<size_t>(args["--max-leaf-offset"]);
 
         for (const auto* node : tree.leaf_nodes()) {
             const auto edge = node->data.cumulative_edge_length / step;
-            std::cout << std::string(static_cast<size_t>(std::lround(edge)), ' ')
-                      << node->seq_id
-                      << "  [edge: " << edge << ']'
+            std::cout << std::string(static_cast<size_t>(std::lround(edge)), ' ') << node->seq_id;
+            if (node->draw.chart_antigen_index)
+                std::cout << " [antigen: " << *node->draw.chart_antigen_index << ']';
+            std::cout << "  [cumul: " << node->data.cumulative_edge_length
+                      << ']'
+                      // << "  [edge: " << edge << ']'
                       << '\n';
         }
 
