@@ -72,15 +72,6 @@ int main(int argc, const char* argv[])
 
 void print_tree(const Tree& tree, double step)
 {
-    auto count_antigens = [](const Node& node) -> size_t {
-        size_t count = 0;
-        tree::iterate_leaf(node, [&count](const Node& node2) {
-            if (node2.draw.chart_antigen_index)
-                ++count;
-        });
-        return count;
-    };
-
     auto print_prefix = [step](const Node& node) {
         const auto edge = node.data.cumulative_edge_length / step;
         std::cout << std::string(static_cast<size_t>(std::lround(edge)), ' ');
@@ -100,8 +91,8 @@ void print_tree(const Tree& tree, double step)
     auto print_node = [&](const Node& node) {
         print_prefix(node);
         std::cout << '+';
-        if (const auto ags = count_antigens(node); ags)
-            std::cout << "  ags:" << ags;
+        if (node.draw.matched_antigens)
+            std::cout << "  ags:" << node.draw.matched_antigens;
         // print_cumul(node);
         std::cout << '\n';
     };

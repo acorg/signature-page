@@ -68,6 +68,7 @@ class NodeDrawData
     Color mark_with_line = ColorNoChange;
     Pixels mark_with_line_width{0};
     std::optional<size_t> chart_antigen_index;
+    size_t matched_antigens = 0; // for parent nodes only
     bool mark_with_label = false;
 
 }; // class NodeDrawData
