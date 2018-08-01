@@ -20,7 +20,7 @@ void Tree::match_seqdb(const seqdb::Seqdb& seqdb)
 
 void Tree::ladderize(Tree::LadderizeMethod aLadderizeMethod)
 {
-    std::cout << "TREE: ladderizing" << std::endl;
+      // std::cerr << "DEBUG: Tree: ladderizing" << std::endl;
 
     auto set_max_edge = [](Node& aNode) {
         aNode.data.ladderize_max_edge_length = aNode.edge_length;
@@ -80,7 +80,7 @@ void Tree::ladderize(Tree::LadderizeMethod aLadderizeMethod)
 
 void Tree::set_number_strains()
 {
-    std::cout << "TREE: set number strains" << std::endl;
+    // std::cerr << "DEBUG: Tree: set number strains" << std::endl;
 
     auto set_number_strains = [](Node& aNode) {
         aNode.data.number_strains = 0;
@@ -97,7 +97,7 @@ void Tree::set_number_strains()
 
 void Tree::set_continents()
 {
-    std::cout << "TREE: set continents" << std::endl;
+    // std::cerr << "DEBUG: Tree: set continents" << std::endl;
 
     tree::iterate_leaf(*this, [](Node& aNode) { aNode.data.set_continent(aNode.seq_id); });
 

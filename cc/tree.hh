@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <algorithm>
 
 #include "acmacs-base/date.hh"
 #include "acmacs-base/color.hh"
@@ -145,12 +146,12 @@ class Tree : public Node
     void make_aa_transitions(const std::vector<size_t>& aPositions);
 
     void compute_cumulative_edge_length()
-        {
-            const double was = mMaxCumulativeEdgeLength;
-            mMaxCumulativeEdgeLength = -1;
-            Node::compute_cumulative_edge_length(0, mMaxCumulativeEdgeLength);
-            std::cout << "TREE: compute_cumulative_edge_length " << std::setprecision(10) << was << " --> " << mMaxCumulativeEdgeLength << std::endl;
-        }
+    {
+        // const double was = mMaxCumulativeEdgeLength;
+        mMaxCumulativeEdgeLength = -1;
+        Node::compute_cumulative_edge_length(0, mMaxCumulativeEdgeLength);
+        // std::cout << "TREE: compute_cumulative_edge_length " << std::setprecision(10) << was << " --> " << mMaxCumulativeEdgeLength << std::endl;
+    }
 
     void compute_distance_from_previous();
 
@@ -161,22 +162,36 @@ class Tree : public Node
     void report_cumulative_edge_length(std::ostream& out);
     void list_strains(std::ostream& out);
 
-    std::vector<const Node*> leaf_nodes_sorted_by_cumulative_edge_length()
+    std::pair<double, double> cumulative_edge_minmax() const
         {
-              // compute_cumulative_edge_length();
-            return leaf_nodes_sorted_by([](const Node* a, const Node* b) -> bool { return a->data.cumulative_edge_length > b->data.cumulative_edge_length; });
+            auto nodes = leaf_nodes();
+            const auto [min_node, max_node] = std::minmax_element(nodes.begin(), nodes.end(), [](const Node* a, const Node* b) -> bool { return a->data.cumulative_edge_length < b->data.cumulative_edge_length; });
+            return {(*min_node)->data.cumulative_edge_length, (*max_node)->data.cumulative_edge_length};
         }
+
+    std::vector<const Node*> leaf_nodes() const
+    {
+        std::vector<const Node*> result;
+        tree::iterate_leaf(*this, [&result](const Node& aNode) -> void { result.push_back(&aNode); });
+        return result;
+    }
+
+    std::vector<const Node*> leaf_nodes_sorted_by_cumulative_edge_length() const
+    {
+        // compute_cumulative_edge_length();
+        return leaf_nodes_sorted_by([](const Node* a, const Node* b) -> bool { return a->data.cumulative_edge_length > b->data.cumulative_edge_length; });
+    }
 
     std::vector<const Node*> leaf_nodes_sorted_by_date() const
-        {
-            return leaf_nodes_sorted_by([](const Node* a, const Node* b) -> bool { return a->data.date() < b->data.date(); });
-        }
+    {
+        return leaf_nodes_sorted_by([](const Node* a, const Node* b) -> bool { return a->data.date() < b->data.date(); });
+    }
 
     std::vector<const Node*> leaf_nodes_sorted_by_distance_from_previous()
-        {
-            compute_distance_from_previous();
-            return leaf_nodes_sorted_by([](const Node* a, const Node* b) -> bool { return a->data.distance_from_previous > b->data.distance_from_previous; });
-        }
+    {
+        compute_distance_from_previous();
+        return leaf_nodes_sorted_by([](const Node* a, const Node* b) -> bool { return a->data.distance_from_previous > b->data.distance_from_previous; });
+    }
 
     // std::vector<const Node*> leaf_nodes_sorted_by_edge_length_to_next() const // longest first!
     //     {
@@ -193,22 +208,21 @@ class Tree : public Node
 
     std::vector<const Node*> find_name(std::string aName) const;
     void re_root(const std::vector<const Node*>& aNewRoot);
-      // re-roots tree making the parent of the leaf node with the passed name root
+    // re-roots tree making the parent of the leaf node with the passed name root
     void re_root(std::string aName);
 
- private:
+  private:
     double mMaxCumulativeEdgeLength = -1;
 
     size_t longest_aa() const;
     void make_aa_at(const std::vector<size_t>& aPositions);
 
     template <typename Cmp> std::vector<const Node*> leaf_nodes_sorted_by(Cmp&& cmp) const // Cmp: [](const Node*, const Node*) -> bool
-        {
-            std::vector<const Node*> result;
-            tree::iterate_leaf(*this, [&result](const Node& aNode) -> void { result.push_back(&aNode); });
-            std::sort(result.begin(), result.end(), cmp);
-            return result;
-        }
+    {
+        auto result = leaf_nodes();
+        std::sort(result.begin(), result.end(), cmp);
+        return result;
+    }
 
 }; // class Tree
 
