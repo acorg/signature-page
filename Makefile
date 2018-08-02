@@ -12,7 +12,8 @@ TARGETS = \
 	$(DIST)/sigp \
 	$(DIST)/make-isig \
 	$(DIST)/tree-aa-info \
-	$(DIST)/tree-text
+	$(DIST)/tree-text \
+	$(DIST)/tree-chart-sections
 
 SIGNATURE_PAGE_SOURCES = tree.cc tree-export.cc \
 			 signature-page.cc tree-draw.cc time-series-draw.cc clades-draw.cc \
@@ -27,6 +28,7 @@ TEST_SETTINGS_COPY_SOURCES = test-settings-copy.cc settings.cc
 MAKE_ISIG_SOURCES = make-isig.cc tree.cc tree-export.cc
 TREE_AA_INFO_SOURCES = tree-aa-info.cc tree.cc tree-export.cc
 TREE_TEXT_SOURCES = tree-text.cc tree.cc tree-export.cc
+TREE_CHART_SECTIONS_SOURCES = tree-chart-sections.cc tree.cc tree-export.cc
 
 # ----------------------------------------------------------------------
 
@@ -100,6 +102,10 @@ $(DIST)/tree-aa-info: $(patsubst %.cc,$(BUILD)/%.o,$(TREE_AA_INFO_SOURCES)) | $(
 	@$(CXX) $(LDFLAGS) -o $@ $^ $(LDLIBS) $(AD_RPATH)
 
 $(DIST)/tree-text: $(patsubst %.cc,$(BUILD)/%.o,$(TREE_TEXT_SOURCES)) | $(DIST)
+	@printf "%-16s %s\n" "LINK" $@
+	@$(CXX) $(LDFLAGS) -o $@ $^ $(LDLIBS) $(AD_RPATH)
+
+$(DIST)/tree-chart-sections: $(patsubst %.cc,$(BUILD)/%.o,$(TREE_CHART_SECTIONS_SOURCES)) | $(DIST)
 	@printf "%-16s %s\n" "LINK" $@
 	@$(CXX) $(LDFLAGS) -o $@ $^ $(LDLIBS) $(AD_RPATH)
 
