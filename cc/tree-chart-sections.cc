@@ -12,6 +12,7 @@ struct group_t
 {
     group_t(std::string a_path, size_t a_group_index) : path(a_path), group_index(a_group_index) {}
     std::string path;
+    std::string first, last;
     size_t group_index;
     std::vector<size_t> members;
 };
@@ -24,9 +25,10 @@ struct groups_t
 template <typename RW> inline json_writer::writer<RW>& operator<<(json_writer::writer<RW>& writer, const group_t& group)
 {
     writer << json_writer::start_object
-           << "N" << std::to_string(group.group_index) + ": " + group.path + " (" + std::to_string(group.members.size()) + ')'
-           << "path" << group.path
-           << "num_members" << group.members.size()
+           << "N" << std::to_string(group.group_index) + ' ' + group.first + ' ' + group.last + " (" + std::to_string(group.members.size()) + ')'
+           // << "N" << std::to_string(group.group_index) + ": " + group.path + " (" + std::to_string(group.members.size()) + ')'
+           // << "path" << group.path
+           // << "num_members" << group.members.size()
            << "members" << group.members
            << json_writer::end_object;
     return writer;
@@ -84,6 +86,9 @@ int main(int argc, const char* argv[])
                     tree::iterate_leaf(node, [&group](const Node& node2) {
                         if (node2.draw.chart_antigen_index)
                             group.members.push_back(*node2.draw.chart_antigen_index);
+                        if (group.first.empty())
+                            group.first = node2.seq_id;
+                        group.last = node2.seq_id;
                     });
                 }
             };
