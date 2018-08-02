@@ -1,10 +1,46 @@
 #include <iostream>
 
 #include "acmacs-base/argc-argv.hh"
-#include "acmacs-base/stream.hh"
+#include "acmacs-base/json-writer.hh"
 #include "acmacs-chart-2/factory-import.hh"
 #include "tree.hh"
 #include "tree-export.hh"
+
+// ----------------------------------------------------------------------
+
+struct group_t
+{
+    group_t(std::string a_path) : path(a_path) {}
+    std::string path;
+    std::vector<size_t> members;
+};
+
+struct groups_t
+{
+    std::vector<group_t> groups;
+};
+
+template <typename RW> inline json_writer::writer<RW>& operator<<(json_writer::writer<RW>& writer, const group_t& group)
+{
+    writer << json_writer::start_object
+           << "N" << group.path
+           << "num_members" << group.members.size()
+           << "members" << group.members
+           << json_writer::end_object;
+    return writer;
+}
+
+template <typename RW> inline json_writer::writer<RW>& operator<<(json_writer::writer<RW>& writer, const groups_t& groups)
+{
+    writer << json_writer::start_object << "  version"
+           << "group-series-set-v1"
+           << "group_sets" << json_writer::start_array << json_writer::start_object << "N"
+           << "tree-chart-sections"
+           << "groups";
+    json_writer::write_list(writer, groups.groups);
+    writer << json_writer::end_object << json_writer::end_array << json_writer::end_object;
+    return writer;
+}
 
 // ----------------------------------------------------------------------
 
@@ -38,22 +74,19 @@ int main(int argc, const char* argv[])
         Tree tree = tree::tree_import(args[0], chart);
 
         if (args["--group-series-sets"]) {
-            using group_t = std::pair<std::string, std::vector<size_t>>;
-            using groups_t = std::vector<group_t>;
             groups_t groups;
             const size_t max_in_group = tree.draw.matched_antigens / 3 * 2;
             auto make_groups = [&groups, max_in_group, threshold = static_cast<size_t>(args["--group-threshold"])](const Node& node, std::string path) {
                 if (node.draw.matched_antigens >= threshold && node.draw.matched_antigens < max_in_group) {
-                    auto& group = groups.emplace_back(path, std::vector<size_t>{});
+                    auto& group = groups.groups.emplace_back(path);
                     tree::iterate_leaf(node, [&group](const Node& node2) {
                         if (node2.draw.chart_antigen_index)
-                            group.second.push_back(*node2.draw.chart_antigen_index);
+                            group.members.push_back(*node2.draw.chart_antigen_index);
                     });
                 }
             };
             tree::iterate_pre_path(tree, make_groups);
-            for (const auto& group : groups)
-                std::cout << std::setw(30) << std::left << group.first << ' ' << group.second << '\n';
+            json_writer::export_to_json(groups, args["--group-series-sets"], 2);
         }
         else {
             auto report_antigens = [](const Node& node, std::string path) {
