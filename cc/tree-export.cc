@@ -4,8 +4,9 @@ namespace jsw = json_writer;
 
 #include "acmacs-base/enumerate.hh"
 #include "acmacs-base/read-file.hh"
-#include "tree-export.hh"
-#include "tree.hh"
+#include "seqdb/seqdb.hh"
+#include "signature-page/tree-export.hh"
+#include "signature-page/tree.hh"
 
 // ----------------------------------------------------------------------
 
@@ -261,7 +262,36 @@ void tree::tree_import(std::string aFilename, Tree& aTree)
 {
     json_reader::read_from_file<Node, TreeRootHandler>(aFilename, aTree);
       // aTree.set_number_strains();
+
+} // tree::tree_import
+
+// ----------------------------------------------------------------------
+
+Tree tree::tree_import(std::string aFilename)
+{
+    Tree tree;
+    tree_import(aFilename, tree);
+    return tree;
 }
+
+// ----------------------------------------------------------------------
+
+Tree tree::tree_import(std::string aFilename, std::shared_ptr<acmacs::chart::Chart> chart, Tree::LadderizeMethod aLadderizeMethod)
+{
+    Tree tree;
+    tree_import(aFilename, tree);
+    tree.match_seqdb(seqdb::get());
+    if (chart) {
+        const auto matched_names = tree.match(*chart);
+        if (matched_names)
+            std::cout << "INFO: tree sequences found in the chart: " << matched_names << std::endl;
+    }
+    tree.set_number_strains();
+    tree.ladderize(aLadderizeMethod);
+    tree.compute_cumulative_edge_length();
+    return tree;
+
+} // tree::tree_import
 
 // ----------------------------------------------------------------------
 

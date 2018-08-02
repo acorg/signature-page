@@ -42,8 +42,7 @@ int main(int argc, const char* const* argv)
         std::string source_tree_file = argv[1];
 
         const auto seqdb = seqdb::get();
-        Tree tree;
-        tree::tree_import(source_tree_file, tree);
+        Tree tree = tree::tree_import(source_tree_file);
         tree.match_seqdb(seqdb);
         tree.set_number_strains();
         tree.ladderize(Tree::LadderizeMethod::NumberOfLeaves);

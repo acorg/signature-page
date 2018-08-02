@@ -39,18 +39,12 @@ int main(int argc, const char* argv[])
         if (args["--seqdb"])
             seqdb::setup(args["--seqdb"], verbose ? seqdb::report::yes : seqdb::report::no);
 
-        Tree tree;
-        tree::tree_import(args[0], tree);
-        tree.match_seqdb(seqdb::get());
-        if (args["--chart"]) {
-            auto chart = acmacs::chart::import_from_file(args["--chart"], acmacs::chart::Verify::None, report_time::No);
-            const auto matched_names = tree.match(*chart);
-            if (matched_names)
-                std::cout << "Tree sequences found in the chart: " << matched_names << std::endl;
-        }
-        tree.set_number_strains();
-        tree.ladderize(Tree::LadderizeMethod::NumberOfLeaves);
-        tree.compute_cumulative_edge_length();
+        std::shared_ptr<acmacs::chart::Chart> chart;
+        if (args["--chart"])
+            chart = acmacs::chart::import_from_file(args["--chart"], acmacs::chart::Verify::None, report_time::No);
+
+        Tree tree = tree::tree_import(args[0], chart);
+
         const auto [min_edge, max_edge] = tree.cumulative_edge_minmax();
         // std::cout << "mm: " << min_edge << ' ' << max_edge << '\n';
         const auto step = max_edge / static_cast<size_t>(args["--max-leaf-offset"]);

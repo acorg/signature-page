@@ -23,8 +23,7 @@ int main(int argc, const char* const* argv)
         std::string target_tree_file = argv[4];
 
         const auto seqdb = seqdb::get();
-        Tree tree;
-        tree::tree_import(source_tree_file, tree);
+        Tree tree = tree::tree_import(source_tree_file);
           // tree.match_seqdb(seqdb);
 
         auto chart = acmacs::chart::import_from_file(source_chart); // , acmacs::chart::Verify::None, report_time::No
