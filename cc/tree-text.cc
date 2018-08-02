@@ -3,7 +3,6 @@
 
 #include "acmacs-base/argc-argv.hh"
 #include "acmacs-base/stream.hh"
-#include "seqdb/seqdb.hh"
 #include "acmacs-chart-2/factory-import.hh"
 #include "tree.hh"
 #include "tree-export.hh"

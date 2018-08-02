@@ -4,7 +4,6 @@
 
 #include "acmacs-base/stream.hh"
 #include "acmacs-base/enumerate.hh"
-#include "seqdb/seqdb.hh"
 #include "signature-page/tree.hh"
 #include "signature-page/tree-export.hh"
 
@@ -41,12 +40,7 @@ int main(int argc, const char* const* argv)
     if (argc == 2) {
         std::string source_tree_file = argv[1];
 
-        const auto seqdb = seqdb::get();
-        Tree tree = tree::tree_import(source_tree_file);
-        tree.match_seqdb(seqdb);
-        tree.set_number_strains();
-        tree.ladderize(Tree::LadderizeMethod::NumberOfLeaves);
-        tree.compute_cumulative_edge_length();
+        const Tree tree = tree::tree_import(source_tree_file, nullptr);
 
         auto diffs = collect(tree);
         compute_entries_diffs(diffs);
