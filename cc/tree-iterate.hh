@@ -98,6 +98,26 @@ namespace tree
 
 // ----------------------------------------------------------------------
 
+    template <typename N, typename F3> inline void iterate_pre_path(N&& aNode, F3&& f_subtree_pre, std::string path = std::string{})
+    {
+        constexpr const char path_parts[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        if (!aNode.is_leaf()) {
+            f_subtree_pre(std::forward<N>(aNode), path);
+            auto subpath_p = std::begin(path_parts);
+            std::string subpath_infix;
+            for (auto& node: aNode.subtree) {
+                iterate_pre_path(node, std::forward<F3>(f_subtree_pre), path + subpath_infix + *subpath_p);
+                ++subpath_p;
+                if (!*subpath_p) {
+                    subpath_p = std::begin(path_parts);
+                    subpath_infix += '-';
+                }
+            }
+        }
+    }
+
+// ----------------------------------------------------------------------
+
     template <typename N, typename F3> inline void iterate_post(N&& aNode, F3&& f_subtree_post)
     {
         if (!aNode.is_leaf()) {
