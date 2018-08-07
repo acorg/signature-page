@@ -78,7 +78,7 @@ void TreeDraw::prepare()
     if (number_of_hz_sections == 0 || !mHzSections.show)
         number_of_hz_sections = 1;
     const auto& canvas_size = mSurface.viewport().size;
-    mHorizontalStep = canvas_size.width / mTree.width();
+    mHorizontalStep = (canvas_size.width - mSettings.right_padding) / mTree.width();
     mVerticalStep = (canvas_size.height - (number_of_hz_sections - 1) * mHzSections.vertical_gap) / static_cast<double>(mTree.height() + 2); // +2 to add space at the top and bottom
     set_vertical_pos();
 

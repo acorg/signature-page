@@ -226,6 +226,7 @@ class TreeDrawSettings : public rjson::field_container_child
     rjson::field_get_set<acmacs::TextStyle> label_style;
     rjson::field_get_set<double> name_offset;         // offset of the label from the line right end, in W widths
     rjson::field_get_set<std::string> color_nodes;    // black, continent, position number (e.g. 162)
+    rjson::field_get_set<double> right_padding;       // padding at the right to add space for the mark_with_line (for BVic del and triple-del mutants)
     AATransitionDrawSettings aa_transition;
     LegendSettings legend;
 
