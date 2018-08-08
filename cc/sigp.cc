@@ -93,6 +93,8 @@ int main(int argc, const char *argv[])
             //     signature_page.tree_draw().hz_sections().report_html(args["--hz-sections-report-html"]);
         }
 
+        if (!args["--no-draw"])
+            std::cout << "INFO: generated: " << args[1] << '\n';
         if (args["--open"])
             acmacs::open(args[1], 2);
 
