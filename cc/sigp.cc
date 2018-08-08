@@ -3,6 +3,7 @@
 #include <string>
 
 #include "acmacs-base/argc-argv.hh"
+#include "acmacs-base/read-file.hh"
 #include "acmacs-base/quicklook.hh"
 #include "seqdb/seqdb.hh"
 
@@ -75,11 +76,11 @@ int main(int argc, const char *argv[])
             }
             signature_page.prepare(!args["--not-show-hz-sections"]);
             if (args["--report-cumulative"]) {
-                std::ofstream out(args["--report-cumulative"]);
+                acmacs::file::ofstream out(args["--report-cumulative"]);
                 signature_page.tree().report_cumulative_edge_length(out);
             }
             if (args["--list-ladderized"]) {
-                std::ofstream out(args["--list-ladderized"]);
+                acmacs::file::ofstream out(args["--list-ladderized"]);
                 signature_page.tree().list_strains(out);
             }
             if (!args["--no-draw"])
