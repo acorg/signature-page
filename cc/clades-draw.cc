@@ -137,6 +137,7 @@ static const clades_update_t sCladesFixer = {
     {"NO-GLY", {"NO-GLY", 0, false}},
     {"3C.3", {"3C.3", 0, true}},
     {"3C.3A", {"3C.3a", 0, true}},
+    {"3C.3B", {"3C.3b", 0, true}},
     {"3C.2A", {"3C.2a", 6, true}},
     {"2A1", {"2a1", 4, true}},
     {"2A1A", {"2a1a", 0, true}},
