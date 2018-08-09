@@ -163,7 +163,6 @@ void SignaturePageDraw::init_settings()
     if (!mChartFilename.empty() && mSurface->aspect() > 1) { // with maps
         mSettings->tree_draw.legend.width = 100;
         mSettings->hz_sections.vertical_gap = 15;
-        mSettings->clades.slot_width = 10;
         for (auto clade: mSettings->clades.clades) {
             clade.label_offset = acmacs::Offset{1, 0};
         }
@@ -178,14 +177,11 @@ void SignaturePageDraw::init_settings()
     else {                      // just tree
         mSettings->tree_draw.legend.width = 180;
         mSettings->hz_sections.vertical_gap = 15;
+        mSettings->signature_page.clades_width = 150;
         // for (auto& section: mSettings->hz_sections.sections) {
         //     section.show_label_in_time_series = false;
         // }
 
-        mSettings->clades.slot_width = 10;
-        for (auto clade: mSettings->clades.clades) {
-            clade.label_offset = acmacs::Offset{10, 0};
-        }
         if (mTreeDraw)
             mTreeDraw->detect_hz_lines_for_clades(mCladesDraw ? mCladesDraw->clades() : nullptr, true);
     }

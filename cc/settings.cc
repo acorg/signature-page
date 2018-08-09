@@ -138,18 +138,26 @@ CladesDrawSettings::CladesDrawSettings(rjson::field_container_parent& aParent, s
       slot_width(*this, "slot_width", 10, rjson::initialize_field::yes)
 {
     clades.emplace_back();
-    for (const auto* n: {"GLY", "NO-GLY", "DEL2017"}) {
-        auto cn = clades.emplace_back();
-        cn.name = n;
-        cn.show = false;
-    }
-    for (const auto* n: {"3C2A1A", "3C2A1B", "3C2A1", "3C2A2", "3C2A3", "3C2A4"}) {
-        auto cn = clades.emplace_back();
-        cn.name = n;
-        cn.section_inclusion_tolerance = 15;
-        cn.section_exclusion_tolerance = 10;
-        cn.slot = static_cast<int>(cn.name.get_value_ref().str().size() - 4);
-    }
+    // for (const auto* n: {"GLY", "NO-GLY", "DEL2017"}) {
+    //     auto cn = clades.emplace_back();
+    //     cn.name = n;
+    //     cn.show = false;
+    // }
+    // // for (const auto* n: {"3C2A1A", "3C2A1B", "3C2A1", "3C2A2", "3C2A3", "3C2A4"}) {
+    // //     auto cn = clades.emplace_back();
+    // //     cn.name = n;
+    // //     cn.section_inclusion_tolerance = 15;
+    // //     cn.section_exclusion_tolerance = 10;
+    // //     cn.slot = static_cast<int>(cn.name.get_value_ref().str().size() - 4);
+    // // }
+    // for (auto [name, display, slot] : {}) { // Sarah's H3 clades 2018-08-09
+    //     auto cn = clades.emplace_back();
+    //     cn.name = name;
+    //     cn.display_name = display;
+    //     cn.section_inclusion_tolerance = 15;
+    //     cn.section_exclusion_tolerance = 10;
+    //     cn.slot = slot;
+    // }
 }
 
 HzSection::HzSection(const rjson::value& aData)
@@ -386,6 +394,8 @@ TreeDrawSettings::TreeDrawSettings(rjson::field_container_parent& aParent, std::
       aa_transition(*this, "aa_transition"),
       legend(*this, "legend")
 {
+    mods.emplace_back().add("?mod", "hide-if-cumulative-edge-length-bigger-than").add("d1", rjson::number{0.04});
+
 } // TreeDrawSettings::TreeDrawSettings
 
 void TreeDrawSettings::remove_for_signature_page_settings()

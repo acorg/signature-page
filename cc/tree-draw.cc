@@ -841,11 +841,13 @@ void HzSections::detect_hz_lines_for_clades(Tree& aTree, const Clades* aClades, 
         add(find_first_leaf(aTree), false, "first-leaf", 0);
 
         if (aClades) {
-            for (const auto& clade: *aClades) {
+            for (const auto& clade : *aClades) {
                 if (clade.second.shown()) {
-                    for (const auto& sect: clade.second.sections) {
-                          // std::cerr << "DEBUG: clade: " << clade.first << ' ' << s << DEBUG_LINE_FUNC << '\n';
-                        add(aTree, *sect.first, *sect.last, false, clade.first, 0);
+                    for (const auto& sect : clade.second.sections) {
+                        if (clade.first != "GLY" && clade.first != "NO-GLY") {
+                            // std::cerr << "DEBUG: clade: " << clade.first << ' ' << s << DEBUG_LINE_FUNC << '\n';
+                            add(aTree, *sect.first, *sect.last, false, clade.first, 0);
+                        }
                     }
                 }
             }
