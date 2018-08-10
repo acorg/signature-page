@@ -53,13 +53,15 @@ class ColoringByPos : public Coloring
     virtual Color color(const Node& aNode) const;
     virtual Legend* legend() const;
     size_t pos() const { return mPos; }
-    inline const UsedColors& used_colors() const { return mUsed; }
+    const UsedColors& used_colors() const { return mUsed; }
+    void color_for_aa(const std::map<std::string, std::string>& colors);
 
     virtual void report() const;
 
  private:
     size_t mPos;
     mutable UsedColors mUsed;
+    std::map<std::string, std::string> colors_;
 };
 
 // ----------------------------------------------------------------------

@@ -426,7 +426,41 @@ namespace rjson
     }
 
       // ----------------------------------------------------------------------
-      // std::vector<std::string>
+      // std::map<std::string, std::string>
+      // ----------------------------------------------------------------------
+
+    template <> struct content_type<std::map<std::string, std::string>> { using type = object; };
+
+    template <> inline field_get_set<std::map<std::string, std::string>>::operator std::map<std::string, std::string>() const
+    {
+        try {
+            const rjson::object& obj = get_value_ref();
+            std::map<std::string, std::string> result;
+            for (const auto& [key, val] : obj)
+                result.emplace(key, val.str());
+            return result;
+        }
+        catch (std::exception&) {
+            std::cerr << "ERROR: cannot convert json to std::vector<std::string>: " << get_value_ref() << '\n';
+            throw;
+        }
+    }
+
+    template <> inline value to_value<std::map<std::string, std::string>>(const std::map<std::string, std::string>& aData)
+    {
+        object obj;
+        for (const auto& [key, val] : aData)
+            obj[key] = rjson::string(val);
+        return obj;
+    }
+
+    template <> inline value to_value<std::map<std::string, std::string>>(std::map<std::string, std::string>&& aData)
+    {
+        return to_value(const_cast<const std::map<std::string, std::string>&>(aData));
+    }
+
+      // ----------------------------------------------------------------------
+      //
       // ----------------------------------------------------------------------
 
     template <typename FValue> inline field_get_set<FValue>::field_get_set(field_container_parent& aParent, std::string aFieldName, FValue&& aDefault, initialize_field aInitialize)

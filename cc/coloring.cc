@@ -42,22 +42,44 @@ Legend* ColoringByContinent::legend() const
 
 // ----------------------------------------------------------------------
 
+void ColoringByPos::color_for_aa(const std::map<std::string, std::string>& colors)
+{
+    colors_ = colors;
+
+} // ColoringByPos::color_for_aa
+
+// ----------------------------------------------------------------------
+
 Color ColoringByPos::color(const Node& aNode) const
 {
     Color c("pink");
     const auto amino_acids = aNode.data.amino_acids();
-    auto distinct_colors = Color::distinct();
     if (amino_acids.size() > mPos) {
         const char aa = amino_acids[mPos];
-        try {
-            auto& cc = mUsed.at(aa);
-            ++cc.second;
-            c = cc.first;
+        if (!colors_.empty()) {
+            try {
+                c = colors_.at(std::string(1, aa));
+                if (auto found = mUsed.find(aa); found == mUsed.end())
+                    mUsed[aa] = std::make_pair(c, 1);
+                else
+                    ++found->second.second;
+            }
+            catch (std::out_of_range&) {
+                throw std::runtime_error(std::string{"\"color_for_aa\" in settings does not provide color for "} + aa);
+            }
         }
-        catch (std::out_of_range&) {
-            if (aa != 'X')      // X is always black
-                c = distinct_colors[mUsed.size()];
-            mUsed[aa] = std::make_pair(c, 1);
+        else {
+            auto distinct_colors = Color::distinct();
+            try {
+                auto& cc = mUsed.at(aa);
+                ++cc.second;
+                c = cc.first;
+            }
+            catch (std::out_of_range&) {
+                if (aa != 'X') // X is always black
+                    c = distinct_colors[mUsed.size()];
+                mUsed[aa] = std::make_pair(c, 1);
+            }
         }
     }
     return c;

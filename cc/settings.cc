@@ -390,6 +390,7 @@ TreeDrawSettings::TreeDrawSettings(rjson::field_container_parent& aParent, std::
       label_style(*this, "label_style", {}),
       name_offset(*this, "name_offset", 0.3),
       color_nodes(*this, "color_nodes", "continent"),
+      color_for_aa(*this, "color_for_aa", {}),
       right_padding(*this, "right_padding", 0),
       aa_transition(*this, "aa_transition"),
       legend(*this, "legend")

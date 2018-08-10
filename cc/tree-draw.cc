@@ -37,7 +37,10 @@ void TreeDraw::make_coloring()
         mColoring = std::unique_ptr<Coloring>(new ColoringByContinent());
     else {
         try {
-            mColoring = std::unique_ptr<Coloring>(new ColoringByPos(std::stoul(std::string(color_nodes))));
+            auto coloring = std::make_unique<ColoringByPos>(std::stoul(std::string(color_nodes)));
+            if (!mSettings.color_for_aa.empty())
+                coloring->color_for_aa(mSettings.color_for_aa);
+            mColoring = std::move(coloring);
         }
         catch (std::exception&) {
             throw std::runtime_error("Unrecognized TreeDrawSettings.color_nodes: " + std::string(color_nodes));
