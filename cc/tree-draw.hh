@@ -357,7 +357,7 @@ class TreeDraw
     void fit_labels_into_viewport();
     void calculate_name_offset();
 
-    inline double text_width(std::string text) { return mSurface.text_size(text, mFontSize, mSettings.label_style).width; }
+    double text_width(std::string text) { return mSurface.text_size(text, mFontSize, mSettings.label_style).width; }
     double max_label_offset();
 
     void make_coloring();

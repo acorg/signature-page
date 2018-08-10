@@ -133,6 +133,11 @@ inline const Node& find_last_leaf(const Node& aNode)
     return aNode.is_leaf() ? aNode : find_last_leaf(aNode.subtree.back());
 }
 
+inline Node& find_last_leaf(Node& aNode)
+{
+    return aNode.is_leaf() ? aNode : find_last_leaf(aNode.subtree.back());
+}
+
 // ----------------------------------------------------------------------
 
 class Tree : public Node

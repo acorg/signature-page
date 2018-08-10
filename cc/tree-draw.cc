@@ -413,7 +413,9 @@ void TreeDraw::set_line_no()
         }
     };
     tree::iterate_leaf(mTree, set_line_no);
-    std::cout << "TREE-lines: " << current_line << std::endl;
+    if (auto& last_leaf = find_last_leaf(mTree); last_leaf.draw.line_no == 0) // last leaf is perhaps hidden but we need its line_no later to figure out correct shown tree height
+        last_leaf.draw.line_no = current_line - 1;
+    std::cout << "INFO: TREE-lines: " << (current_line - 1) << std::endl;
 
 } // TreeDraw::set_line_no
 
@@ -421,12 +423,13 @@ void TreeDraw::set_line_no()
 
 void TreeDraw::set_vertical_pos()
 {
+    // std::cerr << "DEBUG: set_vertical_pos" << '\n';
     double vertical_pos = mVerticalStep;
     bool topmost_node = true;
     auto set_leaf_vertical_pos = [&](Node& aNode) {
         if (aNode.draw.shown) {
             if (aNode.draw.hz_section_index != NodeDrawData::HzSectionNoIndex && mHzSections.show && mHzSections.sections[aNode.draw.hz_section_index].show) {
-                std::cout << "TREE-hz-section: " << aNode.draw.hz_section_index << " " << aNode.seq_id << std::endl;
+                std::cout << "INFO: TREE-hz-section: " << aNode.draw.hz_section_index << " " << aNode.seq_id << std::endl;
                 if (!topmost_node)
                     vertical_pos += mHzSections.vertical_gap;
             }
