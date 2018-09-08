@@ -174,41 +174,48 @@ class TreeDrawMods : public rjson::array_field_container_child<TreeDrawMod>
 // serializing Tree::LadderizeMethod from tree.hh
 namespace rjson
 {
-    template <> struct content_type<Tree::LadderizeMethod> { using type = string; };
-
-    template <> inline field_get_set<Tree::LadderizeMethod>::operator Tree::LadderizeMethod() const
+    inline namespace v1
     {
-        try {
-            const std::string_view method_s = get_value_ref();
-            if (method_s == "number-of-leaves")
-                return Tree::LadderizeMethod::NumberOfLeaves;
-            else if (method_s == "max-edge-length")
-                return Tree::LadderizeMethod::MaxEdgeLength;
-            else
-                throw std::exception{}; // std::runtime_error("Unrecognized ladderize method: " + method_s);
-        }
-        catch (std::exception& /*err*/) {
-            std::cerr << "ERROR: cannot convert json to Tree::LadderizeMethod: " << get_value_ref() << '\n';
-            return {};
-        }
-    }
+        template <> struct content_type<Tree::LadderizeMethod>
+        {
+            using type = string;
+        };
 
-    template <> inline value to_value<Tree::LadderizeMethod>(const Tree::LadderizeMethod& aLadderizeMethod)
-    {
+        template <> inline field_get_set<Tree::LadderizeMethod>::operator Tree::LadderizeMethod() const
+        {
+            try {
+                const std::string_view method_s = get_value_ref();
+                if (method_s == "number-of-leaves")
+                    return Tree::LadderizeMethod::NumberOfLeaves;
+                else if (method_s == "max-edge-length")
+                    return Tree::LadderizeMethod::MaxEdgeLength;
+                else
+                    throw std::exception{}; // std::runtime_error("Unrecognized ladderize method: " + method_s);
+            }
+            catch (std::exception& /*err*/) {
+                std::cerr << "ERROR: cannot convert json to Tree::LadderizeMethod: " << get_value_ref() << '\n';
+                return {};
+            }
+        }
+
+        template <> inline value to_value<Tree::LadderizeMethod>(const Tree::LadderizeMethod& aLadderizeMethod)
+        {
             switch (aLadderizeMethod) {
-              case Tree::LadderizeMethod::NumberOfLeaves:
-                  return string{"number-of-leaves"};
-              case Tree::LadderizeMethod::MaxEdgeLength:
-                  return string{"max-edge-length"};
+                case Tree::LadderizeMethod::NumberOfLeaves:
+                    return string{"number-of-leaves"};
+                case Tree::LadderizeMethod::MaxEdgeLength:
+                    return string{"max-edge-length"};
             }
             return string{"number-of-leaves"};
-    }
+        }
 
-    template <> inline value to_value<Tree::LadderizeMethod>(Tree::LadderizeMethod&& aLadderizeMethod)
-    {
-        return to_value<Tree::LadderizeMethod>(const_cast<const Tree::LadderizeMethod&>(aLadderizeMethod));
-    }
-}
+        template <> inline value to_value<Tree::LadderizeMethod>(Tree::LadderizeMethod&& aLadderizeMethod)
+        {
+            return to_value<Tree::LadderizeMethod>(const_cast<const Tree::LadderizeMethod&>(aLadderizeMethod));
+        }
+
+    } // namespace v1
+} // namespace rjson
 
 class TreeDrawSettings : public rjson::field_container_child
 {
