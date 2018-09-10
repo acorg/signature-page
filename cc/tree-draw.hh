@@ -339,12 +339,21 @@ class TreeDraw
     static constexpr const size_t sFirstLineNo = 1; // line of the first node is 1, we have 1 line space at the top and bottom of the tree
 
  private:
+    struct AA_Transition
+    {
+        std::string first_leaf;
+        std::string transition;
+        acmacs::Location2D origin;
+        size_t number_strains;
+    };
+
     acmacs::surface::Surface& mSurface;
     Tree& mTree;
     TreeDrawSettings& mSettings;
     HzSections& mHzSections;
     std::unique_ptr<Coloring> mColoring;
     mutable std::unique_ptr<Legend> mColoringLegend;
+    std::vector<AA_Transition> aa_transitions_;
 
     double mHorizontalStep;
     double mVerticalStep;
@@ -360,6 +369,7 @@ class TreeDraw
     void draw_legend();
     void draw_aa_transition(const Node& aNode, acmacs::Location2D aOrigin, double aRight);
     void draw_mark_with_label(const Node& aNode, acmacs::Location2D aTextOrigin);
+    void report_aa_transitions();
 
     void fit_labels_into_viewport();
     void calculate_name_offset();

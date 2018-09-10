@@ -169,6 +169,7 @@ void TreeDraw::draw()
 
     double vertical_gap = 0;
     draw_node(mTree, 0 /*mLineWidth / 2*/, vertical_gap, mSettings.root_edge);
+    report_aa_transitions();
     mColoring->report();
     draw_legend();
 
@@ -629,7 +630,8 @@ void TreeDraw::draw_aa_transition(const Node& aNode, acmacs::Location2D aOrigin,
                     settings.per_branch.by_aa_label.emplace_back().set_label_disabled_offset(labels.label(), first_leaf.seq_id, settings.per_branch.label_offset);
                 }
 
-                std::cout << "AA transitions: " << labels.label() << " --> " << aNode.data.number_strains << " strains  label pos: " << origin << " first-leaf-seq-id:" << first_leaf.seq_id << '\n';
+                aa_transitions_.push_back({first_leaf.seq_id, labels.label(), origin, aNode.data.number_strains});
+                // std::cout << "AA transitions: " << labels.label() << " --> " << aNode.data.number_strains << " strains  label pos: " << origin << " first-leaf-seq-id:" << first_leaf.seq_id << '\n';
             }
         }
     }
@@ -676,6 +678,23 @@ void TreeDraw::draw_legend()
     }
 
 } // TreeDraw::draw_legend
+
+// ----------------------------------------------------------------------
+
+void TreeDraw::report_aa_transitions()
+{
+    std::sort(aa_transitions_.begin(), aa_transitions_.end(), [](const auto& e1, const auto& e2) -> bool { return e1.origin.y() < e2.origin.y(); });
+    const auto transition_width = static_cast<int>(std::max_element(aa_transitions_.begin(), aa_transitions_.end(), [](const auto& e1, const auto& e2) -> bool { return e1.transition.size() < e2.transition.size(); })->transition.size());
+    const auto node_width = static_cast<int>(std::max_element(aa_transitions_.begin(), aa_transitions_.end(), [](const auto& e1, const auto& e2) -> bool { return e1.first_leaf.size() < e2.first_leaf.size(); })->first_leaf.size());
+    std::cout << "AA transitions:\n";
+    for (const auto& tr : aa_transitions_) {
+        std::cout << "  " << std::setw(transition_width + 1) << std::left << tr.transition
+                  << std::setw(node_width + 1) << std::left << tr.first_leaf
+                  << "strains:" << std::setw(4) << std::right << tr.number_strains
+                  << " [" << std::setprecision(0) << tr.origin.x() << ' ' << tr.origin.y() << "]\n";
+    }
+
+} // TreeDraw::report_aa_transitions
 
 // ----------------------------------------------------------------------
 
