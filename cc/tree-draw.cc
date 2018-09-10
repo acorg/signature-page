@@ -683,15 +683,17 @@ void TreeDraw::draw_legend()
 
 void TreeDraw::report_aa_transitions()
 {
-    std::sort(aa_transitions_.begin(), aa_transitions_.end(), [](const auto& e1, const auto& e2) -> bool { return e1.origin.y() < e2.origin.y(); });
-    const auto transition_width = static_cast<int>(std::max_element(aa_transitions_.begin(), aa_transitions_.end(), [](const auto& e1, const auto& e2) -> bool { return e1.transition.size() < e2.transition.size(); })->transition.size());
-    const auto node_width = static_cast<int>(std::max_element(aa_transitions_.begin(), aa_transitions_.end(), [](const auto& e1, const auto& e2) -> bool { return e1.first_leaf.size() < e2.first_leaf.size(); })->first_leaf.size());
-    std::cout << "AA transitions:\n";
-    for (const auto& tr : aa_transitions_) {
-        std::cout << "  " << std::setw(transition_width + 1) << std::left << tr.transition
-                  << std::setw(node_width + 1) << std::left << tr.first_leaf
-                  << "strains:" << std::setw(4) << std::right << tr.number_strains
-                  << " [" << std::setprecision(0) << tr.origin.x() << ' ' << tr.origin.y() << "]\n";
+    if (!aa_transitions_.empty()) {
+        std::sort(aa_transitions_.begin(), aa_transitions_.end(), [](const auto& e1, const auto& e2) -> bool { return e1.origin.y() < e2.origin.y(); });
+        const auto transition_width = static_cast<int>(
+            std::max_element(aa_transitions_.begin(), aa_transitions_.end(), [](const auto& e1, const auto& e2) -> bool { return e1.transition.size() < e2.transition.size(); })->transition.size());
+        const auto node_width = static_cast<int>(
+            std::max_element(aa_transitions_.begin(), aa_transitions_.end(), [](const auto& e1, const auto& e2) -> bool { return e1.first_leaf.size() < e2.first_leaf.size(); })->first_leaf.size());
+        std::cout << "AA transitions:\n";
+        for (const auto& tr : aa_transitions_) {
+            std::cout << "  " << std::setw(transition_width + 1) << std::left << tr.transition << std::setw(node_width + 1) << std::left << tr.first_leaf << "strains:" << std::setw(4) << std::right
+                      << tr.number_strains << " [" << std::setprecision(0) << tr.origin.x() << ' ' << tr.origin.y() << "]\n";
+        }
     }
 
 } // TreeDraw::report_aa_transitions
@@ -931,7 +933,7 @@ const AATransitionIndividualSettings& AATransitionPerBranchDrawSettings::setting
 #ifdef __clang__
 #pragma GCC diagnostic ignored "-Wexit-time-destructors"
 #endif
-    static rjson::value settings{rjson::object{}};
+    static rjson::v1::value settings{rjson::v1::object{}};
     static AATransitionIndividualSettings result{settings};
 #pragma GCC diagnostic pop
 
@@ -950,12 +952,12 @@ const AATransitionIndividualSettings& AATransitionPerBranchDrawSettings::setting
         constexpr const auto rand_size = static_cast<double>(rand.max() - rand.min());
         acmacs::Location2D old_label_offset;
         try {
-            const rjson::array& ar = settings["label_offset"];
+            const rjson::v1::array& ar = settings["label_offset"];
             old_label_offset = acmacs::Location2D{ar[0], ar[1]};
         }
-        catch (rjson::field_not_found&) {
+        catch (rjson::v1::field_not_found&) {
         }
-        settings.set_field("label_offset", rjson::array{static_cast<double>(rand()) * scatter_label_offset * 2 / rand_size - scatter_label_offset + old_label_offset.x(),
+        settings.set_field("label_offset", rjson::v1::array{static_cast<double>(rand()) * scatter_label_offset * 2 / rand_size - scatter_label_offset + old_label_offset.x(),
                                                         static_cast<double>(rand()) * scatter_label_offset * 2 / rand_size - scatter_label_offset + old_label_offset.y()});
     }
     return result;

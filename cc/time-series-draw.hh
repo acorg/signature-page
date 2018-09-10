@@ -15,20 +15,20 @@ class HzSections;
 
 // ----------------------------------------------------------------------
 
-class TimeSeriesDrawSettings : public rjson::field_container_child
+class TimeSeriesDrawSettings : public rjson::v1::field_container_child
 {
  public:
-    TimeSeriesDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName);
+    TimeSeriesDrawSettings(rjson::v1::field_container_parent& aParent, std::string aFieldName);
 
-    rjson::field_get_set<std::string> begin;
-    rjson::field_get_set<std::string> end;
-    rjson::field_get_set<double> label_size;
-    rjson::field_get_set<acmacs::TextStyle> label_style;
-    rjson::field_get_set<double> month_year_to_timeseries_gap;
-    rjson::field_get_set<Color> month_separator_color;
-    rjson::field_get_set<double> month_separator_width;
-    rjson::field_get_set<double> dash_width;
-    rjson::field_get_set<double> dash_line_width;
+    rjson::v1::field_get_set<std::string> begin;
+    rjson::v1::field_get_set<std::string> end;
+    rjson::v1::field_get_set<double> label_size;
+    rjson::v1::field_get_set<acmacs::TextStyle> label_style;
+    rjson::v1::field_get_set<double> month_year_to_timeseries_gap;
+    rjson::v1::field_get_set<Color> month_separator_color;
+    rjson::v1::field_get_set<double> month_separator_width;
+    rjson::v1::field_get_set<double> dash_width;
+    rjson::v1::field_get_set<double> dash_line_width;
 
 }; // class TimeSeriesDrawSettings
 

@@ -213,21 +213,21 @@ AntigenicMapsDrawBase* make_antigenic_maps_draw(std::string aChartFilename, acma
 
 // ----------------------------------------------------------------------
 
-class AntigenicMapMod : public rjson::array_field_container_child_element
+class AntigenicMapMod : public rjson::v1::array_field_container_child_element
 {
  public:
-    inline AntigenicMapMod(const rjson::value& aData) : rjson::array_field_container_child_element(aData) {}
+    inline AntigenicMapMod(const rjson::v1::value& aData) : rjson::v1::array_field_container_child_element(aData) {}
 
     template <typename Result> inline Result get_or_default(std::string aName, Result&& aDefault) const
         {
-            static_assert(!std::is_same_v<Result, rjson::object> && !std::is_same_v<Result, rjson::array>, "get_or_default returns a copy, not a reference, use get_or_empty_object or get_or_empty_array");
+            static_assert(!std::is_same_v<Result, rjson::v1::object> && !std::is_same_v<Result, rjson::v1::array>, "get_or_default returns a copy, not a reference, use get_or_empty_object or get_or_empty_array");
             try {
                 if constexpr (std::is_same_v<Result, std::string>)
                     return operator[](aName).str();
                 else
                     return operator[](aName);
             }
-            catch (rjson::field_not_found&) {
+            catch (rjson::v1::field_not_found&) {
                 return aDefault;
             }
         }
@@ -237,28 +237,28 @@ class AntigenicMapMod : public rjson::array_field_container_child_element
             return get_or_default<std::string>(aName, aDefault);
         }
 
-    //$ inline std::string name() const { return get("N", rjson::string{}); }
-    //$ inline const rjson::array& mods() const { return get("mods", rjson::array{}); }
-    //$ inline Location offset() const { const rjson::array& ar = get("offset", rjson::array{0.0, 0.0}); return {ar[0], ar[1]}; }
-    //$ inline Color get_color(std::string aName, const char* aDefault) const { return static_cast<std::string>(get(aName, rjson::string{aDefault})); }
-    //$ inline double get(std::string aName, double aDefault) const { return get(aName, rjson::value{rjson::number{aDefault}}); }
-    //$ inline bool get(std::string aName, bool aDefault) const { return get(aName, rjson::value{rjson::boolean{aDefault}}); }
-    //$ inline std::string get(std::string aName, const char* aDefault) const { return get(aName, rjson::value{rjson::string{aDefault}}); }
+    //$ inline std::string name() const { return get("N", rjson::v1::string{}); }
+    //$ inline const rjson::v1::array& mods() const { return get("mods", rjson::v1::array{}); }
+    //$ inline Location offset() const { const rjson::v1::array& ar = get("offset", rjson::v1::array{0.0, 0.0}); return {ar[0], ar[1]}; }
+    //$ inline Color get_color(std::string aName, const char* aDefault) const { return static_cast<std::string>(get(aName, rjson::v1::string{aDefault})); }
+    //$ inline double get(std::string aName, double aDefault) const { return get(aName, rjson::v1::value{rjson::v1::number{aDefault}}); }
+    //$ inline bool get(std::string aName, bool aDefault) const { return get(aName, rjson::v1::value{rjson::v1::boolean{aDefault}}); }
+    //$ inline std::string get(std::string aName, const char* aDefault) const { return get(aName, rjson::v1::value{rjson::v1::string{aDefault}}); }
 
-    //$ inline Location offset() const { const rjson::array& ar = get("offset", rjson::array{0.0, 0.0}); return {ar[0], ar[1]}; }
-    //$ inline double get(std::string aName, double aDefault) const { return get_or_default(aName, rjson::value{rjson::number{aDefault}}); }
-    //$ inline bool get(std::string aName, bool aDefault) const { return get(aName, rjson::value{rjson::boolean{aDefault}}); }
-    //$ inline std::string get(std::string aName, const char* aDefault) const { return get(aName, rjson::value{rjson::string{aDefault}}); }
+    //$ inline Location offset() const { const rjson::v1::array& ar = get("offset", rjson::v1::array{0.0, 0.0}); return {ar[0], ar[1]}; }
+    //$ inline double get(std::string aName, double aDefault) const { return get_or_default(aName, rjson::v1::value{rjson::v1::number{aDefault}}); }
+    //$ inline bool get(std::string aName, bool aDefault) const { return get(aName, rjson::v1::value{rjson::v1::boolean{aDefault}}); }
+    //$ inline std::string get(std::string aName, const char* aDefault) const { return get(aName, rjson::v1::value{rjson::v1::string{aDefault}}); }
 
     inline std::string name() const { return get_or_default("N", std::string{}); }
 
-    inline const rjson::array& mods() const
+    inline const rjson::v1::array& mods() const
         {
             try {
                 return operator[]("mods");
             }
-            catch (rjson::field_not_found&) {
-                return rjson::sEmptyArray;
+            catch (rjson::v1::field_not_found&) {
+                return rjson::v1::sEmptyArray;
             }
         }
 
@@ -267,7 +267,7 @@ class AntigenicMapMod : public rjson::array_field_container_child_element
             try {
                 return Color(operator[](aName));
             }
-            catch (rjson::field_not_found&) {
+            catch (rjson::v1::field_not_found&) {
                 return aDefault;
             }
         }
@@ -275,10 +275,10 @@ class AntigenicMapMod : public rjson::array_field_container_child_element
     inline acmacs::Offset offset() const
         {
             try {
-                const rjson::array& ar = operator[]("offset");
+                const rjson::v1::array& ar = operator[]("offset");
                 return {ar[0], ar[1]};
             }
-            catch (rjson::field_not_found&) {
+            catch (rjson::v1::field_not_found&) {
                 return {};
             }
         }
@@ -287,17 +287,17 @@ class AntigenicMapMod : public rjson::array_field_container_child_element
 
 }; // class AntigenicMapMod
 
-class AntigenicMapsDrawSettings : public rjson::field_container_child
+class AntigenicMapsDrawSettings : public rjson::v1::field_container_child
 {
  public:
-    AntigenicMapsDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName);
+    AntigenicMapsDrawSettings(rjson::v1::field_container_parent& aParent, std::string aFieldName);
 
-    rjson::field_get_set<std::string> layout;
-    rjson::field_get_set<size_t> columns;
-    rjson::field_get_set<double> gap;
-    rjson::field_get_set<Color> mapped_antigens_section_line_color;
-    rjson::field_get_set<double> mapped_antigens_section_line_width;
-    rjson::array_field_container_child<AntigenicMapMod> mods;
+    rjson::v1::field_get_set<std::string> layout;
+    rjson::v1::field_get_set<size_t> columns;
+    rjson::v1::field_get_set<double> gap;
+    rjson::v1::field_get_set<Color> mapped_antigens_section_line_color;
+    rjson::v1::field_get_set<double> mapped_antigens_section_line_width;
+    rjson::v1::array_field_container_child<AntigenicMapMod> mods;
 
     // inline std::vector<AntigenicMapMod>& get_mods() { return mods; }
     void viewport(const acmacs::Viewport& aViewport);

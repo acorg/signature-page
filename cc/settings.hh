@@ -12,12 +12,12 @@
 
 // ----------------------------------------------------------------------
 
-class Settings : public rjson::field_container_toplevel
+class Settings : public rjson::v1::field_container_toplevel
 {
  public:
     Settings();
 
-    rjson::field_get_set<std::string> version;
+    rjson::v1::field_get_set<std::string> version;
     SignaturePageDrawSettings signature_page;
     TitleDrawSettings title;
     TreeDrawSettings tree_draw;

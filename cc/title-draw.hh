@@ -12,16 +12,16 @@ class ChartDrawBase;
 
 // ----------------------------------------------------------------------
 
-class TitleDrawSettings : public rjson::field_container_child
+class TitleDrawSettings : public rjson::v1::field_container_child
 {
  public:
-    TitleDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName);
+    TitleDrawSettings(rjson::v1::field_container_parent& aParent, std::string aFieldName);
 
-    rjson::field_get_set<std::string> title;
-    rjson::field_get_set<Color> color; // Color
-    rjson::field_get_set<double> size;
-    rjson::field_get_set<acmacs::TextStyle> style;
-    rjson::field_get_set<acmacs::Offset> offset;
+    rjson::v1::field_get_set<std::string> title;
+    rjson::v1::field_get_set<Color> color; // Color
+    rjson::v1::field_get_set<double> size;
+    rjson::v1::field_get_set<acmacs::TextStyle> style;
+    rjson::v1::field_get_set<acmacs::Offset> offset;
 
 }; // class TitleDrawSettings
 

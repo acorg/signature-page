@@ -19,8 +19,15 @@ enum class TreeJsonKey : char
 {
     Subtree='t', SeqId='n', EdgeLength='l',
 
-    Unknown
+    Unknown='?'
 };
+
+template <typename RW> inline json_writer::writer<RW>& operator<<(json_writer::writer<RW>& aWriter, TreeJsonKey aKey)
+{
+    const char k = static_cast<char>(aKey);
+    aWriter.Key(&k, 1, false);
+    return aWriter;
+}
 
 // ----------------------------------------------------------------------
 

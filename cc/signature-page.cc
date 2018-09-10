@@ -375,15 +375,15 @@ void SignaturePageDraw::draw_mods()
                 if (mod_n == "text") {
                     const auto text = mod["text"].str();
                     acmacs::Offset offset;
-                    try { const auto& settings_offset = mod["offset"]; offset = acmacs::Offset{settings_offset[0], settings_offset[1]}; } catch (rjson::field_not_found&) {}
+                    try { const auto& settings_offset = mod["offset"]; offset = acmacs::Offset{settings_offset[0], settings_offset[1]}; } catch (rjson::v1::field_not_found&) {}
                     Color color{BLACK};
-                    try { color = Color(mod["color"]); } catch (rjson::field_not_found&) {}
+                    try { color = Color(mod["color"]); } catch (rjson::v1::field_not_found&) {}
                     Pixels size{14};
-                    try { size = mod["size"]; } catch (rjson::field_not_found&) {}
+                    try { size = mod["size"]; } catch (rjson::v1::field_not_found&) {}
                     acmacs::TextStyle style;
-                    try { style.font_family = mod["family"].str(); } catch (rjson::field_not_found&) {}
-                    try { style.slant = mod["slant"].str(); } catch (rjson::field_not_found&) {}
-                    try { style.weight = mod["weight"].str(); } catch (rjson::field_not_found&) {}
+                    try { style.font_family = mod["family"].str(); } catch (rjson::v1::field_not_found&) {}
+                    try { style.slant = mod["slant"].str(); } catch (rjson::v1::field_not_found&) {}
+                    try { style.weight = mod["weight"].str(); } catch (rjson::v1::field_not_found&) {}
                     mSurface->text(offset, text, color, size, style);
                 }
                 else {

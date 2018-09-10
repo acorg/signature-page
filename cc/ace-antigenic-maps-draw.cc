@@ -49,10 +49,10 @@ void AntigenicMapsLayoutDrawAce::prepare_apply_mods()
                 }
                 else {
                     try {
-                        const rjson::array& ar = mod["value"];
+                        const rjson::v1::array& ar = mod["value"];
                         chart_draw().flip(ar[0], ar[1]);
                     }
-                    catch (rjson::field_not_found&) {
+                    catch (rjson::v1::field_not_found&) {
                     }
                 }
             }
@@ -274,7 +274,7 @@ void AntigenicMapsLayoutDrawAce::mark_vaccines(const AntigenicMapMod& vaccine_mo
         const auto& chart = chart_draw().chart();
         Vaccines vaccs{chart};
         for (const auto& mod_v: vaccine_mod.mods()) {
-            const rjson::object& mod = mod_v;
+            const rjson::v1::object& mod = mod_v;
             const std::string type = mod.get_or_default("type", std::string{}), passage = mod.get_or_default("passage", std::string{}), name = mod.get_or_default("name", std::string{});
             VaccineMatcher matcher(vaccs, VaccineMatchData{}.name(name).type(type).passage(passage));
               // std::cerr << matcher.report(2) << '\n';
@@ -301,7 +301,7 @@ void AntigenicMapsLayoutDrawAce::mark_vaccines(const AntigenicMapMod& vaccine_mo
                         matcher.hide_label(chart_draw());
                 }
                 else if (field_name == "label")
-                    add_label(std::shared_ptr<VaccineMatcherLabel>{matcher.label(chart_draw())}, static_cast<const rjson::object&>(item_value));
+                    add_label(std::shared_ptr<VaccineMatcherLabel>{matcher.label(chart_draw())}, static_cast<const rjson::v1::object&>(item_value));
                 else if (field_name != "type" && field_name != "passage" && field_name != "name" && (field_name.empty() || (field_name.front() != '?' && field_name.back() != '?')))
                     std::cerr << "WARNING: mark_vaccines: unrecognized key \"" << field_name << '"' << std::endl;
             }
@@ -320,7 +320,7 @@ void AntigenicMapsLayoutDrawAce::mark_vaccines(const AntigenicMapMod& vaccine_mo
 void AntigenicMapsLayoutDrawAce::mark_antigens(const AntigenicMapMod& mod)
 {
     ModAntigens applicator(mod.data());
-    applicator.apply(chart_draw(), rjson::value{});
+    applicator.apply(chart_draw(), rjson::v1::value{});
 
 } // AntigenicMapsLayoutDrawAce::mark_antigens
 
@@ -338,23 +338,23 @@ void AntigenicMapsLayoutDrawAce::mark_antigens_old(const AntigenicMapMod& mod)
         antigen_style.outline_width = Pixels{mod.get_or_default("outline_width", 0.5)};
         chart_draw().modify(index, antigen_style, mod.get_or_default("raise_", true) ? PointDrawingOrder::Raise : PointDrawingOrder::NoChange);
         try {
-            const rjson::object& label_data = mod["label"];
+            const rjson::v1::object& label_data = mod["label"];
             auto& label = chart_draw().add_label(index);
             label.size(label_data.get_or_default("size", 9.0));
             try {
-                const rjson::array& offset = label_data["offset"];
+                const rjson::v1::array& offset = label_data["offset"];
                 label.offset({offset[0], offset[1]});
             }
-            catch (rjson::field_not_found&) {
+            catch (rjson::v1::field_not_found&) {
                 label.offset({0, 1});
             }
             if (const auto display_name = label_data.get<std::string>("display_name"); display_name)
                 label.display_name(*display_name);
         }
-        catch (rjson::field_not_found&) { // no label
+        catch (rjson::v1::field_not_found&) { // no label
         }
     }
-    catch (rjson::field_not_found&) {
+    catch (rjson::v1::field_not_found&) {
         std::cerr << "WARNING: Antigens: no index in " << select << '\n';
     }
     catch (std::out_of_range&) {
@@ -368,7 +368,7 @@ void AntigenicMapsLayoutDrawAce::mark_antigens_old(const AntigenicMapMod& mod)
 
 // ----------------------------------------------------------------------
 
-void AntigenicMapsLayoutDrawAce::add_label(std::shared_ptr<VaccineMatcherLabel> label, const rjson::object& data)
+void AntigenicMapsLayoutDrawAce::add_label(std::shared_ptr<VaccineMatcherLabel> label, const rjson::v1::object& data)
 {
     for (const auto& [item_key, item_value]: data) {
         const auto field_name = item_key.strv();
@@ -385,7 +385,7 @@ void AntigenicMapsLayoutDrawAce::add_label(std::shared_ptr<VaccineMatcherLabel> 
         else if (field_name == "weight")
             label->weight(item_value.str());
         else if (field_name == "offset") {
-            const rjson::array& offset = item_value;
+            const rjson::v1::array& offset = item_value;
             label->offset({offset[0], offset[1]});
         }
         else if (field_name.empty() || (field_name.front() != '?' && field_name.back() != '?'))

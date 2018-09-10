@@ -37,8 +37,8 @@ namespace rjson
         class field_container_toplevel : public field_container_parent
         {
           public:
-            void use_json(rjson::value&& aData) { mData = std::move(aData); }
-            void update(rjson::value&& aData) { mData.update(aData); }
+            void use_json(value&& aData) { mData = std::move(aData); }
+            void update(value&& aData) { mData.update(aData); }
 
             const value& operator[](std::string aFieldName) const override { return mData[aFieldName]; }
             value& operator[](std::string aFieldName) override { return mData[aFieldName]; }
@@ -64,7 +64,7 @@ namespace rjson
             std::string to_json_pp(size_t aIndent, json_pp_emacs_indent emacs_indent = json_pp_emacs_indent::yes) const { return mData.to_json_pp(aIndent, emacs_indent); }
 
           private:
-            mutable rjson::value mData = rjson::object{};
+            mutable value mData = object{};
 
         }; // class field_container_toplevel
 
@@ -77,8 +77,8 @@ namespace rjson
 
             const value& operator[](std::string aFieldName) const override { return mParent[mFieldName][aFieldName]; }
             value& operator[](std::string aFieldName) override { return mParent[mFieldName][aFieldName]; }
-            value& get_or_add(std::string aFieldName, value&& aDefault) override { return mParent.get_or_add(mFieldName, rjson::object{}).get_or_add(aFieldName, std::forward<value>(aDefault)); }
-            value& get_or_add(std::string aFieldName, const value& aDefault) override { return mParent.get_or_add(mFieldName, rjson::object{}).get_or_add(aFieldName, aDefault); }
+            value& get_or_add(std::string aFieldName, value&& aDefault) override { return mParent.get_or_add(mFieldName, object{}).get_or_add(aFieldName, std::forward<value>(aDefault)); }
+            value& get_or_add(std::string aFieldName, const value& aDefault) override { return mParent.get_or_add(mFieldName, object{}).get_or_add(aFieldName, aDefault); }
             const array& get_or_empty_array(std::string aFieldName) const override { return mParent[mFieldName].get_or_empty_array(aFieldName); }
 
             void remove_child(std::string aFieldName) override
@@ -160,7 +160,7 @@ namespace rjson
             Element emplace_back()
             {
                 try {
-                    rjson::array& ar = mParent.get_or_add(mFieldName, array{});
+                    array& ar = mParent.get_or_add(mFieldName, array{});
                     ar.insert(object{});
                     return Element{*ar.rbegin()};
                 }
@@ -173,8 +173,8 @@ namespace rjson
             void push_back(size_t value)
             {
                 try {
-                    rjson::array& ar = mParent.get_or_add(mFieldName, array{});
-                    ar.insert(rjson::integer{value});
+                    array& ar = mParent.get_or_add(mFieldName, array{});
+                    ar.insert(integer{value});
                 }
                 catch (std::exception&) {
                     std::cerr << "Not array? " << mFieldName << ": " << mParent.get_or_empty_array(mFieldName) << '\n';
@@ -185,8 +185,8 @@ namespace rjson
             void push_back(std::string value)
             {
                 try {
-                    rjson::array& ar = mParent.get_or_add(mFieldName, array{});
-                    ar.insert(rjson::string{value});
+                    array& ar = mParent.get_or_add(mFieldName, array{});
+                    ar.insert(string{value});
                 }
                 catch (std::exception&) {
                     std::cerr << "Not array? " << mFieldName << ": " << mParent.get_or_empty_array(mFieldName) << '\n';
@@ -335,9 +335,9 @@ namespace rjson
             }
         }
 
-        template <> inline value to_value<Color>(const Color& aColor) { return rjson::string{aColor.to_string()}; }
+        template <> inline value to_value<Color>(const Color& aColor) { return string{aColor.to_string()}; }
 
-        template <> inline value to_value<Color>(Color&& aColor) { return rjson::string{aColor.to_string()}; }
+        template <> inline value to_value<Color>(Color&& aColor) { return string{aColor.to_string()}; }
 
         template <> inline value& field_get_set<Color>::get_or_add() { return mParent.get_or_add(mFieldName, mDefault); }
 
@@ -454,7 +454,7 @@ namespace rjson
             try {
                 const auto& ar = get_value_ref();
                 std::vector<std::string> result{ar.size()};
-                std::transform(ar.begin(), ar.end(), result.begin(), [](const rjson::value& elt) -> std::string { return std::get<rjson::string>(elt).str(); });
+                std::transform(ar.begin(), ar.end(), result.begin(), [](const value& elt) -> std::string { return std::get<string>(elt).str(); });
                 return result;
             }
             catch (std::exception&) {
@@ -485,7 +485,7 @@ namespace rjson
         template <> inline field_get_set<std::map<std::string, std::string>>::operator std::map<std::string, std::string>() const
         {
             try {
-                const rjson::object& obj = get_value_ref();
+                const object& obj = get_value_ref();
                 std::map<std::string, std::string> result;
                 for (const auto& [key, val] : obj)
                     result.emplace(key, val.str());
@@ -501,7 +501,7 @@ namespace rjson
         {
             object obj;
             for (const auto& [key, val] : aData)
-                obj[key] = rjson::string(val);
+                obj[key] = string(val);
             return obj;
         }
 
@@ -536,7 +536,7 @@ namespace rjson
 
 // ----------------------------------------------------------------------
 
-template <typename FValue> inline std::ostream& operator<<(std::ostream& out, const rjson::field_get_set<FValue>& aValue)
+template <typename FValue> inline std::ostream& operator<<(std::ostream& out, const rjson::v1::field_get_set<FValue>& aValue)
 {
     return out << static_cast<FValue>(aValue);
 }

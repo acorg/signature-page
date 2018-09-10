@@ -15,32 +15,32 @@ class HzSections;
 
 // ----------------------------------------------------------------------
 
-class AAAtPosSection : public rjson::array_field_container_child_element
+class AAAtPosSection : public rjson::v1::array_field_container_child_element
 {
  public:
-    AAAtPosSection(const rjson::value& aData);
+    AAAtPosSection(const rjson::v1::value& aData);
 
-    rjson::field_get_set<size_t> pos;
-    rjson::field_get_set<std::string> aa;
-    rjson::field_get_set<size_t> num;
-    rjson::field_get_set<std::string> first;
-    rjson::field_get_set<std::string> last;
+    rjson::v1::field_get_set<size_t> pos;
+    rjson::v1::field_get_set<std::string> aa;
+    rjson::v1::field_get_set<size_t> num;
+    rjson::v1::field_get_set<std::string> first;
+    rjson::v1::field_get_set<std::string> last;
 };
 
-class AAAtPosDrawSettings : public rjson::field_container_child
+class AAAtPosDrawSettings : public rjson::v1::field_container_child
 {
  public:
-    AAAtPosDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName);
+    AAAtPosDrawSettings(rjson::v1::field_container_parent& aParent, std::string aFieldName);
 
-    rjson::field_get_set<double> width;
-    rjson::field_get_set<double> right_margin;
-    rjson::field_get_set<double> line_width;
-    rjson::field_get_set<double> line_length;         // fraction of the surface width
-    rjson::field_get_set<size_t> diverse_index_threshold;
-    rjson::array_field_container_child<size_t> positions;
-    rjson::field_get_set<bool> report_most_diverse_positions;
-    rjson::field_get_set<size_t> small_section_threshold; // remove sections having this or fewer number of sequences
-    rjson::array_field_container_child<AAAtPosSection> sections;
+    rjson::v1::field_get_set<double> width;
+    rjson::v1::field_get_set<double> right_margin;
+    rjson::v1::field_get_set<double> line_width;
+    rjson::v1::field_get_set<double> line_length;         // fraction of the surface width
+    rjson::v1::field_get_set<size_t> diverse_index_threshold;
+    rjson::v1::array_field_container_child<size_t> positions;
+    rjson::v1::field_get_set<bool> report_most_diverse_positions;
+    rjson::v1::field_get_set<size_t> small_section_threshold; // remove sections having this or fewer number of sequences
+    rjson::v1::array_field_container_child<AAAtPosSection> sections;
 
 }; // class AAAtPosDrawSettings
 
