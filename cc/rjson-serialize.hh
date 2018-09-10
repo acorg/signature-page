@@ -11,7 +11,7 @@
 
 namespace rjson
 {
-    inline namespace v1
+    namespace v1
     {
         using Size = acmacs::Size;
         using TextStyle = acmacs::TextStyle;

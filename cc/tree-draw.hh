@@ -174,7 +174,7 @@ class TreeDrawMods : public rjson::v1::array_field_container_child<TreeDrawMod>
 // serializing Tree::LadderizeMethod from tree.hh
 namespace rjson
 {
-    inline namespace v1
+    namespace v1
     {
         template <> struct content_type<Tree::LadderizeMethod>
         {
