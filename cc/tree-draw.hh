@@ -193,7 +193,7 @@ namespace rjson
                     throw std::exception{}; // std::runtime_error("Unrecognized ladderize method: " + method_s);
             }
             catch (std::exception& /*err*/) {
-                std::cerr << "ERROR: cannot convert json to Tree::LadderizeMethod: " << get_value_ref() << '\n';
+                std::cerr << "ERROR: cannot convert json to Tree::LadderizeMethod: " << get_value_ref().to_json() << '\n';
                 return {};
             }
         }

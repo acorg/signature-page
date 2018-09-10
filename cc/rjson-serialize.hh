@@ -165,7 +165,7 @@ namespace rjson
                     return Element{*ar.rbegin()};
                 }
                 catch (std::exception&) {
-                    std::cerr << "Not array? " << mFieldName << ": " << mParent.get_or_empty_array(mFieldName) << '\n';
+                    std::cerr << "Not array? " << mFieldName << ": " << mParent.get_or_empty_array(mFieldName).to_json() << '\n';
                     throw;
                 }
             }
@@ -177,7 +177,7 @@ namespace rjson
                     ar.insert(integer{value});
                 }
                 catch (std::exception&) {
-                    std::cerr << "Not array? " << mFieldName << ": " << mParent.get_or_empty_array(mFieldName) << '\n';
+                    std::cerr << "Not array? " << mFieldName << ": " << mParent.get_or_empty_array(mFieldName).to_json() << '\n';
                     throw;
                 }
             }
@@ -189,7 +189,7 @@ namespace rjson
                     ar.insert(string{value});
                 }
                 catch (std::exception&) {
-                    std::cerr << "Not array? " << mFieldName << ": " << mParent.get_or_empty_array(mFieldName) << '\n';
+                    std::cerr << "Not array? " << mFieldName << ": " << mParent.get_or_empty_array(mFieldName).to_json() << '\n';
                     throw;
                 }
             }
@@ -261,7 +261,7 @@ namespace rjson
                         return val;
                     }
                     catch (std::bad_variant_access&) {
-                        std::cerr << "ERROR: cannot convert rjson::value to " << typeid(rjson_type<FValue>).name() << " (" << typeid(FValue).name() << "): " << val << '\n';
+                        std::cerr << "ERROR: cannot convert rjson::value to " << typeid(rjson_type<FValue>).name() << " (" << typeid(FValue).name() << "): " << val.to_json() << '\n';
                         throw;
                     }
                 }
@@ -330,7 +330,8 @@ namespace rjson
                 return Color(get_value_ref());
             }
             catch (std::exception&) {
-                std::cerr << "ERROR: cannot convert json to Color: " << get_value_ref() << '\n';
+                const auto& val_ref = get_value_ref();
+                std::cerr << "ERROR: cannot convert json to Color: " << val_ref.to_json() << '\n';
                 throw;
             }
         }
@@ -357,7 +358,7 @@ namespace rjson
                 return {static_cast<double>(ar[0]), static_cast<double>(ar[1])};
             }
             catch (std::exception&) {
-                std::cerr << "ERROR: cannot convert json to Size: " << get_value_ref() << '\n';
+                std::cerr << "ERROR: cannot convert json to Size: " << get_value_ref().to_json() << '\n';
                 throw;
             }
         }
@@ -382,7 +383,7 @@ namespace rjson
                 return {static_cast<double>(ar[0]), static_cast<double>(ar[1])};
             }
             catch (std::exception&) {
-                std::cerr << "ERROR: cannot convert json to acmacs::Offset: " << get_value_ref() << '\n';
+                std::cerr << "ERROR: cannot convert json to acmacs::Offset: " << get_value_ref().to_json() << '\n';
                 throw;
             }
         }
@@ -423,7 +424,7 @@ namespace rjson
                 return style;
             }
             catch (std::exception&) {
-                std::cerr << "ERROR: cannot convert json to TextStyle: " << get_value_ref() << '\n';
+                std::cerr << "ERROR: cannot convert json to TextStyle: " << get_value_ref().to_json() << '\n';
                 throw;
             }
         }
@@ -458,7 +459,7 @@ namespace rjson
                 return result;
             }
             catch (std::exception&) {
-                std::cerr << "ERROR: cannot convert json to std::vector<std::string>: " << get_value_ref() << '\n';
+                std::cerr << "ERROR: cannot convert json to std::vector<std::string>: " << get_value_ref().to_json() << '\n';
                 throw;
             }
         }
@@ -492,7 +493,7 @@ namespace rjson
                 return result;
             }
             catch (std::exception&) {
-                std::cerr << "ERROR: cannot convert json to std::vector<std::string>: " << get_value_ref() << '\n';
+                std::cerr << "ERROR: cannot convert json to std::vector<std::string>: " << get_value_ref().to_json() << '\n';
                 throw;
             }
         }
