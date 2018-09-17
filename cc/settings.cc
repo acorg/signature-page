@@ -14,7 +14,7 @@ static constexpr const char* SETTINGS_VERSION_4 = "signature-page-settings-v4";
 // ----------------------------------------------------------------------
 
 AATransitionIndividualSettings::AATransitionIndividualSettings(const rjson::v1::value& aData)
-    : rjson::v1::array_field_container_child_element(aData),
+    : rjson::array_field_container_child_element(aData),
       label(*this, "label", "", rjson::v1::initialize_field::yes),
       first_leaf_seq_id(*this, "first_leaf_seq_id", ""),
       show(*this, "show", true),
@@ -29,8 +29,8 @@ AATransitionIndividualSettings::AATransitionIndividualSettings(const rjson::v1::
 {
 }
 
-AATransitionPerBranchDrawSettings::AATransitionPerBranchDrawSettings(rjson::v1::field_container_parent& aParent, std::string aFieldName)
-    : rjson::v1::field_container_child(aParent, aFieldName),
+AATransitionPerBranchDrawSettings::AATransitionPerBranchDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
+    : rjson::field_container_child(aParent, aFieldName),
       show(*this, "show", true, rjson::v1::initialize_field::yes),
       size(*this, "size", 8, rjson::v1::initialize_field::yes),
       color(*this, "color", "black", rjson::v1::initialize_field::yes),
@@ -51,8 +51,8 @@ void AATransitionPerBranchDrawSettings::remove_for_signature_page_settings()
         remove_child(name);
 }
 
-AATransitionDrawSettings::AATransitionDrawSettings(rjson::v1::field_container_parent& aParent, std::string aFieldName)
-    : rjson::v1::field_container_child(aParent, aFieldName),
+AATransitionDrawSettings::AATransitionDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
+    : rjson::field_container_child(aParent, aFieldName),
       show(*this, "show", true, rjson::v1::initialize_field::yes),
       number_strains_threshold(*this, "number_strains_threshold", 20, rjson::v1::initialize_field::yes),
       number_strains_threshold_help(*this, "number_strains_threshold?", "do not show aa transition label if number_strains (leaf nodes) for the branch is less than this value", rjson::v1::initialize_field::yes),
@@ -72,7 +72,7 @@ void AATransitionDrawSettings::remove_for_signature_page_settings()
 }
 
 TreeDrawVaccineSettings::TreeDrawVaccineSettings(const rjson::v1::value& aData)
-    : rjson::v1::array_field_container_child_element(aData),
+    : rjson::array_field_container_child_element(aData),
       name(*this, "name", "", rjson::v1::initialize_field::yes),
       name_help(*this, "name?", "empty for default settings", rjson::v1::initialize_field::yes),
       label_color(*this, "label_color", "black", rjson::v1::initialize_field::yes),
@@ -83,8 +83,8 @@ TreeDrawVaccineSettings::TreeDrawVaccineSettings(const rjson::v1::value& aData)
 {
 }
 
-LegendSettings::LegendSettings(rjson::v1::field_container_parent& aParent, std::string aFieldName)
-    : rjson::v1::field_container_child(aParent, aFieldName),
+LegendSettings::LegendSettings(rjson::field_container_parent& aParent, std::string aFieldName)
+    : rjson::field_container_child(aParent, aFieldName),
       offset(*this, "offset", {-30, 950}, rjson::v1::initialize_field::yes),
       width(*this, "width", 100, rjson::v1::initialize_field::yes),
       title_style(*this, "title_style", {"sans_serif"}, rjson::v1::initialize_field::yes),
@@ -95,8 +95,8 @@ LegendSettings::LegendSettings(rjson::v1::field_container_parent& aParent, std::
 {
 }
 
-TimeSeriesDrawSettings::TimeSeriesDrawSettings(rjson::v1::field_container_parent& aParent, std::string aFieldName)
-    : rjson::v1::field_container_child(aParent, aFieldName),
+TimeSeriesDrawSettings::TimeSeriesDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
+    : rjson::field_container_child(aParent, aFieldName),
       begin(*this, "begin", ""),
       end(*this, "end", ""),
       label_size(*this, "label_size", 8, rjson::v1::initialize_field::yes),
@@ -110,7 +110,7 @@ TimeSeriesDrawSettings::TimeSeriesDrawSettings(rjson::v1::field_container_parent
 }
 
 CladeDrawSettings::CladeDrawSettings(const rjson::v1::value& aData, std::string aName, bool aShow)
-    : rjson::v1::array_field_container_child_element(aData),
+    : rjson::array_field_container_child_element(aData),
       name(*this, "name", aName, rjson::v1::initialize_field::yes),
       display_name(*this, "display_name", "", rjson::v1::initialize_field::yes),
       show(*this, "show", aShow, rjson::v1::initialize_field::yes),
@@ -132,8 +132,8 @@ CladeDrawSettings::CladeDrawSettings(const rjson::v1::value& aData, std::string 
 {
 }
 
-CladesDrawSettings::CladesDrawSettings(rjson::v1::field_container_parent& aParent, std::string aFieldName)
-    : rjson::v1::field_container_child(aParent, aFieldName),
+CladesDrawSettings::CladesDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
+    : rjson::field_container_child(aParent, aFieldName),
       clades(*this, "clades"),
       slot_width(*this, "slot_width", 10, rjson::v1::initialize_field::yes)
 {
@@ -161,7 +161,7 @@ CladesDrawSettings::CladesDrawSettings(rjson::v1::field_container_parent& aParen
 }
 
 HzSection::HzSection(const rjson::v1::value& aData)
-    : rjson::v1::array_field_container_child_element(aData),
+    : rjson::array_field_container_child_element(aData),
       show(*this, "show", true, rjson::v1::initialize_field::yes),
       show_line(*this, "show_line", true, rjson::v1::initialize_field::yes),
       show_label_in_time_series(*this, "show_label_in_time_series", true, rjson::v1::initialize_field::yes),
@@ -176,8 +176,8 @@ HzSection::HzSection(const rjson::v1::value& aData)
 {
 }
 
-HzSections::HzSections(rjson::v1::field_container_parent& aParent, std::string aFieldName)
-    : rjson::v1::field_container_child(aParent, aFieldName),
+HzSections::HzSections(rjson::field_container_parent& aParent, std::string aFieldName)
+    : rjson::field_container_child(aParent, aFieldName),
       vertical_gap(*this, "vertical_gap", 20, rjson::v1::initialize_field::yes),
       line_color(*this, "line_color", "grey63", rjson::v1::initialize_field::yes),
       line_width(*this, "line_width", 1, rjson::v1::initialize_field::yes),
@@ -189,8 +189,8 @@ HzSections::HzSections(rjson::v1::field_container_parent& aParent, std::string a
 {
 }
 
-MappedAntigensDrawSettings::MappedAntigensDrawSettings(rjson::v1::field_container_parent& aParent, std::string aFieldName)
-    : rjson::v1::field_container_child(aParent, aFieldName),
+MappedAntigensDrawSettings::MappedAntigensDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
+    : rjson::field_container_child(aParent, aFieldName),
       width(*this, "width", 10, rjson::v1::initialize_field::yes),
       line_width(*this, "line_width", 0.5, rjson::v1::initialize_field::yes),
       line_color(*this, "line_color", "grey56", rjson::v1::initialize_field::yes),
@@ -199,7 +199,7 @@ MappedAntigensDrawSettings::MappedAntigensDrawSettings(rjson::v1::field_containe
 }
 
 AAAtPosSection::AAAtPosSection(const rjson::v1::value& aData)
-    : rjson::v1::array_field_container_child_element(aData),
+    : rjson::array_field_container_child_element(aData),
       pos(*this, "_pos", 0),
       aa(*this, "aa", ""),
       num(*this, "num", 0),
@@ -208,8 +208,8 @@ AAAtPosSection::AAAtPosSection(const rjson::v1::value& aData)
 {
 } // AAAtPosSection::AAAtPosSection
 
-AAAtPosDrawSettings::AAAtPosDrawSettings(rjson::v1::field_container_parent& aParent, std::string aFieldName)
-    : rjson::v1::field_container_child(aParent, aFieldName),
+AAAtPosDrawSettings::AAAtPosDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
+    : rjson::field_container_child(aParent, aFieldName),
       width(*this, "width", 0, rjson::v1::initialize_field::yes),
       right_margin(*this, "right_margin", 0, rjson::v1::initialize_field::yes),
       line_width(*this, "line_width", 0.15, rjson::v1::initialize_field::yes),
@@ -224,8 +224,8 @@ AAAtPosDrawSettings::AAAtPosDrawSettings(rjson::v1::field_container_parent& aPar
 
 // ----------------------------------------------------------------------
 
-AntigenicMapsDrawSettings::AntigenicMapsDrawSettings(rjson::v1::field_container_parent& aParent, std::string aFieldName)
-    : rjson::v1::field_container_child(aParent, aFieldName),
+AntigenicMapsDrawSettings::AntigenicMapsDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
+    : rjson::field_container_child(aParent, aFieldName),
       layout(*this, "layout", "labelled_grid", rjson::v1::initialize_field::yes),
       columns(*this, "columns", 3, rjson::v1::initialize_field::yes),
       gap(*this, "gap", 20, rjson::v1::initialize_field::yes),
@@ -374,8 +374,8 @@ acmacs::Viewport AntigenicMapMod::get_viewport(const acmacs::Viewport& aOrigView
 
 // ----------------------------------------------------------------------
 
-TreeDrawSettings::TreeDrawSettings(rjson::v1::field_container_parent& aParent, std::string aFieldName)
-    : rjson::v1::field_container_child(aParent, aFieldName),
+TreeDrawSettings::TreeDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
+    : rjson::field_container_child(aParent, aFieldName),
       ladderize(*this, "ladderize", Tree::LadderizeMethod::NumberOfLeaves),
       ladderize_help(*this, "ladderize?", "number-of-leaves or max-edge-length"),
       mods(*this, "mods"),
@@ -412,8 +412,8 @@ void TreeDrawSettings::remove_for_signature_page_settings()
 
 // ----------------------------------------------------------------------
 
-TitleDrawSettings::TitleDrawSettings(rjson::v1::field_container_parent& aParent, std::string aFieldName)
-    : rjson::v1::field_container_child(aParent, aFieldName),
+TitleDrawSettings::TitleDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
+    : rjson::field_container_child(aParent, aFieldName),
       title(*this, "title", ""),
       color(*this, "color", "black", rjson::v1::initialize_field::yes),
       size(*this, "size", 12, rjson::v1::initialize_field::yes),
@@ -424,8 +424,8 @@ TitleDrawSettings::TitleDrawSettings(rjson::v1::field_container_parent& aParent,
 
 // ----------------------------------------------------------------------
 
-SignaturePageDrawSettings::SignaturePageDrawSettings(rjson::v1::field_container_parent& aParent, std::string aFieldName)
-    : rjson::v1::field_container_child(aParent, aFieldName),
+SignaturePageDrawSettings::SignaturePageDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
+    : rjson::field_container_child(aParent, aFieldName),
       layout(*this, "layout", "auto", rjson::v1::initialize_field::yes),
       top(*this, "top", 60, rjson::v1::initialize_field::yes),
       bottom(*this, "bottom", 60, rjson::v1::initialize_field::yes),

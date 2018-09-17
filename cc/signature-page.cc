@@ -371,9 +371,9 @@ void SignaturePageDraw::draw_mods()
     try {
         for (const auto& mod: mSettings->get_or_empty_array("mods")) {
             if (mod.exists("N")) {
-                const auto mod_n = mod["N"].strv();
+                const std::string_view mod_n = mod["N"];
                 if (mod_n == "text") {
-                    const auto text = mod["text"].str();
+                    const std::string text = mod["text"];
                     acmacs::Offset offset;
                     try { const auto& settings_offset = mod["offset"]; offset = acmacs::Offset{settings_offset[0], settings_offset[1]}; } catch (rjson::v1::field_not_found&) {}
                     Color color{BLACK};
@@ -381,9 +381,9 @@ void SignaturePageDraw::draw_mods()
                     Pixels size{14};
                     try { size = mod["size"]; } catch (rjson::v1::field_not_found&) {}
                     acmacs::TextStyle style;
-                    try { style.font_family = mod["family"].str(); } catch (rjson::v1::field_not_found&) {}
-                    try { style.slant = mod["slant"].str(); } catch (rjson::v1::field_not_found&) {}
-                    try { style.weight = mod["weight"].str(); } catch (rjson::v1::field_not_found&) {}
+                    rjson::assign_if_not_null(mod["family"], style.font_family);
+                    rjson::assign_if_not_null(mod["slant"], style.slant);
+                    rjson::assign_if_not_null(mod["weight"], style.weight);
                     mSurface->text(offset, text, color, size, style);
                 }
                 else {

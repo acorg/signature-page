@@ -82,7 +82,7 @@ class AntigenicMapsLayoutDrawAce : public AntigenicMapsLayoutDraw
     void mark_vaccines(const AntigenicMapMod& mod);
     void mark_antigens(const AntigenicMapMod& mod);
     void mark_antigens_old(const AntigenicMapMod& mod);
-    void add_label(std::shared_ptr<VaccineMatcherLabel> label, const rjson::v1::object& data);
+    void add_label(std::shared_ptr<VaccineMatcherLabel> label, const rjson::value& data);
 
 }; // class AntigenicMapsLayoutDrawAce
 

@@ -20,15 +20,15 @@ class TitleDraw;
 
 // ----------------------------------------------------------------------
 
-class SignaturePageDrawSettings : public rjson::v1::field_container_child
+class SignaturePageDrawSettings : public rjson::field_container_child
 {
  public:
     enum class Layout { Auto, TreeTSClades, TreeCladesTSMaps, TreeAATSClades };
 
-    SignaturePageDrawSettings(rjson::v1::field_container_parent& aParent, std::string aFieldName);
+    SignaturePageDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName);
 
-    rjson::v1::field_get_set<std::string> layout;
-    rjson::v1::field_get_set<double>
+    rjson::field_get_set<std::string> layout;
+    rjson::field_get_set<double>
         top,
         bottom,
         left,
@@ -38,11 +38,11 @@ class SignaturePageDrawSettings : public rjson::v1::field_container_child
         time_series_width,
         clades_width,
         antigenic_maps_width;
-    rjson::v1::field_get_set<bool> _force_pp; // hidden field to force pretty printing this rjson object
+    rjson::field_get_set<bool> _force_pp; // hidden field to force pretty printing this rjson object
 
     Layout get_layout() const
         {
-            const auto layout_s = layout.get_value_ref().strv();
+            const std::string_view layout_s = layout.get_value_ref();
             if (layout_s == "auto")
                 return Layout::Auto;
             else if (layout_s == "tree-ts-clades")

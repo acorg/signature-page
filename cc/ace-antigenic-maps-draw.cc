@@ -279,7 +279,7 @@ void AntigenicMapsLayoutDrawAce::mark_vaccines(const AntigenicMapMod& vaccine_mo
             VaccineMatcher matcher(vaccs, VaccineMatchData{}.name(name).type(type).passage(passage));
               // std::cerr << matcher.report(2) << '\n';
             for (const auto& [item_key, item_value]: mod) {
-                const auto field_name = item_key.strv();
+                const std::string_view field_name = item_key;
                 if (field_name == "size")
                     matcher.size(item_value);
                 else if (field_name == "fill")
@@ -338,7 +338,7 @@ void AntigenicMapsLayoutDrawAce::mark_antigens_old(const AntigenicMapMod& mod)
         antigen_style.outline_width = Pixels{mod.get_or_default("outline_width", 0.5)};
         chart_draw().modify(index, antigen_style, mod.get_or_default("raise_", true) ? PointDrawingOrder::Raise : PointDrawingOrder::NoChange);
         try {
-            const rjson::v1::object& label_data = mod["label"];
+            const rjson::value& label_data = mod["label"];
             auto& label = chart_draw().add_label(index);
             label.size(label_data.get_or_default("size", 9.0));
             try {
@@ -368,22 +368,22 @@ void AntigenicMapsLayoutDrawAce::mark_antigens_old(const AntigenicMapMod& mod)
 
 // ----------------------------------------------------------------------
 
-void AntigenicMapsLayoutDrawAce::add_label(std::shared_ptr<VaccineMatcherLabel> label, const rjson::v1::object& data)
+void AntigenicMapsLayoutDrawAce::add_label(std::shared_ptr<VaccineMatcherLabel> label, const rjson::value& data)
 {
     for (const auto& [item_key, item_value]: data) {
-        const auto field_name = item_key.strv();
+        const std::string_view field_name = item_key;
         if (field_name == "size")
             label->size(item_value);
         else if (field_name == "color")
             label->color(Color(item_value));
         else if (field_name == "font_family")
-            label->font_family(item_value.str());
+            label->font_family(item_value);
         else if (field_name == "name_type")
-            label->name_type(item_value.str());
+            label->name_type(item_value);
         else if (field_name == "slant")
-            label->slant(item_value.str());
+            label->slant(item_value);
         else if (field_name == "weight")
-            label->weight(item_value.str());
+            label->weight(item_value);
         else if (field_name == "offset") {
             const rjson::v1::array& offset = item_value;
             label->offset({offset[0], offset[1]});

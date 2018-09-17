@@ -213,28 +213,19 @@ AntigenicMapsDrawBase* make_antigenic_maps_draw(std::string aChartFilename, acma
 
 // ----------------------------------------------------------------------
 
-class AntigenicMapMod : public rjson::v1::array_field_container_child_element
+class AntigenicMapMod : public rjson::array_field_container_child_element
 {
  public:
-    inline AntigenicMapMod(const rjson::v1::value& aData) : rjson::v1::array_field_container_child_element(aData) {}
+    inline AntigenicMapMod(const rjson::value& aData) : rjson::array_field_container_child_element(aData) {}
 
     template <typename Result> inline Result get_or_default(std::string aName, Result&& aDefault) const
         {
-            static_assert(!std::is_same_v<Result, rjson::v1::object> && !std::is_same_v<Result, rjson::v1::array>, "get_or_default returns a copy, not a reference, use get_or_empty_object or get_or_empty_array");
-            try {
-                if constexpr (std::is_same_v<Result, std::string>)
-                    return operator[](aName).str();
-                else
-                    return operator[](aName);
-            }
-            catch (rjson::v1::field_not_found&) {
-                return aDefault;
-            }
+            return rjson::get_or(operator[](aName), std::forward<Result>(aDefault));
         }
 
     inline std::string get_or_default(std::string aName, const char* aDefault) const
         {
-            return get_or_default<std::string>(aName, aDefault);
+            return rjson::get_or(operator[](aName), aDefault);
         }
 
     //$ inline std::string name() const { return get("N", rjson::v1::string{}); }
@@ -252,52 +243,39 @@ class AntigenicMapMod : public rjson::v1::array_field_container_child_element
 
     inline std::string name() const { return get_or_default("N", std::string{}); }
 
-    inline const rjson::v1::array& mods() const
+    inline const rjson::value& mods() const
         {
-            try {
-                return operator[]("mods");
-            }
-            catch (rjson::v1::field_not_found&) {
-                return rjson::v1::sEmptyArray;
-            }
+            return get_or_empty_array("mods");
         }
 
     inline Color get_color(std::string aName, Color&& aDefault) const
         {
-            try {
-                return Color(operator[](aName));
-            }
-            catch (rjson::v1::field_not_found&) {
-                return aDefault;
-            }
+            return rjson::get_or(operator[](aName), aDefault);
         }
 
     inline acmacs::Offset offset() const
         {
-            try {
-                const rjson::v1::array& ar = operator[]("offset");
+            if (const rjson::value& ar = operator[]("offset"); !ar.is_null())
                 return {ar[0], ar[1]};
-            }
-            catch (rjson::v1::field_not_found&) {
+            else
                 return {};
-            }
         }
 
     acmacs::Viewport get_viewport(const acmacs::Viewport& aOrigViewport) const; // settings.cc
 
 }; // class AntigenicMapMod
 
-class AntigenicMapsDrawSettings : public rjson::v1::field_container_child
+class AntigenicMapsDrawSettings : public rjson::field_container_child
 {
  public:
-    AntigenicMapsDrawSettings(rjson::v1::field_container_parent& aParent, std::string aFieldName);
+    AntigenicMapsDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName);
 
-    rjson::v1::field_get_set<std::string> layout;
-    rjson::v1::field_get_set<size_t> columns;
-    rjson::v1::field_get_set<double> gap;
-    rjson::v1::field_get_set<Color> mapped_antigens_section_line_color;
-    rjson::v1::field_get_set<double> mapped_antigens_section_line_width;
-    rjson::v1::array_field_container_child<AntigenicMapMod> mods;
+    rjson::field_get_set<std::string> layout;
+    rjson::field_get_set<size_t> columns;
+    rjson::field_get_set<double> gap;
+    rjson::field_get_set<Color> mapped_antigens_section_line_color;
+    rjson::field_get_set<double> mapped_antigens_section_line_width;
+    rjson::array_field_container_child<AntigenicMapMod> mods;
 
     // inline std::vector<AntigenicMapMod>& get_mods() { return mods; }
     void viewport(const acmacs::Viewport& aViewport);

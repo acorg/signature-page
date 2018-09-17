@@ -30,7 +30,7 @@ TreeDraw::~TreeDraw()
 
 void TreeDraw::make_coloring()
 {
-    const auto color_nodes = mSettings.color_nodes.get_value_ref().strv();
+    const std::string_view color_nodes = mSettings.color_nodes.get_value_ref();
     if (color_nodes == "black")
         mColoring = std::unique_ptr<Coloring>(new ColoringBlack());
     else if (color_nodes == "continent")

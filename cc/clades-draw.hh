@@ -16,7 +16,7 @@ class TimeSeriesDraw;
 
 // ----------------------------------------------------------------------
 
-class CladeDrawSettings : public rjson::v1::array_field_container_child_element
+class CladeDrawSettings : public rjson::array_field_container_child_element
 {
  public:
     constexpr static const int NoSlot = -1;
@@ -25,33 +25,33 @@ class CladeDrawSettings : public rjson::v1::array_field_container_child_element
     inline CladeDrawSettings(const CladeDrawSettings&) = default;
     inline CladeDrawSettings(CladeDrawSettings&&) = default;
 
-    rjson::v1::field_get_set<std::string> name;           // empty for default settings
-    rjson::v1::field_get_set<std::string> display_name;
-    rjson::v1::field_get_set<bool> show; // show this clade
-    rjson::v1::field_get_set<size_t> section_inclusion_tolerance; // max number of lines (strains) within section from another clade that do not interrupt the secion
-    rjson::v1::field_get_set<size_t> section_exclusion_tolerance; // max number of lines (strains) to exclude small sections
-    rjson::v1::field_get_set<bool> show_section_size_in_label;
-    rjson::v1::field_get_set<Color> arrow_color;
-    rjson::v1::field_get_set<double> line_width;
-    rjson::v1::field_get_set<double> arrow_width;
-    rjson::v1::field_get_set<Color> separator_color;
-    rjson::v1::field_get_set<double> separator_width;
-    rjson::v1::field_get_set<std::string> label_position; // middle, top, bottom
-    rjson::v1::field_get_set<acmacs::Offset> label_offset;
-    rjson::v1::field_get_set<Color> label_color;
-    rjson::v1::field_get_set<double> label_size;
-    rjson::v1::field_get_set<acmacs::TextStyle> label_style;
-    rjson::v1::field_get_set<double> label_rotation;
-    rjson::v1::field_get_set<int> slot;
+    rjson::field_get_set<std::string> name;           // empty for default settings
+    rjson::field_get_set<std::string> display_name;
+    rjson::field_get_set<bool> show; // show this clade
+    rjson::field_get_set<size_t> section_inclusion_tolerance; // max number of lines (strains) within section from another clade that do not interrupt the secion
+    rjson::field_get_set<size_t> section_exclusion_tolerance; // max number of lines (strains) to exclude small sections
+    rjson::field_get_set<bool> show_section_size_in_label;
+    rjson::field_get_set<Color> arrow_color;
+    rjson::field_get_set<double> line_width;
+    rjson::field_get_set<double> arrow_width;
+    rjson::field_get_set<Color> separator_color;
+    rjson::field_get_set<double> separator_width;
+    rjson::field_get_set<std::string> label_position; // middle, top, bottom
+    rjson::field_get_set<acmacs::Offset> label_offset;
+    rjson::field_get_set<Color> label_color;
+    rjson::field_get_set<double> label_size;
+    rjson::field_get_set<acmacs::TextStyle> label_style;
+    rjson::field_get_set<double> label_rotation;
+    rjson::field_get_set<int> slot;
 
 }; // class CladeDrawSettings
 
 // ----------------------------------------------------------------------
 
-class CladesDrawSettings : public rjson::v1::field_container_child
+class CladesDrawSettings : public rjson::field_container_child
 {
  public:
-    CladesDrawSettings(rjson::v1::field_container_parent& aParent, std::string aFieldName);
+    CladesDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName);
 
     inline const CladeDrawSettings for_clade(std::string name) const
         {
@@ -66,8 +66,8 @@ class CladesDrawSettings : public rjson::v1::field_container_child
             return *p;
         }
 
-    rjson::v1::array_field_container_child<CladeDrawSettings> clades;
-    rjson::v1::field_get_set<double> slot_width;
+    rjson::array_field_container_child<CladeDrawSettings> clades;
+    rjson::field_get_set<double> slot_width;
 
       // for json importer
     // inline std::vector<CladeDrawSettings>& get_clades() { return clades; }

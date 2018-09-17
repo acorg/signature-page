@@ -5,18 +5,18 @@
 
 // ----------------------------------------------------------------------
 
-class LegendSettings : public rjson::v1::field_container_child
+class LegendSettings : public rjson::field_container_child
 {
  public:
-    LegendSettings(rjson::v1::field_container_parent& aParent, std::string aFieldName);
+    LegendSettings(rjson::field_container_parent& aParent, std::string aFieldName);
 
-    rjson::v1::field_get_set<acmacs::Offset> offset;  // in enclosing surface
-    rjson::v1::field_get_set<double> width; // in enclosing surface scale
-    rjson::v1::field_get_set<acmacs::TextStyle> title_style;
-    rjson::v1::field_get_set<double> title_size;
-    rjson::v1::field_get_set<acmacs::TextStyle> text_style;
-    rjson::v1::field_get_set<double> text_size;
-    rjson::v1::field_get_set<double> interline;
+    rjson::field_get_set<acmacs::Offset> offset;  // in enclosing surface
+    rjson::field_get_set<double> width; // in enclosing surface scale
+    rjson::field_get_set<acmacs::TextStyle> title_style;
+    rjson::field_get_set<double> title_size;
+    rjson::field_get_set<acmacs::TextStyle> text_style;
+    rjson::field_get_set<double> text_size;
+    rjson::field_get_set<double> interline;
 
 }; // class LegendSettings
 
