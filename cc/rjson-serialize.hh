@@ -1,6 +1,7 @@
 #pragma once
 
 #include <typeinfo>
+#include <optional>
 
 #include "acmacs-base/rjson.hh"
 
@@ -18,7 +19,9 @@ namespace rjson
 
         class field_container_parent
         {
-          public:
+         public:
+            field_container_parent() = default;
+            field_container_parent(const field_container_parent&) = default;
             virtual ~field_container_parent() = default;
 
             virtual const value& operator[](std::string aFieldName) const = 0;
@@ -182,6 +185,19 @@ namespace rjson
 
             std::string to_json() const { return rjson::to_string(get_array()); }
 
+            template <typename Func> std::optional<Element> find_if(Func&& func) const
+                {
+                    if (const value& found = rjson::find_if(get_array(), std::forward<Func>(func)); !found.is_null())
+                        return Element{found};
+                    else
+                        return {};
+                }
+
+            template <typename Func> void for_each(Func&& func) const
+                {
+                    rjson::for_each(get_array(), std::forward<Func>(func));
+                }
+
           private:
             field_container_parent& mParent;
             std::string mFieldName;
@@ -221,7 +237,8 @@ namespace rjson
 
         template <typename FValue> class field_get_set
         {
-          public:
+         public:
+            field_get_set(const field_get_set&) = default;
             field_get_set(field_container_parent& aParent, std::string aFieldName, FValue&& aDefault, initialize_field aInitialize = initialize_field::no);
             field_get_set(field_container_parent& aParent, std::string aFieldName, const FValue& aDefault, initialize_field aInitialize = initialize_field::no);
 
@@ -335,8 +352,8 @@ namespace rjson
                 const auto& obj = get_value_ref();
                 TextStyle style;
                 assign_if_not_null(obj["family"], style.font_family);
-                assign_if_not_null(obj["slant"], style.slant);
-                assign_if_not_null(obj["weight"], style.weight);
+                assign_if_not_null(obj["slant"], style.slant, [](const value& val) { return acmacs::FontSlant{val}; });
+                assign_if_not_null(obj["weight"], style.weight, [](const value& val) { return acmacs::FontWeight{val}; });
                 return style;
             }
             catch (std::exception&) {

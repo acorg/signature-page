@@ -12,7 +12,7 @@
 
 // ----------------------------------------------------------------------
 
-class Settings : public rjson::v1::field_container_toplevel
+class Settings : public rjson::field_container_toplevel
 {
  public:
     Settings();

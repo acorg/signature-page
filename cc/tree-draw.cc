@@ -933,7 +933,7 @@ const AATransitionIndividualSettings& AATransitionPerBranchDrawSettings::setting
 #ifdef __clang__
 #pragma GCC diagnostic ignored "-Wexit-time-destructors"
 #endif
-    static rjson::v1::value settings{rjson::v1::object{}};
+    static rjson::value settings{rjson::object{}};
     static AATransitionIndividualSettings result{settings};
 #pragma GCC diagnostic pop
 
@@ -951,13 +951,9 @@ const AATransitionIndividualSettings& AATransitionPerBranchDrawSettings::setting
         std::random_device rand;
         constexpr const auto rand_size = static_cast<double>(rand.max() - rand.min());
         acmacs::Location2D old_label_offset;
-        try {
-            const rjson::v1::array& ar = settings["label_offset"];
+        if (const auto& ar = settings["label_offset"]; !ar.is_null())
             old_label_offset = acmacs::Location2D{ar[0], ar[1]};
-        }
-        catch (rjson::v1::field_not_found&) {
-        }
-        settings.set_field("label_offset", rjson::v1::array{static_cast<double>(rand()) * scatter_label_offset * 2 / rand_size - scatter_label_offset + old_label_offset.x(),
+        settings.set_field("label_offset", rjson::array{static_cast<double>(rand()) * scatter_label_offset * 2 / rand_size - scatter_label_offset + old_label_offset.x(),
                                                         static_cast<double>(rand()) * scatter_label_offset * 2 / rand_size - scatter_label_offset + old_label_offset.y()});
     }
     return result;

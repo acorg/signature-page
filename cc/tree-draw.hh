@@ -22,13 +22,13 @@ class Coloring;
 class AATransitionIndividualSettings : public rjson::array_field_container_child_element
 {
  public:
-    AATransitionIndividualSettings(const rjson::v1::value& aData);
+    AATransitionIndividualSettings(const rjson::value& aData);
 
     inline void set_label_disabled_offset(std::string aLabel, std::string aFirstLeafSeqid, acmacs::Offset&& aLabelOffset)
         {
             label = aLabel;
             first_leaf_seq_id = aFirstLeafSeqid;
-            add("?label_offset", std::move(aLabelOffset));
+            add("?label_offset", rjson::to_value(std::move(aLabelOffset)));
         }
 
     rjson::field_get_set<std::string> label;
@@ -41,7 +41,6 @@ class AATransitionIndividualSettings : public rjson::array_field_container_child
     rjson::field_get_set<acmacs::Offset> label_offset;
     rjson::field_get_set<double> label_connection_line_width;
     rjson::field_get_set<Color> label_connection_line_color;
-    rjson::field_get_set<bool> _no_pp; // hidden field to avoid pretty printing this rjson object
 
 }; // class AATransitionIndividualSettings
 
@@ -95,7 +94,7 @@ class AATransitionDrawSettings : public rjson::field_container_child
 class TreeDrawVaccineSettings : public rjson::array_field_container_child_element
 {
  public:
-    TreeDrawVaccineSettings(const rjson::v1::value& aData);
+    TreeDrawVaccineSettings(const rjson::value& aData);
 
     rjson::field_get_set<std::string> name;           // empty for default settings
     rjson::field_get_set<std::string> name_help;
@@ -118,7 +117,7 @@ class TreeDrawVaccines : public rjson::array_field_container_child<TreeDrawVacci
 class TreeDrawMod : public rjson::array_field_container_child_element
 {
  public:
-    inline TreeDrawMod(const rjson::v1::value& aData)
+    inline TreeDrawMod(const rjson::value& aData)
         : rjson::array_field_container_child_element(aData),
           mod(*this, "mod", std::string{}),
           d1(*this,  "d1", -1.0),
@@ -159,12 +158,11 @@ class TreeDrawMods : public rjson::array_field_container_child<TreeDrawMod>
  public:
     using rjson::array_field_container_child<TreeDrawMod>::array_field_container_child;
 
-    inline const TreeDrawMod find_mark_with_label(std::string aSeqId) const // not reference returned, TreeDrawMod is a proxy
+    const TreeDrawMod find_mark_with_label(std::string aSeqId) const // not reference returned, TreeDrawMod is a proxy
         {
-            auto p = std::find_if(begin(), end(), [&](const auto& e) { return e.mod == "mark-with-label" && e.seq_id == aSeqId; });
-            if (p == end())
-                throw std::runtime_error("Invalid tree.mods settings: cannot find mark-with-label for " + aSeqId);
-            return *p;
+            if (auto found = find_if([&](const rjson::value& val) { return static_cast<std::string_view>(val["mod"]) == "mark-with-label" && static_cast<std::string_view>(val["seq_id"]) == aSeqId; }); found)
+                return *found;
+            throw std::runtime_error("Invalid tree.mods settings: cannot find mark-with-label for " + aSeqId);
         }
 
 }; // class TreeDrawMods
@@ -174,13 +172,8 @@ class TreeDrawMods : public rjson::array_field_container_child<TreeDrawMod>
 // serializing Tree::LadderizeMethod from tree.hh
 namespace rjson
 {
-    namespace v1
+    inline namespace v2
     {
-        template <> struct content_type<Tree::LadderizeMethod>
-        {
-            using type = string;
-        };
-
         template <> inline field_get_set<Tree::LadderizeMethod>::operator Tree::LadderizeMethod() const
         {
             try {
@@ -193,28 +186,28 @@ namespace rjson
                     throw std::exception{}; // std::runtime_error("Unrecognized ladderize method: " + method_s);
             }
             catch (std::exception& /*err*/) {
-                std::cerr << "ERROR: cannot convert json to Tree::LadderizeMethod: " << get_value_ref().to_json() << '\n';
+                std::cerr << "ERROR: cannot convert json to Tree::LadderizeMethod: " << rjson::to_string(get_value_ref()) << '\n';
                 return {};
             }
         }
 
-        template <> inline value to_value<Tree::LadderizeMethod>(const Tree::LadderizeMethod& aLadderizeMethod)
+        template <> inline value to_value(const Tree::LadderizeMethod& aLadderizeMethod)
         {
             switch (aLadderizeMethod) {
                 case Tree::LadderizeMethod::NumberOfLeaves:
-                    return string{"number-of-leaves"};
+                    return "number-of-leaves";
                 case Tree::LadderizeMethod::MaxEdgeLength:
-                    return string{"max-edge-length"};
+                    return "max-edge-length";
             }
-            return string{"number-of-leaves"};
+            return "number-of-leaves";
         }
 
-        template <> inline value to_value<Tree::LadderizeMethod>(Tree::LadderizeMethod&& aLadderizeMethod)
+        template <> inline value to_value(Tree::LadderizeMethod&& aLadderizeMethod)
         {
-            return to_value<Tree::LadderizeMethod>(const_cast<const Tree::LadderizeMethod&>(aLadderizeMethod));
+            return to_value(const_cast<const Tree::LadderizeMethod&>(aLadderizeMethod));
         }
 
-    } // namespace v1
+    } // namespace v2
 } // namespace rjson
 
 class TreeDrawSettings : public rjson::field_container_child
@@ -247,7 +240,7 @@ class TreeDrawSettings : public rjson::field_container_child
 class HzSection : public rjson::array_field_container_child_element
 {
  public:
-    HzSection(const rjson::v1::value& aData);
+    HzSection(const rjson::value& aData);
     // HzSection(std::string aName = std::string{}, bool aShowLine = true);
     // HzSection(const Node& aFirst, bool aShow, bool aShowLine, bool aShowMap);
       // inline HzSection(const HzSection&) = default;
@@ -309,7 +302,9 @@ class HzSections : public rjson::field_container_child
 
     inline size_t shown_maps() const
         {
-            return std::accumulate(sections.begin(), sections.end(), 0U, [](size_t a, const HzSection& section) -> size_t { return a + (section.show_map ? 1 : 0); });
+            size_t result = 0;
+            sections.for_each([&result](const HzSection& section) { if (section.show_map) ++result; });
+            return result;
         }
 
 };

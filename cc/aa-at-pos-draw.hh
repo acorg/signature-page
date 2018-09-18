@@ -18,7 +18,7 @@ class HzSections;
 class AAAtPosSection : public rjson::array_field_container_child_element
 {
  public:
-    AAAtPosSection(const rjson::v1::value& aData);
+    AAAtPosSection(const rjson::value& aData);
 
     rjson::field_get_set<size_t> pos;
     rjson::field_get_set<std::string> aa;

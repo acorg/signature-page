@@ -38,13 +38,13 @@ class AntigenicMapsDrawBase
     virtual const ChartDrawBase& chart() const = 0;
     virtual void make_layout() = 0;
 
-    inline acmacs::surface::Surface& surface() { return mSurface; }
-    inline const Tree& tree() const { return mTree; }
-    inline const HzSections& hz_sections() const { return mHzSections; }
-    inline SignaturePageDrawSettings& signature_page_settings() { return mSignaturePageDrawSettings; }
-    inline const SignaturePageDrawSettings& signature_page_settings() const { return mSignaturePageDrawSettings; }
-    inline AntigenicMapsDrawSettings& settings() { return mSettings; }
-    inline const AntigenicMapsDrawSettings& settings() const { return mSettings; }
+    acmacs::surface::Surface& surface() { return mSurface; }
+    const Tree& tree() const { return mTree; }
+    const HzSections& hz_sections() const { return mHzSections; }
+    SignaturePageDrawSettings& signature_page_settings() { return mSignaturePageDrawSettings; }
+    const SignaturePageDrawSettings& signature_page_settings() const { return mSignaturePageDrawSettings; }
+    AntigenicMapsDrawSettings& settings() { return mSettings; }
+    const AntigenicMapsDrawSettings& settings() const { return mSettings; }
 
     AntigenicMapsLayout& layout() { return *mLayout; }
       // const AntigenicMapsLayout& layout() const { return *mLayout; }
@@ -216,14 +216,14 @@ AntigenicMapsDrawBase* make_antigenic_maps_draw(std::string aChartFilename, acma
 class AntigenicMapMod : public rjson::array_field_container_child_element
 {
  public:
-    inline AntigenicMapMod(const rjson::value& aData) : rjson::array_field_container_child_element(aData) {}
+    AntigenicMapMod(const rjson::value& aData) : rjson::array_field_container_child_element(aData) {}
 
-    template <typename Result> inline Result get_or_default(std::string aName, Result&& aDefault) const
+    template <typename Result> Result get_or_default(std::string aName, Result&& aDefault) const
         {
             return rjson::get_or(operator[](aName), std::forward<Result>(aDefault));
         }
 
-    inline std::string get_or_default(std::string aName, const char* aDefault) const
+    std::string get_or_default(std::string aName, const char* aDefault) const
         {
             return rjson::get_or(operator[](aName), aDefault);
         }
@@ -241,19 +241,22 @@ class AntigenicMapMod : public rjson::array_field_container_child_element
     //$ inline bool get(std::string aName, bool aDefault) const { return get(aName, rjson::v1::value{rjson::v1::boolean{aDefault}}); }
     //$ inline std::string get(std::string aName, const char* aDefault) const { return get(aName, rjson::v1::value{rjson::v1::string{aDefault}}); }
 
-    inline std::string name() const { return get_or_default("N", std::string{}); }
+    std::string name() const { return get_or_default("N", std::string{}); }
 
-    inline const rjson::value& mods() const
+    const rjson::value& mods() const
         {
             return get_or_empty_array("mods");
         }
 
-    inline Color get_color(std::string aName, Color&& aDefault) const
+    Color get_color(std::string aName, Color&& aDefault) const
         {
-            return rjson::get_or(operator[](aName), aDefault);
+            if (const rjson::value& val = operator[](aName); !val.is_null())
+                return Color(static_cast<std::string_view>(val));
+            else
+                return aDefault;
         }
 
-    inline acmacs::Offset offset() const
+    acmacs::Offset offset() const
         {
             if (const rjson::value& ar = operator[]("offset"); !ar.is_null())
                 return {ar[0], ar[1]};

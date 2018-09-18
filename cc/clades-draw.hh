@@ -21,7 +21,7 @@ class CladeDrawSettings : public rjson::array_field_container_child_element
  public:
     constexpr static const int NoSlot = -1;
 
-    CladeDrawSettings(const rjson::v1::value& aData, std::string aName = std::string{}, bool aShow = true);
+    CladeDrawSettings(const rjson::value& aData, std::string aName = std::string{}, bool aShow = true);
     inline CladeDrawSettings(const CladeDrawSettings&) = default;
     inline CladeDrawSettings(CladeDrawSettings&&) = default;
 
@@ -53,17 +53,14 @@ class CladesDrawSettings : public rjson::field_container_child
  public:
     CladesDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName);
 
-    inline const CladeDrawSettings for_clade(std::string name) const
+    const CladeDrawSettings for_clade(std::string name) const
         {
-            auto p = std::find_if(clades.begin(), clades.end(), [&name](const auto& c) { return static_cast<std::string>(c.name) == name; });
-            if (p == clades.end()) {
-                p = std::find_if(clades.begin(), clades.end(), [](const auto& c) { return c.name.empty(); });
-                if (p == clades.end()) {
-                    std::cerr << "DEBUG: " << clades << DEBUG_LINE_FUNC << '\n';
-                    throw std::runtime_error("ERROR: no clade entry with empty name (for default settings)");
-                }
-            }
-            return *p;
+            if (auto found = clades.find_if([&name](const rjson::value& c) -> bool { return static_cast<std::string_view>(c["name"]) == name; }); found)
+                return *found;
+            if (auto found = clades.find_if([](const rjson::value& c) -> bool { return c["name"].empty(); }); found)
+                return *found;
+            std::cerr << "DEBUG: " << clades << DEBUG_LINE_FUNC << '\n';
+            throw std::runtime_error("ERROR: no clade entry with empty name (for default settings)");
         }
 
     rjson::array_field_container_child<CladeDrawSettings> clades;
