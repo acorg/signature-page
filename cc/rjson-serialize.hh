@@ -193,14 +193,17 @@ namespace rjson
                         return {};
                 }
 
+            template <typename Func> std::optional<size_t> find_index_if(Func&& func) const { return rjson::find_index_if(get_array(), std::forward<Func>(func)); }
+            template <typename Func> std::optional<size_t> find_index_if(Func&& func) { return rjson::find_index_if(get_array(), std::forward<Func>(func)); }
+
             template <typename Func> void for_each(Func&& func) const
                 {
-                    rjson::for_each(get_array(), std::forward<Func>(func));
+                    rjson::for_each(get_array(), [&func](const rjson::value& val) { func(Element(val)); });
                 }
 
             template <typename Func> void for_each(Func&& func)
                 {
-                    rjson::for_each(get_array(), std::forward<Func>(func));
+                    rjson::for_each(get_array(), [&func](rjson::value& val) { Element elt(val); func(elt); });
                 }
 
           private:
@@ -466,6 +469,11 @@ namespace rjson
         {
             if (aInitialize == initialize_field::yes)
                 get_or_add();
+        }
+
+        template <typename FValue> inline std::ostream& operator<<(std::ostream& out, const field_get_set<FValue>& field)
+        {
+            return out << static_cast<FValue>(field);
         }
 
     } // namespace v2

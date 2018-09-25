@@ -163,7 +163,7 @@ void SignaturePageDraw::init_settings()
     if (!mChartFilename.empty() && mSurface->aspect() > 1) { // with maps
         mSettings->tree_draw.legend.width = 100;
         mSettings->hz_sections.vertical_gap = 15;
-        mSettings->clades.clades.for_each([](rjson::value& clade) { clade["label_offset"] = rjson::array{1, 0}; });
+        mSettings->clades.clades.for_each([](auto& clade) { clade.label_offset = acmacs::Offset{1, 0}; });
         if (mAntigenicMapsDraw)
             mAntigenicMapsDraw->init_settings();
     }
