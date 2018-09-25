@@ -149,11 +149,11 @@ namespace rjson
             {
                 try {
                     auto& ar = mParent.get_or_add(mFieldName, array{});
-                    ar.insert(object{});
+                    ar.append(object{});
                     return Element{ar[ar.size() - 1]};
                 }
                 catch (std::exception&) {
-                    std::cerr << "Not array? " << mFieldName << ": " << mParent.get_or_empty_array(mFieldName).to_json() << '\n';
+                    std::cerr << "Not array? " << mFieldName << ": " << rjson::to_string(mParent.get_or_empty_array(mFieldName)) << '\n';
                     throw;
                 }
             }
@@ -164,7 +164,7 @@ namespace rjson
                     mParent.get_or_add(mFieldName, array{}).append(val);
                 }
                 catch (std::exception&) {
-                    std::cerr << "Not array? " << mFieldName << ": " << mParent.get_or_empty_array(mFieldName).to_json() << '\n';
+                    std::cerr << "Not array? " << mFieldName << ": " << rjson::to_string(mParent.get_or_empty_array(mFieldName)) << '\n';
                     throw;
                 }
             }
@@ -175,7 +175,7 @@ namespace rjson
                     mParent.get_or_add(mFieldName, array{}).append(val);
                 }
                 catch (std::exception&) {
-                    std::cerr << "Not array? " << mFieldName << ": " << mParent.get_or_empty_array(mFieldName).to_json() << '\n';
+                    std::cerr << "Not array? " << mFieldName << ": " << rjson::to_string(mParent.get_or_empty_array(mFieldName)) << '\n';
                     throw;
                 }
             }
