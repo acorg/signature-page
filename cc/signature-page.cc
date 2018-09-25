@@ -163,10 +163,7 @@ void SignaturePageDraw::init_settings()
     if (!mChartFilename.empty() && mSurface->aspect() > 1) { // with maps
         mSettings->tree_draw.legend.width = 100;
         mSettings->hz_sections.vertical_gap = 15;
-        for (auto clade: mSettings->clades.clades) {
-            clade.label_offset = acmacs::Offset{1, 0};
-        }
-
+        mSettings->clades.clades.for_each([](rjson::value& clade) { clade["label_offset"] = rjson::array{1, 0}; });
         if (mAntigenicMapsDraw)
             mAntigenicMapsDraw->init_settings();
     }
@@ -369,28 +366,30 @@ void SignaturePageDraw::draw(bool report_antigens_in_hz_sections, bool init_sett
 void SignaturePageDraw::draw_mods()
 {
     try {
-        for (const auto& mod: mSettings->get_or_empty_array("mods")) {
-            if (mod.exists("N")) {
-                const std::string_view mod_n = mod["N"];
+        rjson::for_each(mSettings->get_or_empty_array("mods"), [this](const rjson::value& mod) {
+            if (const auto& mod_n_v = mod["N"]; !mod_n_v.is_null()) {
+                const std::string_view mod_n = mod_n_v;
                 if (mod_n == "text") {
                     const std::string text = mod["text"];
                     acmacs::Offset offset;
-                    try { const auto& settings_offset = mod["offset"]; offset = acmacs::Offset{settings_offset[0], settings_offset[1]}; } catch (rjson::v1::field_not_found&) {}
+                    if (const auto& settings_offset = mod["offset"]; !settings_offset.is_null())
+                        offset = acmacs::Offset{settings_offset[0], settings_offset[1]};
                     Color color{BLACK};
-                    try { color = Color(mod["color"]); } catch (rjson::v1::field_not_found&) {}
+                    if (const auto& color_v = mod["color"]; !color_v.is_null())
+                        color = static_cast<std::string_view>(color_v);
                     Pixels size{14};
-                    try { size = mod["size"]; } catch (rjson::v1::field_not_found&) {}
+                    rjson::assign_if_not_null(mod["size"], size);
                     acmacs::TextStyle style;
                     rjson::assign_if_not_null(mod["family"], style.font_family);
-                    rjson::assign_if_not_null(mod["slant"], style.slant);
-                    rjson::assign_if_not_null(mod["weight"], style.weight);
+                    rjson::assign_if_not_null(mod["slant"], style.slant, [](const rjson::value& val) { return acmacs::FontSlant{val}; });
+                    rjson::assign_if_not_null(mod["weight"], style.weight, [](const rjson::value& val) { return acmacs::FontWeight{val}; });
                     mSurface->text(offset, text, color, size, style);
                 }
                 else {
                     std::cerr << "WARNING: unrecognized mod: " << mod << '\n';
                 }
             }
-        }
+        });
     }
     catch (std::exception& err) {
         std::cerr << "WARNING: cannot draw mods: " << err.what() << '\n';

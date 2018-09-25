@@ -198,6 +198,11 @@ namespace rjson
                     rjson::for_each(get_array(), std::forward<Func>(func));
                 }
 
+            template <typename Func> void for_each(Func&& func)
+                {
+                    rjson::for_each(get_array(), std::forward<Func>(func));
+                }
+
           private:
             field_container_parent& mParent;
             std::string mFieldName;
