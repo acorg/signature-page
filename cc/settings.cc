@@ -245,6 +245,7 @@ AntigenicMapsDrawSettings::AntigenicMapsDrawSettings(rjson::v1::field_container_
     mods.emplace_back().add("N", "tracked_antigens").add("fill", "green3").add("outline", "white").add("outline_width", 0.5).add("size", 5.0);
     mods.emplace_back().add("N", "?tracked_sera").add("fill", "transparent").add("outline", "black").add("outline_width", 0.5).add("size", 5.0); // tracked sera above tracked antigens!
     mods.emplace_back().add("N", "?tracked_serum_circles").add("outline", "black").add("outline_width", 0.5); // tracked serum circles above tracked antigens!
+    mods.emplace_back().add("N", "?serum_circle").add("map", "A").add("serum", "A(H3N2)/SOUTH CAROLINA/4/2017 CDC 2017-106").add("outline", "black").add("outline_width", 0.5);
     mods.emplace_back().add("N", "title").add("text_color", "black").add("text_size", 12.0).add("padding", 3.0)
             .add("offset", rjson::v1::array{0.0, 0.0}).add("weight", "normal").add("slant", "normal").add("font_family", "san serif");
     mods.emplace_back().add("N", "background").add("color", "white");
@@ -281,25 +282,6 @@ AntigenicMapsDrawSettings::AntigenicMapsDrawSettings(rjson::v1::field_container_
     mods.emplace_back().add("N", "antigens").add("select", rjson::v1::object{{"vaccine", rjson::v1::object{{"type", "surrogate"_rj}, {"passage", "reassortant"_rj}}}})
             .add("fill", "pink"_rj).add("outline", "white"_rj).add("size", 15.0_rj).add("order", "raise"_rj).add("report", false)
             .add("label", rjson::v1::object{{"offset", rjson::v1::array{0, 1}}, {"name_type", "abbreviated_location_with_passage_type"_rj}, {"size", 9.0_rj}});
-
-    //   // old vaccine spec
-    // mods.emplace_back().add("N", "vaccines").add("mods", rjson::v1::array{
-    //         rjson::v1::object{{"size", 15.0_rj}, {"outline", "white"_rj}},
-    //         rjson::v1::object{{"label", rjson::v1::object{{"offset", rjson::v1::array{0, 1}}, {"color", "black"_rj},
-    //                                               {"weight", "normal"_rj}, {"slant", "normal"_rj},
-    //                                               {"font_family", "helvetica neu"_rj}, {"size", 9.0_rj},
-    //                                               {"name_type", "abbreviated_location_with_passage_type"_rj}}}},
-    //         rjson::v1::object{{"type", "previous"_rj}, {"passage", "cell"_rj}, {"fill", "blue"_rj}},
-    //         rjson::v1::object{{"type", "previous"_rj}, {"passage", "egg"_rj}, {"fill", "blue"_rj}},
-    //         rjson::v1::object{{"type", "previous"_rj}, {"passage", "reassortant"_rj}, {"fill", "blue"_rj}},
-    //         rjson::v1::object{{"type", "current"_rj}, {"passage", "cell"_rj}, {"fill", "red"_rj}},
-    //         rjson::v1::object{{"type", "current"_rj}, {"passage", "egg"_rj}, {"fill", "red"_rj}},
-    //         rjson::v1::object{{"type", "current"_rj}, {"passage", "reassortant"_rj}, {"fill", "green"_rj}},
-    //         rjson::v1::object{{"type", "surrogate"_rj}, {"passage", "cell"_rj}, {"fill", "pink"_rj}},
-    //         rjson::v1::object{{"type", "surrogate"_rj}, {"passage", "egg"_rj}, {"fill", "pink"_rj}},
-    //         rjson::v1::object{{"type", "surrogate"_rj}, {"passage", "reassortant"_rj}, {"fill", "pink"_rj}},
-    //         rjson::v1::object{{"?name", "TEXAS"_rj}, {"?show", rjson::v1::boolean{false}}},
-    //    });
 }
 
 void AntigenicMapsDrawSettings::viewport(const acmacs::Viewport& aViewport)

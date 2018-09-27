@@ -16,7 +16,7 @@ class AntigenicMapsLayoutDraw
     virtual void prepare();
     virtual void prepare_apply_mods() = 0;
     virtual void prepare_chart_for_all_sections() = 0;
-    virtual void prepare_drawing_chart(size_t aSectionIndex, bool report_antigens_in_hz_sections) = 0;
+    virtual void prepare_drawing_chart(size_t aSectionIndex, std::string map_letter, bool report_antigens_in_hz_sections) = 0;
     virtual void draw_chart(acmacs::surface::Surface& aSurface, size_t aSectionIndex) = 0;
 
     inline AntigenicMapsDrawBase& antigenic_maps_draw() { return mAntigenicMapsDraw; }
