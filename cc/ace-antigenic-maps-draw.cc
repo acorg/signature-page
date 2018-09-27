@@ -221,14 +221,21 @@ acmacs::chart::PointIndexList AntigenicMapsLayoutDrawAce::tracked_antigens(size_
 
 // ----------------------------------------------------------------------
 
-std::map<size_t, acmacs::chart::PointIndexList> AntigenicMapsLayoutDrawAce::tracked_sera(size_t aSectionIndex) const
+void AntigenicMapsLayoutDrawAce::find_homologous_antigens_for_sera() const
 {
-    const auto& chrt = chart();
     if (!mHomologousAntigenForSeraFound) {
-        chrt.set_homologous(acmacs::chart::Chart::find_homologous_for_big_chart::yes);
+        chart().set_homologous(acmacs::chart::Chart::find_homologous_for_big_chart::yes);
         mHomologousAntigenForSeraFound = true;
     }
 
+} // AntigenicMapsLayoutDrawAce::find_homologous_antigens_for_sera
+
+// ----------------------------------------------------------------------
+
+std::map<size_t, acmacs::chart::PointIndexList> AntigenicMapsLayoutDrawAce::tracked_sera(size_t aSectionIndex) const
+{
+    find_homologous_antigens_for_sera();
+    const auto& chrt = chart();
     const auto tracked_antigen_indices = tracked_antigens(aSectionIndex, false);
     std::map<size_t, acmacs::chart::PointIndexList> tracked_indices;
     for (size_t serum_no = 0; serum_no < chrt.number_of_sera(); ++serum_no) {
@@ -255,6 +262,7 @@ std::map<size_t, acmacs::chart::PointIndexList> AntigenicMapsLayoutDrawAce::trac
 
 void AntigenicMapsLayoutDrawAce::tracked_serum_circles(const AntigenicMapMod& mod, size_t aSectionIndex)
 {
+    find_homologous_antigens_for_sera();
     for (auto serum_antigens: tracked_sera(aSectionIndex))
         make_serum_circle(mod, serum_antigens.first, serum_antigens.second);
 
@@ -299,6 +307,7 @@ void AntigenicMapsLayoutDrawAce::make_serum_circle(const AntigenicMapMod& mod, s
 void AntigenicMapsLayoutDrawAce::serum_circle(const AntigenicMapMod& mod, std::string map_letter, size_t /*aSectionIndex*/)
 {
     if (const std::string map = mod.get_or_default("map", "A"); map == map_letter) {
+        find_homologous_antigens_for_sera();
         std::string serum_name = mod.get_or_default("serum", "");
         if (serum_name.empty())
             throw std::runtime_error("invalid mod (\"serum\" not found): " + mod.to_json());
