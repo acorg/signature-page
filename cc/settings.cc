@@ -245,7 +245,9 @@ AntigenicMapsDrawSettings::AntigenicMapsDrawSettings(rjson::v1::field_container_
     mods.emplace_back().add("N", "tracked_antigens").add("fill", "green3").add("outline", "white").add("outline_width", 0.5).add("size", 5.0);
     mods.emplace_back().add("N", "?tracked_sera").add("fill", "transparent").add("outline", "black").add("outline_width", 0.5).add("size", 5.0); // tracked sera above tracked antigens!
     mods.emplace_back().add("N", "?tracked_serum_circles").add("outline", "black").add("outline_width", 0.5); // tracked serum circles above tracked antigens!
-    mods.emplace_back().add("N", "?serum_circle").add("map", "A").add("serum", "A(H3N2)/SOUTH CAROLINA/4/2017 CDC 2017-106").add("outline", "black").add("outline_width", 0.5);
+    mods.emplace_back().add("N", "?serum_circle").add("map", "A").add("serum", "A(H3N2)/SOUTH CAROLINA/4/2017 CDC 2017-106")
+            .add("outline", "black").add("outline_width", 0.5).add("fill", "transparent").add("radius_line", "transparent").add("radius_line_width", 1.0).add("radius_line_dash", "nodash")
+            .add("serum_size", 5.0).add("serum_outline", "black").add("serum_outline_width", 0.5);
     mods.emplace_back().add("N", "title").add("text_color", "black").add("text_size", 12.0).add("padding", 3.0)
             .add("offset", rjson::v1::array{0.0, 0.0}).add("weight", "normal").add("slant", "normal").add("font_family", "san serif");
     mods.emplace_back().add("N", "background").add("color", "white");
