@@ -270,14 +270,16 @@ void AntigenicMapsLayoutDrawAce::tracked_serum_circles(const AntigenicMapMod& mo
 
 // ----------------------------------------------------------------------
 
-void AntigenicMapsLayoutDrawAce::make_serum_circle(const AntigenicMapMod& mod, size_t serum_no, const acmacs::chart::PointIndexList& homologous_antigens)
+// returns if circle shown
+bool AntigenicMapsLayoutDrawAce::make_serum_circle(const AntigenicMapMod& mod, size_t serum_no, const acmacs::chart::PointIndexList& homologous_antigens)
 {
     std::vector<double> radii(homologous_antigens.size());
     std::transform(homologous_antigens.begin(), homologous_antigens.end(), radii.begin(),
                    [&](size_t ag_no) -> double { return chart().serum_circle_radius_empirical(ag_no, serum_no, 0, false); });
     std::sort(radii.begin(), radii.end());
     const auto radius_p = std::find_if(radii.begin(), radii.end(), [](double r) -> bool { return r >= 0.0; });
-    if (radius_p != radii.end()) {
+    const bool shown = radius_p != radii.end();
+    if (shown) {
         std::cout << "INFO: serum circle for " << serum_no << ' ' << chart().serum(serum_no)->full_name() << " radius: " << *radius_p << " antigens: " << homologous_antigens << '\n';
         auto& serum_circle = chart_draw().serum_circle(serum_no, Scaled{*radius_p});
         serum_circle.fill(mod.get_color("fill", "transparent"))
@@ -299,6 +301,7 @@ void AntigenicMapsLayoutDrawAce::make_serum_circle(const AntigenicMapMod& mod, s
         else
             std::cerr << " antigens: " << homologous_antigens << ": no radius\n";
     }
+    return shown;
 
 } // AntigenicMapsLayoutDrawAce::make_serum_circle
 
@@ -318,8 +321,8 @@ void AntigenicMapsLayoutDrawAce::serum_circle(const AntigenicMapMod& mod, std::s
         const auto homologous_antigens_for_serum = chrt.serum(*serum_index)->homologous_antigens();
         if (!homologous_antigens_for_serum.empty()) {
             // std::cout << "INFO: forced serum circle for serum: " << *serum_index << ' ' << serum_name << '\n';
-            make_serum_circle(mod, *serum_index, homologous_antigens_for_serum);
-            make_tracked_serum(*serum_index, Pixels{mod.get_or_default("serum_size", 5.0)}, mod.get_color("serum_outline", "black"), Pixels{mod.get_or_default("serum_outline_width", 0.5)});
+            if (make_serum_circle(mod, *serum_index, homologous_antigens_for_serum))
+                make_tracked_serum(*serum_index, Pixels{mod.get_or_default("serum_size", 5.0)}, mod.get_color("serum_outline", mod.get_color("outline", "black")), Pixels{mod.get_or_default("serum_outline_width", 0.5)});
         }
         else
             std::cerr << "WARNING: no homologous antigens for serum (for forced serum circle): " << *serum_index << ' ' << serum_name << '\n';

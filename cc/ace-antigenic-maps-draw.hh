@@ -85,7 +85,8 @@ class AntigenicMapsLayoutDrawAce : public AntigenicMapsLayoutDraw
     void mark_antigens_old(const AntigenicMapMod& mod);
     void add_label(std::shared_ptr<VaccineMatcherLabel> label, const rjson::v1::object& data);
 
-    void make_serum_circle(const AntigenicMapMod& mod, size_t serum_no, const acmacs::chart::PointIndexList& homologous_antigens);
+    // returns if circle shown
+    bool make_serum_circle(const AntigenicMapMod& mod, size_t serum_no, const acmacs::chart::PointIndexList& homologous_antigens);
     void make_tracked_serum(size_t serum_index, Pixels size, Color outline, Pixels outline_width);
     void find_homologous_antigens_for_sera() const;
 
