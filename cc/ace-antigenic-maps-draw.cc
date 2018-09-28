@@ -122,6 +122,9 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, std
 {
     // reset tracked antigens and sera shown on the previous map
     chart_draw().remove_serum_circles();
+    for (size_t serum_index = chart().number_of_antigens(); serum_index < (chart().number_of_antigens() + chart().number_of_sera()); ++serum_index)
+        chart_draw().remove_label(serum_index);
+
     for (const auto& mod: settings().mods) {
         const std::string name = mod.name();
         if (name == "sera") {
