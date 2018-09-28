@@ -192,13 +192,50 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, std
 
 // ----------------------------------------------------------------------
 
-void AntigenicMapsLayoutDrawAce::make_tracked_serum(size_t serum_index, Pixels size, Color outline, Pixels outline_width)
+void AntigenicMapsLayoutDrawAce::make_tracked_serum(size_t serum_index, Pixels size, Color outline, Pixels outline_width, const rjson::v1::object& label_data)
 {
     acmacs::PointStyle tracked_serum_style;
     tracked_serum_style.size = size;
     tracked_serum_style.outline = outline;
     tracked_serum_style.outline_width = outline_width;
     chart_draw().modify_serum(serum_index, tracked_serum_style, PointDrawingOrder::Raise);
+    if (!label_data.empty() && label_data.get_or_default("show", true)) {
+        auto& label = chart_draw().add_label(chart().number_of_antigens() + serum_index);
+        for (const auto& [item_key, item_value] : label_data) {
+            const auto field_name = item_key.strv();
+            if (field_name == "size")
+                label.size(item_value);
+            else if (field_name == "color")
+                label.color(Color(item_value));
+            else if (field_name == "font_family")
+                label.font_family(item_value.str());
+            else if (field_name == "name_type") {
+                auto serum = chart().serum(serum_index);
+                const auto name_type = item_value.str();
+                if (name_type == "abbreviated")
+                    label.display_name(serum->abbreviated_name());
+                else if (name_type == "abbreviated_name_with_serum_id")
+                    label.display_name(serum->abbreviated_name_with_serum_id());
+                else {
+                    if (name_type != "full")
+                        std::cerr << "WARNING: unrecognized \"name_type\" for label for serum: " << label_data.to_json() << '\n';
+                    label.display_name(serum->full_name());
+                }
+            }
+            else if (field_name == "display_name")
+                label.display_name(item_value.str());
+            else if (field_name == "slant")
+                label.slant(item_value.str());
+            else if (field_name == "weight")
+                label.weight(item_value.str());
+            else if (field_name == "offset") {
+                const rjson::v1::array& offset = item_value;
+                label.offset({offset[0], offset[1]});
+            }
+            else if (field_name.empty() || (field_name.front() != '?' && field_name.back() != '?'))
+                std::cerr << "WARNING: mark_vaccines label: unrecognized key \"" << field_name << '"' << std::endl;
+        }
+    }
 
 } // AntigenicMapsLayoutDrawAce::make_tracked_serum
 
@@ -322,7 +359,7 @@ void AntigenicMapsLayoutDrawAce::serum_circle(const AntigenicMapMod& mod, std::s
         if (!homologous_antigens_for_serum.empty()) {
             // std::cout << "INFO: forced serum circle for serum: " << *serum_index << ' ' << serum_name << '\n';
             if (make_serum_circle(mod, *serum_index, homologous_antigens_for_serum))
-                make_tracked_serum(*serum_index, Pixels{mod.get_or_default("serum_size", 5.0)}, mod.get_color("serum_outline", mod.get_color("outline", "black")), Pixels{mod.get_or_default("serum_outline_width", 0.5)});
+                make_tracked_serum(*serum_index, Pixels{mod.get_or_default("serum_size", 5.0)}, mod.get_color("serum_outline", mod.get_color("outline", "black")), Pixels{mod.get_or_default("serum_outline_width", 0.5)}, mod.get_or_empty_object("label"));
         }
         else
             std::cerr << "WARNING: no homologous antigens for serum (for forced serum circle): " << *serum_index << ' ' << serum_name << '\n';
