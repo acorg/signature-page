@@ -23,7 +23,7 @@ void AntigenicMapsDraw::make_layout()
 void AntigenicMapsLayoutDrawAce::prepare_apply_mods()
 {
       // std::cerr << "DEBUG: [ace] AntigenicMapsLayoutDrawAce::prepare_apply_mods" << std::endl;
-    for (const auto& mod: settings().mods) {
+    settings().mods.for_each([this](const auto& mod) {
         try {
             const std::string name = mod.name();
             if (name == "rotate_degrees") {
@@ -80,7 +80,7 @@ void AntigenicMapsLayoutDrawAce::prepare_apply_mods()
             std::cerr << "WARNING: MOD: " << mod << DEBUG_LINE_FUNC << '\n';
             throw;
         }
-    }
+    });
     chart_draw().calculate_viewport();
 
 } // AntigenicMapsLayoutDrawAce::prepare_apply_mods
@@ -91,7 +91,7 @@ void AntigenicMapsLayoutDrawAce::prepare_chart_for_all_sections()
 {
     chart_draw().mark_egg_antigens();
     chart_draw().mark_reassortant_antigens();
-    for (const auto& mod: settings().mods) {
+    settings().mods.for_each([this](const auto& mod) {
         const std::string name = mod.name();
         if (name == "point_scale") {
             chart_draw().scale_points(mod.get_or_default("scale", 1.0), mod.get_or_default("outline_scale", 1.0));
@@ -112,7 +112,7 @@ void AntigenicMapsLayoutDrawAce::prepare_chart_for_all_sections()
             test_antigen_style.outline_width = Pixels{mod.get_or_default("outline_width", 0.5)};
             chart_draw().modify(chart().antigens()->test_indexes(), test_antigen_style);
         }
-    }
+    });
 
 } // AntigenicMapsLayoutDrawAce::prepare_chart_for_all_sections
 
@@ -125,7 +125,7 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, std
     for (size_t serum_index = chart().number_of_antigens(); serum_index < (chart().number_of_antigens() + chart().number_of_sera()); ++serum_index)
         chart_draw().remove_label(serum_index);
 
-    for (const auto& mod: settings().mods) {
+    settings().mods.for_each([this](const auto& mod) {
         const std::string name = mod.name();
         if (name == "sera") {
             acmacs::PointStyle serum_style;
@@ -145,9 +145,9 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, std
             sequenced_antigen_style.outline_width = Pixels{mod.get_or_default("outline_width", 0.5)};
             chart_draw().modify(sequenced_indices, sequenced_antigen_style);
         }
-    }
+    });
 
-    for (const auto& mod: settings().mods) {
+    settings().mods.for_each([this,aSectionIndex,report_antigens_in_hz_sections,map_letter](const auto& mod) {
         const std::string name = mod.name();
         if (name == "tracked_antigens") {
             const auto tracked_indices = tracked_antigens(aSectionIndex, report_antigens_in_hz_sections);
@@ -179,7 +179,7 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, std
         else if (name == "antigens_old") {
             mark_antigens_old(mod);
         }
-    }
+    });
 
       // marked antigens
       // tracked_antigen_colored_by_clade
@@ -195,17 +195,18 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, std
 
 // ----------------------------------------------------------------------
 
-void AntigenicMapsLayoutDrawAce::make_tracked_serum(size_t serum_index, Pixels size, Color outline, Pixels outline_width, const rjson::v1::object& label_data)
+void AntigenicMapsLayoutDrawAce::make_tracked_serum(size_t serum_index, Pixels size, Color outline, Pixels outline_width, const rjson::value& label_data)
 {
     acmacs::PointStyle tracked_serum_style;
     tracked_serum_style.size = size;
     tracked_serum_style.outline = outline;
     tracked_serum_style.outline_width = outline_width;
     chart_draw().modify_serum(serum_index, tracked_serum_style, PointDrawingOrder::Raise);
-    if (!label_data.empty() && label_data.get_or_default("show", true)) {
+    if (!label_data.empty() && rjson::get_or(label_data, "show", true)) {
         auto& label = chart_draw().add_label(chart().number_of_antigens() + serum_index);
-        for (const auto& [item_key, item_value] : label_data) {
-            const auto field_name = item_key.strv();
+        rjson::for_each([&label](const rjson::object::value_type& key_value) {
+            const auto& [item_key, item_value] = key_value;
+            const std::string_view field_name = item_key;
             if (field_name == "size")
                 label.size(item_value);
             else if (field_name == "color")
@@ -214,7 +215,7 @@ void AntigenicMapsLayoutDrawAce::make_tracked_serum(size_t serum_index, Pixels s
                 label.font_family(item_value.str());
             else if (field_name == "name_type") {
                 auto serum = chart().serum(serum_index);
-                const auto name_type = item_value.str();
+                const std::string_view name_type = item_value;
                 if (name_type == "abbreviated")
                     label.display_name(serum->abbreviated_name());
                 else if (name_type == "abbreviated_name_with_serum_id")
@@ -226,18 +227,17 @@ void AntigenicMapsLayoutDrawAce::make_tracked_serum(size_t serum_index, Pixels s
                 }
             }
             else if (field_name == "display_name")
-                label.display_name(item_value.str());
+                label.display_name(item_value);
             else if (field_name == "slant")
-                label.slant(item_value.str());
+                label.slant(item_value);
             else if (field_name == "weight")
-                label.weight(item_value.str());
+                label.weight(item_value);
             else if (field_name == "offset") {
-                const rjson::v1::array& offset = item_value;
-                label.offset({offset[0], offset[1]});
+                label.offset({item_value[0], item_value[1]});
             }
             else if (field_name.empty() || (field_name.front() != '?' && field_name.back() != '?'))
                 std::cerr << "WARNING: mark_vaccines label: unrecognized key \"" << field_name << '"' << std::endl;
-        }
+        });
     }
 
 } // AntigenicMapsLayoutDrawAce::make_tracked_serum

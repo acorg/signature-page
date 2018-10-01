@@ -33,7 +33,7 @@ const acmacs::Viewport& AntigenicMapsLayoutDraw::viewport() const
 
 void AntigenicMapsLayoutDraw::apply_mods_before(acmacs::surface::Surface& aSurface)
 {
-    for (const auto& mod: settings().mods) {
+    settings().mods.for_each([&aSurface](const auto& mod) {
         const std::string name = mod.name();
         if (name == "background") {
             Color color = mod.get_color("color", "white");
@@ -43,7 +43,7 @@ void AntigenicMapsLayoutDraw::apply_mods_before(acmacs::surface::Surface& aSurfa
         else if (name == "grid") {
             aSurface.grid(Scaled{1}, mod.get_color("color", "grey80"), Pixels{mod.get_or_default("line_width", 1.0)});
         }
-    }
+    });
 
 } // AntigenicMapsLayoutDraw::apply_mods_before
 
@@ -51,13 +51,13 @@ void AntigenicMapsLayoutDraw::apply_mods_before(acmacs::surface::Surface& aSurfa
 
 void AntigenicMapsLayoutDraw::apply_mods_after(acmacs::surface::Surface& aSurface)
 {
-    for (const auto& mod: settings().mods) {
+    settings().mods.for_each([&aSurface](const auto& mod) {
         const std::string name = mod.name();
         if (name == "border") {
             const auto& v = aSurface.viewport();
             aSurface.rectangle(v.origin, v.size, mod.get_color("color", "black"), Pixels{mod.get_or_default("line_width", 1.0) * 2});
         }
-    }
+    });
 
 } // AntigenicMapsLayoutDraw::apply_mods_after
 
