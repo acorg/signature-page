@@ -11,7 +11,8 @@ void AAAtPosDraw::prepare()
     if (mSettings.width > 0) {
         if (!mSettings.positions.empty()) {
             positions_.resize(mSettings.positions.size());
-            std::transform(mSettings.positions.begin(), mSettings.positions.end(), positions_.begin(), [](size_t pos_based_1) { return pos_based_1 - 1; });
+            auto pos_iter = positions_.begin();
+            mSettings.positions.for_each([&pos_iter](size_t pos_based_1) { *pos_iter = pos_based_1 - 1; ++pos_iter; });
             collect_aa_per_pos();
         }
         else if (mSettings.diverse_index_threshold > 0) {
@@ -245,11 +246,11 @@ void AAAtPosDraw::draw_hz_section_lines() const
                     const auto y = (previous_vertical_pos + node.draw.vertical_pos) / 2;
                     mSurface.line({0, y}, {mSurface.viewport().size.width, y}, mHzSections.line_color, Pixels{mHzSections.line_width}, acmacs::surface::Dash::Dash3);
                     mSurface.text({-20, y}, std::to_string(node.draw.line_no), BLACK, Pixels{6});
-                    for (auto aa_pos : section.triggering_aa_pos) {
+                    section.triggering_aa_pos.for_each([this,section_width,y](size_t aa_pos) {
                         const auto section_no = std::find(positions_.begin(), positions_.end(), (aa_pos - 1)) - positions_.begin();
                         mSurface.line({section_width * section_no + section_width * 0.25, y}, {section_width * (section_no + 1) - section_width * 0.25, y}, BLACK, Pixels{mHzSections.line_width * 2});
                         // std::cerr << "DEBUG: " << node.draw.line_no << " triggering_aa_pos: " << aa_pos << ' ' << section_no << '\n';
-                    }
+                    });
                 }
             }
             previous_vertical_pos = node.draw.vertical_pos;
