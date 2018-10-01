@@ -24,8 +24,8 @@ class CladeDrawSettings : public rjson::array_field_container_child_element
     CladeDrawSettings(const rjson::value& aData, std::string aName = std::string{}, bool aShow = true);
     CladeDrawSettings(const CladeDrawSettings&) = default;
     CladeDrawSettings(CladeDrawSettings&&) = default;
-    CladeDrawSettings& operator=(const CladeDrawSettings&) = default;
-    CladeDrawSettings& operator=(CladeDrawSettings&&) = default;
+    CladeDrawSettings& operator=(const CladeDrawSettings&) = delete; // see rjson::array_field_container_child_element
+    CladeDrawSettings& operator=(CladeDrawSettings&&) = delete; // see rjson::array_field_container_child_element
 
     rjson::field_get_set<std::string> name;           // empty for default settings
     rjson::field_get_set<std::string> display_name;

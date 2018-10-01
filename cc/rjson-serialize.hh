@@ -220,7 +220,8 @@ namespace rjson
           public:
             array_field_container_child_element(const value& aData) : mData{aData} {}
             array_field_container_child_element(const array_field_container_child_element&) = default;
-            array_field_container_child_element& operator=(const array_field_container_child_element&) = default;
+            array_field_container_child_element& operator=(const array_field_container_child_element&) = delete; // cannot re-assign const value& mData
+            array_field_container_child_element& operator=(array_field_container_child_element&&) = delete; // cannot re-assign const value& mData
 
             const value& operator[](std::string aFieldName) const override { return mData[aFieldName]; }
             value& operator[](std::string aFieldName) override { return const_cast<value&>(mData)[aFieldName]; }
