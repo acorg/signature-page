@@ -204,15 +204,14 @@ void AntigenicMapsLayoutDrawAce::make_tracked_serum(size_t serum_index, Pixels s
     chart_draw().modify_serum(serum_index, tracked_serum_style, PointDrawingOrder::Raise);
     if (!label_data.empty() && rjson::get_or(label_data, "show", true)) {
         auto& label = chart_draw().add_label(chart().number_of_antigens() + serum_index);
-        rjson::for_each([&label](const rjson::object::value_type& key_value) {
-            const auto& [item_key, item_value] = key_value;
-            const std::string_view field_name = item_key;
+        rjson::for_each(label_data, [&label,&label_data,this,serum_index](const rjson::key_value_t& key_value) {
+            const auto& [field_name, item_value] = key_value;
             if (field_name == "size")
                 label.size(item_value);
             else if (field_name == "color")
-                label.color(Color(item_value));
+                label.color(Color(static_cast<std::string_view>(item_value)));
             else if (field_name == "font_family")
-                label.font_family(item_value.str());
+                label.font_family(item_value);
             else if (field_name == "name_type") {
                 auto serum = chart().serum(serum_index);
                 const std::string_view name_type = item_value;
@@ -222,7 +221,7 @@ void AntigenicMapsLayoutDrawAce::make_tracked_serum(size_t serum_index, Pixels s
                     label.display_name(serum->abbreviated_name_with_serum_id());
                 else {
                     if (name_type != "full")
-                        std::cerr << "WARNING: unrecognized \"name_type\" for label for serum: " << label_data.to_json() << '\n';
+                        std::cerr << "WARNING: unrecognized \"name_type\" for label for serum: " << label_data << '\n';
                     label.display_name(serum->full_name());
                 }
             }
@@ -377,13 +376,11 @@ void AntigenicMapsLayoutDrawAce::mark_vaccines(const AntigenicMapMod& vaccine_mo
     try {
         const auto& chart = chart_draw().chart();
         Vaccines vaccs{chart};
-        for (const auto& mod_v: vaccine_mod.mods()) {
-            const rjson::v1::object& mod = mod_v;
-            const std::string type = mod.get_or_default("type", std::string{}), passage = mod.get_or_default("passage", std::string{}), name = mod.get_or_default("name", std::string{});
+        rjson::for_each(vaccine_mod.mods(), [&vaccs,this](const rjson::value& mod) {
+            const std::string type = rjson::get_or(mod, "type", ""), passage = rjson::get_or(mod, "passage", ""), name = rjson::get_or(mod, "name", "");
             VaccineMatcher matcher(vaccs, VaccineMatchData{}.name(name).type(type).passage(passage));
               // std::cerr << matcher.report(2) << '\n';
-            for (const auto& [item_key, item_value]: mod) {
-                const std::string_view field_name = item_key;
+            rjson::for_each(mod, [&matcher,this](const std::string& field_name, const rjson::value& item_value) {
                 if (field_name == "size")
                     matcher.size(item_value);
                 else if (field_name == "fill")
@@ -405,15 +402,15 @@ void AntigenicMapsLayoutDrawAce::mark_vaccines(const AntigenicMapMod& vaccine_mo
                         matcher.hide_label(chart_draw());
                 }
                 else if (field_name == "label")
-                    add_label(std::shared_ptr<VaccineMatcherLabel>{matcher.label(chart_draw())}, static_cast<const rjson::v1::object&>(item_value));
+                    add_label(std::shared_ptr<VaccineMatcherLabel>{matcher.label(chart_draw())}, xx static_cast<const rjson::v1::object&>(item_value));
                 else if (field_name != "type" && field_name != "passage" && field_name != "name" && (field_name.empty() || (field_name.front() != '?' && field_name.back() != '?')))
                     std::cerr << "WARNING: mark_vaccines: unrecognized key \"" << field_name << '"' << std::endl;
-            }
-        }
+            });
+        });
         // std::cerr << "DEBUG: Vaccines:" << std::endl << vaccs.report(2) << std::endl;
         vaccs.plot(chart_draw());
     }
-    catch (std::bad_variant_access&) {
+    catch (std::exception&) {
         std::cerr << "WARNING: cannot mark vaccines: invalid vaccine settings: " << vaccine_mod << std::endl;
     }
 

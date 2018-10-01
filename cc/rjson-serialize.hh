@@ -428,7 +428,7 @@ namespace rjson
         {
             try {
                 std::map<std::string, std::string> result;
-                rjson::for_each(get_value_ref(), [&result](const object::value_type& key_val) {
+                rjson::for_each(get_value_ref(), [&result](const key_value_t& key_val) {
                     const auto& [key, val] = key_val;
                     result.emplace(key, static_cast<std::string>(val));
                 });
