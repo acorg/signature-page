@@ -187,7 +187,7 @@ namespace rjson
 
             template <typename Func> std::optional<Element> find_if(Func&& func) const
                 {
-                    if (const value& found = rjson::find_if(get_array(), std::forward<Func>(func)); !found.is_null())
+                    if (const value& found = rjson::find_if(get_array(), [&func](const rjson::value& val) -> bool { return func(Element(val)); }); !found.is_null())
                         return Element{found};
                     else
                         return {};
@@ -219,6 +219,8 @@ namespace rjson
         {
           public:
             array_field_container_child_element(const value& aData) : mData{aData} {}
+            array_field_container_child_element(const array_field_container_child_element&) = default;
+            array_field_container_child_element& operator=(const array_field_container_child_element&) = default;
 
             const value& operator[](std::string aFieldName) const override { return mData[aFieldName]; }
             value& operator[](std::string aFieldName) override { return const_cast<value&>(mData)[aFieldName]; }
@@ -359,7 +361,7 @@ namespace rjson
             try {
                 const auto& obj = get_value_ref();
                 TextStyle style;
-                assign_if_not_null(obj["family"], style.font_family);
+                style.font_family <<= obj["family"]; // assign_if_not_null(obj["family"], style.font_family);
                 assign_if_not_null(obj["slant"], style.slant, [](const value& val) { return acmacs::FontSlant{val}; });
                 assign_if_not_null(obj["weight"], style.weight, [](const value& val) { return acmacs::FontWeight{val}; });
                 return style;

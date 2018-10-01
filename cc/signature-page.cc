@@ -375,12 +375,11 @@ void SignaturePageDraw::draw_mods()
                     if (const auto& settings_offset = mod["offset"]; !settings_offset.is_null())
                         offset = acmacs::Offset{settings_offset[0], settings_offset[1]};
                     Color color{BLACK};
-                    if (const auto& color_v = mod["color"]; !color_v.is_null())
-                        color = static_cast<std::string_view>(color_v);
+                    rjson::assign_if_not_null(mod["color"], color, [](const rjson::value& val) { return static_cast<std::string_view>(val); });
                     Pixels size{14};
-                    rjson::assign_if_not_null(mod["size"], size);
+                    size <<= mod["size"];
                     acmacs::TextStyle style;
-                    rjson::assign_if_not_null(mod["family"], style.font_family);
+                    style.font_family <<= mod["family"];
                     rjson::assign_if_not_null(mod["slant"], style.slant, [](const rjson::value& val) { return acmacs::FontSlant{val}; });
                     rjson::assign_if_not_null(mod["weight"], style.weight, [](const rjson::value& val) { return acmacs::FontWeight{val}; });
                     mSurface->text(offset, text, color, size, style);

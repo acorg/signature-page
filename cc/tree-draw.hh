@@ -160,7 +160,7 @@ class TreeDrawMods : public rjson::array_field_container_child<TreeDrawMod>
 
     const TreeDrawMod find_mark_with_label(std::string aSeqId) const // not reference returned, TreeDrawMod is a proxy
         {
-            if (auto found = find_if([&](const rjson::value& val) { return static_cast<std::string_view>(val["mod"]) == "mark-with-label" && static_cast<std::string_view>(val["seq_id"]) == aSeqId; }); found)
+            if (auto found = find_if([&](const auto& val) { return static_cast<std::string>(val.mod) == "mark-with-label" && static_cast<std::string>(val.seq_id) == aSeqId; }); found)
                 return *found;
             throw std::runtime_error("Invalid tree.mods settings: cannot find mark-with-label for " + aSeqId);
         }

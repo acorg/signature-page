@@ -311,7 +311,7 @@ void AntigenicMapsDrawSettings::viewport(const acmacs::Viewport& aViewport)
             return rjson::array{aViewport.origin.x(), aViewport.origin.y(), aViewport.size.width, aViewport.size.height};
     };
       // std::cerr << "DEBUG: AntigenicMapsDrawSettings::viewport" << std::endl;
-    if (auto vpmod = mods.find_if([](const rjson::value& mod) -> bool { return AntigenicMapMod(mod).name() == "viewport"; }); !vpmod) {
+    if (auto vpmod = mods.find_if([](const auto& mod) -> bool { return mod.name() == "viewport"; }); !vpmod) {
         auto mod = mods.emplace_back();
         mod.set_field("N", "viewport");
         mod.set_field("viewport", make_setting_list());
