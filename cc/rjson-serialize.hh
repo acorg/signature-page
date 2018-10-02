@@ -252,7 +252,13 @@ namespace rjson
             field_get_set(const field_get_set&) = default;
             field_get_set(field_container_parent& aParent, std::string aFieldName, const FValue& aDefault, initialize_field aInitialize = initialize_field::no);
 
-            const value& get_value_ref() const { return mParent[mFieldName]; }
+            const value& get_value_ref() const
+                {
+                    if (const auto& val = mParent[mFieldName]; !val.is_null())
+                        return val;
+                    else
+                        return mDefault;
+                }
 
             field_get_set<FValue>& operator=(const FValue& aValue) { mParent.set_field(mFieldName, to_value(aValue)); return *this; }
             field_get_set<FValue>& operator=(const field_get_set<FValue>& aSource) { return operator=(static_cast<FValue>(aSource)); }

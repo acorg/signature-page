@@ -68,6 +68,7 @@ install: $(TARGETS)
 
 test: install $(DIST)/sigp
 	test/test
+.PHONY: test
 
 # ----------------------------------------------------------------------
 

@@ -24,6 +24,14 @@ function failed
 
 trap failed ERR
 
+function test
+{
+    echo "======================================================================"
+    echo "$@"
+    "$@" || failed
+    printf "======================================================================\n\n"
+}
+
 # ======================================================================
 
 export LD_LIBRARY_PATH="${ACMACSD_ROOT}/lib:${LD_LIBRARY_PATH}"
@@ -34,5 +42,5 @@ cd "$TESTDIR"
 #xzdiff "$TDIR"/tree.json.xz "$TDIR"/tree2.json.xz
 
 SETTINGS="$TDIR/tree.settings.json"
-../dist/sigp --init-settings "$SETTINGS" ./newick.json.xz "$TDIR"/tree.pdf
-../dist/sigp -s "$SETTINGS" ./newick.json.xz "$TDIR"/tree.pdf
+test ../dist/sigp --init-settings "$SETTINGS" ./newick.json.xz "$TDIR"/tree.pdf
+test ../dist/sigp -s "$SETTINGS" ./newick.json.xz "$TDIR"/tree.pdf
