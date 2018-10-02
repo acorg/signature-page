@@ -223,7 +223,7 @@ class AntigenicMapMod : public rjson::array_field_container_child_element
             return rjson::get_or(operator[](aName), std::forward<Result>(aDefault));
         }
 
-    std::string get_or_default(std::string aName, const char* aDefault) const
+    std::string_view get_or_default(std::string aName, const char* aDefault) const
         {
             return rjson::get_or(operator[](aName), aDefault);
         }
@@ -241,7 +241,7 @@ class AntigenicMapMod : public rjson::array_field_container_child_element
     //$ inline bool get(std::string aName, bool aDefault) const { return get(aName, rjson::v1::value{rjson::v1::boolean{aDefault}}); }
     //$ inline std::string get(std::string aName, const char* aDefault) const { return get(aName, rjson::v1::value{rjson::v1::string{aDefault}}); }
 
-    std::string name() const { return get_or_default("N", std::string{}); }
+    std::string_view name() const { return get_or_default("N", ""); }
 
     const rjson::value& mods() const
         {

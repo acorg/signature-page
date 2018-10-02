@@ -204,8 +204,7 @@ void AntigenicMapsLayoutDrawAce::make_tracked_serum(size_t serum_index, Pixels s
     chart_draw().modify_serum(serum_index, tracked_serum_style, PointDrawingOrder::Raise);
     if (!label_data.empty() && rjson::get_or(label_data, "show", true)) {
         auto& label = chart_draw().add_label(chart().number_of_antigens() + serum_index);
-        rjson::for_each(label_data, [&label,&label_data,this,serum_index](const rjson::key_value_t& key_value) {
-            const auto& [field_name, item_value] = key_value;
+        rjson::for_each(label_data, [&label,&label_data,this,serum_index](const std::string& field_name, const rjson::value& item_value) {
             if (field_name == "size")
                 label.size(item_value);
             else if (field_name == "color")
@@ -384,9 +383,9 @@ void AntigenicMapsLayoutDrawAce::mark_vaccines(const AntigenicMapMod& vaccine_mo
                 if (field_name == "size")
                     matcher.size(item_value);
                 else if (field_name == "fill")
-                    matcher.fill(Color(item_value));
+                    matcher.fill(item_value);
                 else if (field_name == "outline")
-                    matcher.outline(Color(item_value));
+                    matcher.outline(item_value);
                 else if (field_name == "outline_width")
                     matcher.outline_width(item_value);
                 else if (field_name == "aspect")

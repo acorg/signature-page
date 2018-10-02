@@ -251,7 +251,6 @@ namespace rjson
          public:
             field_get_set(const field_get_set&) = default;
             field_get_set(field_container_parent& aParent, std::string aFieldName, FValue&& aDefault, initialize_field aInitialize = initialize_field::no);
-            field_get_set(field_container_parent& aParent, std::string aFieldName, const FValue& aDefault, initialize_field aInitialize = initialize_field::no);
 
             const value& get_value_ref() const { return mParent[mFieldName]; }
 
@@ -428,9 +427,8 @@ namespace rjson
         {
             try {
                 std::map<std::string, std::string> result;
-                rjson::for_each(get_value_ref(), [&result](const key_value_t& key_val) {
-                    const auto& [key, val] = key_val;
-                    result.emplace(key, static_cast<std::string>(val));
+                rjson::for_each(get_value_ref(), [&result](const std::string& field_name, const rjson::value& item_value) {
+                    result.emplace(field_name, static_cast<std::string>(item_value));
                 });
                 return result;
             }
@@ -461,14 +459,6 @@ namespace rjson
         inline field_get_set<FValue>::field_get_set(field_container_parent& aParent, std::string aFieldName, FValue&& aDefault, initialize_field aInitialize)
             : mParent{aParent}, mFieldName{aFieldName}, mDefault{to_value(std::forward<FValue>(aDefault))}
               // mDefault{to_value(const_cast<const FValue&>(aDefault))} //
-        {
-            if (aInitialize == initialize_field::yes)
-                get_or_add();
-        }
-
-        template <typename FValue>
-        inline field_get_set<FValue>::field_get_set(field_container_parent& aParent, std::string aFieldName, const FValue& aDefault, initialize_field aInitialize)
-            : mParent{aParent}, mFieldName{aFieldName}, mDefault{to_value(aDefault)}
         {
             if (aInitialize == initialize_field::yes)
                 get_or_add();
