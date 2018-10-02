@@ -194,7 +194,6 @@ namespace rjson
                 }
 
             template <typename Func> std::optional<size_t> find_index_if(Func&& func) const { return rjson::find_index_if(get_array(), std::forward<Func>(func)); }
-            template <typename Func> std::optional<size_t> find_index_if(Func&& func) { return rjson::find_index_if(get_array(), std::forward<Func>(func)); }
 
             template <typename Func> void for_each(Func&& func) const
                 {

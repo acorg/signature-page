@@ -30,7 +30,7 @@ TreeDraw::~TreeDraw()
 
 void TreeDraw::make_coloring()
 {
-    const std::string_view color_nodes = mSettings.color_nodes.get_value_ref();
+    const std::string color_nodes = mSettings.color_nodes;
     if (color_nodes == "black")
         mColoring = std::unique_ptr<Coloring>(new ColoringBlack());
     else if (color_nodes == "continent")
@@ -703,7 +703,7 @@ void TreeDraw::report_aa_transitions()
 
 void HzSections::sort(const Tree& aTree)
 {
-    node_refs = decltype(node_refs){sections.size()};
+    node_refs.resize(sections.size());
 
     auto set_first_node = [this](const Node& node) {
         if (auto sec_no = sections.find_index_if([&node](const auto& s) -> bool { return static_cast<std::string>(HzSection(s).name) == node.seq_id; }); sec_no)
