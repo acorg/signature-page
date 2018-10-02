@@ -250,7 +250,7 @@ namespace rjson
         {
          public:
             field_get_set(const field_get_set&) = default;
-            field_get_set(field_container_parent& aParent, std::string aFieldName, FValue&& aDefault, initialize_field aInitialize = initialize_field::no);
+            field_get_set(field_container_parent& aParent, std::string aFieldName, const FValue& aDefault, initialize_field aInitialize = initialize_field::no);
 
             const value& get_value_ref() const { return mParent[mFieldName]; }
 
@@ -262,7 +262,7 @@ namespace rjson
             bool empty() const { return static_cast<FValue>(*this).empty(); }
 
             // to be specialized for complex types
-            operator FValue() const { return get_value_ref(); }
+            operator FValue() const { return static_cast<FValue>(get_value_ref()); }
 
           private:
             field_container_parent& mParent;
@@ -361,9 +361,9 @@ namespace rjson
             try {
                 const auto& obj = get_value_ref();
                 TextStyle style;
-                style.font_family <<= obj["family"]; // assign_if_not_null(obj["family"], style.font_family);
-                assign_if_not_null(obj["slant"], style.slant, [](const value& val) { return acmacs::FontSlant{val}; });
-                assign_if_not_null(obj["weight"], style.weight, [](const value& val) { return acmacs::FontWeight{val}; });
+                assign_string_if_not_null(obj["family"], style.font_family);
+                assign_string_if_not_null(obj["slant"], style.slant); // assign_if_not_null(obj["slant"], style.slant, [](const value& val) { return acmacs::FontSlant{val}; });
+                assign_string_if_not_null(obj["weight"], style.weight); // assign_if_not_null(obj["weight"], style.weight, [](const value& val) { return acmacs::FontWeight{val}; });
                 return style;
             }
             catch (std::exception&) {
@@ -456,8 +456,8 @@ namespace rjson
         // ----------------------------------------------------------------------
 
         template <typename FValue>
-        inline field_get_set<FValue>::field_get_set(field_container_parent& aParent, std::string aFieldName, FValue&& aDefault, initialize_field aInitialize)
-            : mParent{aParent}, mFieldName{aFieldName}, mDefault{to_value(std::forward<FValue>(aDefault))}
+        inline field_get_set<FValue>::field_get_set(field_container_parent& aParent, std::string aFieldName, const FValue& aDefault, initialize_field aInitialize)
+            : mParent{aParent}, mFieldName{aFieldName}, mDefault{to_value(aDefault)}
               // mDefault{to_value(const_cast<const FValue&>(aDefault))} //
         {
             if (aInitialize == initialize_field::yes)

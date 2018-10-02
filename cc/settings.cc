@@ -86,9 +86,9 @@ LegendSettings::LegendSettings(rjson::field_container_parent& aParent, std::stri
     : rjson::field_container_child(aParent, aFieldName),
       offset(*this, "offset", {-30, 950}, rjson::initialize_field::yes),
       width(*this, "width", 100, rjson::initialize_field::yes),
-      title_style(*this, "title_style", {"sans_serif"}, rjson::initialize_field::yes),
+      title_style(*this, "title_style", std::string_view("sans_serif"), rjson::initialize_field::yes),
       title_size(*this, "title_size", 10, rjson::initialize_field::yes),
-      text_style(*this, "text_style", {"monospace"}, rjson::initialize_field::yes),
+      text_style(*this, "text_style", std::string_view("monospace"), rjson::initialize_field::yes),
       text_size(*this, "text_size", 10, rjson::initialize_field::yes),
       interline(*this, "interline", 1.5, rjson::initialize_field::yes)
 {

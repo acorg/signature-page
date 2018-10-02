@@ -34,15 +34,15 @@ int main(int argc, const char* argv[])
             throw std::runtime_error("Usage: "s + args.program() + " [options] <tree.json>\n" + args.usage_options());
         }
         const bool verbose = args["-v"] || args["--verbose"];
-        seqdb::setup_dbs(args["--db-dir"], verbose ? seqdb::report::yes : seqdb::report::no);
+        seqdb::setup_dbs(args["--db-dir"].str(), verbose ? seqdb::report::yes : seqdb::report::no);
         if (args["--seqdb"])
-            seqdb::setup(args["--seqdb"], verbose ? seqdb::report::yes : seqdb::report::no);
+            seqdb::setup(args["--seqdb"].str(), verbose ? seqdb::report::yes : seqdb::report::no);
 
         std::shared_ptr<acmacs::chart::Chart> chart;
         if (args["--chart"])
             chart = acmacs::chart::import_from_file(args["--chart"], acmacs::chart::Verify::None, report_time::No);
 
-        Tree tree = tree::tree_import(args[0], chart);
+        Tree tree = tree::tree_import(std::string(args[0]), chart);
 
         const auto [min_edge, max_edge] = tree.cumulative_edge_minmax();
         // std::cout << "mm: " << min_edge << ' ' << max_edge << '\n';
