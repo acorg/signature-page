@@ -27,7 +27,7 @@ using AllDiffs = std::map<AADiff, std::vector<DiffEntry>>;
 
 // ----------------------------------------------------------------------
 
-static size_t hamming_distance(std::string seq1, std::string seq2);
+// static size_t hamming_distance(std::string seq1, std::string seq2);
 static AADiff diff_sequence(std::string seq1, std::string seq2);
 static AllDiffs collect(const Tree& tree);
 static void compute_entries_diffs(AllDiffs& diffs);
@@ -137,16 +137,16 @@ AllDiffs collect(const Tree &tree)
 
 // ----------------------------------------------------------------------
 
-size_t hamming_distance(std::string seq1, std::string seq2)
-{
-    size_t dist = 0;
-    for (size_t pos = 0; pos < std::min(seq1.size(), seq2.size()); ++pos) {
-        if (seq1[pos] != seq2[pos])
-            ++dist;
-    }
-    return dist;
+// size_t hamming_distance(std::string seq1, std::string seq2)
+// {
+//     size_t dist = 0;
+//     for (size_t pos = 0; pos < std::min(seq1.size(), seq2.size()); ++pos) {
+//         if (seq1[pos] != seq2[pos])
+//             ++dist;
+//     }
+//     return dist;
 
-} // hamming_distance
+// } // hamming_distance
 
 // ----------------------------------------------------------------------
 
