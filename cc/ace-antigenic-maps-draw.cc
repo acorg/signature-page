@@ -392,7 +392,7 @@ void AntigenicMapsLayoutDrawAce::mark_vaccines(const AntigenicMapMod& vaccine_mo
                 else if (field_name == "no")
                     matcher.no(item_value); // size_t
                 else if (field_name == "show") {
-                    const bool show = item_value;
+                    const bool show = item_value.get_bool();
                     matcher.show(show);
                     if (!show)
                         matcher.hide_label(chart_draw());
