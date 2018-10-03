@@ -25,6 +25,7 @@ namespace rjson
             virtual ~field_container_parent() = default;
 
             virtual const value& operator[](std::string aFieldName) const = 0;
+            virtual const value& get(std::string n1, std::string n2) const = 0;
             virtual value& operator[](std::string aFieldName) = 0;
             virtual value& get_or_add(std::string aFieldName, value&& aDefault) = 0;
             virtual value& get_or_add(std::string aFieldName, const value& aDefault) = 0;
@@ -43,7 +44,8 @@ namespace rjson
             void use_json(value&& aData) { mData = std::move(aData); }
             void update(value&& aData) { mData.update(aData); }
 
-            const value& operator[](std::string aFieldName) const override { return mData[aFieldName]; }
+            const value& operator[](std::string aFieldName) const override { return mData.get(aFieldName); }
+            const value& get(std::string n1, std::string n2) const override { return mData.get(n1, n2); }
             value& operator[](std::string aFieldName) override { return mData[aFieldName]; }
             value& get_or_add(std::string aFieldName, value&& aDefault) override { value& val = mData.set(aFieldName); if (val.is_null()) val = std::move(aDefault); return val; }
             value& get_or_add(std::string aFieldName, const value& aDefault) override { value& val = mData.set(aFieldName); if (val.is_null()) val = aDefault; return val; }
@@ -67,7 +69,8 @@ namespace rjson
           public:
             field_container_child(field_container_parent& aParent, std::string aFieldName) : mParent{aParent}, mFieldName{aFieldName} {}
 
-            const value& operator[](std::string aFieldName) const override { return mParent[mFieldName][aFieldName]; }
+            const value& operator[](std::string aFieldName) const override { return mParent.get(mFieldName, aFieldName); }
+            const value& get(std::string /*n1*/, std::string /*n2*/) const override { throw std::runtime_error("field_container_child::get(n1, n2)"); }
             value& operator[](std::string aFieldName) override { return mParent[mFieldName][aFieldName]; }
             value& get_or_add(std::string aFieldName, value&& aDefault) override { return mParent.get_or_add(mFieldName, object{})[aFieldName] = std::move(aDefault); }
             value& get_or_add(std::string aFieldName, const value& aDefault) override { return mParent.get_or_add(mFieldName, object{})[aFieldName] = aDefault; }
@@ -205,12 +208,13 @@ namespace rjson
                     rjson::for_each(get_array(), [&func](rjson::value& val) { Element elt(val); func(elt); });
                 }
 
+            const value& get_array() const { return mParent.get_or_empty_array(mFieldName); }
+
           private:
             field_container_parent& mParent;
             std::string mFieldName;
 
             value& get_array() { return mParent.get_or_add(mFieldName, array{}); }
-            const value& get_array() const { return mParent.get_or_empty_array(mFieldName); }
 
         }; // class array_field_container_child<>
 
@@ -222,7 +226,8 @@ namespace rjson
             array_field_container_child_element& operator=(const array_field_container_child_element&) = delete; // cannot re-assign const value& mData
             array_field_container_child_element& operator=(array_field_container_child_element&&) = delete; // cannot re-assign const value& mData
 
-            const value& operator[](std::string aFieldName) const override { return mData[aFieldName]; }
+            const value& operator[](std::string aFieldName) const override { return mData.get(aFieldName); }
+            const value& get(std::string n1, std::string n2) const override { return mData.get(n1, n2); }
             value& operator[](std::string aFieldName) override { return const_cast<value&>(mData)[aFieldName]; }
             value& get_or_add(std::string aFieldName, value&& aDefault) override { value& val = const_cast<value&>(mData).set(aFieldName); if (val.is_null()) val = std::move(aDefault); return val; }
             value& get_or_add(std::string aFieldName, const value& aDefault) override { value& val = const_cast<value&>(mData).set(aFieldName); if (val.is_null()) val = aDefault; return val; }
@@ -267,7 +272,14 @@ namespace rjson
             bool empty() const { return static_cast<FValue>(*this).empty(); }
 
             // to be specialized for complex types
-            operator FValue() const { return static_cast<FValue>(get_value_ref()); }
+            operator FValue() const
+            {
+                const value& val = get_value_ref();
+                if constexpr (std::is_same_v<FValue, bool>)
+                    return val.get_bool();
+                else
+                    return static_cast<FValue>(get_value_ref());
+            }
 
           private:
             field_container_parent& mParent;

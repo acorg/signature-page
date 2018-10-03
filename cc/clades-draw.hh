@@ -55,15 +55,7 @@ class CladesDrawSettings : public rjson::field_container_child
  public:
     CladesDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName);
 
-    const CladeDrawSettings for_clade(std::string name) const
-        {
-            if (auto found = clades.find_if([&name](const auto& c) -> bool { return static_cast<std::string>(c.name) == name; }); found)
-                return *found;
-            if (auto found = clades.find_if([](const auto& c) -> bool { return c.name.empty(); }); found)
-                return *found;
-            std::cerr << "DEBUG: " << clades << DEBUG_LINE_FUNC << '\n';
-            throw std::runtime_error("ERROR: no clade entry with empty name (for default settings)");
-        }
+    const CladeDrawSettings for_clade(std::string name) const;
 
     rjson::array_field_container_child<CladeDrawSettings> clades;
     rjson::field_get_set<double> slot_width;
