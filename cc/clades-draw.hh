@@ -55,7 +55,7 @@ class CladesDrawSettings : public rjson::field_container_child
  public:
     CladesDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName);
 
-    const CladeDrawSettings for_clade(std::string name) const;
+    CladeDrawSettings for_clade(std::string name) const;
 
     rjson::array_field_container_child<CladeDrawSettings> clades;
     rjson::field_get_set<double> slot_width;

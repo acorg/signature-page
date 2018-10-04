@@ -8,14 +8,12 @@
 
 // ----------------------------------------------------------------------
 
-const CladeDrawSettings CladesDrawSettings::for_clade(std::string name) const
+CladeDrawSettings CladesDrawSettings::for_clade(std::string name) const
 {
     if (auto found = clades.find_if([&name](const CladeDrawSettings& c) -> bool { return static_cast<std::string>(c.name) == name; }); found) {
-        std::cerr << "DEBUG: for_clade found name " << *found << DEBUG_LINE_FUNC << '\n';
         return *found;
     }
     if (auto found = clades.find_if([](const auto& c) -> bool { return c.name.empty(); }); found) {
-        std::cerr << "DEBUG: for_clade found empty " << *found << DEBUG_LINE_FUNC << '\n';
         return *found;
     }
     std::cerr << "DEBUG: " << clades << DEBUG_LINE_FUNC << '\n';
@@ -87,9 +85,8 @@ void CladesDraw::collect()
                     for (auto& c: *node_clades) {
                         auto p = mClades.emplace(c, aNode);
                         if (!p.second) { // the clade is already present, extend its range
-                            std::cerr << "DEBUG: CladesDraw::collect clade " << c << '\n';
-                            const auto& for_clade = mSettings.for_clade(c);
-                            std::cerr << "DEBUG: CladesDraw::collect for_clade " << for_clade << '\n';
+                            const auto for_clade = mSettings.for_clade(c);
+                              // std::cerr << "DEBUG: CladesDraw::collect for_clade " << for_clade << '\n';
                             std::cerr << "DEBUG: CladesDraw::collect name " << for_clade.name << '\n';
                             std::cerr << "DEBUG: CladesDraw::collect section_exclusion_tolerance " << for_clade.section_exclusion_tolerance << '\n';
                             p.first->second.extend(aNode, mSettings.for_clade(c).section_inclusion_tolerance);
