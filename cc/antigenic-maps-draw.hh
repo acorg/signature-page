@@ -228,7 +228,7 @@ class AntigenicMapMod : public rjson::v1::array_field_container_child_element
                     return operator[](aName);
             }
             catch (rjson::v1::field_not_found&) {
-                return aDefault;
+                return std::move(aDefault);
             }
         }
 

@@ -469,7 +469,7 @@ namespace rjson
             array ar;
             for (const auto& elt : aData)
                 ar.insert(string{elt});
-            return ar;
+            return std::move(ar);
         }
 
         template <> inline value to_value<std::vector<std::string>>(std::vector<std::string>&& aData) { return to_value(const_cast<const std::vector<std::string>&>(aData)); }
@@ -503,7 +503,7 @@ namespace rjson
             object obj;
             for (const auto& [key, val] : aData)
                 obj[key] = string(val);
-            return obj;
+            return std::move(obj);
         }
 
         template <> inline value to_value<std::map<std::string, std::string>>(std::map<std::string, std::string>&& aData)
