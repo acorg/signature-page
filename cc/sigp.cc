@@ -49,9 +49,9 @@ int main(int argc, const char *argv[])
             throw std::runtime_error("Usage: "s + args.program() + " [options] <tree.json> <output.pdf>\n" + args.usage_options());
         }
         const bool verbose = args["-v"] || args["--verbose"];
-        seqdb::setup_dbs(args["--db-dir"], verbose ? seqdb::report::yes : seqdb::report::no);
+        seqdb::setup_dbs(static_cast<std::string>(args["--db-dir"]), verbose ? seqdb::report::yes : seqdb::report::no);
         if (args["--seqdb"])
-            seqdb::setup(args["--seqdb"], verbose ? seqdb::report::yes : seqdb::report::no);
+            seqdb::setup(static_cast<std::string>(args["--seqdb"]), verbose ? seqdb::report::yes : seqdb::report::no);
 
         {
             SignaturePageDraw signature_page;
@@ -66,10 +66,10 @@ int main(int argc, const char *argv[])
             if (args["-s"])
                 load_settings(args["-s"]);
 
-            signature_page.tree(args[0]);
+            signature_page.tree(std::string(args[0]));
             if (args["--chart"])
-                signature_page.chart(args["--chart"]); // before make_surface!
-            signature_page.make_surface(args[1], args["--init-settings"], args["--show-aa-at-pos"], !args["--no-draw"]); // before init_layout!
+                signature_page.chart(static_cast<std::string>(args["--chart"])); // before make_surface!
+            signature_page.make_surface(std::string(args[1]), args["--init-settings"], args["--show-aa-at-pos"], !args["--no-draw"]); // before init_layout!
             if (args["--init-settings"]) {
                 signature_page.init_layout(args["--show-aa-at-pos"]);
                 signature_page.init_settings();
@@ -86,7 +86,7 @@ int main(int argc, const char *argv[])
             if (!args["--no-draw"])
                 signature_page.draw(args["--report-hz-section_antigens"], args["--init-settings"], args["--aa-at-pos-hz-section-threshold"], args["--aa-at-pos-small-section-threshold"]);
             if (args["--init-settings"])
-                signature_page.write_initialized_settings(args["--init-settings"]);
+                signature_page.write_initialized_settings(static_cast<std::string>(args["--init-settings"]));
             if (args["--hz-sections-report"])
                 signature_page.tree_draw().hz_sections().report(std::cout);
             // if (args["--hz-sections-report-html"])
@@ -96,7 +96,7 @@ int main(int argc, const char *argv[])
         if (!args["--no-draw"])
             std::cout << "INFO: generated: " << args[1] << '\n';
         if (args["--open"])
-            acmacs::open(args[1], 2);
+            acmacs::open(std::string(args[1]), 2);
 
         return 0;
     }

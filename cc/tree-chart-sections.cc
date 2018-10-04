@@ -70,12 +70,12 @@ int main(int argc, const char* argv[])
             throw std::runtime_error("Usage: "s + args.program() + " [options] <tree.json> <chart.ace>\n" + args.usage_options());
         }
         const bool verbose = args["-v"] || args["--verbose"];
-        seqdb::setup_dbs(args["--db-dir"], verbose ? seqdb::report::yes : seqdb::report::no);
+        seqdb::setup_dbs(static_cast<std::string>(args["--db-dir"]), verbose ? seqdb::report::yes : seqdb::report::no);
         if (args["--seqdb"])
-            seqdb::setup(args["--seqdb"], verbose ? seqdb::report::yes : seqdb::report::no);
+            seqdb::setup(static_cast<std::string>(args["--seqdb"]), verbose ? seqdb::report::yes : seqdb::report::no);
 
         std::shared_ptr<acmacs::chart::Chart> chart = acmacs::chart::import_from_file(args[1], acmacs::chart::Verify::None, report_time::No);
-        Tree tree = tree::tree_import(args[0], chart);
+        Tree tree = tree::tree_import(std::string(args[0]), chart);
 
         if (args["--group-series-sets"]) {
             groups_t groups;
@@ -93,7 +93,7 @@ int main(int argc, const char* argv[])
                 }
             };
             tree::iterate_pre_path(tree, make_groups);
-            json_writer::export_to_json(groups, args["--group-series-sets"], 2);
+            json_writer::export_to_json(groups, static_cast<std::string>(args["--group-series-sets"]), 2);
         }
         else {
             auto report_antigens = [](const Node& node, std::string path) {
