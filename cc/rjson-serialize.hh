@@ -1,4 +1,5 @@
 #pragma once
+#error Obsolete 2018-10-08
 
 #include <typeinfo>
 #include <optional>

@@ -3,8 +3,8 @@
 #include <map>
 
 #include "acmacs-base/color.hh"
+#include "acmacs-base/settings.hh"
 #include "acmacs-draw/surface.hh"
-#include "rjson-serialize.hh"
 
 // ----------------------------------------------------------------------
 
@@ -15,16 +15,16 @@ class HzSections;
 
 // ----------------------------------------------------------------------
 
-class AAAtPosSection : public rjson::array_field_container_child_element
+class AAAtPosSection : public acmacs::settings::object
 {
  public:
     AAAtPosSection(const rjson::value& aData);
 
-    rjson::field_get_set<size_t> pos;
-    rjson::field_get_set<std::string> aa;
-    rjson::field_get_set<size_t> num;
-    rjson::field_get_set<std::string> first;
-    rjson::field_get_set<std::string> last;
+    acmacs::settings::field<size_t>      pos{this, "_pos"};
+    acmacs::settings::field<std::string> aa{this, "aa"};
+    acmacs::settings::field<size_t>      num{this, "num"};
+    acmacs::settings::field<std::string> first{this, "first"};
+    acmacs::settings::field<std::string> last{this, "last"};
 };
 
 class AAAtPosDrawSettings : public rjson::field_container_child

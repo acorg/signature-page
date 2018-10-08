@@ -8,7 +8,6 @@
 #include "aa-at-pos-draw.hh"
 #include "antigenic-maps-draw.hh"
 #include "title-draw.hh"
-#include "rjson-serialize.hh"
 
 // ----------------------------------------------------------------------
 

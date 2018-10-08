@@ -5,9 +5,9 @@
 #include <vector>
 #include <map>
 
+#include "acmacs-base/settings.hh"
 #include "acmacs-draw/surface.hh"
-#include "tree.hh"
-#include "rjson-serialize.hh"
+#include "signature-page/tree.hh"
 
 // ----------------------------------------------------------------------
 

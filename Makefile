@@ -7,22 +7,24 @@ MAKEFLAGS = -w
 # ----------------------------------------------------------------------
 
 TARGETS = \
+	$(DIST)/sigp \
 	$(DIST)/sigp-settings-create \
 	$(DIST)/test-settings-copy \
-	$(DIST)/sigp \
 	$(DIST)/make-isig \
 	$(DIST)/tree-aa-info \
 	$(DIST)/tree-text \
 	$(DIST)/tree-chart-sections
 
-SIGNATURE_PAGE_SOURCES = tree.cc tree-export.cc \
-			 signature-page.cc tree-draw.cc time-series-draw.cc clades-draw.cc \
-			 mapped-antigens-draw.cc aa-at-pos-draw.cc antigenic-maps-layout.cc \
-			 antigenic-maps-draw.cc ace-antigenic-maps-draw.cc \
-			 title-draw.cc coloring.cc settings.cc
+SIGNATURE_PAGE_SOURCES = \
+  tree.cc tree-export.cc \
+  signature-page.cc tree-draw.cc time-series-draw.cc clades-draw.cc \
+  mapped-antigens-draw.cc aa-at-pos-draw.cc antigenic-maps-layout.cc \
+  antigenic-maps-draw.cc ace-antigenic-maps-draw.cc \
+  title-draw.cc coloring.cc settings.cc
+
 SIGP_SOURCES = sigp.cc $(SIGNATURE_PAGE_SOURCES)
-SETTINGS_CREATE_SOURCES = settings-create.cc settings.cc
-TEST_SETTINGS_COPY_SOURCES = test-settings-copy.cc settings.cc
+SETTINGS_CREATE_SOURCES = settings-create.cc # settings.cc
+TEST_SETTINGS_COPY_SOURCES = test-settings-copy.cc # settings.cc
 # TEST_DRAW_CHART_SOURCES = test-draw-chart.cc $(SIGNATURE_PAGE_SOURCES)
 
 MAKE_ISIG_SOURCES = make-isig.cc tree.cc tree-export.cc

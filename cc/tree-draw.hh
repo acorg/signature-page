@@ -9,7 +9,6 @@
 #include "acmacs-draw/surface.hh"
 #include "legend.hh"
 #include "clades-draw.hh"
-#include "rjson-serialize.hh"
 
 // ----------------------------------------------------------------------
 
