@@ -85,18 +85,18 @@ void SignaturePageDraw::make_surface(std::string aFilename, bool init_settings, 
     mSurface = std::make_unique<acmacs::surface::PdfCairo>(draw_map ? aFilename : std::string{}, width, height);
     std::cout << "INFO: Surface: " << width << " x " << height << std::endl;
 
-    mTreeDraw = std::make_unique<TreeDraw>(mSurface->subsurface(false), *mTree, mSettings->tree_draw, mSettings->hz_sections);
-    mTimeSeriesDraw = std::make_unique<TimeSeriesDraw>(mSurface->subsurface(false), *mTree, *mTreeDraw, mSettings->hz_sections, mSettings->time_series);
-    mCladesDraw = std::make_unique<CladesDraw>(mSurface->subsurface(false), *mTree, *mTreeDraw, *mTimeSeriesDraw, mSettings->clades);
-    mAAAtPosDraw = std::make_unique<AAAtPosDraw>(mSurface->subsurface(false), *mTree, mSettings->hz_sections, mSettings->aa_at_pos);
+    mTreeDraw = std::make_unique<TreeDraw>(mSurface->subsurface(false), *mTree, *mSettings->tree_draw, *mSettings->hz_sections);
+    mTimeSeriesDraw = std::make_unique<TimeSeriesDraw>(mSurface->subsurface(false), *mTree, *mTreeDraw, *mSettings->hz_sections, *mSettings->time_series);
+    mCladesDraw = std::make_unique<CladesDraw>(mSurface->subsurface(false), *mTree, *mTreeDraw, *mTimeSeriesDraw, *mSettings->clades);
+    mAAAtPosDraw = std::make_unique<AAAtPosDraw>(mSurface->subsurface(false), *mTree, *mSettings->hz_sections, *mSettings->aa_at_pos);
 
     if (!mChartFilename.empty()) {
         mAntigenicMapsDraw = std::unique_ptr<AntigenicMapsDrawBase>(make_antigenic_maps_draw(mChartFilename, mSurface->subsurface(false), *mTree, *mSettings->hz_sections, *mSettings->signature_page, *mSettings->antigenic_maps));
-        mMappedAntigensDraw = std::make_unique<MappedAntigensDraw>(mSurface->subsurface(false), *mTree, mAntigenicMapsDraw->chart(), mSettings->mapped_antigens);
-        mTitleDraw = std::make_unique<TitleDraw>(mSurface->subsurface(false), *mTree, &mAntigenicMapsDraw->chart(), mSettings->title);
+        mMappedAntigensDraw = std::make_unique<MappedAntigensDraw>(mSurface->subsurface(false), *mTree, mAntigenicMapsDraw->chart(), *mSettings->mapped_antigens);
+        mTitleDraw = std::make_unique<TitleDraw>(mSurface->subsurface(false), *mTree, &mAntigenicMapsDraw->chart(), *mSettings->title);
     }
     else {
-        mTitleDraw = std::make_unique<TitleDraw>(mSurface->subsurface(false), *mTree, nullptr, mSettings->title);
+        mTitleDraw = std::make_unique<TitleDraw>(mSurface->subsurface(false), *mTree, nullptr, *mSettings->title);
     }
 
 } // SignaturePageDraw::make_surface
