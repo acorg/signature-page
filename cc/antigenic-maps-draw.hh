@@ -261,6 +261,9 @@ class AntigenicMapMod : public acmacs::settings::object
     acmacs::settings::field_object<SelectSettings> select{this, "select"}; // antigens
     acmacs::settings::field<bool> report{this, "report"}, raise_if_not_found{this, "raise_if_not_found"}, raise_{this, "raise_"}, shown_on_all{this, "shown_on_all"}; // antigens
     acmacs::settings::field<std::string> order{this, "order"}; // antigens
+    acmacs::settings::field<std::string> map{this, "map"}, serum{this, "serum"}, radius_line_dash{this, "radius_line_dash"}; // serum_circle
+    acmacs::settings::field<double> radius_line_width{this, "radius_line_width"}, serum_size{this, "serum_size"}, serum_outline_width{this, "serum_outline_width"}; // serum_circle
+    acmacs::settings::field<Color> radius_line{this, "radius_line"}, serum_outline{this, "serum_outline"}; // serum_circle
 
     acmacs::Viewport get_viewport(const acmacs::Viewport& aOrigViewport) const;
 

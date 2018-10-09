@@ -194,7 +194,7 @@ void CladesDraw::init_settings()
                 clade.second.slot = slot;
                 (*settings_clade)->show = show;
             }
-            settings_clade->slot = clade.second.slot;
+            (*settings_clade)->slot = clade.second.slot;
         }
     }
 

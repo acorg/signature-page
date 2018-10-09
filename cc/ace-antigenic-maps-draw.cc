@@ -27,15 +27,15 @@ void AntigenicMapsLayoutDrawAce::prepare_apply_mods()
         try {
             const std::string name(mod.name());
             if (name == "rotate_degrees") {
-                chart_draw().rotate(mod.get_or_default("angle", 0.0) * M_PI / 180.0);
+                chart_draw().rotate(mod.angle.get_or(0.0) * M_PI / 180.0);
             }
             else if (name == "rotate_radians") {
-                chart_draw().rotate(mod.get_or_default("angle", 0.0));
+                chart_draw().rotate(mod.angle.get_or(0.0));
             }
             else if (name == "rotate") {
-                if (const double degrees = mod.get_or_default("degrees", 0.0); !float_zero(degrees))
+                if (const double degrees = mod.degrees.get_or(0.0); !float_zero(degrees))
                     chart_draw().rotate(degrees * M_PI / 180.0);
-                else if (const double radians = mod.get_or_default("radians", 0.0); !float_zero(radians))
+                else if (const double radians = mod.radians.get_or(0.0); !float_zero(radians))
                     chart_draw().rotate(radians);
             }
             else if (name == "flip") {
@@ -58,14 +58,14 @@ void AntigenicMapsLayoutDrawAce::prepare_apply_mods()
             else if (name == "title") {
                 chart_draw()
                     .title()
-                    .text_size(mod.get_or_default("text_size", 12.0))
+                    .text_size(mod.text_size.get_or(12.0))
                     .text_color(mod.get_color("text_color", "black"))
-                    .weight(std::string(mod.get_or_default("weight", "normal")))
-                    .slant(std::string(mod.get_or_default("slant", "normal")))
-                    .font_family(std::string(mod.get_or_default("font_family", "san serif")))
+                    .weight(std::string(mod.weight.get_or("normal")))
+                    .slant(std::string(mod.slant.get_or("normal")))
+                    .font_family(std::string(mod.font_family.get_or("san serif")))
                     .background("transparent")
                     .border_width(0)
-                    .padding(mod.get_or_default("padding", 3.0))
+                    .padding(mod.padding.get_or(3.0))
                     .offset(mod.offset())
                     .remove_all_lines();
             }
@@ -182,7 +182,7 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, std
       // tracked_antigen_colored_by_clade
 
     std::string title = hz_sections().node_refs[aSectionIndex].index + "."; // std::string(1, 'A' + static_cast<char>(aSectionNo)) + ".";
-    const HzSection& section = hz_sections().sections[aSectionIndex];
+    const HzSection& section = *hz_sections().sections[aSectionIndex];
     if (!section.label.empty())
         title += " " + static_cast<std::string>(section.label);
     // std::cerr << "DEBUG: map title: " << title << '\n';
@@ -318,10 +318,10 @@ bool AntigenicMapsLayoutDrawAce::make_serum_circle(const AntigenicMapMod& mod, s
         std::cout << "INFO: serum circle for " << serum_no << ' ' << chart().serum(serum_no)->full_name() << " radius: " << *radius_p << " antigens: " << homologous_antigens << '\n';
         auto& serum_circle = chart_draw().serum_circle(serum_no, Scaled{*radius_p});
         serum_circle.fill(mod.get_color("fill", "transparent"))
-            .outline(mod.get_color("outline", "black"), mod.get_or_default("outline_width", 1.0))
-            .radius_line(mod.get_color("radius_line", "transparent"), mod.get_or_default("radius_line_width", 1.0));
+                .outline(mod.outline.get_or(BLACK), mod.outline_width.get_or(1.0))
+                .radius_line(mod.radius_line.get_or(TRANSPARENT), mod.radius_line_width.get_or(1.0));
         //.angles(mod.get["angle_degrees"][0] * math.pi / 180.0, mod.get["angle_degrees"][1] * math.pi / 180.0);
-        const auto radius_line_dash = mod.get_or_default("radius_line_dash", "");
+        const auto radius_line_dash = mod.radius_line_dash.get_or("");
         if (radius_line_dash.empty() || radius_line_dash == "nodash")
             serum_circle.radius_line_no_dash();
         else if (radius_line_dash == "dash1")
@@ -344,23 +344,22 @@ bool AntigenicMapsLayoutDrawAce::make_serum_circle(const AntigenicMapMod& mod, s
 
 void AntigenicMapsLayoutDrawAce::serum_circle(const AntigenicMapMod& mod, std::string map_letter, size_t /*aSectionIndex*/)
 {
-    if (const auto map = mod.get_or_default("map", "A"); map == map_letter) {
+    if (const auto map = mod.map.get_or("A"); map == map_letter) {
         find_homologous_antigens_for_sera();
-        std::string serum_name(mod.get_or_default("serum", ""));
-        if (serum_name.empty())
+        if (mod.serum.empty())
             throw std::runtime_error("invalid mod (\"serum\" not found): " + mod.to_json());
         const auto& chrt = chart();
-        auto serum_index = chrt.sera()->find_by_full_name(serum_name);
+        auto serum_index = chrt.sera()->find_by_full_name(mod.serum);
         if (!serum_index)
             throw std::runtime_error("serum not found: " + mod.to_json());
         const auto homologous_antigens_for_serum = chrt.serum(*serum_index)->homologous_antigens();
         if (!homologous_antigens_for_serum.empty()) {
-            // std::cout << "INFO: forced serum circle for serum: " << *serum_index << ' ' << serum_name << '\n';
+            // std::cout << "INFO: forced serum circle for serum: " << *serum_index << ' ' << mod.serum << '\n';
             if (make_serum_circle(mod, *serum_index, homologous_antigens_for_serum))
                 make_tracked_serum(*serum_index, Pixels{mod.get_or_default("serum_size", 5.0)}, mod.get_color("serum_outline", mod.get_color("outline", "black")), Pixels{mod.get_or_default("serum_outline_width", 0.5)}, mod.get_or_empty_object("label"));
         }
         else
-            std::cerr << "WARNING: no homologous antigens for serum (for forced serum circle): " << *serum_index << ' ' << serum_name << '\n';
+            std::cerr << "WARNING: no homologous antigens for serum (for forced serum circle): " << *serum_index << ' ' << mod.serum << '\n';
     }
 
 } // AntigenicMapsLayoutDrawAce::serum_circle

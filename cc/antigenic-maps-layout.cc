@@ -35,12 +35,12 @@ void AntigenicMapsLayoutDraw::apply_mods_before(acmacs::surface::Surface& aSurfa
 {
     settings().mods.for_each([&aSurface](const auto& mod) {
         if (mod.name == "background") {
-            Color color = mod.get_color("color", "white");
+            const Color color = mod.color.get_or(WHITE);
             const auto& v = aSurface.viewport();
             aSurface.rectangle_filled(v.origin, v.size, color, Pixels{0}, color);
         }
         else if (mod.name == "grid") {
-            aSurface.grid(Scaled{1}, mod.get_color("color", "grey80"), Pixels{mod.get_or_default("line_width", 1.0)});
+            aSurface.grid(Scaled{1}, mod.color.get_or("grey80"), Pixels{mod.line_width.get_or(1.0)});
         }
     });
 
@@ -53,7 +53,7 @@ void AntigenicMapsLayoutDraw::apply_mods_after(acmacs::surface::Surface& aSurfac
     settings().mods.for_each([&aSurface](const auto& mod) {
         if (mod.name == "border") {
             const auto& v = aSurface.viewport();
-            aSurface.rectangle(v.origin, v.size, mod.get_color("color", "black"), Pixels{mod.get_or_default("line_width", 1.0) * 2});
+            aSurface.rectangle(v.origin, v.size, mod.color.get_or(BLACK), Pixels{mod.line_width.get_or(1.0) * 2});
         }
     });
 
