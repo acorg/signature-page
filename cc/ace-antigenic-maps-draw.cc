@@ -93,18 +93,18 @@ void AntigenicMapsLayoutDrawAce::prepare_chart_for_all_sections()
         }
         if (mod.name == "reference_antigens") {
             acmacs::PointStyle ref_antigen_style;
-            ref_antigen_style.size = Pixels{mod.get_or_default("size", 5.0)};
-            ref_antigen_style.fill = mod.get_color("fill", "transparent");
-            ref_antigen_style.outline = mod.get_color("outline", "grey88");
-            ref_antigen_style.outline_width = Pixels{mod.get_or_default("outline_width", 0.5)};
+            ref_antigen_style.size = Pixels{mod.size.get_or(5.0)};
+            ref_antigen_style.fill = mod.fill.get_or(TRANSPARENT);
+            ref_antigen_style.outline = mod.outline.get_or("grey88");
+            ref_antigen_style.outline_width = Pixels{mod.outline_width.get_or(0.5)};
             chart_draw().modify(chart().antigens()->reference_indexes(), ref_antigen_style);
         }
         else if (mod.name == "test_antigens") {
             acmacs::PointStyle test_antigen_style;
-            test_antigen_style.size = Pixels{mod.get_or_default("size", 3.0)};
-            test_antigen_style.fill = mod.get_color("fill", "grey88");
-            test_antigen_style.outline = mod.get_color("outline", "grey88");
-            test_antigen_style.outline_width = Pixels{mod.get_or_default("outline_width", 0.5)};
+            test_antigen_style.size = Pixels{mod.size.get_or(3.0)};
+            test_antigen_style.fill = mod.fill.get_or("grey88");
+            test_antigen_style.outline = mod.outline.get_or("grey88");
+            test_antigen_style.outline_width = Pixels{mod.outline_width.get_or(0.5)};
             chart_draw().modify(chart().antigens()->test_indexes(), test_antigen_style);
         }
     });
@@ -123,20 +123,20 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, std
     settings().mods.for_each([this](const auto& mod) {
         if (mod.name == "sera") {
             acmacs::PointStyle serum_style;
-            serum_style.size = Pixels{mod.get_or_default("size", 5.0)};
-            serum_style.fill = mod.get_color("fill", "transparent");
-            serum_style.outline = mod.get_color("outline", "grey88");
-            serum_style.outline_width = Pixels{mod.get_or_default("outline_width", 0.5)};
+            serum_style.size = Pixels{mod.size.get_or(5.0)};
+            serum_style.fill = mod.fill.get_or(TRANSPARENT);
+            serum_style.outline = mod.outline.get_or("grey88");
+            serum_style.outline_width = Pixels{mod.outline_width.get_or(0.5)};
             chart_draw().modify_all_sera(serum_style, PointDrawingOrder::Lower);
         }
         else if (mod.name == "sequenced_antigens") {      // mark sequenced antigens (removes old tracked antigens marking)
             std::vector<size_t> sequenced_indices(sequenced_antigens().size());
             std::transform(sequenced_antigens().begin(), sequenced_antigens().end(), sequenced_indices.begin(), [](const auto& src) -> size_t { return src.first; });
             acmacs::PointStyle sequenced_antigen_style;
-            sequenced_antigen_style.size = Pixels{mod.get_or_default("size", 3.0)};
-            sequenced_antigen_style.fill = mod.get_color("fill", "grey88");
-            sequenced_antigen_style.outline = mod.get_color("outline", "white");
-            sequenced_antigen_style.outline_width = Pixels{mod.get_or_default("outline_width", 0.5)};
+            sequenced_antigen_style.size = Pixels{mod.size.get_or(3.0)};
+            sequenced_antigen_style.fill = mod.fill.get_or("grey88");
+            sequenced_antigen_style.outline = mod.outline.get_or(WHITE);
+            sequenced_antigen_style.outline_width = Pixels{mod.outline_width.get_or(0.5)};
             chart_draw().modify(sequenced_indices, sequenced_antigen_style);
         }
     });
@@ -145,17 +145,17 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, std
         if (mod.name == "tracked_antigens") {
             const auto tracked_indices = tracked_antigens(aSectionIndex, report_antigens_in_hz_sections);
             acmacs::PointStyle tracked_antigen_style;
-            tracked_antigen_style.size = Pixels{mod.get_or_default("size", 5.0)};
-            tracked_antigen_style.fill = mod.get_color("fill", "grey63");
-            tracked_antigen_style.outline = mod.get_color("outline", "white");
-            tracked_antigen_style.outline_width = Pixels{mod.get_or_default("outline_width", 0.5)};
+            tracked_antigen_style.size = Pixels{mod.size.get_or(5.0)};
+            tracked_antigen_style.fill = mod.fill.get_or("grey63");
+            tracked_antigen_style.outline = mod.outline.get_or(WHITE);
+            tracked_antigen_style.outline_width = Pixels{mod.outline_width.get_or(0.5)};
             chart_draw().modify(tracked_indices, tracked_antigen_style, PointDrawingOrder::Raise);
         }
         else if (mod.name == "tracked_sera") {
             const auto tracked_indices = tracked_sera(aSectionIndex);
             std::cout << "INFO: tracked_sera: " << tracked_indices << std::endl;
             for (auto [serum_index, ignored]: tracked_indices)
-                make_tracked_serum(serum_index, Pixels{mod.get_or_default("size", 5.0)}, mod.get_color("outline", "black"), Pixels{mod.get_or_default("outline_width", 0.5)}, *mod.label);
+                make_tracked_serum(serum_index, Pixels{mod.size.get_or(5.0)}, mod.outline.get_or("black"), Pixels{mod.outline_width.get_or(0.5)}, *mod.label);
         }
         else if (mod.name == "tracked_serum_circles") {
             tracked_serum_circles(mod, aSectionIndex);
@@ -433,7 +433,7 @@ void AntigenicMapsLayoutDrawAce::mark_antigens_old(const AntigenicMapMod& mod)
             chart_draw().modify(static_cast<size_t>(index), antigen_style, mod.raise_.get_or(true) ? PointDrawingOrder::Raise : PointDrawingOrder::NoChange);
             if (const auto& label_data = mod.label; label_data.is_set()) {
                 auto& label = chart_draw().add_label(index);
-                label.size(label_data->.size.get_or(9.0));
+                label.size(label_data->size.get_or(9.0));
                 label.offset = label_data->offset.get_or({0, 1});
                 if (const auto& display_name = label_data->display_name; display_name.is_set())
                     label.display_name(display_name);
