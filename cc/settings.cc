@@ -12,12 +12,12 @@ using namespace std::string_literals;
 Settings::Settings()
 {
     auto mod = mods.append();
-    mod.name_commented = "text";
-    mod.color = BLACK;
-    mod.offset = acmacs::Offset{100.0, 100.0};
-    mod.size = 12.0;
-    mod.style = acmacs::TextStyle{};
-    mod.text = "Text to show";
+    mod->name_commented = "text";
+    mod->color = BLACK;
+    mod->offset = acmacs::Offset{100.0, 100.0};
+    mod->size = 12.0;
+    mod->style = acmacs::TextStyle{};
+    mod->text = "Text to show";
 
 } // Settings::Settings
 

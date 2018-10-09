@@ -87,7 +87,7 @@ class AntigenicMapsLayoutDrawAce : public AntigenicMapsLayoutDraw
 
     // returns if circle shown
     bool make_serum_circle(const AntigenicMapMod& mod, size_t serum_no, const acmacs::chart::PointIndexList& homologous_antigens);
-    void make_tracked_serum(size_t serum_index, Pixels size, Color outline, Pixels outline_width, const rjson::value& label_data = rjson::value{});
+    void make_tracked_serum(size_t serum_index, Pixels size, Color outline, Pixels outline_width, const LabelSettings& label_data);
     void find_homologous_antigens_for_sera() const;
 
 }; // class AntigenicMapsLayoutDrawAce

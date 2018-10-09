@@ -159,7 +159,7 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, std
             const auto tracked_indices = tracked_sera(aSectionIndex);
             std::cout << "INFO: tracked_sera: " << tracked_indices << std::endl;
             for (auto [serum_index, ignored]: tracked_indices)
-                make_tracked_serum(serum_index, Pixels{mod.get_or_default("size", 5.0)}, mod.get_color("outline", "black"), Pixels{mod.get_or_default("outline_width", 0.5)});
+                make_tracked_serum(serum_index, Pixels{mod.get_or_default("size", 5.0)}, mod.get_color("outline", "black"), Pixels{mod.get_or_default("outline_width", 0.5)}, *mod.label);
         }
         else if (name == "tracked_serum_circles") {
             tracked_serum_circles(mod, aSectionIndex);
@@ -192,15 +192,17 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, std
 
 // ----------------------------------------------------------------------
 
-void AntigenicMapsLayoutDrawAce::make_tracked_serum(size_t serum_index, Pixels size, Color outline, Pixels outline_width, const rjson::value& label_data)
+void AntigenicMapsLayoutDrawAce::make_tracked_serum(size_t serum_index, Pixels size, Color outline, Pixels outline_width, const LabelSettings& label_data)
 {
     acmacs::PointStyle tracked_serum_style;
     tracked_serum_style.size = size;
     tracked_serum_style.outline = outline;
     tracked_serum_style.outline_width = outline_width;
     chart_draw().modify_serum(serum_index, tracked_serum_style, PointDrawingOrder::Raise);
-    if (!label_data.empty() && rjson::get_or(label_data, "show", true)) {
+    if (label_data.offset.is_set() && label_data.show.get_or(true)) {
         auto& label = chart_draw().add_label(chart().number_of_antigens() + serum_index);
+        label.offset(label_data.offset);
+
         rjson::for_each(label_data, [&label,&label_data,this,serum_index](const std::string& field_name, const rjson::value& item_value) {
             if (field_name == "size")
                 label.size(item_value);
@@ -317,7 +319,7 @@ bool AntigenicMapsLayoutDrawAce::make_serum_circle(const AntigenicMapMod& mod, s
     if (shown) {
         std::cout << "INFO: serum circle for " << serum_no << ' ' << chart().serum(serum_no)->full_name() << " radius: " << *radius_p << " antigens: " << homologous_antigens << '\n';
         auto& serum_circle = chart_draw().serum_circle(serum_no, Scaled{*radius_p});
-        serum_circle.fill(mod.get_color("fill", "transparent"))
+        serum_circle.fill(mod.fill.get_or(TRANSPARENT))
                 .outline(mod.outline.get_or(BLACK), mod.outline_width.get_or(1.0))
                 .radius_line(mod.radius_line.get_or(TRANSPARENT), mod.radius_line_width.get_or(1.0));
         //.angles(mod.get["angle_degrees"][0] * math.pi / 180.0, mod.get["angle_degrees"][1] * math.pi / 180.0);
@@ -356,7 +358,7 @@ void AntigenicMapsLayoutDrawAce::serum_circle(const AntigenicMapMod& mod, std::s
         if (!homologous_antigens_for_serum.empty()) {
             // std::cout << "INFO: forced serum circle for serum: " << *serum_index << ' ' << mod.serum << '\n';
             if (make_serum_circle(mod, *serum_index, homologous_antigens_for_serum))
-                make_tracked_serum(*serum_index, Pixels{mod.get_or_default("serum_size", 5.0)}, mod.get_color("serum_outline", mod.get_color("outline", "black")), Pixels{mod.get_or_default("serum_outline_width", 0.5)}, mod.get_or_empty_object("label"));
+                make_tracked_serum(*serum_index, Pixels{mod.serum_size.get_or(5.0)}, mod.serum_outline.get_or(mod.outline.get_or(BLACK)), Pixels{mod.serum_outline_width.get_or(0.5)}, *mod.label);
         }
         else
             std::cerr << "WARNING: no homologous antigens for serum (for forced serum circle): " << *serum_index << ' ' << mod.serum << '\n';

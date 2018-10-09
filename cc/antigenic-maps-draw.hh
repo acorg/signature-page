@@ -218,6 +218,7 @@ class LabelSettings : public acmacs::settings::object
  public:
     using acmacs::settings::object::object;
 
+    acmacs::settings::field<bool> show{this, "show"};
     acmacs::settings::field<std::string> name_type{this, "name_type"};
     acmacs::settings::field<acmacs::Offset> offset{this, "offset"};
     acmacs::settings::field<double> size{this, "size"};
