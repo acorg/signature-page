@@ -266,39 +266,32 @@ class HzSection : public acmacs::settings::object
     using acmacs::settings::object::object;
     // HzSection(std::string aName = std::string{}, bool aShowLine = true);
     // HzSection(const Node& aFirst, bool aShow, bool aShowLine, bool aShowMap);
-      // inline HzSection(const HzSection&) = default;
-    // inline HzSection(HzSection&&) = default;
-    // inline HzSection& operator=(const HzSection&) = default;
 
-    acmacs::settings::field<bool> show;
-    acmacs::settings::field<bool> show_line;
-    acmacs::settings::field<bool> show_label_in_time_series;
-    acmacs::settings::field<bool> show_map;
-    acmacs::settings::field<std::string> name;           // first seq_id
-    acmacs::settings::field<std::string> label;          // antigenic map label, empty - generate automatically
-
-    rjson::array_field_container_child<std::string> triggering_clades; // clades that trigger this hz line
-    rjson::array_field_container_child<size_t> triggering_aa_pos;      // aa pos triggering this line
-
-      // not stored in settings
-    // const Node* first;
-    // const Node* last;
-    // std::string index;
+    acmacs::settings::field<bool>              show{this, "show", true};
+    acmacs::settings::field<bool>              show_line{this, "show_line", true};
+    acmacs::settings::field<bool>              show_label_in_time_series{this, "show_label_in_time_series", true};
+    acmacs::settings::field<bool>              show_map{this, "show_map", true};
+    acmacs::settings::field<std::string>       name{this, "name", ""};           // first seq_id
+    acmacs::settings::field<std::string>       label{this, "label", ""};          // antigenic map label, empty - generate automatically
+    acmacs::settings::field_array<std::string> triggering_clades{this, "triggering_clades"}; // clades that trigger this hz line
+    acmacs::settings::field_array<size_t>      triggering_aa_pos{this, "triggering_aa_pos"};      // aa pos triggering this line
 };
+
+// ----------------------------------------------------------------------
 
 class HzSections : public acmacs::settings::object
 {
  public:
     using acmacs::settings::object::object;
 
-    acmacs::settings::field<double> vertical_gap;
-    acmacs::settings::field<Color> line_color;
-    acmacs::settings::field<double> line_width;
-    acmacs::settings::field<double> ts_label_size;
-    acmacs::settings::field<acmacs::TextStyle> ts_label_style;
-    acmacs::settings::field<Color> ts_label_color;
-    rjson::array_field_container_child<HzSection> sections;
-    acmacs::settings::field<bool> show_labels_in_time_series_in_tree_mode;
+    acmacs::settings::field<double>             vertical_gap{this, "vertical_gap", 20};
+    acmacs::settings::field<Color>              line_color{this, "line_color", "grey63"};
+    acmacs::settings::field<double>             line_width{this, "line_width", 1};
+    acmacs::settings::field<double>             ts_label_size{this, "ts_label_size", 10};
+    acmacs::settings::field<acmacs::TextStyle>  ts_label_style{this, "ts_label_style", {}};
+    acmacs::settings::field<Color>              ts_label_color{this, "ts_label_color", "black"};
+    acmacs::settings::field_array_of<HzSection> sections{this, "sections"};
+    acmacs::settings::field<bool>               show_labels_in_time_series_in_tree_mode{this, "show_labels_in_time_series_in_tree_mode", false};
 
       // not stored
 
@@ -323,7 +316,7 @@ class HzSections : public acmacs::settings::object
     void add(const Node& node, bool show_line, std::string clade, size_t aa_pos);
     void add(const Tree& tree, const Node& first, const Node& last, bool show_line, std::string clade, size_t aa_pos);
 
-    inline size_t shown_maps() const
+    size_t shown_maps() const
         {
             size_t result = 0;
             sections.for_each([&result](const HzSection& section) { if (section.show_map) ++result; });
