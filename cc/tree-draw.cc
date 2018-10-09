@@ -38,8 +38,8 @@ void TreeDraw::make_coloring()
     else {
         try {
             auto coloring = std::make_unique<ColoringByPos>(std::stoul(std::string(color_nodes)));
-            if (!mSettings.color_for_aa.empty())
-                coloring->color_for_aa(mSettings.color_for_aa);
+            if (const std::map<std::string, std::string> color_for_aa = mSettings.color_for_aa; !color_for_aa.empty())
+                coloring->color_for_aa(color_for_aa);
             mColoring = std::move(coloring);
         }
         catch (std::exception&) {
@@ -591,8 +591,7 @@ void TreeDraw::draw_aa_transition(const Node& aNode, acmacs::Location2D aOrigin,
     const auto& first_leaf = find_first_leaf(aNode);
     if (settings->show && !aNode.data.aa_transitions.empty() && aNode.data.number_strains >= settings->number_strains_threshold) {
         if (auto labels = aNode.data.aa_transitions.make_labels(settings->show_empty_left); !labels.empty()) {
-            const auto& branch_settings = settings->per_branch->settings_for_label(labels, first_leaf.seq_id);
-            if (branch_settings.show) {
+            if (const auto /*not ref! */ branch_settings = settings->per_branch->settings_for_label(labels, first_leaf.seq_id); branch_settings.show) {
                 const auto longest_label = std::max_element(labels.begin(), labels.end(), [](const auto& a, const auto& b) { return a.first.size() < b.first.size(); });
                 const auto longest_label_size = mSurface.text_size(longest_label->first, Pixels{branch_settings.size}, branch_settings.style);
                 const auto node_line_width = aRight - aOrigin.x();
@@ -628,7 +627,7 @@ void TreeDraw::draw_aa_transition(const Node& aNode, acmacs::Location2D aOrigin,
                 }
 
                 if (mInitializeSettings) {
-                    settings->per_branch->by_aa_label.emplace_back().set_label_disabled_offset(labels.label(), first_leaf.seq_id, settings->per_branch->label_offset);
+                    settings->per_branch->by_aa_label.append()->set_label_disabled_offset(labels.label(), first_leaf.seq_id, settings->per_branch->label_offset);
                 }
 
                 aa_transitions_.push_back({first_leaf.seq_id, labels.label(), origin, aNode.data.number_strains});
@@ -706,7 +705,7 @@ void HzSections::sort(const Tree& aTree)
     node_refs.resize(sections.size());
 
     auto set_first_node = [this](const Node& node) {
-        if (auto sec_no = sections.find_index_if([&node](const auto& s) -> bool { return static_cast<std::string>(HzSection(s).name) == node.seq_id; }); sec_no)
+        if (auto sec_no = sections.find_index_if([&node](const auto& s) -> bool { return s.name == node.seq_id; }); sec_no)
             node_refs[*sec_no].first = &node;
     };
     tree::iterate_leaf(aTree, set_first_node);
@@ -715,7 +714,7 @@ void HzSections::sort(const Tree& aTree)
     std::vector<size_t> to_remove;
     for (size_t sec_no = 0; sec_no < node_refs.size(); ++sec_no) {
         if (node_refs[sec_no].first == nullptr) {
-            if (!sections[sec_no]->name.empty())
+            if (sections[sec_no]->name != "")
                 std::cerr << "WARNING: HZ section removed (leaf node not found): " << sections[sec_no]->name << std::endl;
             to_remove.push_back(sec_no);
         }
@@ -736,12 +735,12 @@ void HzSections::sort(const Tree& aTree)
     // if the first section does not start with the topmost node, prepend section list with the new section
     const Node* first_leaf = aTree.find_leaf_by_line_no(TreeDraw::sFirstLineNo);
     if (sections.empty() || node_refs[section_order.front()].first != first_leaf) {
-        auto new_sec = sections.emplace_back();
+        auto new_sec = sections.append();
         node_refs.emplace_back(first_leaf);
-        new_sec.name = first_leaf->seq_id;
-        new_sec.show = true;
-        new_sec.show_line = false;
-        new_sec.show_map = false;
+        new_sec->name = first_leaf->seq_id;
+        new_sec->show = true;
+        new_sec->show_line = false;
+        new_sec->show_map = false;
         section_order.insert(section_order.begin(), node_refs.size() - 1);
     }
 
@@ -769,12 +768,12 @@ void HzSections::report(std::ostream& out) const
     out << "INFO: hz sections\n";
     for (auto section_index: section_order) {
         out << "  " << std::setw(4) << std::right << node_refs[section_index].first->draw.line_no << ' ' << node_refs[section_index].first->seq_id;
-        const auto& section = sections[section_index];
-        if (!section->triggering_clades.empty()) {
-            out << "   clades: " << section->triggering_clades;
+        const auto& section = *sections[section_index];
+        if (!section.triggering_clades.empty()) {
+            out << "   clades: " << section.triggering_clades;
         }
-        if (!section->triggering_aa_pos.empty()) {
-            out << "   aa-at: " << section->triggering_aa_pos;
+        if (!section.triggering_aa_pos.empty()) {
+            out << "   aa-at: " << section.triggering_aa_pos;
         }
         out << '\n';
     }
@@ -886,21 +885,21 @@ void HzSections::detect_hz_lines_for_clades(Tree& aTree, const Clades* aClades, 
 
 void HzSections::add(std::string seq_id, bool show_line, std::string clade, size_t aa_pos)
 {
-    if (auto found = sections.find_if([&seq_id](const auto& sect) { return HzSection(sect).name == seq_id; }); !found) {
+    if (auto found = sections.find_if([&seq_id](const auto& sect) { return sect.name == seq_id; }); !found) {
           // std::cerr << "DEBUG: add hz section: " << seq_id << '\n';
-        auto sec = sections.emplace_back();
-        sec.name = seq_id;
-        sec.show_line = show_line;
+        auto sec = sections.append();
+        sec->name = seq_id;
+        sec->show_line = show_line;
         if (!clade.empty())
-            sec.triggering_clades.push_back(clade);
+            sec->triggering_clades.append(clade);
         if (aa_pos > 0)
-            sec.triggering_aa_pos.push_back(aa_pos);
+            sec->triggering_aa_pos.append(aa_pos);
     }
     else {
         if (!clade.empty())
-            (*found)->triggering_clades.push_back(clade);
+            (*found)->triggering_clades.append(clade);
         if (aa_pos > 0)
-            (*found)->triggering_aa_pos.push_back(aa_pos);
+            (*found)->triggering_aa_pos.append(aa_pos);
         std::cerr << "DEBUG: " << seq_id << ' ' << (*found)->triggering_clades << ' '  << (*found)->triggering_aa_pos << '\n';
     }
 
@@ -926,34 +925,60 @@ void HzSections::add(const Tree& tree, const Node& first, const Node& last, bool
 
 // ----------------------------------------------------------------------
 
-const AATransitionIndividualSettings& AATransitionPerBranchDrawSettings::settings_for_label(const AA_TransitionLabels& aLabels, std::string aFirstLeafSeqid) const
+AATransitionIndividualSettingsForLabel::AATransitionIndividualSettingsForLabel(const AATransitionPerBranchDrawSettings& src)
+    : // label(src.label), first_leaf_seq_id(src.first_leaf_seq_id),
+    show(src.show), size(src.size), color(src.color),
+      style(src.style), interline(src.interline), label_offset(src.label_offset),
+      label_connection_line_width(src.label_connection_line_width), label_connection_line_color(src.label_connection_line_color)
 {
-#pragma GCC diagnostic push
-#ifdef __clang__
-#pragma GCC diagnostic ignored "-Wexit-time-destructors"
-#endif
-    static rjson::value settings{rjson::object{}};
-    static AATransitionIndividualSettings result{settings};
-#pragma GCC diagnostic pop
 
-    settings = data();
+} // AATransitionIndividualSettingsForLabel::AATransitionIndividualSettingsForLabel
 
-    auto match_entry = [label = aLabels.label(), aFirstLeafSeqid](const auto& entry_v) {
-                           const AATransitionIndividualSettings entry(entry_v);
-                           return entry.label == label && (entry.first_leaf_seq_id.empty() || entry.first_leaf_seq_id == aFirstLeafSeqid);
+// ----------------------------------------------------------------------
+
+void AATransitionIndividualSettingsForLabel::update(const AATransitionIndividualSettings& src)
+{
+    // label = src.label;
+    // first_leaf_seq_id = src.first_leaf_seq_id;
+    show = src.show;
+    size = src.size;
+    color = src.color;
+    style = src.style;
+    interline = src.interline;
+    label_offset = src.label_offset;
+    label_connection_line_width = src.label_connection_line_width;
+    label_connection_line_color = src.label_connection_line_color;
+
+} // AATransitionIndividualSettingsForLabel::update
+
+// ----------------------------------------------------------------------
+
+AATransitionIndividualSettingsForLabel AATransitionPerBranchDrawSettings::settings_for_label(const AA_TransitionLabels& aLabels, std::string aFirstLeafSeqid) const
+{
+//v1 #pragma GCC diagnostic push
+//v1 #ifdef __clang__
+//v1 #pragma GCC diagnostic ignored "-Wexit-time-destructors"
+//v1 #endif
+//v1     static rjson::value settings{rjson::object{}};
+//v1     static AATransitionIndividualSettings result{settings};
+//v1 #pragma GCC diagnostic pop
+//v1
+//v1     settings = data();
+
+    AATransitionIndividualSettingsForLabel result(*this);
+    auto match_entry = [label = aLabels.label(), aFirstLeafSeqid](const AATransitionIndividualSettings& entry) {
+                           return entry.label == label && (entry.first_leaf_seq_id == "" || entry.first_leaf_seq_id == aFirstLeafSeqid);
                        };
     if (auto found = by_aa_label.find_if(match_entry); found) {
-        settings.update((*found).data());
+        result.update(*found);
     }
 
     if (scatter_label_offset > 0.0) {
         std::random_device rand;
         constexpr const auto rand_size = static_cast<double>(rand.max() - rand.min());
-        acmacs::Location2D old_label_offset;
-        if (const auto& ar = settings["label_offset"]; !ar.is_null())
-            old_label_offset = acmacs::Location2D{ar[0], ar[1]};
-        settings["label_offset"] = rjson::array{static_cast<double>(rand()) * scatter_label_offset * 2 / rand_size - scatter_label_offset + old_label_offset.x(),
-                                                static_cast<double>(rand()) * scatter_label_offset * 2 / rand_size - scatter_label_offset + old_label_offset.y()};
+        const acmacs::Location2D old_label_offset = result.label_offset;
+        result.label_offset.x(static_cast<double>(rand()) * scatter_label_offset * 2 / rand_size - scatter_label_offset + old_label_offset.x());
+        result.label_offset.y(static_cast<double>(rand()) * scatter_label_offset * 2 / rand_size - scatter_label_offset + old_label_offset.y());
     }
     return result;
 

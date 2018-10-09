@@ -34,13 +34,12 @@ const acmacs::Viewport& AntigenicMapsLayoutDraw::viewport() const
 void AntigenicMapsLayoutDraw::apply_mods_before(acmacs::surface::Surface& aSurface)
 {
     settings().mods.for_each([&aSurface](const auto& mod) {
-        const std::string name(mod.name());
-        if (name == "background") {
+        if (mod.name == "background") {
             Color color = mod.get_color("color", "white");
             const auto& v = aSurface.viewport();
             aSurface.rectangle_filled(v.origin, v.size, color, Pixels{0}, color);
         }
-        else if (name == "grid") {
+        else if (mod.name == "grid") {
             aSurface.grid(Scaled{1}, mod.get_color("color", "grey80"), Pixels{mod.get_or_default("line_width", 1.0)});
         }
     });
@@ -52,8 +51,7 @@ void AntigenicMapsLayoutDraw::apply_mods_before(acmacs::surface::Surface& aSurfa
 void AntigenicMapsLayoutDraw::apply_mods_after(acmacs::surface::Surface& aSurface)
 {
     settings().mods.for_each([&aSurface](const auto& mod) {
-        const std::string name(mod.name());
-        if (name == "border") {
+        if (mod.name == "border") {
             const auto& v = aSurface.viewport();
             aSurface.rectangle(v.origin, v.size, mod.get_color("color", "black"), Pixels{mod.get_or_default("line_width", 1.0) * 2});
         }
@@ -99,7 +97,7 @@ void LabelledGridBase::draw(acmacs::surface::Surface& aMappedAntigensDrawSurface
     size_t shown_maps = 0, row = 0, column = 0;
     for (const auto section_index: layout_draw().hz_sections().section_order) {
         const auto& section = layout_draw().hz_sections().sections[section_index];
-        if (section.show && section.show_map) {
+        if (section->show && section->show_map) {
             acmacs::surface::Surface& map_surface = surface.subsurface({column * (map_width + settings.gap), row * (map_width + settings.gap)},
                                                                        Scaled{map_width}, layout_draw().viewport(), true);
             const std::string map_letter = layout_draw().hz_sections().node_refs[section_index].index;

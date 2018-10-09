@@ -179,8 +179,8 @@ void CladesDraw::init_settings()
         auto matcher = [&](const auto& c) { return static_cast<std::string>(c.name) == clade.first; };
         auto get_settings_clade = [&matcher, &clade, this]() {
             if (auto settings_clade = mSettings.clades.find_if(matcher); !settings_clade) {
-                auto new_clade = mSettings.clades.emplace_back();
-                new_clade.name = clade.first;
+                auto new_clade = mSettings.clades.append();
+                new_clade->name = clade.first;
                 return mSettings.clades.find_if(matcher);
             }
             else
@@ -190,9 +190,9 @@ void CladesDraw::init_settings()
         if (auto settings_clade = get_settings_clade(); settings_clade) {
             if (const auto clade_fixer = sCladesFixer.find(clade.first); clade_fixer != sCladesFixer.end()) {
                 const auto [display_name, slot, show] = clade_fixer->second;
-                (*settings_clade).display_name = display_name;
+                (*settings_clade)->display_name = display_name;
                 clade.second.slot = slot;
-                (*settings_clade).show = show;
+                (*settings_clade)->show = show;
             }
             settings_clade->slot = clade.second.slot;
         }

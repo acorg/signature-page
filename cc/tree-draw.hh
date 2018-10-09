@@ -18,6 +18,30 @@ class Coloring;
 
 // ----------------------------------------------------------------------
 
+class AATransitionIndividualSettings;
+class AATransitionPerBranchDrawSettings;
+
+struct AATransitionIndividualSettingsForLabel
+{
+  public:
+    AATransitionIndividualSettingsForLabel(const AATransitionPerBranchDrawSettings& src);
+    void update(const AATransitionIndividualSettings& src);
+
+    // std::string label;
+    // std::string first_leaf_seq_id;
+    bool show;
+    double size;
+    Color color;
+    acmacs::TextStyle style;
+    double interline;
+    acmacs::Offset label_offset;
+    double label_connection_line_width;
+    Color label_connection_line_color;
+
+}; // class AATransitionIndividualSettingsForLabel
+
+// ----------------------------------------------------------------------
+
 class AATransitionIndividualSettings : public acmacs::settings::object
 {
   public:
@@ -64,8 +88,7 @@ class AATransitionPerBranchDrawSettings : public acmacs::settings::object
     acmacs::settings::field<Color>                                   label_connection_line_color{this, "label_connection_line_color", "black"};
     acmacs::settings::field_array_of<AATransitionIndividualSettings> by_aa_label{this, "by_aa_label"};
 
-      // returns ref to static object overriden with each call
-    const AATransitionIndividualSettings& settings_for_label(const AA_TransitionLabels& aLabels, std::string aFirstLeafSeqid) const;
+    AATransitionIndividualSettingsForLabel settings_for_label(const AA_TransitionLabels& aLabels, std::string aFirstLeafSeqid) const;
 
     void remove_for_signature_page_settings()
     {
