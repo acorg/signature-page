@@ -13,86 +13,86 @@ static constexpr const char* SETTINGS_VERSION_4 = "signature-page-settings-v4";
 
 // ----------------------------------------------------------------------
 
-AATransitionIndividualSettings::AATransitionIndividualSettings(const rjson::value& aData)
-    : rjson::array_field_container_child_element(aData),
-      label(*this, "label", "", rjson::initialize_field::yes),
-      first_leaf_seq_id(*this, "first_leaf_seq_id", ""),
-      show(*this, "show", true),
-      size(*this, "size", 8),
-      color(*this, "color", "black"),
-      style(*this, "style", std::string_view("Courier New")),
-      interline(*this, "interline", 1.2),
-      label_offset(*this, "label_offset", {-40, 20}),
-      label_connection_line_width(*this, "label_connection_line_width", 0.1),
-      label_connection_line_color(*this, "label_connection_line_color", "black")
-{
-}
+//v1 AATransitionIndividualSettings::AATransitionIndividualSettings(const rjson::value& aData)
+//v1     : rjson::array_field_container_child_element(aData),
+//v1       label(*this, "label", "", rjson::initialize_field::yes),
+//v1       first_leaf_seq_id(*this, "first_leaf_seq_id", ""),
+//v1       show(*this, "show", true),
+//v1       size(*this, "size", 8),
+//v1       color(*this, "color", "black"),
+//v1       style(*this, "style", std::string_view("Courier New")),
+//v1       interline(*this, "interline", 1.2),
+//v1       label_offset(*this, "label_offset", {-40, 20}),
+//v1       label_connection_line_width(*this, "label_connection_line_width", 0.1),
+//v1       label_connection_line_color(*this, "label_connection_line_color", "black")
+//v1 {
+//v1 }
 
-AATransitionPerBranchDrawSettings::AATransitionPerBranchDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
-    : rjson::field_container_child(aParent, aFieldName),
-      show(*this, "show", true, rjson::initialize_field::yes),
-      size(*this, "size", 8, rjson::initialize_field::yes),
-      color(*this, "color", "black", rjson::initialize_field::yes),
-      style(*this, "style", std::string_view("Courier New"), rjson::initialize_field::yes),
-      interline(*this, "interline", 1.2, rjson::initialize_field::yes),
-      label_offset(*this, "label_offset", {-40, 20}, rjson::initialize_field::yes),
-      scatter_label_offset(*this, "scatter_label_offset", 0, rjson::initialize_field::yes),
-      scatter_label_offset_help(*this, "scatter_label_offset?", "randomization range for label offset in trying to avoid clattering (mostly for figuring out good offsets", rjson::initialize_field::yes),
-      label_connection_line_width(*this, "label_connection_line_width", 0.1, rjson::initialize_field::yes),
-      label_connection_line_color(*this, "label_connection_line_color", "black", rjson::initialize_field::yes),
-      by_aa_label(*this, "by_aa_label")
-{
-}
+//v1 AATransitionPerBranchDrawSettings::AATransitionPerBranchDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
+//v1     : rjson::field_container_child(aParent, aFieldName),
+//v1       show(*this, "show", true, rjson::initialize_field::yes),
+//v1       size(*this, "size", 8, rjson::initialize_field::yes),
+//v1       color(*this, "color", "black", rjson::initialize_field::yes),
+//v1       style(*this, "style", std::string_view("Courier New"), rjson::initialize_field::yes),
+//v1       interline(*this, "interline", 1.2, rjson::initialize_field::yes),
+//v1       label_offset(*this, "label_offset", {-40, 20}, rjson::initialize_field::yes),
+//v1       scatter_label_offset(*this, "scatter_label_offset", 0, rjson::initialize_field::yes),
+//v1       scatter_label_offset_help(*this, "scatter_label_offset?", "randomization range for label offset in trying to avoid clattering (mostly for figuring out good offsets", rjson::initialize_field::yes),
+//v1       label_connection_line_width(*this, "label_connection_line_width", 0.1, rjson::initialize_field::yes),
+//v1       label_connection_line_color(*this, "label_connection_line_color", "black", rjson::initialize_field::yes),
+//v1       by_aa_label(*this, "by_aa_label")
+//v1 {
+//v1 }
 
-void AATransitionPerBranchDrawSettings::remove_for_signature_page_settings()
-{
-    for (const auto name: {"show", "size", "color", "style", "interline", "label_offset", "scatter_label_offset", "scatter_label_offset?", "label_connection_line_width", "label_connection_line_color"})
-        remove_child(name);
-}
+//v1 void AATransitionPerBranchDrawSettings::remove_for_signature_page_settings()
+//v1 {
+//v1     for (const auto name: {"show", "size", "color", "style", "interline", "label_offset", "scatter_label_offset", "scatter_label_offset?", "label_connection_line_width", "label_connection_line_color"})
+//v1         remove_child(name);
+//v1 }
 
-AATransitionDrawSettings::AATransitionDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
-    : rjson::field_container_child(aParent, aFieldName),
-      show(*this, "show", true, rjson::initialize_field::yes),
-      number_strains_threshold(*this, "number_strains_threshold", 20, rjson::initialize_field::yes),
-      number_strains_threshold_help(*this, "number_strains_threshold?", "do not show aa transition label if number_strains (leaf nodes) for the branch is less than this value", rjson::initialize_field::yes),
-      show_empty_left(*this, "show_empty_left", false, rjson::initialize_field::yes),
-      per_branch(*this, "per_branch"),
-      show_node_for_left_line(*this, "show_node_for_left_line", false, rjson::initialize_field::yes),
-      node_for_left_line_color(*this, "node_for_left_line_color", "green", rjson::initialize_field::yes),
-      node_for_left_line_width(*this, "node_for_left_line_width", 1, rjson::initialize_field::yes)
-{
-}
+//v1 AATransitionDrawSettings::AATransitionDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
+//v1     : rjson::field_container_child(aParent, aFieldName),
+//v1       show(*this, "show", true, rjson::initialize_field::yes),
+//v1       number_strains_threshold(*this, "number_strains_threshold", 20, rjson::initialize_field::yes),
+//v1       number_strains_threshold_help(*this, "number_strains_threshold?", "do not show aa transition label if number_strains (leaf nodes) for the branch is less than this value", rjson::initialize_field::yes),
+//v1       show_empty_left(*this, "show_empty_left", false, rjson::initialize_field::yes),
+//v1       per_branch(*this, "per_branch"),
+//v1       show_node_for_left_line(*this, "show_node_for_left_line", false, rjson::initialize_field::yes),
+//v1       node_for_left_line_color(*this, "node_for_left_line_color", "green", rjson::initialize_field::yes),
+//v1       node_for_left_line_width(*this, "node_for_left_line_width", 1, rjson::initialize_field::yes)
+//v1 {
+//v1 }
 
-void AATransitionDrawSettings::remove_for_signature_page_settings()
-{
-    for (const auto name: {"show", "number_strains_threshold", "number_strains_threshold?", "show_empty_left", "show_node_for_left_line", "node_for_left_line_color", "node_for_left_line_width"})
-        remove_child(name);
-    per_branch.remove_for_signature_page_settings();
-}
+//v1 void AATransitionDrawSettings::remove_for_signature_page_settings()
+//v1 {
+//v1     for (const auto name: {"show", "number_strains_threshold", "number_strains_threshold?", "show_empty_left", "show_node_for_left_line", "node_for_left_line_color", "node_for_left_line_width"})
+//v1         remove_child(name);
+//v1     per_branch.remove_for_signature_page_settings();
+//v1 }
 
-TreeDrawVaccineSettings::TreeDrawVaccineSettings(const rjson::value& aData)
-    : rjson::array_field_container_child_element(aData),
-      name(*this, "name", "", rjson::initialize_field::yes),
-      name_help(*this, "name?", "empty for default settings", rjson::initialize_field::yes),
-      label_color(*this, "label_color", "black", rjson::initialize_field::yes),
-      label_size(*this, "label_size", 10, rjson::initialize_field::yes),
-      label_style(*this, "label_style", {}, rjson::initialize_field::yes),
-      line_color(*this, "line_color", "black", rjson::initialize_field::yes),
-      line_width(*this, "line_width", 1, rjson::initialize_field::yes)
-{
-}
+//v1 TreeDrawVaccineSettings::TreeDrawVaccineSettings(const rjson::value& aData)
+//v1     : rjson::array_field_container_child_element(aData),
+//v1       name(*this, "name", "", rjson::initialize_field::yes),
+//v1       name_help(*this, "name?", "empty for default settings", rjson::initialize_field::yes),
+//v1       label_color(*this, "label_color", "black", rjson::initialize_field::yes),
+//v1       label_size(*this, "label_size", 10, rjson::initialize_field::yes),
+//v1       label_style(*this, "label_style", {}, rjson::initialize_field::yes),
+//v1       line_color(*this, "line_color", "black", rjson::initialize_field::yes),
+//v1       line_width(*this, "line_width", 1, rjson::initialize_field::yes)
+//v1 {
+//v1 }
 
-LegendSettings::LegendSettings(rjson::field_container_parent& aParent, std::string aFieldName)
-    : rjson::field_container_child(aParent, aFieldName),
-      offset(*this, "offset", {-30, 950}, rjson::initialize_field::yes),
-      width(*this, "width", 100, rjson::initialize_field::yes),
-      title_style(*this, "title_style", std::string_view("sans_serif"), rjson::initialize_field::yes),
-      title_size(*this, "title_size", 10, rjson::initialize_field::yes),
-      text_style(*this, "text_style", std::string_view("monospace"), rjson::initialize_field::yes),
-      text_size(*this, "text_size", 10, rjson::initialize_field::yes),
-      interline(*this, "interline", 1.5, rjson::initialize_field::yes)
-{
-}
+//v1 LegendSettings::LegendSettings(rjson::field_container_parent& aParent, std::string aFieldName)
+//v1     : rjson::field_container_child(aParent, aFieldName),
+//v1       offset(*this, "offset", {-30, 950}, rjson::initialize_field::yes),
+//v1       width(*this, "width", 100, rjson::initialize_field::yes),
+//v1       title_style(*this, "title_style", std::string_view("sans_serif"), rjson::initialize_field::yes),
+//v1       title_size(*this, "title_size", 10, rjson::initialize_field::yes),
+//v1       text_style(*this, "text_style", std::string_view("monospace"), rjson::initialize_field::yes),
+//v1       text_size(*this, "text_size", 10, rjson::initialize_field::yes),
+//v1       interline(*this, "interline", 1.5, rjson::initialize_field::yes)
+//v1 {
+//v1 }
 
 TimeSeriesDrawSettings::TimeSeriesDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
     : rjson::field_container_child(aParent, aFieldName),
@@ -108,56 +108,56 @@ TimeSeriesDrawSettings::TimeSeriesDrawSettings(rjson::field_container_parent& aP
 {
 }
 
-CladeDrawSettings::CladeDrawSettings(const rjson::value& aData, std::string aName, bool aShow)
-    : rjson::array_field_container_child_element(aData),
-      name(*this, "name", aName, rjson::initialize_field::yes),
-      display_name(*this, "display_name", "", rjson::initialize_field::yes),
-      show(*this, "show", aShow, rjson::initialize_field::yes),
-      section_inclusion_tolerance(*this, "section_inclusion_tolerance", 10, rjson::initialize_field::yes),
-      section_exclusion_tolerance(*this, "section_exclusion_tolerance", 5, rjson::initialize_field::yes),
-      show_section_size_in_label(*this, "show_section_size_in_label", true, rjson::initialize_field::yes),
-      arrow_color(*this, "arrow_color", "black", rjson::initialize_field::yes),
-      line_width(*this, "line_width", 0.8, rjson::initialize_field::yes),
-      arrow_width(*this, "arrow_width", 3, rjson::initialize_field::yes),
-      separator_color(*this, "separator_color", "grey63", rjson::initialize_field::yes),
-      separator_width(*this, "separator_width", 0.5, rjson::initialize_field::yes),
-      label_position(*this, "label_position", "middle", rjson::initialize_field::yes),
-      label_offset(*this, "label_offset", {5, 0}, rjson::initialize_field::yes),
-      label_color(*this, "label_color", "black", rjson::initialize_field::yes),
-      label_size(*this, "label_size", 11, rjson::initialize_field::yes),
-      label_style(*this, "label_style", {}, rjson::initialize_field::yes),
-      label_rotation(*this, "label_rotation", 0, rjson::initialize_field::yes),
-      slot(*this, "slot", NoSlot, rjson::initialize_field::yes)
-{
-}
+//v1 CladeDrawSettings::CladeDrawSettings(const rjson::value& aData, std::string aName, bool aShow)
+//v1     : rjson::array_field_container_child_element(aData),
+//v1       name(*this, "name", aName, rjson::initialize_field::yes),
+//v1       display_name(*this, "display_name", "", rjson::initialize_field::yes),
+//v1       show(*this, "show", aShow, rjson::initialize_field::yes),
+//v1       section_inclusion_tolerance(*this, "section_inclusion_tolerance", 10, rjson::initialize_field::yes),
+//v1       section_exclusion_tolerance(*this, "section_exclusion_tolerance", 5, rjson::initialize_field::yes),
+//v1       show_section_size_in_label(*this, "show_section_size_in_label", true, rjson::initialize_field::yes),
+//v1       arrow_color(*this, "arrow_color", "black", rjson::initialize_field::yes),
+//v1       line_width(*this, "line_width", 0.8, rjson::initialize_field::yes),
+//v1       arrow_width(*this, "arrow_width", 3, rjson::initialize_field::yes),
+//v1       separator_color(*this, "separator_color", "grey63", rjson::initialize_field::yes),
+//v1       separator_width(*this, "separator_width", 0.5, rjson::initialize_field::yes),
+//v1       label_position(*this, "label_position", "middle", rjson::initialize_field::yes),
+//v1       label_offset(*this, "label_offset", {5, 0}, rjson::initialize_field::yes),
+//v1       label_color(*this, "label_color", "black", rjson::initialize_field::yes),
+//v1       label_size(*this, "label_size", 11, rjson::initialize_field::yes),
+//v1       label_style(*this, "label_style", {}, rjson::initialize_field::yes),
+//v1       label_rotation(*this, "label_rotation", 0, rjson::initialize_field::yes),
+//v1       slot(*this, "slot", NoSlot, rjson::initialize_field::yes)
+//v1 {
+//v1 }
 
-CladesDrawSettings::CladesDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
-    : rjson::field_container_child(aParent, aFieldName),
-      clades(*this, "clades"),
-      slot_width(*this, "slot_width", 10, rjson::initialize_field::yes)
-{
-    clades.emplace_back();
-    // for (const auto* n: {"GLY", "NO-GLY", "DEL2017"}) {
-    //     auto cn = clades.emplace_back();
-    //     cn.name = n;
-    //     cn.show = false;
-    // }
-    // // for (const auto* n: {"3C2A1A", "3C2A1B", "3C2A1", "3C2A2", "3C2A3", "3C2A4"}) {
-    // //     auto cn = clades.emplace_back();
-    // //     cn.name = n;
-    // //     cn.section_inclusion_tolerance = 15;
-    // //     cn.section_exclusion_tolerance = 10;
-    // //     cn.slot = static_cast<int>(cn.name.get_value_ref().str().size() - 4);
-    // // }
-    // for (auto [name, display, slot] : {}) { // Sarah's H3 clades 2018-08-09
-    //     auto cn = clades.emplace_back();
-    //     cn.name = name;
-    //     cn.display_name = display;
-    //     cn.section_inclusion_tolerance = 15;
-    //     cn.section_exclusion_tolerance = 10;
-    //     cn.slot = slot;
-    // }
-}
+//v1 CladesDrawSettings::CladesDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
+//v1     : rjson::field_container_child(aParent, aFieldName),
+//v1       clades(*this, "clades"),
+//v1       slot_width(*this, "slot_width", 10, rjson::initialize_field::yes)
+//v1 {
+//v1     clades.emplace_back();
+//v1     // for (const auto* n: {"GLY", "NO-GLY", "DEL2017"}) {
+//v1     //     auto cn = clades.emplace_back();
+//v1     //     cn.name = n;
+//v1     //     cn.show = false;
+//v1     // }
+//v1     // // for (const auto* n: {"3C2A1A", "3C2A1B", "3C2A1", "3C2A2", "3C2A3", "3C2A4"}) {
+//v1     // //     auto cn = clades.emplace_back();
+//v1     // //     cn.name = n;
+//v1     // //     cn.section_inclusion_tolerance = 15;
+//v1     // //     cn.section_exclusion_tolerance = 10;
+//v1     // //     cn.slot = static_cast<int>(cn.name.get_value_ref().str().size() - 4);
+//v1     // // }
+//v1     // for (auto [name, display, slot] : {}) { // Sarah's H3 clades 2018-08-09
+//v1     //     auto cn = clades.emplace_back();
+//v1     //     cn.name = name;
+//v1     //     cn.display_name = display;
+//v1     //     cn.section_inclusion_tolerance = 15;
+//v1     //     cn.section_exclusion_tolerance = 10;
+//v1     //     cn.slot = slot;
+//v1     // }
+//v1 }
 
 HzSection::HzSection(const rjson::value& aData)
     : rjson::array_field_container_child_element(aData),
@@ -364,41 +364,41 @@ acmacs::Viewport AntigenicMapMod::get_viewport(const acmacs::Viewport& aOrigView
 
 // ----------------------------------------------------------------------
 
-TreeDrawSettings::TreeDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
-    : rjson::field_container_child(aParent, aFieldName),
-      ladderize(*this, "ladderize", Tree::LadderizeMethod::NumberOfLeaves),
-      ladderize_help(*this, "ladderize?", "number-of-leaves or max-edge-length"),
-      mods(*this, "mods"),
-      mods_help(*this, "mods?", {"mods is a list of objects:", "{mod: root, s1: new-root}", "{mod: hide-isolated-before, s1: date}",
-                      "{mod: hide-if-cumulative-edge-length-bigger-than, d1: cumulative-length-threshold}", "{mod: before2015-58P-or-146I-or-559I}",
-                      "{mod: hide-between, s1: first-name-to-hide, s2: last-name-to-hide} - after ladderizing", "{mod: hide-one, s1: name-to-hide} - after ladderizing",
-                      "{mod: mark-with-line, s1: name-to-mark, s2: color-to-mark, d1: line-width-in-pixels}",
-                      "{mod: mark-clade-with-line, clade: , color: , line_width: line-width-in-pixels}",
-                      "{mod: mark-with-label, seq_id:, label:, line_color:, line_width:, label_offset:, label_size:, labeL_color:, label_style: }"
-          }, rjson::initialize_field::yes),
-      force_line_width(*this, "force_line_width", false),
-      line_width(*this, "line_width", 1),
-      root_edge(*this, "root_edge", 0),
-      line_color(*this, "line_color", "black"),
-      label_style(*this, "label_style", {}),
-      name_offset(*this, "name_offset", 0.3),
-      color_nodes(*this, "color_nodes", "continent"),
-      color_for_aa(*this, "color_for_aa", {}),
-      right_padding(*this, "right_padding", 0),
-      aa_transition(*this, "aa_transition"),
-      legend(*this, "legend")
-{
-    mods.emplace_back().add("?mod", "hide-if-cumulative-edge-length-bigger-than").add("d1", 0.04);
+//v1 TreeDrawSettings::TreeDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
+//v1     : rjson::field_container_child(aParent, aFieldName),
+//v1       ladderize(*this, "ladderize", Tree::LadderizeMethod::NumberOfLeaves),
+//v1       ladderize_help(*this, "ladderize?", "number-of-leaves or max-edge-length"),
+//v1       mods(*this, "mods"),
+//v1       mods_help(*this, "mods?", {"mods is a list of objects:", "{mod: root, s1: new-root}", "{mod: hide-isolated-before, s1: date}",
+//v1                       "{mod: hide-if-cumulative-edge-length-bigger-than, d1: cumulative-length-threshold}", "{mod: before2015-58P-or-146I-or-559I}",
+//v1                       "{mod: hide-between, s1: first-name-to-hide, s2: last-name-to-hide} - after ladderizing", "{mod: hide-one, s1: name-to-hide} - after ladderizing",
+//v1                       "{mod: mark-with-line, s1: name-to-mark, s2: color-to-mark, d1: line-width-in-pixels}",
+//v1                       "{mod: mark-clade-with-line, clade: , color: , line_width: line-width-in-pixels}",
+//v1                       "{mod: mark-with-label, seq_id:, label:, line_color:, line_width:, label_offset:, label_size:, labeL_color:, label_style: }"
+//v1           }, rjson::initialize_field::yes),
+//v1       force_line_width(*this, "force_line_width", false),
+//v1       line_width(*this, "line_width", 1),
+//v1       root_edge(*this, "root_edge", 0),
+//v1       line_color(*this, "line_color", "black"),
+//v1       label_style(*this, "label_style", {}),
+//v1       name_offset(*this, "name_offset", 0.3),
+//v1       color_nodes(*this, "color_nodes", "continent"),
+//v1       color_for_aa(*this, "color_for_aa", {}),
+//v1       right_padding(*this, "right_padding", 0),
+//v1       aa_transition(*this, "aa_transition"),
+//v1       legend(*this, "legend")
+//v1 {
+//v1     mods.emplace_back().add("?mod", "hide-if-cumulative-edge-length-bigger-than").add("d1", 0.04);
+//v1
+//v1 } // TreeDrawSettings::TreeDrawSettings
 
-} // TreeDrawSettings::TreeDrawSettings
-
-void TreeDrawSettings::remove_for_signature_page_settings()
-{
-    for (const auto name: {"ladderize", "ladderize?", "mods", "mods?", "force_line_width", "line_width", "root_edge", "line_color", "label_style", "name_offset", "color_nodes", "vaccines", "legend"})
-        remove_child(name);
-    aa_transition.remove_for_signature_page_settings();
-
-} // TreeDrawSettings::remove_for_signature_page_settings
+//v1 void TreeDrawSettings::remove_for_signature_page_settings()
+//v1 {
+//v1     for (const auto name: {"ladderize", "ladderize?", "mods", "mods?", "force_line_width", "line_width", "root_edge", "line_color", "label_style", "name_offset", "color_nodes", "vaccines", "legend"})
+//v1         remove_child(name);
+//v1     aa_transition.remove_for_signature_page_settings();
+//v1
+//v1 } // TreeDrawSettings::remove_for_signature_page_settings
 
 // ----------------------------------------------------------------------
 

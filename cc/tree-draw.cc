@@ -645,7 +645,7 @@ void TreeDraw::draw_mark_with_label(const Node& aNode, acmacs::Location2D aTextO
 {
     if (aNode.draw.mark_with_label) {
           // std::cerr << "DEBUG: draw mark_with_label " << aNode.seq_id << '\n';
-        const auto settings = mSettings.mods.find_mark_with_label(aNode.seq_id);
+        const auto settings = mSettings.find_mark_with_label_mod(aNode.seq_id);
 
         const acmacs::Offset label_offset = settings.label_offset;
         const acmacs::Location2D label_origin = aTextOrigin + label_offset;

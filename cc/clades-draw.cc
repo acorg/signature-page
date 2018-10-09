@@ -214,13 +214,17 @@ void CladesDraw::draw()
                 const double top = section.first->draw.vertical_pos - mTreeDraw.vertical_step() / 2;
                 const double bottom = section.last->draw.vertical_pos + mTreeDraw.vertical_step() / 2;
                 const double label_height = mSurface.text_size("W", Pixels{for_clade.label_size}, for_clade.label_style).height;
-                double label_vpos = top + label_height;
-                const std::string label_position = for_clade.label_position;
-                if (label_position == "middle") {
-                    label_vpos = (top + bottom + label_height) / 2.0;
-                }
-                else if (label_position == "bottom") {
-                    label_vpos = bottom;
+                double label_vpos{0};
+                switch (static_cast<CladeDrawSettingsLabelPosition>(for_clade.label_position)) {
+                  case CladeDrawSettingsLabelPosition::middle:
+                      label_vpos = (top + bottom + label_height) / 2.0;
+                      break;
+                  case CladeDrawSettingsLabelPosition::bottom:
+                      label_vpos = bottom;
+                      break;
+                  case CladeDrawSettingsLabelPosition::top:
+                      label_vpos = top + label_height;
+                      break;
                 }
                 (this->*draw_lines)(clade.slot, name_clade.first, top, bottom, label_vpos, for_clade);
             }

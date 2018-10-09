@@ -27,19 +27,19 @@ class AAAtPosSection : public acmacs::settings::object
     acmacs::settings::field<std::string> last{this, "last"};
 };
 
-class AAAtPosDrawSettings : public rjson::field_container_child
+class AAAtPosDrawSettings : public acmacs::settings::object
 {
  public:
     AAAtPosDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName);
 
-    rjson::field_get_set<double> width;
-    rjson::field_get_set<double> right_margin;
-    rjson::field_get_set<double> line_width;
-    rjson::field_get_set<double> line_length;         // fraction of the surface width
-    rjson::field_get_set<size_t> diverse_index_threshold;
+    acmacs::settings::field<double> width;
+    acmacs::settings::field<double> right_margin;
+    acmacs::settings::field<double> line_width;
+    acmacs::settings::field<double> line_length;         // fraction of the surface width
+    acmacs::settings::field<size_t> diverse_index_threshold;
     rjson::array_field_container_child<size_t> positions;
-    rjson::field_get_set<bool> report_most_diverse_positions;
-    rjson::field_get_set<size_t> small_section_threshold; // remove sections having this or fewer number of sequences
+    acmacs::settings::field<bool> report_most_diverse_positions;
+    acmacs::settings::field<size_t> small_section_threshold; // remove sections having this or fewer number of sequences
     rjson::array_field_container_child<AAAtPosSection> sections;
 
 }; // class AAAtPosDrawSettings

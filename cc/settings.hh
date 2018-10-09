@@ -16,7 +16,7 @@ class Settings : public rjson::field_container_toplevel
  public:
     Settings();
 
-    rjson::field_get_set<std::string> version;
+    acmacs::settings::field<std::string> version;
     SignaturePageDrawSettings signature_page;
     TitleDrawSettings title;
     TreeDrawSettings tree_draw;

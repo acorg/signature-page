@@ -64,7 +64,6 @@ namespace acmacs::settings
 class SignaturePageDrawSettings : public acmacs::settings::object
 {
  public:
-
     using acmacs::settings::object::object;
 
     acmacs::settings::field<SignaturePageLayout> layout{this, "layout", SignaturePageLayout::Auto};

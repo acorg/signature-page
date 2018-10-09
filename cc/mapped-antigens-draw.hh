@@ -13,15 +13,15 @@ class ChartDrawBase;
 
 // ----------------------------------------------------------------------
 
-class MappedAntigensDrawSettings : public rjson::field_container_child
+class MappedAntigensDrawSettings : public acmacs::settings::object
 {
  public:
     MappedAntigensDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName);
 
-    rjson::field_get_set<double> width;
-    rjson::field_get_set<double> line_width;
-    rjson::field_get_set<Color> line_color;
-    rjson::field_get_set<double> line_length;         // fraction of the surface width
+    acmacs::settings::field<double> width;
+    acmacs::settings::field<double> line_width;
+    acmacs::settings::field<Color> line_color;
+    acmacs::settings::field<double> line_length;         // fraction of the surface width
 
 }; // class MappedAntigensDrawSettings
 

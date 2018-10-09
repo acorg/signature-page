@@ -15,20 +15,20 @@ class HzSections;
 
 // ----------------------------------------------------------------------
 
-class TimeSeriesDrawSettings : public rjson::field_container_child
+class TimeSeriesDrawSettings : public acmacs::settings::object
 {
  public:
     TimeSeriesDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName);
 
-    rjson::field_get_set<std::string> begin;
-    rjson::field_get_set<std::string> end;
-    rjson::field_get_set<double> label_size;
-    rjson::field_get_set<acmacs::TextStyle> label_style;
-    rjson::field_get_set<double> month_year_to_timeseries_gap;
-    rjson::field_get_set<Color> month_separator_color;
-    rjson::field_get_set<double> month_separator_width;
-    rjson::field_get_set<double> dash_width;
-    rjson::field_get_set<double> dash_line_width;
+    acmacs::settings::field<std::string> begin;
+    acmacs::settings::field<std::string> end;
+    acmacs::settings::field<double> label_size;
+    acmacs::settings::field<acmacs::TextStyle> label_style;
+    acmacs::settings::field<double> month_year_to_timeseries_gap;
+    acmacs::settings::field<Color> month_separator_color;
+    acmacs::settings::field<double> month_separator_width;
+    acmacs::settings::field<double> dash_width;
+    acmacs::settings::field<double> dash_line_width;
 
 }; // class TimeSeriesDrawSettings
 

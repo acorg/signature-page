@@ -5,18 +5,18 @@
 
 // ----------------------------------------------------------------------
 
-class LegendSettings : public rjson::field_container_child
+class LegendSettings : public acmacs::settings::object
 {
  public:
-    LegendSettings(rjson::field_container_parent& aParent, std::string aFieldName);
+    using acmacs::settings::object::object;
 
-    rjson::field_get_set<acmacs::Offset> offset;  // in enclosing surface
-    rjson::field_get_set<double> width; // in enclosing surface scale
-    rjson::field_get_set<acmacs::TextStyle> title_style;
-    rjson::field_get_set<double> title_size;
-    rjson::field_get_set<acmacs::TextStyle> text_style;
-    rjson::field_get_set<double> text_size;
-    rjson::field_get_set<double> interline;
+    acmacs::settings::field<acmacs::Offset>    offset{this, "offset", {-30, 950}};  // in enclosing surface
+    acmacs::settings::field<double>            width{this, "width", 100}; // in enclosing surface scale
+    acmacs::settings::field<acmacs::TextStyle> title_style{this, "title_style", {"sans_serif"}};
+    acmacs::settings::field<double>            title_size{this, "title_size", 10};
+    acmacs::settings::field<acmacs::TextStyle> text_style{this, "text_style", {"monospace"}};
+    acmacs::settings::field<double>            text_size{this, "text_size", 10};
+    acmacs::settings::field<double>            interline{this, "interline", 1.5};
 
 }; // class LegendSettings
 
