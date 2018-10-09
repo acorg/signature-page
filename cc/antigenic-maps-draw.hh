@@ -278,7 +278,7 @@ class AntigenicMapsDrawSettings : public acmacs::settings::object
     acmacs::settings::field<std::string>              layout{this, "layout", "labelled_grid"};
     acmacs::settings::field<size_t>                   columns{this, "columns", 3};
     acmacs::settings::field<double>                   gap{this, "gap", 20};
-    acmacs::settings::field<Color>                    mapped_antigens_section_line_color{this, "mapped_antigens_section_line_color", "black"};
+    acmacs::settings::field<Color>                    mapped_antigens_section_line_color{this, "mapped_antigens_section_line_color", BLACK};
     acmacs::settings::field<double>                   mapped_antigens_section_line_width{this, "mapped_antigens_section_line_width", 1};
     acmacs::settings::field_array_of<AntigenicMapMod> mods{this, "mods"};
 

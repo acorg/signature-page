@@ -18,7 +18,7 @@ class HzSections;
 class AAAtPosSection : public acmacs::settings::object
 {
  public:
-    AAAtPosSection(const rjson::value& aData);
+    using acmacs::settings::object::object;
 
     acmacs::settings::field<size_t>      pos{this, "_pos"};
     acmacs::settings::field<std::string> aa{this, "aa"};
@@ -27,20 +27,22 @@ class AAAtPosSection : public acmacs::settings::object
     acmacs::settings::field<std::string> last{this, "last"};
 };
 
+// ----------------------------------------------------------------------
+
 class AAAtPosDrawSettings : public acmacs::settings::object
 {
  public:
-    AAAtPosDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName);
+    using acmacs::settings::object::object;
 
-    acmacs::settings::field<double> width;
-    acmacs::settings::field<double> right_margin;
-    acmacs::settings::field<double> line_width;
-    acmacs::settings::field<double> line_length;         // fraction of the surface width
-    acmacs::settings::field<size_t> diverse_index_threshold;
-    rjson::array_field_container_child<size_t> positions;
-    acmacs::settings::field<bool> report_most_diverse_positions;
-    acmacs::settings::field<size_t> small_section_threshold; // remove sections having this or fewer number of sequences
-    rjson::array_field_container_child<AAAtPosSection> sections;
+    acmacs::settings::field<double>                  width{this, "width", 0};
+    acmacs::settings::field<double>                  right_margin{this, "right_margin", 0};
+    acmacs::settings::field<double>                  line_width{this, "line_width", 0.15};
+    acmacs::settings::field<double>                  line_length{this, "line_length", 0.5};         // fraction of the surface width
+    acmacs::settings::field<size_t>                  diverse_index_threshold{this, "diverse_index_threshold", 3};
+    acmacs::settings::field_array<size_t>            positions{this, "positions"};
+    acmacs::settings::field<bool>                    report_most_diverse_positions{this, "report_most_diverse_positions", false};
+    acmacs::settings::field<size_t>                  small_section_threshold{this, "small_section_threshold", 3}; // remove sections having this or fewer number of sequences
+    acmacs::settings::field_array_of<AAAtPosSection> sections{this, "?sections"};
 
 }; // class AAAtPosDrawSettings
 

@@ -73,14 +73,14 @@ class CladeDrawSettings : public acmacs::settings::object
     acmacs::settings::field<size_t>                         section_inclusion_tolerance{this, "section_inclusion_tolerance", 10}; // max number of lines (strains) within section from another clade that do not interrupt the secion
     acmacs::settings::field<size_t>                         section_exclusion_tolerance{this, "section_exclusion_tolerance", 5}; // max number of lines (strains) to exclude small sections
     acmacs::settings::field<bool>                           show_section_size_in_label{this, "show_section_size_in_label", true};
-    acmacs::settings::field<Color>                          arrow_color{this, "arrow_color", "black"};
+    acmacs::settings::field<Color>                          arrow_color{this, "arrow_color", BLACK};
     acmacs::settings::field<double>                         line_width{this, "line_width", 0.8};
     acmacs::settings::field<double>                         arrow_width{this, "arrow_width", 3};
     acmacs::settings::field<Color>                          separator_color{this, "separator_color", "grey63"};
     acmacs::settings::field<double>                         separator_width{this, "separator_width", 0.5};
     acmacs::settings::field<CladeDrawSettingsLabelPosition> label_position{this, "label_position", CladeDrawSettingsLabelPosition::middle};
     acmacs::settings::field<acmacs::Offset>                 label_offset{this, "label_offset", {5, 0}};
-    acmacs::settings::field<Color>                          label_color{this, "label_color", "black"};
+    acmacs::settings::field<Color>                          label_color{this, "label_color", BLACK};
     acmacs::settings::field<double>                         label_size{this, "label_size", 11};
     acmacs::settings::field<acmacs::TextStyle>              label_style{this, "label_style", {}};
     acmacs::settings::field<double>                         label_rotation{this, "label_rotation", 0};

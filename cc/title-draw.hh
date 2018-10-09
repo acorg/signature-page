@@ -15,13 +15,13 @@ class ChartDrawBase;
 class TitleDrawSettings : public acmacs::settings::object
 {
  public:
-    TitleDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName);
+    using acmacs::settings::object::object;
 
-    acmacs::settings::field<std::string> title;
-    acmacs::settings::field<Color> color; // Color
-    acmacs::settings::field<double> size;
-    acmacs::settings::field<acmacs::TextStyle> style;
-    acmacs::settings::field<acmacs::Offset> offset;
+    acmacs::settings::field<std::string>       title{this, "title", ""};
+    acmacs::settings::field<Color>             color{this, "color", BLACK};
+    acmacs::settings::field<double>            size{this, "size", 12};
+    acmacs::settings::field<acmacs::TextStyle> style{this, "style", {}};
+    acmacs::settings::field<acmacs::Offset>    offset{this, "offset", {10, 30}};
 
 }; // class TitleDrawSettings
 

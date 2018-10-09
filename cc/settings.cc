@@ -9,7 +9,50 @@ using namespace std::string_literals;
 
 // ----------------------------------------------------------------------
 
-static constexpr const char* SETTINGS_VERSION_4 = "signature-page-settings-v4";
+Settings::Settings()
+{
+    auto mod = mods.append();
+    mod.name_commented = "text";
+    mod.color = BLACK;
+    mod.offset = acmacs::Offset{100.0, 100.0};
+    mod.size = 12.0;
+    mod.style = acmacs::TextStyle{};
+    mod.text = "Text to show";
+
+} // Settings::Settings
+
+// ----------------------------------------------------------------------
+
+void read_settings(Settings& aSettings, std::string aFilename)
+{
+    std::cout << "INFO: reading settings from " << aFilename << std::endl;
+    aSettings.update_from_file(aFilename);
+    aSettings.upgrade();
+
+} // read_settings
+
+// ----------------------------------------------------------------------
+
+void Settings::upgrade()             // upgrade to the new version in case old version data provided
+{
+    if (version != SETTINGS_VERSION_4) {
+        throw std::runtime_error("Unsupported settings version: " + static_cast<std::string>(version));
+    }
+
+} // Settings::upgrade
+
+// ----------------------------------------------------------------------
+
+void write_settings(const Settings& aSettings, std::string aFilename)
+{
+    std::cout << "INFO: writing settings to " << aFilename << std::endl;
+    aSettings.write_to_file(aFilename);
+
+} // write_settings
+
+// ----------------------------------------------------------------------
+
+// static constexpr const char* SETTINGS_VERSION_4 = "signature-page-settings-v4";
 
 // ----------------------------------------------------------------------
 
@@ -94,19 +137,19 @@ static constexpr const char* SETTINGS_VERSION_4 = "signature-page-settings-v4";
 //v1 {
 //v1 }
 
-TimeSeriesDrawSettings::TimeSeriesDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
-    : rjson::field_container_child(aParent, aFieldName),
-      begin(*this, "begin", ""),
-      end(*this, "end", ""),
-      label_size(*this, "label_size", 8, rjson::initialize_field::yes),
-      label_style(*this, "label_style", {}, rjson::initialize_field::yes),
-      month_year_to_timeseries_gap(*this, "month_year_to_timeseries_gap", 2, rjson::initialize_field::yes),
-      month_separator_color(*this, "month_separator_color", "black", rjson::initialize_field::yes),
-      month_separator_width(*this, "month_separator_width", 0.5, rjson::initialize_field::yes),
-      dash_width(*this, "dash_width", 0.5, rjson::initialize_field::yes),
-      dash_line_width(*this, "dash_line_width", 1, rjson::initialize_field::yes)
-{
-}
+//v1 TimeSeriesDrawSettings::TimeSeriesDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
+//v1     : rjson::field_container_child(aParent, aFieldName),
+//v1       begin(*this, "begin", ""),
+//v1       end(*this, "end", ""),
+//v1       label_size(*this, "label_size", 8, rjson::initialize_field::yes),
+//v1       label_style(*this, "label_style", {}, rjson::initialize_field::yes),
+//v1       month_year_to_timeseries_gap(*this, "month_year_to_timeseries_gap", 2, rjson::initialize_field::yes),
+//v1       month_separator_color(*this, "month_separator_color", "black", rjson::initialize_field::yes),
+//v1       month_separator_width(*this, "month_separator_width", 0.5, rjson::initialize_field::yes),
+//v1       dash_width(*this, "dash_width", 0.5, rjson::initialize_field::yes),
+//v1       dash_line_width(*this, "dash_line_width", 1, rjson::initialize_field::yes)
+//v1 {
+//v1 }
 
 //v1 CladeDrawSettings::CladeDrawSettings(const rjson::value& aData, std::string aName, bool aShow)
 //v1     : rjson::array_field_container_child_element(aData),
@@ -188,14 +231,14 @@ TimeSeriesDrawSettings::TimeSeriesDrawSettings(rjson::field_container_parent& aP
 //v1 {
 //v1 }
 
-MappedAntigensDrawSettings::MappedAntigensDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
-    : rjson::field_container_child(aParent, aFieldName),
-      width(*this, "width", 10, rjson::initialize_field::yes),
-      line_width(*this, "line_width", 0.5, rjson::initialize_field::yes),
-      line_color(*this, "line_color", "grey56", rjson::initialize_field::yes),
-      line_length(*this, "line_length", 0.5, rjson::initialize_field::yes)
-{
-}
+//v1 MappedAntigensDrawSettings::MappedAntigensDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
+//v1     : rjson::field_container_child(aParent, aFieldName),
+//v1       width(*this, "width", 10, rjson::initialize_field::yes),
+//v1       line_width(*this, "line_width", 0.5, rjson::initialize_field::yes),
+//v1       line_color(*this, "line_color", "grey56", rjson::initialize_field::yes),
+//v1       line_length(*this, "line_length", 0.5, rjson::initialize_field::yes)
+//v1 {
+//v1 }
 
 // AAAtPosSection::AAAtPosSection(const rjson::value& aData)
 //     : rjson::array_field_container_child_element(aData),
@@ -207,19 +250,19 @@ MappedAntigensDrawSettings::MappedAntigensDrawSettings(rjson::field_container_pa
 // {
 // } // AAAtPosSection::AAAtPosSection
 
-AAAtPosDrawSettings::AAAtPosDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
-    : rjson::field_container_child(aParent, aFieldName),
-      width(*this, "width", 0, rjson::initialize_field::yes),
-      right_margin(*this, "right_margin", 0, rjson::initialize_field::yes),
-      line_width(*this, "line_width", 0.15, rjson::initialize_field::yes),
-      line_length(*this, "line_length", 0.5, rjson::initialize_field::yes),
-      diverse_index_threshold(*this, "diverse_index_threshold", 3, rjson::initialize_field::yes),
-      positions(*this, "positions"),
-      report_most_diverse_positions(*this, "report_most_diverse_positions", false, rjson::initialize_field::yes),
-      small_section_threshold(*this, "small_section_threshold", 3, rjson::initialize_field::yes),
-      sections(*this, "?sections")
-{
-} // AAAtPosDrawSettings::AAAtPosDrawSettings
+//v1 AAAtPosDrawSettings::AAAtPosDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
+//v1     : rjson::field_container_child(aParent, aFieldName),
+//v1       width(*this, "width", 0, rjson::initialize_field::yes),
+//v1       right_margin(*this, "right_margin", 0, rjson::initialize_field::yes),
+//v1       line_width(*this, "line_width", 0.15, rjson::initialize_field::yes),
+//v1       line_length(*this, "line_length", 0.5, rjson::initialize_field::yes),
+//v1       diverse_index_threshold(*this, "diverse_index_threshold", 3, rjson::initialize_field::yes),
+//v1       positions(*this, "positions"),
+//v1       report_most_diverse_positions(*this, "report_most_diverse_positions", false, rjson::initialize_field::yes),
+//v1       small_section_threshold(*this, "small_section_threshold", 3, rjson::initialize_field::yes),
+//v1       sections(*this, "?sections")
+//v1 {
+//v1 } // AAAtPosDrawSettings::AAAtPosDrawSettings
 
 // ----------------------------------------------------------------------
 
@@ -402,15 +445,15 @@ acmacs::Viewport AntigenicMapMod::get_viewport(const acmacs::Viewport& aOrigView
 
 // ----------------------------------------------------------------------
 
-TitleDrawSettings::TitleDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
-    : rjson::field_container_child(aParent, aFieldName),
-      title(*this, "title", ""),
-      color(*this, "color", "black", rjson::initialize_field::yes),
-      size(*this, "size", 12, rjson::initialize_field::yes),
-      style(*this, "style", {}, rjson::initialize_field::yes),
-      offset(*this, "offset", {10, 30}, rjson::initialize_field::yes)
-{
-}
+//v1 TitleDrawSettings::TitleDrawSettings(rjson::field_container_parent& aParent, std::string aFieldName)
+//v1     : rjson::field_container_child(aParent, aFieldName),
+//v1       title(*this, "title", ""),
+//v1       color(*this, "color", "black", rjson::initialize_field::yes),
+//v1       size(*this, "size", 12, rjson::initialize_field::yes),
+//v1       style(*this, "style", {}, rjson::initialize_field::yes),
+//v1       offset(*this, "offset", {10, 30}, rjson::initialize_field::yes)
+//v1 {
+//v1 }
 
 // ----------------------------------------------------------------------
 
@@ -432,59 +475,6 @@ TitleDrawSettings::TitleDrawSettings(rjson::field_container_parent& aParent, std
 
 // **********************************************************************
 
-Settings::Settings()
-    : version(*this, "  version", SETTINGS_VERSION_4, rjson::initialize_field::yes),
-      signature_page(*this, "signature_page"),
-      title(*this, "title"),
-      tree_draw(*this, "tree"),
-      time_series(*this, "time_series"),
-      clades(*this, "clades"),
-      hz_sections(*this, "hz_sections"),
-      mapped_antigens(*this, "mapped_antigens"),
-      aa_at_pos(*this, "aa_at_pos"),
-      antigenic_maps(*this, "antigenic_maps")
-{
-      // add sample text mod
-    set_field("mods", rjson::value(rjson::object{{{"?N", "text"},
-                    {"color", "black"},
-                    {"offset", rjson::array{100.0, 100.0}},
-                    {"size", 12.0},
-                    {"style", rjson::object{{{"family", ""}, {"slant", "normal"}, {"weight", "normal"}}}},
-                    {"text", "Text to show"}
-                }}));
-
-    // std::cerr << "Settings: " << to_json_pp(2) << '\n';
-
-} // Settings::Settings
-
-// ----------------------------------------------------------------------
-
-void read_settings(Settings& aSettings, std::string aFilename)
-{
-    std::cout << "INFO: reading settings from " << aFilename << std::endl;
-    aSettings.update(rjson::parse_file(aFilename));
-    aSettings.upgrade();
-
-} // read_settings
-
-// ----------------------------------------------------------------------
-
-void Settings::upgrade()             // upgrade to the new version in case old version data provided
-{
-    if (version != SETTINGS_VERSION_4) {
-        throw std::runtime_error("Unsupported settings version: " + static_cast<std::string>(version));
-    }
-
-} // Settings::upgrade
-
-// ----------------------------------------------------------------------
-
-void write_settings(const Settings& aSettings, std::string aFilename, size_t aIndent)
-{
-    std::cout << "INFO: writing settings to " << aFilename << std::endl;
-    acmacs::file::write(aFilename, aSettings.to_json_pp(aIndent));
-
-} // write_settings
 
 // ----------------------------------------------------------------------
 /// Local Variables:
