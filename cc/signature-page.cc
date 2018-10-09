@@ -47,18 +47,18 @@ void SignaturePageDraw::load_settings(std::string aFilename)
 
 // ----------------------------------------------------------------------
 
-SignaturePageDrawSettings::Layout SignaturePageDraw::detect_layout(bool init_settings, bool show_aa_at_pos) const
+SignaturePageLayout SignaturePageDraw::detect_layout(bool init_settings, bool show_aa_at_pos) const
 {
     const auto layout = mSettings->signature_page.get_layout();
-    if (layout == SignaturePageDrawSettings::Layout::Auto || init_settings) {
+    if (layout == SignaturePageLayout::Auto || init_settings) {
         if (mChartFilename.empty()) {
             if (show_aa_at_pos)
-                return SignaturePageDrawSettings::Layout::TreeAATSClades;
+                return SignaturePageLayout::TreeAATSClades;
             else
-                return SignaturePageDrawSettings::Layout::TreeTSClades;
+                return SignaturePageLayout::TreeTSClades;
         }
         else
-            return SignaturePageDrawSettings::Layout::TreeCladesTSMaps;
+            return SignaturePageLayout::TreeCladesTSMaps;
     }
     else
         return layout;
@@ -71,13 +71,13 @@ void SignaturePageDraw::make_surface(std::string aFilename, bool init_settings, 
 {
     double width = 300, height = 300;
     switch (detect_layout(init_settings, show_aa_at_pos)) {
-      case SignaturePageDrawSettings::Layout::TreeCladesTSMaps:
-      case SignaturePageDrawSettings::Layout::TreeAATSClades:
+      case SignaturePageLayout::TreeCladesTSMaps:
+      case SignaturePageLayout::TreeAATSClades:
           width = 1360;         // ratio 1.6
           height = 850;
           break;
-      case SignaturePageDrawSettings::Layout::TreeTSClades:
-      case SignaturePageDrawSettings::Layout::Auto:
+      case SignaturePageLayout::TreeTSClades:
+      case SignaturePageLayout::Auto:
           height = 800;
           width = std::floor(height * (210.0 / 297.0));
           break;
@@ -190,19 +190,19 @@ void SignaturePageDraw::init_settings()
 void SignaturePageDraw::write_initialized_settings(std::string aFilename)
 {
     auto layout = settings().signature_page.get_layout();
-    if (layout == SignaturePageDrawSettings::Layout::Auto)
-        layout = mSurface->aspect() > 1 ? SignaturePageDrawSettings::Layout::TreeCladesTSMaps : SignaturePageDrawSettings::Layout::TreeTSClades;
+    if (layout == SignaturePageLayout::Auto)
+        layout = mSurface->aspect() > 1 ? SignaturePageLayout::TreeCladesTSMaps : SignaturePageLayout::TreeTSClades;
     switch (layout) {
-      case SignaturePageDrawSettings::Layout::Auto:
+      case SignaturePageLayout::Auto:
           break;
-      case SignaturePageDrawSettings::Layout::TreeCladesTSMaps:
+      case SignaturePageLayout::TreeCladesTSMaps:
           settings().tree_draw.remove_for_signature_page_settings();
           settings().time_series.remove();
           settings().clades.remove();
           settings().hz_sections.remove();
           break;
-      case SignaturePageDrawSettings::Layout::TreeTSClades:
-      case SignaturePageDrawSettings::Layout::TreeAATSClades:
+      case SignaturePageLayout::TreeTSClades:
+      case SignaturePageLayout::TreeAATSClades:
           settings().antigenic_maps.remove();
           settings().mapped_antigens.remove();
           break;
@@ -228,9 +228,9 @@ void SignaturePageDraw::prepare(bool show_hz_sections)
     std::cout << "\nINFO: PREPARE:\n";
     settings().hz_sections.show = show_hz_sections;
     switch (detect_layout(false, false)) {
-      case SignaturePageDrawSettings::Layout::TreeTSClades:
-      case SignaturePageDrawSettings::Layout::TreeAATSClades:
-      case SignaturePageDrawSettings::Layout::Auto:
+      case SignaturePageLayout::TreeTSClades:
+      case SignaturePageLayout::TreeAATSClades:
+      case SignaturePageLayout::Auto:
           make_layout_tree_ts_clades();
           if (mTimeSeriesDraw)
               mTimeSeriesDraw->tree_mode(true);
@@ -238,7 +238,7 @@ void SignaturePageDraw::prepare(bool show_hz_sections)
           // if (mTimeSeriesDraw)
           //     mTimeSeriesDraw->hide_hz_section_labels_in_time_series();
           break;
-      case SignaturePageDrawSettings::Layout::TreeCladesTSMaps:
+      case SignaturePageLayout::TreeCladesTSMaps:
           if (mChartFilename.empty())
               throw std::runtime_error("Cannot generate page in the TreeCladesTSMaps layout: no chart provided (--chart)");
           make_layout_tree_clades_ts_maps();
