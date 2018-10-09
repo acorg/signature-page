@@ -364,46 +364,46 @@ void write_settings(const Settings& aSettings, std::string aFilename)
 
 // } // AntigenicMapsDrawSettings::viewport
 
-acmacs::Viewport AntigenicMapMod::get_viewport(const acmacs::Viewport& aOrigViewport) const
-{
-    acmacs::Viewport result = aOrigViewport;
-
-    const auto& rel = operator[]("rel");
-    try {
-        switch (rel.size()) {
-            case 3:
-                result.set({aOrigViewport.left() + static_cast<double>(rel[0]), aOrigViewport.top() + static_cast<double>(rel[1])}, aOrigViewport.size.width + static_cast<double>(rel[2]));
-                break;
-            default:
-                throw std::exception{};
-        }
-    }
-    catch (std::exception&) {
-        std::cerr << "ERROR: cannot convert json to array (viewport rel): " << rel << '\n';
-        throw;
-    }
-
-    const auto& viewport = operator[]("viewport");
-    try {
-        switch (viewport.size()) {
-            case 3:
-                result.set({viewport[0], viewport[1]}, viewport[2]);
-                break;
-            case 4:
-                result.set(acmacs::Location2D{viewport[0], viewport[1]}, acmacs::Size{viewport[2], viewport[3]});
-                break;
-            default:
-                throw std::exception{};
-        }
-    }
-    catch (std::exception&) {
-        std::cerr << "ERROR: cannot convert json to array (viewport): " << viewport << '\n';
-        throw;
-    }
-
-    return result;
-
-} // AntigenicMapMod::get_viewport
+//v1 acmacs::Viewport AntigenicMapMod::get_viewport(const acmacs::Viewport& aOrigViewport) const
+//v1 {
+//v1     acmacs::Viewport result = aOrigViewport;
+//v1
+//v1     const auto& rel = operator[]("rel");
+//v1     try {
+//v1         switch (rel.size()) {
+//v1             case 3:
+//v1                 result.set({aOrigViewport.left() + static_cast<double>(rel[0]), aOrigViewport.top() + static_cast<double>(rel[1])}, aOrigViewport.size.width + static_cast<double>(rel[2]));
+//v1                 break;
+//v1             default:
+//v1                 throw std::exception{};
+//v1         }
+//v1     }
+//v1     catch (std::exception&) {
+//v1         std::cerr << "ERROR: cannot convert json to array (viewport rel): " << rel << '\n';
+//v1         throw;
+//v1     }
+//v1
+//v1     const auto& viewport = operator[]("viewport");
+//v1     try {
+//v1         switch (viewport.size()) {
+//v1             case 3:
+//v1                 result.set({viewport[0], viewport[1]}, viewport[2]);
+//v1                 break;
+//v1             case 4:
+//v1                 result.set(acmacs::Location2D{viewport[0], viewport[1]}, acmacs::Size{viewport[2], viewport[3]});
+//v1                 break;
+//v1             default:
+//v1                 throw std::exception{};
+//v1         }
+//v1     }
+//v1     catch (std::exception&) {
+//v1         std::cerr << "ERROR: cannot convert json to array (viewport): " << viewport << '\n';
+//v1         throw;
+//v1     }
+//v1
+//v1     return result;
+//v1
+//v1 } // AntigenicMapMod::get_viewport
 
 // ----------------------------------------------------------------------
 

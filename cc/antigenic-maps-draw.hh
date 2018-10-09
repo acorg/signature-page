@@ -213,10 +213,56 @@ AntigenicMapsDrawBase* make_antigenic_maps_draw(std::string aChartFilename, acma
 
 // ----------------------------------------------------------------------
 
+class LabelSettings : public acmacs::settings::object
+{
+ public:
+    using acmacs::settings::object::object;
+
+    acmacs::settings::field<std::string> name_type{this, "name_type"};
+    acmacs::settings::field<acmacs::Offset> offset{this, "offset"};
+    acmacs::settings::field<double> size{this, "size"};
+};
+
+class SelectVaccineSettings : public acmacs::settings::object
+{
+ public:
+    using acmacs::settings::object::object;
+
+    acmacs::settings::field<std::string> passage{this, "passage"}, type{this, "type"}, name{this, "name"};
+};
+
+class SelectSettings : public acmacs::settings::object
+{
+ public:
+    using acmacs::settings::object::object;
+
+    acmacs::settings::field<std::string> full_name{this, "full_name"};
+    acmacs::settings::field_object<SelectVaccineSettings> vaccine{this, "vaccine"};
+};
+
+// ----------------------------------------------------------------------
+
 class AntigenicMapMod : public acmacs::settings::object
 {
  public:
     using acmacs::settings::object::object;
+
+    acmacs::settings::field<std::string> name{this, "N"};
+    acmacs::settings::field<std::string> name_commented{this, "?N"};
+    acmacs::settings::field_array<double> rel{this, "rel"}, viewport{this, "viewport"}; // viewport
+    acmacs::settings::field<double> outline_scale{this, "outline_scale"}, scale{this, "scale"}; // point_scale
+    acmacs::settings::field<Color> outline{this, "outline"}, fill{this, "fill"}, text_color{this, "text_color"}, color{this, "color"};
+    acmacs::settings::field<double> outline_width{this, "outline_width"}, size{this, "size"}, text_size{this, "text_size"}, line_width{this, "line_width"};
+    acmacs::settings::field<std::string> font_family{this, "font_family"}, slant{this, "slant"}, weight{this, "weight"};  // title
+    acmacs::settings::field<acmacs::Offset> offset{this, "offset"};  // title
+    acmacs::settings::field<double> padding{this, "padding"}; // title
+    acmacs::settings::field<double> degrees{this, "degrees"}; // rotate
+    acmacs::settings::field_object<LabelSettings> label{this, "label"}; // antigens
+    acmacs::settings::field_object<SelectSettings> select{this, "select"}; // antigens
+    acmacs::settings::field<bool> report{this, "report"}, raise_if_not_found{this, "raise_if_not_found"}, raise_{this, "raise_"}, shown_on_all{this, "shown_on_all"}; // antigens
+    acmacs::settings::field<std::string> order{this, "order"}; // antigens
+
+    acmacs::Viewport get_viewport(const acmacs::Viewport& aOrigViewport) const;
 
     //v1 template <typename Result> Result get_or_default(std::string aName, Result&& aDefault) const
     //v1     {
@@ -228,20 +274,18 @@ class AntigenicMapMod : public acmacs::settings::object
     //v1         return rjson::get_or(operator[](aName), aDefault);
     //v1     }
 
-    // //$ inline std::string name() const { return get("N", rjson::v1::string{}); }
-    // //$ inline const rjson::v1::array& mods() const { return get("mods", rjson::v1::array{}); }
-    // //$ inline Location offset() const { const rjson::v1::array& ar = get("offset", rjson::v1::array{0.0, 0.0}); return {ar[0], ar[1]}; }
-    // //$ inline Color get_color(std::string aName, const char* aDefault) const { return static_cast<std::string>(get(aName, rjson::v1::string{aDefault})); }
-    // //$ inline double get(std::string aName, double aDefault) const { return get(aName, rjson::v1::value{rjson::v1::number{aDefault}}); }
-    // //$ inline bool get(std::string aName, bool aDefault) const { return get(aName, rjson::v1::value{rjson::v1::boolean{aDefault}}); }
-    // //$ inline std::string get(std::string aName, const char* aDefault) const { return get(aName, rjson::v1::value{rjson::v1::string{aDefault}}); }
-
-    // //$ inline Location offset() const { const rjson::v1::array& ar = get("offset", rjson::v1::array{0.0, 0.0}); return {ar[0], ar[1]}; }
-    // //$ inline double get(std::string aName, double aDefault) const { return get_or_default(aName, rjson::v1::value{rjson::v1::number{aDefault}}); }
-    // //$ inline bool get(std::string aName, bool aDefault) const { return get(aName, rjson::v1::value{rjson::v1::boolean{aDefault}}); }
-    // //$ inline std::string get(std::string aName, const char* aDefault) const { return get(aName, rjson::v1::value{rjson::v1::string{aDefault}}); }
-
-    acmacs::settings::field<std::string> name{this, "N"};
+    //v1 // //$ inline std::string name() const { return get("N", rjson::v1::string{}); }
+    //v1 // //$ inline const rjson::v1::array& mods() const { return get("mods", rjson::v1::array{}); }
+    //v1 // //$ inline Location offset() const { const rjson::v1::array& ar = get("offset", rjson::v1::array{0.0, 0.0}); return {ar[0], ar[1]}; }
+    //v1 // //$ inline Color get_color(std::string aName, const char* aDefault) const { return static_cast<std::string>(get(aName, rjson::v1::string{aDefault})); }
+    //v1 // //$ inline double get(std::string aName, double aDefault) const { return get(aName, rjson::v1::value{rjson::v1::number{aDefault}}); }
+    //v1 // //$ inline bool get(std::string aName, bool aDefault) const { return get(aName, rjson::v1::value{rjson::v1::boolean{aDefault}}); }
+    //v1 // //$ inline std::string get(std::string aName, const char* aDefault) const { return get(aName, rjson::v1::value{rjson::v1::string{aDefault}}); }
+    //v1
+    //v1 // //$ inline Location offset() const { const rjson::v1::array& ar = get("offset", rjson::v1::array{0.0, 0.0}); return {ar[0], ar[1]}; }
+    //v1 // //$ inline double get(std::string aName, double aDefault) const { return get_or_default(aName, rjson::v1::value{rjson::v1::number{aDefault}}); }
+    //v1 // //$ inline bool get(std::string aName, bool aDefault) const { return get(aName, rjson::v1::value{rjson::v1::boolean{aDefault}}); }
+    //v1 // //$ inline std::string get(std::string aName, const char* aDefault) const { return get(aName, rjson::v1::value{rjson::v1::string{aDefault}}); }
 
     //v1 const rjson::value& mods() const
     //v1     {

@@ -112,6 +112,47 @@ AntigenicMapsDrawBase* make_antigenic_maps_draw(std::string aChartFilename, acma
 
 // ----------------------------------------------------------------------
 
+acmacs::Viewport AntigenicMapMod::get_viewport(const acmacs::Viewport& aOrigViewport) const
+{
+    acmacs::Viewport result = aOrigViewport;
+
+    try {
+        switch (rel.size()) {
+            case 3:
+                result.set({aOrigViewport.left() + rel[0], aOrigViewport.top() + rel[1]}, aOrigViewport.size.width + rel[2]);
+                break;
+            default:
+                throw std::exception{};
+        }
+    }
+    catch (std::exception&) {
+        std::cerr << "ERROR: cannot convert json to array (viewport rel): " << rel << '\n';
+        throw;
+    }
+
+    try {
+        switch (viewport.size()) {
+            case 3:
+                result.set({viewport[0], viewport[1]}, viewport[2]);
+                break;
+            case 4:
+                result.set(acmacs::Location2D{viewport[0], viewport[1]}, acmacs::Size{viewport[2], viewport[3]});
+                break;
+            default:
+                throw std::exception{};
+        }
+    }
+    catch (std::exception&) {
+        std::cerr << "ERROR: cannot convert json to array (viewport): " << viewport << '\n';
+        throw;
+    }
+
+    return result;
+
+} // AntigenicMapMod::get_viewport
+
+// ----------------------------------------------------------------------
+
 AntigenicMapsDrawSettings::AntigenicMapsDrawSettings(acmacs::settings::base& parent)
     : acmacs::settings::object(parent)
 {
