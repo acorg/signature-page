@@ -153,7 +153,8 @@ acmacs::Viewport AntigenicMapMod::get_viewport(const acmacs::Viewport& aOrigView
 
 // ----------------------------------------------------------------------
 
-AntigenicMapsDrawSettings::AntigenicMapsDrawSettings(acmacs::settings::base& parent) : acmacs::settings::object(parent)
+AntigenicMapsDrawSettings::AntigenicMapsDrawSettings(acmacs::settings::base& parent)
+    : acmacs::settings::object(parent)
 {
     auto m1 = mods.append();
     m1->name = "viewport";
