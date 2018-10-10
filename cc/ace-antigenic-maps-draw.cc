@@ -38,17 +38,19 @@ void AntigenicMapsLayoutDrawAce::prepare_apply_mods()
                     chart_draw().rotate(radians);
             }
             else if (mod.name == "flip") {
-                if (auto direction = mod.get_or_default("direction", ""); !direction.empty()) {
-                    if (direction == "ns")
+                if (mod.direction.is_set()) {
+                    if (mod.direction == "ns")
                         chart_draw().flip(1, 0);
-                    else if (direction == "ew")
+                    else if (mod.direction == "ew")
                         chart_draw().flip(0, 1);
                     else
                         std::cerr << "ERROR: unrecognized flip value: " << mod << DEBUG_LINE_FUNC << '\n';
                 }
+                else if (mod.value.is_set()) {
+                    chart_draw().flip(mod.value[0], mod.value[1]);
+                }
                 else {
-                    if (const auto& ar = mod["value"]; !ar.is_null())
-                        chart_draw().flip(ar[0], ar[1]);
+                    std::cerr << "ERROR: unrecognized flip mod: " << mod << DEBUG_LINE_FUNC << '\n';
                 }
             }
             else if (mod.name == "viewport") {
@@ -58,14 +60,14 @@ void AntigenicMapsLayoutDrawAce::prepare_apply_mods()
                 chart_draw()
                     .title()
                     .text_size(mod.text_size.get_or(12.0))
-                    .text_color(mod.get_color("text_color", "black"))
+                    .text_color(mod.text_color.get_or(BLACK))
                     .weight(std::string(mod.weight.get_or("normal")))
                     .slant(std::string(mod.slant.get_or("normal")))
                     .font_family(std::string(mod.font_family.get_or("san serif")))
                     .background("transparent")
                     .border_width(0)
                     .padding(mod.padding.get_or(3.0))
-                    .offset(mod.offset())
+                    .offset(mod.offset)
                     .remove_all_lines();
             }
             // else if (mod.name == "tracked_antigen") {
@@ -141,7 +143,7 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, std
         }
     });
 
-    settings().mods.for_each([this,aSectionIndex,report_antigens_in_hz_sections,map_letter](const auto& mod) {
+    settings().mods.for_each([this,aSectionIndex,report_antigens_in_hz_sections,map_letter](const AntigenicMapMod& mod) {
         if (mod.name == "tracked_antigens") {
             const auto tracked_indices = tracked_antigens(aSectionIndex, report_antigens_in_hz_sections);
             acmacs::PointStyle tracked_antigen_style;
@@ -164,13 +166,15 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, std
             serum_circle(mod, map_letter, aSectionIndex);
         }
         else if (mod.name == "vaccines") {
-            mark_vaccines(mod);
+            throw std::runtime_error("obsolete mod \"vaccines\" (use {\"N\":\"antigens\", \"select\": {\"vaccine\": }}): " + mod.to_json());
+                      // mark_vaccines(mod);
         }
         else if (mod.name == "antigens") {
             mark_antigens(mod);
         }
         else if (mod.name == "antigens_old") {
-            mark_antigens_old(mod);
+            throw std::runtime_error("obsolete mod \"antigens_old\" (use {\"N\":\"antigens\"}): " + mod.to_json());
+            // mark_antigens_old(mod);
         }
     });
 
@@ -199,7 +203,7 @@ void AntigenicMapsLayoutDrawAce::make_tracked_serum(size_t serum_index, Pixels s
         auto& label = chart_draw().add_label(chart().number_of_antigens() + serum_index);
         label.offset(label_data.offset);
 
-        rjson::for_each(label_data, [&label,&label_data,this,serum_index](const std::string& field_name, const rjson::value& item_value) {
+        rjson::for_each(label_data.get(), [&label,&label_data,this,serum_index](const std::string& field_name, const rjson::value& item_value) {
             if (field_name == "size")
                 label.size(item_value);
             else if (field_name == "color")
@@ -229,7 +233,7 @@ void AntigenicMapsLayoutDrawAce::make_tracked_serum(size_t serum_index, Pixels s
                 label.offset({item_value[0], item_value[1]});
             }
             else if (field_name.empty() || (field_name.front() != '?' && field_name.back() != '?'))
-                std::cerr << "WARNING: mark_vaccines label: unrecognized key \"" << field_name << '"' << std::endl;
+                std::cerr << "WARNING: make_tracked_serum label: unrecognized key \"" << field_name << '"' << std::endl;
         });
     }
 
@@ -364,89 +368,90 @@ void AntigenicMapsLayoutDrawAce::serum_circle(const AntigenicMapMod& mod, std::s
 
 // ----------------------------------------------------------------------
 
-void AntigenicMapsLayoutDrawAce::mark_vaccines(const AntigenicMapMod& vaccine_mod)
-{
-    try {
-        const auto& chart = chart_draw().chart();
-        Vaccines vaccs{chart};
-        rjson::for_each(vaccine_mod.mods(), [&vaccs, this](const rjson::value& mod) {
-            const std::string type(rjson::get_or(mod, "type", "")), passage(rjson::get_or(mod, "passage", "")), name(rjson::get_or(mod, "name", ""));
-            VaccineMatcher matcher(vaccs, VaccineMatchData{}.name(name).type(type).passage(passage));
-            // std::cerr << matcher.report(2) << '\n';
-            rjson::for_each(mod, [&matcher, this](const std::string& field_name, const rjson::value& item_value) {
-                if (field_name == "size")
-                    matcher.size(item_value);
-                else if (field_name == "fill")
-                    matcher.fill(item_value);
-                else if (field_name == "outline")
-                    matcher.outline(item_value);
-                else if (field_name == "outline_width")
-                    matcher.outline_width(item_value);
-                else if (field_name == "aspect")
-                    matcher.aspect(item_value);
-                else if (field_name == "rotation")
-                    matcher.rotation(item_value);
-                else if (field_name == "no")
-                    matcher.no(item_value); // size_t
-                else if (field_name == "show") {
-                    const bool show = item_value.get_bool();
-                    matcher.show(show);
-                    if (!show)
-                        matcher.hide_label(chart_draw());
-                }
-                else if (field_name == "label")
-                    add_label(std::shared_ptr<VaccineMatcherLabel>{matcher.label(chart_draw())}, item_value);
-                else if (field_name != "type" && field_name != "passage" && field_name != "name" && (field_name.empty() || (field_name.front() != '?' && field_name.back() != '?')))
-                    std::cerr << "WARNING: mark_vaccines: unrecognized key \"" << field_name << '"' << std::endl;
-            });
-        });
-        // std::cerr << "DEBUG: Vaccines:" << std::endl << vaccs.report(2) << std::endl;
-        vaccs.plot(chart_draw());
-    }
-    catch (std::exception&) {
-        std::cerr << "WARNING: cannot mark vaccines: invalid vaccine settings: " << vaccine_mod << std::endl;
-    }
+// Obsolete: use "N":"antigens", "select": {"vaccine": }
+// void AntigenicMapsLayoutDrawAce::mark_vaccines(const AntigenicMapMod& vaccine_mod)
+// {
+//     try {
+//         const auto& chart = chart_draw().chart();
+//         Vaccines vaccs{chart};
+//         rjson::for_each(vaccine_mod.mods(), [&vaccs, this](const rjson::value& mod) {
+//             const std::string type(rjson::get_or(mod, "type", "")), passage(rjson::get_or(mod, "passage", "")), name(rjson::get_or(mod, "name", ""));
+//             VaccineMatcher matcher(vaccs, VaccineMatchData{}.name(name).type(type).passage(passage));
+//             // std::cerr << matcher.report(2) << '\n';
+//             rjson::for_each(mod, [&matcher, this](const std::string& field_name, const rjson::value& item_value) {
+//                 if (field_name == "size")
+//                     matcher.size(item_value);
+//                 else if (field_name == "fill")
+//                     matcher.fill(item_value);
+//                 else if (field_name == "outline")
+//                     matcher.outline(item_value);
+//                 else if (field_name == "outline_width")
+//                     matcher.outline_width(item_value);
+//                 else if (field_name == "aspect")
+//                     matcher.aspect(item_value);
+//                 else if (field_name == "rotation")
+//                     matcher.rotation(item_value);
+//                 else if (field_name == "no")
+//                     matcher.no(item_value); // size_t
+//                 else if (field_name == "show") {
+//                     const bool show = item_value.get_bool();
+//                     matcher.show(show);
+//                     if (!show)
+//                         matcher.hide_label(chart_draw());
+//                 }
+//                 else if (field_name == "label")
+//                     add_label(std::shared_ptr<VaccineMatcherLabel>{matcher.label(chart_draw())}, item_value);
+//                 else if (field_name != "type" && field_name != "passage" && field_name != "name" && (field_name.empty() || (field_name.front() != '?' && field_name.back() != '?')))
+//                     std::cerr << "WARNING: mark_vaccines: unrecognized key \"" << field_name << '"' << std::endl;
+//             });
+//         });
+//         // std::cerr << "DEBUG: Vaccines:" << std::endl << vaccs.report(2) << std::endl;
+//         vaccs.plot(chart_draw());
+//     }
+//     catch (std::exception&) {
+//         std::cerr << "WARNING: cannot mark vaccines: invalid vaccine settings: " << vaccine_mod << std::endl;
+//     }
 
-} // AntigenicMapsLayoutDrawAce::mark_vaccines
+// } // AntigenicMapsLayoutDrawAce::mark_vaccines
 
 // ----------------------------------------------------------------------
 
 void AntigenicMapsLayoutDrawAce::mark_antigens(const AntigenicMapMod& mod)
 {
-    ModAntigens applicator(mod.data());
+    ModAntigens applicator(mod.get());
     applicator.apply(chart_draw(), rjson::value{});
 
 } // AntigenicMapsLayoutDrawAce::mark_antigens
 
 // ----------------------------------------------------------------------
 
-void AntigenicMapsLayoutDrawAce::mark_antigens_old(const AntigenicMapMod& mod)
-{
-    const auto& select = mod.get_or_empty_object("select");
-    try {
-        if (const auto& index = select["index"]; !index.is_null()) {
-            acmacs::PointStyle antigen_style;
-            antigen_style.size = Pixels{mod.size.get_or(5.0)};
-            antigen_style.fill = mod.fill.get_or(PINK);
-            antigen_style.outline = mod.outline.get_or(WHITE);
-            antigen_style.outline_width = Pixels{mod.outline_width.get_or(0.5)};
-            chart_draw().modify(static_cast<size_t>(index), antigen_style, mod.raise_.get_or(true) ? PointDrawingOrder::Raise : PointDrawingOrder::NoChange);
-            if (const auto& label_data = mod.label; label_data.is_set()) {
-                auto& label = chart_draw().add_label(index);
-                label.size(label_data->size.get_or(9.0));
-                label.offset = label_data->offset.get_or({0, 1});
-                if (const auto& display_name = label_data->display_name; display_name.is_set())
-                    label.display_name(display_name);
-            }
-        }
-        else
-            std::cerr << "WARNING: Antigens: no index in " << select << '\n';
-    }
-    catch (std::exception& err) {
-        std::cerr << "WARNING: Antigens: error: " << err.what() << " in " << select << '\n';
-    }
+// void AntigenicMapsLayoutDrawAce::mark_antigens_old(const AntigenicMapMod& mod)
+// {
+//     const auto& select = mod.get_or_empty_object("select");
+//     try {
+//         if (const auto& index = select["index"]; !index.is_null()) {
+//             acmacs::PointStyle antigen_style;
+//             antigen_style.size = Pixels{mod.size.get_or(5.0)};
+//             antigen_style.fill = mod.fill.get_or(PINK);
+//             antigen_style.outline = mod.outline.get_or(WHITE);
+//             antigen_style.outline_width = Pixels{mod.outline_width.get_or(0.5)};
+//             chart_draw().modify(static_cast<size_t>(index), antigen_style, mod.raise_.get_or(true) ? PointDrawingOrder::Raise : PointDrawingOrder::NoChange);
+//             if (const auto& label_data = mod.label; label_data.is_set()) {
+//                 auto& label = chart_draw().add_label(index);
+//                 label.size(label_data->size.get_or(9.0));
+//                 label.offset = label_data->offset.get_or({0, 1});
+//                 if (const auto& display_name = label_data->display_name; display_name.is_set())
+//                     label.display_name(display_name);
+//             }
+//         }
+//         else
+//             std::cerr << "WARNING: Antigens: no index in " << select << '\n';
+//     }
+//     catch (std::exception& err) {
+//         std::cerr << "WARNING: Antigens: error: " << err.what() << " in " << select << '\n';
+//     }
 
-} // AntigenicMapsLayoutDrawAce::mark_antigens_old
+// } // AntigenicMapsLayoutDrawAce::mark_antigens_old
 
 // ----------------------------------------------------------------------
 

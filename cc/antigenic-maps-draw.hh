@@ -257,7 +257,9 @@ class AntigenicMapMod : public acmacs::settings::object
     acmacs::settings::field<std::string> font_family{this, "font_family"}, slant{this, "slant"}, weight{this, "weight"};  // title
     acmacs::settings::field<acmacs::Offset> offset{this, "offset"};  // title
     acmacs::settings::field<double> padding{this, "padding"}; // title
-    acmacs::settings::field<double> degrees{this, "degrees"}; // rotate
+    acmacs::settings::field<double> degrees{this, "degrees"}, radians{this, "radians"}, angle{this, "angle"}; // rotate
+    acmacs::settings::field<std::string> direction{this, "direction"}; // flip
+    acmacs::settings::field_array<double> value{this, "value"}; // flip
     acmacs::settings::field_object<LabelSettings> label{this, "label"}; // antigens
     acmacs::settings::field_object<SelectSettings> select{this, "select"}; // antigens
     acmacs::settings::field<bool> report{this, "report"}, raise_if_not_found{this, "raise_if_not_found"}, raise_{this, "raise_"}, shown_on_all{this, "shown_on_all"}; // antigens
