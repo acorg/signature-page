@@ -5,9 +5,9 @@
 #include <vector>
 #include <map>
 
+#include "acmacs-base/settings.hh"
 #include "acmacs-draw/surface.hh"
-#include "tree.hh"
-#include "rjson-serialize.hh"
+#include "signature-page/tree.hh"
 
 // ----------------------------------------------------------------------
 
@@ -16,61 +16,83 @@ class TimeSeriesDraw;
 
 // ----------------------------------------------------------------------
 
-class CladeDrawSettings : public rjson::v1::array_field_container_child_element
+enum class CladeDrawSettingsLabelPosition { bottom, middle, top };
+
+namespace acmacs::settings
+{
+    inline namespace v1
+    {
+        template <> inline void field<CladeDrawSettingsLabelPosition>::assign(rjson::value& to, const CladeDrawSettingsLabelPosition& from)
+        {
+            switch (from) {
+              case CladeDrawSettingsLabelPosition::bottom:
+                  to = "bottom";
+                  break;
+              case CladeDrawSettingsLabelPosition::middle:
+                  to = "middle";
+                  break;
+              case CladeDrawSettingsLabelPosition::top:
+                  to = "top";
+                  break;
+            }
+        }
+
+        template <> inline CladeDrawSettingsLabelPosition field<CladeDrawSettingsLabelPosition>::extract(const rjson::value& from) const
+        {
+            if (from == "bottom")
+                return CladeDrawSettingsLabelPosition::bottom;
+            else if (from == "middle")
+                return CladeDrawSettingsLabelPosition::middle;
+            else if (from == "top")
+                return CladeDrawSettingsLabelPosition::top;
+            else
+                throw std::runtime_error("Unrecognized CladeDrawSettingsLabelPosition: " + rjson::to_string(from));
+        }
+    }
+}
+
+
+// ----------------------------------------------------------------------
+
+class CladeDrawSettings : public acmacs::settings::object
 {
  public:
+    using acmacs::settings::object::object;
+
     constexpr static const int NoSlot = -1;
 
-    CladeDrawSettings(const rjson::v1::value& aData, std::string aName = std::string{}, bool aShow = true);
-    inline CladeDrawSettings(const CladeDrawSettings&) = default;
-    inline CladeDrawSettings(CladeDrawSettings&&) = default;
-
-    rjson::v1::field_get_set<std::string> name;           // empty for default settings
-    rjson::v1::field_get_set<std::string> display_name;
-    rjson::v1::field_get_set<bool> show; // show this clade
-    rjson::v1::field_get_set<size_t> section_inclusion_tolerance; // max number of lines (strains) within section from another clade that do not interrupt the secion
-    rjson::v1::field_get_set<size_t> section_exclusion_tolerance; // max number of lines (strains) to exclude small sections
-    rjson::v1::field_get_set<bool> show_section_size_in_label;
-    rjson::v1::field_get_set<Color> arrow_color;
-    rjson::v1::field_get_set<double> line_width;
-    rjson::v1::field_get_set<double> arrow_width;
-    rjson::v1::field_get_set<Color> separator_color;
-    rjson::v1::field_get_set<double> separator_width;
-    rjson::v1::field_get_set<std::string> label_position; // middle, top, bottom
-    rjson::v1::field_get_set<acmacs::Offset> label_offset;
-    rjson::v1::field_get_set<Color> label_color;
-    rjson::v1::field_get_set<double> label_size;
-    rjson::v1::field_get_set<acmacs::TextStyle> label_style;
-    rjson::v1::field_get_set<double> label_rotation;
-    rjson::v1::field_get_set<int> slot;
+    acmacs::settings::field<std::string>                    name{this, "name", ""};
+    acmacs::settings::field<std::string>                    display_name{this, "display_name", ""};
+    acmacs::settings::field<bool>                           show{this, "show", true};
+    acmacs::settings::field<size_t>                         section_inclusion_tolerance{this, "section_inclusion_tolerance", 10}; // max number of lines (strains) within section from another clade that do not interrupt the secion
+    acmacs::settings::field<size_t>                         section_exclusion_tolerance{this, "section_exclusion_tolerance", 5}; // max number of lines (strains) to exclude small sections
+    acmacs::settings::field<bool>                           show_section_size_in_label{this, "show_section_size_in_label", true};
+    acmacs::settings::field<Color>                          arrow_color{this, "arrow_color", BLACK};
+    acmacs::settings::field<double>                         line_width{this, "line_width", 0.8};
+    acmacs::settings::field<double>                         arrow_width{this, "arrow_width", 3};
+    acmacs::settings::field<Color>                          separator_color{this, "separator_color", "grey63"};
+    acmacs::settings::field<double>                         separator_width{this, "separator_width", 0.5};
+    acmacs::settings::field<CladeDrawSettingsLabelPosition> label_position{this, "label_position", CladeDrawSettingsLabelPosition::middle};
+    acmacs::settings::field<acmacs::Offset>                 label_offset{this, "label_offset", {5, 0}};
+    acmacs::settings::field<Color>                          label_color{this, "label_color", BLACK};
+    acmacs::settings::field<double>                         label_size{this, "label_size", 11};
+    acmacs::settings::field<acmacs::TextStyle>              label_style{this, "label_style", {}};
+    acmacs::settings::field<double>                         label_rotation{this, "label_rotation", 0};
+    acmacs::settings::field<int>                            slot{this, "slot", NoSlot};
 
 }; // class CladeDrawSettings
 
 // ----------------------------------------------------------------------
 
-class CladesDrawSettings : public rjson::v1::field_container_child
+class CladesDrawSettings : public acmacs::settings::object
 {
  public:
-    CladesDrawSettings(rjson::v1::field_container_parent& aParent, std::string aFieldName);
+    CladesDrawSettings(acmacs::settings::base& parent) : acmacs::settings::object::object(parent) { clades.append(); }
 
-    inline const CladeDrawSettings for_clade(std::string name) const
-        {
-            auto p = std::find_if(clades.begin(), clades.end(), [&name](const auto& c) { return static_cast<std::string>(c.name) == name; });
-            if (p == clades.end()) {
-                p = std::find_if(clades.begin(), clades.end(), [](const auto& c) { return c.name.empty(); });
-                if (p == clades.end()) {
-                    std::cerr << "DEBUG: " << clades << DEBUG_LINE_FUNC << '\n';
-                    throw std::runtime_error("ERROR: no clade entry with empty name (for default settings)");
-                }
-            }
-            return *p;
-        }
+    acmacs::settings::const_array_element<CladeDrawSettings> for_clade(std::string name) const;
 
-    rjson::v1::array_field_container_child<CladeDrawSettings> clades;
-    rjson::v1::field_get_set<double> slot_width;
-
-      // for json importer
-    // inline std::vector<CladeDrawSettings>& get_clades() { return clades; }
+    acmacs::settings::field_array_of<CladeDrawSettings> clades{this, "clades"};
+    acmacs::settings::field<double>                     slot_width{this, "slot_width", 10};
 
 }; // class CladesDrawSettings
 

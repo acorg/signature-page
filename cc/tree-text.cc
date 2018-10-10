@@ -34,9 +34,9 @@ int main(int argc, const char* argv[])
             throw std::runtime_error("Usage: "s + args.program() + " [options] <tree.json>\n" + args.usage_options());
         }
         const bool verbose = args["-v"] || args["--verbose"];
-        seqdb::setup_dbs(static_cast<std::string>(args["--db-dir"]), verbose ? seqdb::report::yes : seqdb::report::no);
+        seqdb::setup_dbs(args["--db-dir"].str(), verbose ? seqdb::report::yes : seqdb::report::no);
         if (args["--seqdb"])
-            seqdb::setup(static_cast<std::string>(args["--seqdb"]), verbose ? seqdb::report::yes : seqdb::report::no);
+            seqdb::setup(args["--seqdb"].str(), verbose ? seqdb::report::yes : seqdb::report::no);
 
         std::shared_ptr<acmacs::chart::Chart> chart;
         if (args["--chart"])

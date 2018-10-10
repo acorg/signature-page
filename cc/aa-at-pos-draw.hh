@@ -3,8 +3,8 @@
 #include <map>
 
 #include "acmacs-base/color.hh"
+#include "acmacs-base/settings.hh"
 #include "acmacs-draw/surface.hh"
-#include "rjson-serialize.hh"
 
 // ----------------------------------------------------------------------
 
@@ -15,32 +15,34 @@ class HzSections;
 
 // ----------------------------------------------------------------------
 
-class AAAtPosSection : public rjson::v1::array_field_container_child_element
+class AAAtPosSection : public acmacs::settings::object
 {
  public:
-    AAAtPosSection(const rjson::v1::value& aData);
+    using acmacs::settings::object::object;
 
-    rjson::v1::field_get_set<size_t> pos;
-    rjson::v1::field_get_set<std::string> aa;
-    rjson::v1::field_get_set<size_t> num;
-    rjson::v1::field_get_set<std::string> first;
-    rjson::v1::field_get_set<std::string> last;
+    acmacs::settings::field<size_t>      pos{this, "_pos"};
+    acmacs::settings::field<std::string> aa{this, "aa"};
+    acmacs::settings::field<size_t>      num{this, "num"};
+    acmacs::settings::field<std::string> first{this, "first"};
+    acmacs::settings::field<std::string> last{this, "last"};
 };
 
-class AAAtPosDrawSettings : public rjson::v1::field_container_child
+// ----------------------------------------------------------------------
+
+class AAAtPosDrawSettings : public acmacs::settings::object
 {
  public:
-    AAAtPosDrawSettings(rjson::v1::field_container_parent& aParent, std::string aFieldName);
+    using acmacs::settings::object::object;
 
-    rjson::v1::field_get_set<double> width;
-    rjson::v1::field_get_set<double> right_margin;
-    rjson::v1::field_get_set<double> line_width;
-    rjson::v1::field_get_set<double> line_length;         // fraction of the surface width
-    rjson::v1::field_get_set<size_t> diverse_index_threshold;
-    rjson::v1::array_field_container_child<size_t> positions;
-    rjson::v1::field_get_set<bool> report_most_diverse_positions;
-    rjson::v1::field_get_set<size_t> small_section_threshold; // remove sections having this or fewer number of sequences
-    rjson::v1::array_field_container_child<AAAtPosSection> sections;
+    acmacs::settings::field<double>                  width{this, "width", 0};
+    acmacs::settings::field<double>                  right_margin{this, "right_margin", 0};
+    acmacs::settings::field<double>                  line_width{this, "line_width", 0.15};
+    acmacs::settings::field<double>                  line_length{this, "line_length", 0.5};         // fraction of the surface width
+    acmacs::settings::field<size_t>                  diverse_index_threshold{this, "diverse_index_threshold", 3};
+    acmacs::settings::field_array<size_t>            positions{this, "positions"};
+    acmacs::settings::field<bool>                    report_most_diverse_positions{this, "report_most_diverse_positions", false};
+    acmacs::settings::field<size_t>                  small_section_threshold{this, "small_section_threshold", 3}; // remove sections having this or fewer number of sequences
+    acmacs::settings::field_array_of<AAAtPosSection> sections{this, "?sections"};
 
 }; // class AAAtPosDrawSettings
 

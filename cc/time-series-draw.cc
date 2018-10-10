@@ -148,11 +148,11 @@ void TimeSeriesDraw::draw_hz_section_lines()
             if (aNode.draw.hz_section_index != NodeDrawData::HzSectionNoIndex) {
                 const auto section_settings = mHzSections.sections[aNode.draw.hz_section_index];
                 double y = aNode.draw.vertical_pos;
-                if (section_settings.show_line) {
+                if (section_settings->show_line) {
                     y = (previous_vertical_pos + aNode.draw.vertical_pos) / 2;
                     mSurface.line({0, y}, {mSurface.viewport().size.width, y}, mHzSections.line_color, Pixels{mHzSections.line_width});
                 }
-                if ((!mTreeMode || mHzSections.show_labels_in_time_series_in_tree_mode) && section_settings.show_label_in_time_series) {
+                if ((!mTreeMode || mHzSections.show_labels_in_time_series_in_tree_mode) && section_settings->show_label_in_time_series) {
                     draw_hz_section_label(aNode.draw.hz_section_index, y);
                 }
             }
@@ -168,7 +168,7 @@ void TimeSeriesDraw::draw_hz_section_lines()
 void TimeSeriesDraw::draw_hz_section_label(size_t aSectionIndex, double aY)
 {
     const auto section_settings = mHzSections.sections[aSectionIndex];
-    if (section_settings.show && section_settings.show_map) {
+    if (section_settings->show && section_settings->show_map) {
         std::string label = mHzSections.node_refs[aSectionIndex].index; // (1, 'A' + static_cast<char>(aSectionNo));
         const acmacs::Size tsize = mSurface.text_size(label, Pixels{mHzSections.ts_label_size}, mHzSections.ts_label_style);
         mSurface.text({mSurface.viewport().size.width - tsize.width * 1.2, aY + tsize.height * 1.2}, label, mHzSections.ts_label_color, Pixels{mHzSections.ts_label_size}, mHzSections.ts_label_style);

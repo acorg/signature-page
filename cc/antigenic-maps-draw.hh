@@ -9,8 +9,8 @@
 #pragma GCC diagnostic pop
 
 #include "acmacs-base/transformation.hh"
+#include "acmacs-base/settings.hh"
 #include "acmacs-draw/surface.hh"
-#include "rjson-serialize.hh"
 
 // ----------------------------------------------------------------------
 
@@ -38,13 +38,13 @@ class AntigenicMapsDrawBase
     virtual const ChartDrawBase& chart() const = 0;
     virtual void make_layout() = 0;
 
-    inline acmacs::surface::Surface& surface() { return mSurface; }
-    inline const Tree& tree() const { return mTree; }
-    inline const HzSections& hz_sections() const { return mHzSections; }
-    inline SignaturePageDrawSettings& signature_page_settings() { return mSignaturePageDrawSettings; }
-    inline const SignaturePageDrawSettings& signature_page_settings() const { return mSignaturePageDrawSettings; }
-    inline AntigenicMapsDrawSettings& settings() { return mSettings; }
-    inline const AntigenicMapsDrawSettings& settings() const { return mSettings; }
+    acmacs::surface::Surface& surface() { return mSurface; }
+    const Tree& tree() const { return mTree; }
+    const HzSections& hz_sections() const { return mHzSections; }
+    SignaturePageDrawSettings& signature_page_settings() { return mSignaturePageDrawSettings; }
+    const SignaturePageDrawSettings& signature_page_settings() const { return mSignaturePageDrawSettings; }
+    AntigenicMapsDrawSettings& settings() { return mSettings; }
+    const AntigenicMapsDrawSettings& settings() const { return mSettings; }
 
     AntigenicMapsLayout& layout() { return *mLayout; }
       // const AntigenicMapsLayout& layout() const { return *mLayout; }
@@ -213,93 +213,79 @@ AntigenicMapsDrawBase* make_antigenic_maps_draw(std::string aChartFilename, acma
 
 // ----------------------------------------------------------------------
 
-class AntigenicMapMod : public rjson::v1::array_field_container_child_element
+class LabelSettings : public acmacs::settings::object
 {
  public:
-    inline AntigenicMapMod(const rjson::v1::value& aData) : rjson::v1::array_field_container_child_element(aData) {}
+    using acmacs::settings::object::object;
 
-    template <typename Result> inline Result get_or_default(std::string aName, Result&& aDefault) const
-        {
-            static_assert(!std::is_same_v<Result, rjson::v1::object> && !std::is_same_v<Result, rjson::v1::array>, "get_or_default returns a copy, not a reference, use get_or_empty_object or get_or_empty_array");
-            try {
-                if constexpr (std::is_same_v<Result, std::string>)
-                    return operator[](aName).str();
-                else
-                    return operator[](aName);
-            }
-            catch (rjson::v1::field_not_found&) {
-                return std::move(aDefault);
-            }
-        }
+    acmacs::settings::field<bool> show{this, "show"};
+    acmacs::settings::field<std::string> name_type{this, "name_type"};
+    acmacs::settings::field<acmacs::Offset> offset{this, "offset"};
+    acmacs::settings::field<double> size{this, "size"};
+};
 
-    inline std::string get_or_default(std::string aName, const char* aDefault) const
-        {
-            return get_or_default<std::string>(aName, aDefault);
-        }
+class SelectVaccineSettings : public acmacs::settings::object
+{
+ public:
+    using acmacs::settings::object::object;
 
-    //$ inline std::string name() const { return get("N", rjson::v1::string{}); }
-    //$ inline const rjson::v1::array& mods() const { return get("mods", rjson::v1::array{}); }
-    //$ inline Location offset() const { const rjson::v1::array& ar = get("offset", rjson::v1::array{0.0, 0.0}); return {ar[0], ar[1]}; }
-    //$ inline Color get_color(std::string aName, const char* aDefault) const { return static_cast<std::string>(get(aName, rjson::v1::string{aDefault})); }
-    //$ inline double get(std::string aName, double aDefault) const { return get(aName, rjson::v1::value{rjson::v1::number{aDefault}}); }
-    //$ inline bool get(std::string aName, bool aDefault) const { return get(aName, rjson::v1::value{rjson::v1::boolean{aDefault}}); }
-    //$ inline std::string get(std::string aName, const char* aDefault) const { return get(aName, rjson::v1::value{rjson::v1::string{aDefault}}); }
+    acmacs::settings::field<std::string> passage{this, "passage"}, type{this, "type"}, name{this, "name"};
+};
 
-    //$ inline Location offset() const { const rjson::v1::array& ar = get("offset", rjson::v1::array{0.0, 0.0}); return {ar[0], ar[1]}; }
-    //$ inline double get(std::string aName, double aDefault) const { return get_or_default(aName, rjson::v1::value{rjson::v1::number{aDefault}}); }
-    //$ inline bool get(std::string aName, bool aDefault) const { return get(aName, rjson::v1::value{rjson::v1::boolean{aDefault}}); }
-    //$ inline std::string get(std::string aName, const char* aDefault) const { return get(aName, rjson::v1::value{rjson::v1::string{aDefault}}); }
+class SelectSettings : public acmacs::settings::object
+{
+ public:
+    using acmacs::settings::object::object;
 
-    inline std::string name() const { return get_or_default("N", std::string{}); }
+    acmacs::settings::field<std::string> full_name{this, "full_name"};
+    acmacs::settings::field_object<SelectVaccineSettings> vaccine{this, "vaccine"};
+};
 
-    inline const rjson::v1::array& mods() const
-        {
-            try {
-                return operator[]("mods");
-            }
-            catch (rjson::v1::field_not_found&) {
-                return rjson::v1::sEmptyArray;
-            }
-        }
+// ----------------------------------------------------------------------
 
-    inline Color get_color(std::string aName, Color&& aDefault) const
-        {
-            try {
-                return Color(operator[](aName));
-            }
-            catch (rjson::v1::field_not_found&) {
-                return aDefault;
-            }
-        }
+class AntigenicMapMod : public acmacs::settings::object
+{
+ public:
+    using acmacs::settings::object::object;
 
-    inline acmacs::Offset offset() const
-        {
-            try {
-                const rjson::v1::array& ar = operator[]("offset");
-                return {ar[0], ar[1]};
-            }
-            catch (rjson::v1::field_not_found&) {
-                return {};
-            }
-        }
+    acmacs::settings::field<std::string> name{this, "N"};
+    acmacs::settings::field<std::string> name_commented{this, "?N"};
+    acmacs::settings::field_array<double> rel{this, "rel"}, viewport{this, "viewport"}; // viewport
+    acmacs::settings::field<double> outline_scale{this, "outline_scale"}, scale{this, "scale"}; // point_scale
+    acmacs::settings::field<Color> outline{this, "outline"}, fill{this, "fill"}, text_color{this, "text_color"}, color{this, "color"};
+    acmacs::settings::field<double> outline_width{this, "outline_width"}, size{this, "size"}, text_size{this, "text_size"}, line_width{this, "line_width"};
+    acmacs::settings::field<std::string> font_family{this, "font_family"}, slant{this, "slant"}, weight{this, "weight"};  // title
+    acmacs::settings::field<acmacs::Offset> offset{this, "offset"};  // title
+    acmacs::settings::field<double> padding{this, "padding"}; // title
+    acmacs::settings::field<double> degrees{this, "degrees"}, radians{this, "radians"}, angle{this, "angle"}; // rotate
+    acmacs::settings::field<std::string> direction{this, "direction"}; // flip
+    acmacs::settings::field_array<double> value{this, "value"}; // flip
+    acmacs::settings::field_object<LabelSettings> label{this, "label"}; // antigens
+    acmacs::settings::field_object<SelectSettings> select{this, "select"}; // antigens
+    acmacs::settings::field<bool> report{this, "report"}, raise_if_not_found{this, "raise_if_not_found"}, raise_{this, "raise_"}, shown_on_all{this, "shown_on_all"}; // antigens
+    acmacs::settings::field<std::string> order{this, "order"}; // antigens
+    acmacs::settings::field<std::string> map{this, "map"}, serum{this, "serum"}, radius_line_dash{this, "radius_line_dash"}; // serum_circle
+    acmacs::settings::field<double> radius_line_width{this, "radius_line_width"}, serum_size{this, "serum_size"}, serum_outline_width{this, "serum_outline_width"}; // serum_circle
+    acmacs::settings::field<Color> radius_line{this, "radius_line"}, serum_outline{this, "serum_outline"}; // serum_circle
 
-    acmacs::Viewport get_viewport(const acmacs::Viewport& aOrigViewport) const; // settings.cc
+    acmacs::Viewport get_viewport(const acmacs::Viewport& aOrigViewport) const;
 
 }; // class AntigenicMapMod
 
-class AntigenicMapsDrawSettings : public rjson::v1::field_container_child
+// ----------------------------------------------------------------------
+
+class AntigenicMapsDrawSettings : public acmacs::settings::object
 {
  public:
-    AntigenicMapsDrawSettings(rjson::v1::field_container_parent& aParent, std::string aFieldName);
+    AntigenicMapsDrawSettings(acmacs::settings::base& parent);
 
-    rjson::v1::field_get_set<std::string> layout;
-    rjson::v1::field_get_set<size_t> columns;
-    rjson::v1::field_get_set<double> gap;
-    rjson::v1::field_get_set<Color> mapped_antigens_section_line_color;
-    rjson::v1::field_get_set<double> mapped_antigens_section_line_width;
-    rjson::v1::array_field_container_child<AntigenicMapMod> mods;
+    acmacs::settings::field<std::string>              layout{this, "layout", "labelled_grid"};
+    acmacs::settings::field<size_t>                   columns{this, "columns", 3};
+    acmacs::settings::field<double>                   gap{this, "gap", 20};
+    acmacs::settings::field<Color>                    mapped_antigens_section_line_color{this, "mapped_antigens_section_line_color", BLACK};
+    acmacs::settings::field<double>                   mapped_antigens_section_line_width{this, "mapped_antigens_section_line_width", 1};
+    acmacs::settings::field_array_of<AntigenicMapMod> mods{this, "mods"};
 
-    // inline std::vector<AntigenicMapMod>& get_mods() { return mods; }
     void viewport(const acmacs::Viewport& aViewport);
 
 }; // class AntigenicMapsDrawSettings

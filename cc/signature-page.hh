@@ -2,9 +2,9 @@
 
 #include <memory>
 
+#include "seqdb/seqdb.hh"
 #include "antigenic-maps-draw.hh"
 #include "chart-draw.hh"
-#include "rjson-serialize.hh"
 
 // ----------------------------------------------------------------------
 
@@ -20,40 +20,64 @@ class TitleDraw;
 
 // ----------------------------------------------------------------------
 
-class SignaturePageDrawSettings : public rjson::v1::field_container_child
+enum class SignaturePageLayout { Auto, TreeTSClades, TreeCladesTSMaps, TreeAATSClades };
+
+namespace acmacs::settings
+{
+    inline namespace v1
+    {
+        template <> inline void field<SignaturePageLayout>::assign(rjson::value& to, const SignaturePageLayout& from)
+        {
+            switch (from) {
+              case SignaturePageLayout::Auto:
+                  to = "auto";
+                  break;
+              case SignaturePageLayout::TreeTSClades:
+                  to = "tree-ts-clades";
+                  break;
+              case SignaturePageLayout::TreeCladesTSMaps:
+                  to = "tree-clades-ts-maps";
+                  break;
+              case SignaturePageLayout::TreeAATSClades:
+                  to = "tree-aa-ts-clades";
+                  break;
+            }
+        }
+
+        template <> inline SignaturePageLayout field<SignaturePageLayout>::extract(const rjson::value& from) const
+        {
+            if (from == "auto")
+                return SignaturePageLayout::Auto;
+            else if (from == "tree-ts-clades")
+                return SignaturePageLayout::TreeTSClades;
+            else if (from == "tree-aa-ts-clades")
+                return SignaturePageLayout::TreeAATSClades;
+            else if (from == "tree-clades-ts-maps")
+                return SignaturePageLayout::TreeCladesTSMaps;
+            else
+                throw std::runtime_error("Unrecognized layout: " + rjson::to_string(from));
+        }
+    }
+}
+
+// ----------------------------------------------------------------------
+
+class SignaturePageDrawSettings : public acmacs::settings::object
 {
  public:
-    enum class Layout { Auto, TreeTSClades, TreeCladesTSMaps, TreeAATSClades };
+    using acmacs::settings::object::object;
 
-    SignaturePageDrawSettings(rjson::v1::field_container_parent& aParent, std::string aFieldName);
-
-    rjson::v1::field_get_set<std::string> layout;
-    rjson::v1::field_get_set<double>
-        top,
-        bottom,
-        left,
-        right,
-        tree_margin_right,
-        mapped_antigens_margin_right,
-        time_series_width,
-        clades_width,
-        antigenic_maps_width;
-    rjson::v1::field_get_set<bool> _force_pp; // hidden field to force pretty printing this rjson object
-
-    Layout get_layout() const
-        {
-            const auto layout_s = layout.get_value_ref().strv();
-            if (layout_s == "auto")
-                return Layout::Auto;
-            else if (layout_s == "tree-ts-clades")
-                return Layout::TreeTSClades;
-            else if (layout_s == "tree-aa-ts-clades")
-                return Layout::TreeAATSClades;
-            else if (layout_s == "tree-clades-ts-maps")
-                return Layout::TreeCladesTSMaps;
-            else
-                throw std::runtime_error("Unrecognized layout: " + std::string(layout_s));
-        }
+    acmacs::settings::field<SignaturePageLayout> layout{this, "layout", SignaturePageLayout::Auto};
+    acmacs::settings::field<double>
+        top{this, "top", 60},
+        bottom{this, "bottom", 60},
+        left{this, "left", 50},
+        right{this, "right", 20},
+        tree_margin_right{this, "tree_margin_right", 0},
+        mapped_antigens_margin_right{this, "mapped_antigens_margin_right"}, //, 30},
+        time_series_width{this, "time_series_width", 400},
+        clades_width{this, "clades_width", 100},
+        antigenic_maps_width{this, "antigenic_maps_width"}; // , 300};
 
 }; // class SignaturePageDrawSettings
 
@@ -71,7 +95,7 @@ class SignaturePageDraw
     void init_settings();
     void write_initialized_settings(std::string aFilename); // removes redundant settings entries depending on layout!
     Settings& settings() { return *mSettings; }
-    void tree(std::string aTreeFilename);
+    void tree(std::string aTreeFilename, seqdb::Seqdb::ignore_not_found ignore = seqdb::Seqdb::ignore_not_found::no);
     Tree& tree() { return *mTree; }
     const TreeDraw& tree_draw() const { return *mTreeDraw; }
     void chart(std::string aChartFilename) { mChartFilename = aChartFilename; }
@@ -93,7 +117,7 @@ class SignaturePageDraw
     std::unique_ptr<AntigenicMapsDrawBase> mAntigenicMapsDraw;
     std::unique_ptr<TitleDraw> mTitleDraw;
 
-    SignaturePageDrawSettings::Layout detect_layout(bool init_settings, bool show_aa_at_pos) const;
+    SignaturePageLayout detect_layout(bool init_settings, bool show_aa_at_pos) const;
     void make_layout_tree_ts_clades();
     void make_layout_tree_clades_ts_maps();
     void draw_mods();

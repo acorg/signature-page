@@ -147,7 +147,7 @@ class Tree : public Node
 
     Tree() = default;
 
-    void match_seqdb(const seqdb::Seqdb& seqdb);
+    void match_seqdb(const seqdb::Seqdb& seqdb, seqdb::Seqdb::ignore_not_found ignore = seqdb::Seqdb::ignore_not_found::no);
     void ladderize(LadderizeMethod aLadderizeMethod);
 
     void set_number_strains();

@@ -30,7 +30,7 @@ TreeDraw::~TreeDraw()
 
 void TreeDraw::make_coloring()
 {
-    const auto color_nodes = mSettings.color_nodes.get_value_ref().strv();
+    const std::string color_nodes = mSettings.color_nodes;
     if (color_nodes == "black")
         mColoring = std::unique_ptr<Coloring>(new ColoringBlack());
     else if (color_nodes == "continent")
@@ -38,8 +38,8 @@ void TreeDraw::make_coloring()
     else {
         try {
             auto coloring = std::make_unique<ColoringByPos>(std::stoul(std::string(color_nodes)));
-            if (!mSettings.color_for_aa.empty())
-                coloring->color_for_aa(mSettings.color_for_aa);
+            if (const std::map<std::string, std::string> color_for_aa = mSettings.color_for_aa; !color_for_aa.empty())
+                coloring->color_for_aa(color_for_aa);
             mColoring = std::move(coloring);
         }
         catch (std::exception&) {
@@ -55,9 +55,7 @@ void TreeDraw::init_settings(const Clades* aClades)
 {
     mInitializeSettings = true;
 
-      // set_line_no();    // line_no is necessary to sort detected hz sections, but set_line_no is called by SignaturePageDraw::init_settings(), so this call is redundant
     mHzSections.detect_hz_lines_for_clades(mTree, aClades, true);
-    // mHzSections.auto_detect(mTree, aClades); // makes no sense
 
 } // TreeDraw::init_settings
 
@@ -108,9 +106,7 @@ void TreeDraw::ladderize()
 
 bool TreeDraw::apply_mods()
 {
-    // std::cout << "TREE-mod: unhide" << std::endl;
-    // unhide();                   // reset previous mods
-    for (const auto& mod: const_cast<const TreeDrawSettings&>(mSettings).mods) { // const_cast to support situation when mods was not set
+    (mSettings).mods.for_each([this] (const auto& mod) { // const_cast to support situation when mods was not set
         const auto mod_mod = static_cast<std::string>(mod.mod);
         if (mod_mod == "root") {
             std::cout << "TREE-mod: " << mod_mod << " " << mod.s1 << std::endl;
@@ -151,8 +147,8 @@ bool TreeDraw::apply_mods()
               // commented out mod
         }
         else
-            throw std::runtime_error("Unrecognized tree mod: " + mod_mod);
-    }
+            throw std::runtime_error("Unrecognized tree mod: " + std::string(mod_mod));
+    });
     return !mSettings.mods.empty();
 
 } // TreeDraw::apply_mods
@@ -164,7 +160,6 @@ void TreeDraw::draw()
     std::cout << "Tree surface: " << mSurface.viewport() << std::endl;
     const double line_width = mSettings.line_width;
     mLineWidth = mSettings.force_line_width ? line_width : std::min(line_width, mVerticalStep * 0.5);
-      // std::cout << "Tree line width: " << mLineWidth.valeu() << "  Settings: " << mSettings.line_width << "  vertical_step/2: " << mVerticalStep * 0.5 << std::endl;
     fit_labels_into_viewport();
 
     double vertical_gap = 0;
@@ -429,7 +424,7 @@ void TreeDraw::set_vertical_pos()
     bool topmost_node = true;
     auto set_leaf_vertical_pos = [&](Node& aNode) {
         if (aNode.draw.shown) {
-            if (aNode.draw.hz_section_index != NodeDrawData::HzSectionNoIndex && mHzSections.show && mHzSections.sections[aNode.draw.hz_section_index].show) {
+            if (aNode.draw.hz_section_index != NodeDrawData::HzSectionNoIndex && mHzSections.show && mHzSections.sections[aNode.draw.hz_section_index]->show) {
                 std::cout << "INFO: TREE-hz-section: " << aNode.draw.hz_section_index << " " << aNode.seq_id << std::endl;
                 if (!topmost_node)
                     vertical_pos += mHzSections.vertical_gap;
@@ -468,19 +463,19 @@ size_t TreeDraw::prepare_hz_sections()
       // const Node& first_leaf = find_first_leaf(mTree);
     for (auto section_index: mHzSections.section_order) {
         const auto section = mHzSections.sections[section_index];
-        if (section.show) {
-            Node* section_start = mTree.find_leaf_by_seqid(section.name);
+        if (section->show) {
+            Node* section_start = mTree.find_leaf_by_seqid(section->name);
             if (section_start) {
                 if (section_start->draw.shown) {
                     section_start->draw.hz_section_index = section_index;
                     ++number_of_hz_sections;
                 }
                 else {
-                    std::cerr << "WARNING: HzSection ignored because its node is hidden: " << section.name << std::endl;
+                    std::cerr << "WARNING: HzSection ignored because its node is hidden: " << section->name << std::endl;
                 }
             }
             else {
-                std::cerr << "WARNING: HzSection seq_id not found: " << section.name << std::endl;
+                std::cerr << "WARNING: HzSection seq_id not found: " << section->name << std::endl;
             }
         }
     }
@@ -588,10 +583,9 @@ void TreeDraw::draw_aa_transition(const Node& aNode, acmacs::Location2D aOrigin,
 {
     auto& settings = mSettings.aa_transition;
     const auto& first_leaf = find_first_leaf(aNode);
-    if (settings.show && !aNode.data.aa_transitions.empty() && aNode.data.number_strains >= settings.number_strains_threshold) {
-        if (auto labels = aNode.data.aa_transitions.make_labels(settings.show_empty_left); !labels.empty()) {
-            const auto& branch_settings = settings.per_branch.settings_for_label(labels, first_leaf.seq_id);
-            if (branch_settings.show) {
+    if (settings->show && !aNode.data.aa_transitions.empty() && aNode.data.number_strains >= settings->number_strains_threshold) {
+        if (auto labels = aNode.data.aa_transitions.make_labels(settings->show_empty_left); !labels.empty()) {
+            if (const auto /*not ref! */ branch_settings = settings->per_branch->settings_for_label(labels, first_leaf.seq_id); branch_settings.show) {
                 const auto longest_label = std::max_element(labels.begin(), labels.end(), [](const auto& a, const auto& b) { return a.first.size() < b.first.size(); });
                 const auto longest_label_size = mSurface.text_size(longest_label->first, Pixels{branch_settings.size}, branch_settings.style);
                 const auto node_line_width = aRight - aOrigin.x();
@@ -603,10 +597,10 @@ void TreeDraw::draw_aa_transition(const Node& aNode, acmacs::Location2D aOrigin,
                     const auto label_width = mSurface.text_size(label.first, Pixels{branch_settings.size}, branch_settings.style).width;
                     const acmacs::Location2D label_xy{origin.x() + (longest_label_size.width - label_width) / 2, origin.y()};
                     mSurface.text(label_xy, label.first, branch_settings.color, Pixels{branch_settings.size}, branch_settings.style);
-                    if (settings.show_node_for_left_line && label.second) {
+                    if (settings->show_node_for_left_line && label.second) {
                         mSurface.line(acmacs::Location2D{},
                                       acmacs::Location2D{mHorizontalStep * label.second->data.cumulative_edge_length, mVerticalStep * label.second->draw.line_no},
-                                      settings.node_for_left_line_color, Pixels{settings.node_for_left_line_width});
+                                      settings->node_for_left_line_color, Pixels{settings->node_for_left_line_width});
                     }
                     origin.y(origin.y() + longest_label_size.height * branch_settings.interline);
                 }
@@ -627,7 +621,7 @@ void TreeDraw::draw_aa_transition(const Node& aNode, acmacs::Location2D aOrigin,
                 }
 
                 if (mInitializeSettings) {
-                    settings.per_branch.by_aa_label.emplace_back().set_label_disabled_offset(labels.label(), first_leaf.seq_id, settings.per_branch.label_offset);
+                    settings->per_branch->by_aa_label.append()->set_label_disabled_offset(labels.label(), first_leaf.seq_id, settings->per_branch->label_offset);
                 }
 
                 aa_transitions_.push_back({first_leaf.seq_id, labels.label(), origin, aNode.data.number_strains});
@@ -644,14 +638,14 @@ void TreeDraw::draw_mark_with_label(const Node& aNode, acmacs::Location2D aTextO
 {
     if (aNode.draw.mark_with_label) {
           // std::cerr << "DEBUG: draw mark_with_label " << aNode.seq_id << '\n';
-        const auto settings = mSettings.mods.find_mark_with_label(aNode.seq_id);
+        const auto settings = mSettings.find_mark_with_label_mod(aNode.seq_id);
 
-        const acmacs::Offset label_offset = settings.label_offset;
+        const acmacs::Offset label_offset = settings->label_offset;
         const acmacs::Location2D label_origin = aTextOrigin + label_offset;
-        mSurface.text(label_origin, settings.label, Color{settings.label_color}, Pixels{settings.label_size}, settings.label_style);
-        const auto vlsize = mSurface.text_size(settings.label, Pixels{settings.label_size}, acmacs::TextStyle{});
+        mSurface.text(label_origin, settings->label, Color{settings->label_color}, Pixels{settings->label_size}, settings->label_style);
+        const auto vlsize = mSurface.text_size(settings->label, Pixels{settings->label_size}, acmacs::TextStyle{});
         const auto line_origin = label_origin + acmacs::Offset{vlsize.width / 2, label_offset.y() > 0 ? - vlsize.height : 0};
-        mSurface.line(line_origin, aTextOrigin, Color{settings.line_color}, Pixels{settings.line_width});
+        mSurface.line(line_origin, aTextOrigin, Color{settings->line_color}, Pixels{settings->line_width});
     }
 
 } // TreeDraw::draw_mark_with_label
@@ -672,7 +666,7 @@ void TreeDraw::draw_legend()
 {
     const Legend* legend = coloring_legend();
     if (legend) {
-        acmacs::surface::Surface& legend_surface = mSurface.subsurface(static_cast<acmacs::Offset>(mSettings.legend.offset), Scaled{mSettings.legend.width}, legend->size(), false);
+        acmacs::surface::Surface& legend_surface = mSurface.subsurface(static_cast<acmacs::Offset>(mSettings.legend->offset), Scaled{mSettings.legend->width}, legend->size(), false);
         legend->draw(legend_surface, mSettings.legend);
           // legend_surface->border("red", 1);
     }
@@ -702,26 +696,24 @@ void TreeDraw::report_aa_transitions()
 
 void HzSections::sort(const Tree& aTree)
 {
-    node_refs = decltype(node_refs){sections.size()};
+    node_refs.resize(sections.size());
 
     auto set_first_node = [this](const Node& node) {
-        auto sec = std::find_if(sections.begin(), sections.end(), [&node](const auto& s) -> bool { return static_cast<std::string>(s.name) == node.seq_id; });
-        if (sec != sections.end()) {
-            node_refs[static_cast<size_t>(sec - sections.begin())].first = &node;
-        }
+        if (auto sec_no = sections.find_index_if([&node](const auto& s) -> bool { return s.name == node.seq_id; }); sec_no)
+            node_refs[*sec_no].first = &node;
     };
     tree::iterate_leaf(aTree, set_first_node);
 
-      // remove not found sections before sorting (e.g. having no name or not found name)
+    // remove not found sections before sorting (e.g. having no name or not found name)
     std::vector<size_t> to_remove;
     for (size_t sec_no = 0; sec_no < node_refs.size(); ++sec_no) {
         if (node_refs[sec_no].first == nullptr) {
-            if (!sections[sec_no].name.empty())
-                std::cerr << "WARNING: HZ section removed (leaf node not found): " << sections[sec_no].name << std::endl;
+            if (sections[sec_no]->name != "")
+                std::cerr << "WARNING: HZ section removed (leaf node not found): " << sections[sec_no]->name << std::endl;
             to_remove.push_back(sec_no);
         }
         else if (!node_refs[sec_no].first->draw.shown) {
-            std::cerr << "WARNING: HZ section removed (leaf node not shown): " << sections[sec_no].name << std::endl;
+            std::cerr << "WARNING: HZ section removed (leaf node not shown): " << sections[sec_no]->name << std::endl;
             to_remove.push_back(sec_no);
         }
     }
@@ -734,15 +726,15 @@ void HzSections::sort(const Tree& aTree)
     acmacs::fill_with_indexes(section_order, node_refs.size());
     std::sort(section_order.begin(), section_order.end(), [this](const auto& a, const auto& b) -> bool { return node_refs[a].first->draw.line_no < node_refs[b].first->draw.line_no; });
 
-      // if the first section does not start with the topmost node, prepend section list with the new section
+    // if the first section does not start with the topmost node, prepend section list with the new section
     const Node* first_leaf = aTree.find_leaf_by_line_no(TreeDraw::sFirstLineNo);
     if (sections.empty() || node_refs[section_order.front()].first != first_leaf) {
-        auto new_sec = sections.emplace_back();
+        auto new_sec = sections.append();
         node_refs.emplace_back(first_leaf);
-        new_sec.name = first_leaf->seq_id;
-        new_sec.show = true;
-        new_sec.show_line = false;
-        new_sec.show_map = false;
+        new_sec->name = first_leaf->seq_id;
+        new_sec->show = true;
+        new_sec->show_line = false;
+        new_sec->show_map = false;
         section_order.insert(section_order.begin(), node_refs.size() - 1);
     }
 
@@ -753,9 +745,9 @@ void HzSections::sort(const Tree& aTree)
         node_refs[section_order.back()].last = &find_last_leaf(aTree);
 
     size_t section_no = 0;
-    for (auto section_index: section_order) {
+    for (auto section_index : section_order) {
         const auto& section = sections[section_index];
-        if (section.show && section.show_map) {
+        if (section->show && section->show_map) {
             node_refs[section_index].index.assign(1, 'A' + static_cast<char>(section_no));
             ++section_no;
         }
@@ -770,7 +762,7 @@ void HzSections::report(std::ostream& out) const
     out << "INFO: hz sections\n";
     for (auto section_index: section_order) {
         out << "  " << std::setw(4) << std::right << node_refs[section_index].first->draw.line_no << ' ' << node_refs[section_index].first->seq_id;
-        const auto& section = sections[section_index];
+        const auto& section = *sections[section_index];
         if (!section.triggering_clades.empty()) {
             out << "   clades: " << section.triggering_clades;
         }
@@ -887,22 +879,22 @@ void HzSections::detect_hz_lines_for_clades(Tree& aTree, const Clades* aClades, 
 
 void HzSections::add(std::string seq_id, bool show_line, std::string clade, size_t aa_pos)
 {
-    if (auto found = std::find_if(sections.begin(), sections.end(), [&seq_id](const auto& sect) { return sect.name == seq_id; }); found == sections.end()) {
+    if (auto found = sections.find_if([&seq_id](const auto& sect) { return sect.name == seq_id; }); !found) {
           // std::cerr << "DEBUG: add hz section: " << seq_id << '\n';
-        auto sec = sections.emplace_back();
-        sec.name = seq_id;
-        sec.show_line = show_line;
+        auto sec = sections.append();
+        sec->name = seq_id;
+        sec->show_line = show_line;
         if (!clade.empty())
-            sec.triggering_clades.push_back(clade);
+            sec->triggering_clades.append(clade);
         if (aa_pos > 0)
-            sec.triggering_aa_pos.push_back(aa_pos);
+            sec->triggering_aa_pos.append(aa_pos);
     }
     else {
         if (!clade.empty())
-            (*found).triggering_clades.push_back(clade);
+            (*found)->triggering_clades.append(clade);
         if (aa_pos > 0)
-            (*found).triggering_aa_pos.push_back(aa_pos);
-        std::cerr << "DEBUG: " << seq_id << ' ' << (*found).triggering_clades << ' '  << (*found).triggering_aa_pos << '\n';
+            (*found)->triggering_aa_pos.append(aa_pos);
+        std::cerr << "DEBUG: " << seq_id << ' ' << (*found)->triggering_clades << ' '  << (*found)->triggering_aa_pos << '\n';
     }
 
 } // HzSections::add
@@ -927,38 +919,47 @@ void HzSections::add(const Tree& tree, const Node& first, const Node& last, bool
 
 // ----------------------------------------------------------------------
 
-const AATransitionIndividualSettings& AATransitionPerBranchDrawSettings::settings_for_label(const AA_TransitionLabels& aLabels, std::string aFirstLeafSeqid) const
+AATransitionIndividualSettingsForLabel::AATransitionIndividualSettingsForLabel(const AATransitionPerBranchDrawSettings& src)
+    : show(src.show), size(src.size), color(src.color),
+      style(src.style), interline(src.interline), label_offset(src.label_offset),
+      label_connection_line_width(src.label_connection_line_width), label_connection_line_color(src.label_connection_line_color)
 {
-#pragma GCC diagnostic push
-#ifdef __clang__
-#pragma GCC diagnostic ignored "-Wexit-time-destructors"
-#endif
-    static rjson::v1::value settings{rjson::v1::object{}};
-    static AATransitionIndividualSettings result{settings};
-#pragma GCC diagnostic pop
 
-    settings = data();
+} // AATransitionIndividualSettingsForLabel::AATransitionIndividualSettingsForLabel
 
-    auto match_entry = [label = aLabels.label(), aFirstLeafSeqid](const auto& entry) {
-                           return entry.label == label && (entry.first_leaf_seq_id.empty() || entry.first_leaf_seq_id == aFirstLeafSeqid);
+// ----------------------------------------------------------------------
+
+void AATransitionIndividualSettingsForLabel::update(const AATransitionIndividualSettings& src)
+{
+    show = src.show;
+    size = src.size;
+    color = src.color;
+    style = src.style;
+    interline = src.interline;
+    label_offset = src.label_offset;
+    label_connection_line_width = src.label_connection_line_width;
+    label_connection_line_color = src.label_connection_line_color;
+
+} // AATransitionIndividualSettingsForLabel::update
+
+// ----------------------------------------------------------------------
+
+AATransitionIndividualSettingsForLabel AATransitionPerBranchDrawSettings::settings_for_label(const AA_TransitionLabels& aLabels, std::string aFirstLeafSeqid) const
+{
+    AATransitionIndividualSettingsForLabel result(*this);
+    auto match_entry = [label = aLabels.label(), aFirstLeafSeqid](const AATransitionIndividualSettings& entry) {
+                           return entry.label == label && (entry.first_leaf_seq_id == "" || entry.first_leaf_seq_id == aFirstLeafSeqid);
                        };
-    if (auto found = std::find_if(std::begin(by_aa_label), std::end(by_aa_label), match_entry);
-        found != std::end(by_aa_label)) {
-        settings.update((*found).data());
+    if (auto found = by_aa_label.find_if(match_entry); found) {
+        result.update(*found);
     }
 
-    if (scatter_label_offset > 0) {
+    if (scatter_label_offset > 0.0) {
         std::random_device rand;
         constexpr const auto rand_size = static_cast<double>(rand.max() - rand.min());
-        acmacs::Location2D old_label_offset;
-        try {
-            const rjson::v1::array& ar = settings["label_offset"];
-            old_label_offset = acmacs::Location2D{ar[0], ar[1]};
-        }
-        catch (rjson::v1::field_not_found&) {
-        }
-        settings.set_field("label_offset", rjson::v1::array{static_cast<double>(rand()) * scatter_label_offset * 2 / rand_size - scatter_label_offset + old_label_offset.x(),
-                                                        static_cast<double>(rand()) * scatter_label_offset * 2 / rand_size - scatter_label_offset + old_label_offset.y()});
+        const acmacs::Location2D old_label_offset = result.label_offset;
+        result.label_offset.x(static_cast<double>(rand()) * scatter_label_offset * 2 / rand_size - scatter_label_offset + old_label_offset.x());
+        result.label_offset.y(static_cast<double>(rand()) * scatter_label_offset * 2 / rand_size - scatter_label_offset + old_label_offset.y());
     }
     return result;
 

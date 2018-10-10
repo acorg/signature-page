@@ -2,8 +2,8 @@
 
 #include <iostream>
 
+#include "acmacs-base/settings.hh"
 #include "acmacs-draw/surface.hh"
-#include "rjson-serialize.hh"
 
 // ----------------------------------------------------------------------
 
@@ -13,15 +13,15 @@ class ChartDrawBase;
 
 // ----------------------------------------------------------------------
 
-class MappedAntigensDrawSettings : public rjson::v1::field_container_child
+class MappedAntigensDrawSettings : public acmacs::settings::object
 {
  public:
-    MappedAntigensDrawSettings(rjson::v1::field_container_parent& aParent, std::string aFieldName);
+    using acmacs::settings::object::object;
 
-    rjson::v1::field_get_set<double> width;
-    rjson::v1::field_get_set<double> line_width;
-    rjson::v1::field_get_set<Color> line_color;
-    rjson::v1::field_get_set<double> line_length;         // fraction of the surface width
+    acmacs::settings::field<double> width{this, "width", 10};
+    acmacs::settings::field<double> line_width{this, "line_width", 0.5};
+    acmacs::settings::field<Color>  line_color{this, "line_color", "grey56"};
+    acmacs::settings::field<double> line_length{this, "line_length", 0.5};         // fraction of the surface width
 
 }; // class MappedAntigensDrawSettings
 

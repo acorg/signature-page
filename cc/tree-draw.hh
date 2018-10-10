@@ -9,7 +9,6 @@
 #include "acmacs-draw/surface.hh"
 #include "legend.hh"
 #include "clades-draw.hh"
-#include "rjson-serialize.hh"
 
 // ----------------------------------------------------------------------
 
@@ -19,270 +18,303 @@ class Coloring;
 
 // ----------------------------------------------------------------------
 
-class AATransitionIndividualSettings : public rjson::v1::array_field_container_child_element
+class AATransitionIndividualSettings;
+class AATransitionPerBranchDrawSettings;
+
+struct AATransitionIndividualSettingsForLabel
 {
- public:
-    AATransitionIndividualSettings(const rjson::v1::value& aData);
+  public:
+    AATransitionIndividualSettingsForLabel(const AATransitionPerBranchDrawSettings& src);
+    void update(const AATransitionIndividualSettings& src);
 
-    inline void set_label_disabled_offset(std::string aLabel, std::string aFirstLeafSeqid, acmacs::Offset&& aLabelOffset)
-        {
-            label = aLabel;
-            first_leaf_seq_id = aFirstLeafSeqid;
-            add("?label_offset", std::move(aLabelOffset));
-        }
+    // std::string label;
+    // std::string first_leaf_seq_id;
+    bool show;
+    double size;
+    Color color;
+    acmacs::TextStyle style;
+    double interline;
+    acmacs::Offset label_offset;
+    double label_connection_line_width;
+    Color label_connection_line_color;
 
-    rjson::v1::field_get_set<std::string> label;
-    rjson::v1::field_get_set<std::string> first_leaf_seq_id;
-    rjson::v1::field_get_set<bool> show;
-    rjson::v1::field_get_set<double> size;
-    rjson::v1::field_get_set<Color> color;
-    rjson::v1::field_get_set<acmacs::TextStyle> style;
-    rjson::v1::field_get_set<double> interline;
-    rjson::v1::field_get_set<acmacs::Offset> label_offset;
-    rjson::v1::field_get_set<double> label_connection_line_width;
-    rjson::v1::field_get_set<Color> label_connection_line_color;
-    rjson::v1::field_get_set<bool> _no_pp; // hidden field to avoid pretty printing this rjson object
+}; // class AATransitionIndividualSettingsForLabel
+
+// ----------------------------------------------------------------------
+
+class AATransitionIndividualSettings : public acmacs::settings::object
+{
+  public:
+    using acmacs::settings::object::object;
+
+    void set_label_disabled_offset(std::string aLabel, std::string aFirstLeafSeqid, acmacs::Offset&& /*aLabelOffset*/)
+    {
+        label = aLabel;
+        first_leaf_seq_id = aFirstLeafSeqid;
+          // label_offset_commented = std::move(aLabelOffset);
+    }
+
+    acmacs::settings::field<std::string> label{this, "label", ""};
+    acmacs::settings::field<std::string> first_leaf_seq_id{this, "first_leaf_seq_id", ""};
+    acmacs::settings::field<bool> show{this, "show", true};
+    acmacs::settings::field<double> size{this, "size", 8};
+    acmacs::settings::field<Color> color{this, "color", "black"};
+    acmacs::settings::field<acmacs::TextStyle> style{this, "style", {"Courier New"}};
+    acmacs::settings::field<double> interline{this, "interline", 1.2};
+    acmacs::settings::field<acmacs::Offset> label_offset{this, "label_offset", {-40, 20}};
+    acmacs::settings::field<double> label_connection_line_width{this, "label_connection_line_width", 0.1};
+    acmacs::settings::field<Color> label_connection_line_color{this, "label_connection_line_color", "black"};
+
+    acmacs::settings::field<acmacs::Offset> label_offset_commented{this, "?label_offset"};
 
 }; // class AATransitionIndividualSettings
 
 // ----------------------------------------------------------------------
 
-class AATransitionPerBranchDrawSettings : public rjson::v1::field_container_child
+class AATransitionPerBranchDrawSettings : public acmacs::settings::object
 {
  public:
-    AATransitionPerBranchDrawSettings(rjson::v1::field_container_parent& aParent, std::string aFieldName);
+    using acmacs::settings::object::object;
 
-    rjson::v1::field_get_set<bool> show;
-    rjson::v1::field_get_set<double> size;
-    rjson::v1::field_get_set<Color> color;
-    rjson::v1::field_get_set<acmacs::TextStyle> style;
-    rjson::v1::field_get_set<double> interline;
-    rjson::v1::field_get_set<acmacs::Offset> label_offset;
-    rjson::v1::field_get_set<double> scatter_label_offset;
-    rjson::v1::field_get_set<std::string> scatter_label_offset_help;
-    rjson::v1::field_get_set<double> label_connection_line_width;
-    rjson::v1::field_get_set<Color> label_connection_line_color;
-    rjson::v1::array_field_container_child<AATransitionIndividualSettings> by_aa_label;
+    acmacs::settings::field<bool>                                    show{this, "show", true};
+    acmacs::settings::field<double>                                  size{this, "size", 8};
+    acmacs::settings::field<Color>                                   color{this, "color", "black"};
+    acmacs::settings::field<acmacs::TextStyle>                       style{this, "style", {"Courier New"}};
+    acmacs::settings::field<double>                                  interline{this, "interline", 1.2};
+    acmacs::settings::field<acmacs::Offset>                          label_offset{this, "label_offset", {-40, 20}};
+    acmacs::settings::field<double>                                  scatter_label_offset{this, "scatter_label_offset", 0};
+    acmacs::settings::field<std::string>                             scatter_label_offset_help{this, "scatter_label_offset?", "randomization range for label offset in trying to avoid clattering (mostly for figuring out good offsets"};
+    acmacs::settings::field<double>                                  label_connection_line_width{this, "label_connection_line_width", 0.1};
+    acmacs::settings::field<Color>                                   label_connection_line_color{this, "label_connection_line_color", "black"};
+    acmacs::settings::field_array_of<AATransitionIndividualSettings> by_aa_label{this, "by_aa_label"};
 
-      // returns ref to static object overriden with each call
-    const AATransitionIndividualSettings& settings_for_label(const AA_TransitionLabels& aLabels, std::string aFirstLeafSeqid) const;
-    void remove_for_signature_page_settings();
+    AATransitionIndividualSettingsForLabel settings_for_label(const AA_TransitionLabels& aLabels, std::string aFirstLeafSeqid) const;
+
+    void remove_for_signature_page_settings()
+    {
+        show.remove();
+        size.remove();
+        color.remove();
+        style.remove();
+        interline.remove();
+        label_offset.remove();
+        scatter_label_offset.remove();
+        scatter_label_offset_help.remove();
+        label_connection_line_width.remove();
+        label_connection_line_color.remove();
+    }
 
 }; // class AATransitionPerBranchDrawSettings
 
 // ----------------------------------------------------------------------
 
-class AATransitionDrawSettings : public rjson::v1::field_container_child
+class AATransitionDrawSettings : public acmacs::settings::object
 {
  public:
-    AATransitionDrawSettings(rjson::v1::field_container_parent& aParent, std::string aFieldName);
+    using acmacs::settings::object::object;
 
-    rjson::v1::field_get_set<bool> show;
-    rjson::v1::field_get_set<unsigned> number_strains_threshold; // Do not show aa transition label if number_strains (leaf nodes) for the branch is less than this value.
-    rjson::v1::field_get_set<std::string> number_strains_threshold_help;
-    rjson::v1::field_get_set<bool> show_empty_left;
-    AATransitionPerBranchDrawSettings per_branch;
-    rjson::v1::field_get_set<bool> show_node_for_left_line;
-    rjson::v1::field_get_set<Color> node_for_left_line_color;
-    rjson::v1::field_get_set<double> node_for_left_line_width;
+    acmacs::settings::field<bool>                                     show{this, "show", true};
+    acmacs::settings::field<unsigned>                                 number_strains_threshold{this, "number_strains_threshold", 20}; // Do not show aa transition label if number_strains (leaf nodes) for the branch is less than this value.
+    acmacs::settings::field<std::string>                              number_strains_threshold_help{this, "number_strains_threshold?", "do not show aa transition label if number_strains (leaf nodes) for the branch is less than this value"};
+    acmacs::settings::field<bool>                                     show_empty_left{this, "show_empty_left", false};
+    acmacs::settings::field_object<AATransitionPerBranchDrawSettings> per_branch{this, "per_branch"};
+    acmacs::settings::field<bool>                                     show_node_for_left_line{this, "show_node_for_left_line", false};
+    acmacs::settings::field<Color>                                    node_for_left_line_color{this, "node_for_left_line_color", "green"};
+    acmacs::settings::field<double>                                   node_for_left_line_width{this, "node_for_left_line_width", 1};
 
-    void remove_for_signature_page_settings();
+    void remove_for_signature_page_settings()
+    {
+        show.remove();
+        number_strains_threshold.remove();
+        number_strains_threshold_help.remove();
+        show_empty_left.remove();
+        show_node_for_left_line.remove();
+        node_for_left_line_color.remove();
+        node_for_left_line_width.remove();
+        per_branch->remove_for_signature_page_settings();
+    }
 
 }; // class AATransitionDrawSettings
 
 // ----------------------------------------------------------------------
 
-class TreeDrawVaccineSettings : public rjson::v1::array_field_container_child_element
+class TreeDrawVaccineSettings : public acmacs::settings::object
 {
  public:
-    TreeDrawVaccineSettings(const rjson::v1::value& aData);
+    using acmacs::settings::object::object;
 
-    rjson::v1::field_get_set<std::string> name;           // empty for default settings
-    rjson::v1::field_get_set<std::string> name_help;
-    rjson::v1::field_get_set<Color> label_color;
-    rjson::v1::field_get_set<double> label_size;
-    rjson::v1::field_get_set<acmacs::TextStyle> label_style;
-    rjson::v1::field_get_set<Color> line_color;
-    rjson::v1::field_get_set<double> line_width;
+    acmacs::settings::field<std::string>       name{this, "name", ""};           // empty for default settings
+    acmacs::settings::field<std::string>       name_help{this, "name?", "empty for default settings"};
+    acmacs::settings::field<Color>             label_color{this, "label_color", "black"};
+    acmacs::settings::field<double>            label_size{this, "label_size", 10};
+    acmacs::settings::field<acmacs::TextStyle> label_style{this, "label_style", {}};
+    acmacs::settings::field<Color>             line_color{this, "line_color", "black"};
+    acmacs::settings::field<double>            line_width{this, "line_width", 1};
 
 }; // class TreeDrawVaccineSettings
 
-class TreeDrawVaccines : public rjson::v1::array_field_container_child<TreeDrawVaccineSettings>
-{
- public:
-    using rjson::v1::array_field_container_child<TreeDrawVaccineSettings>::array_field_container_child;
-};
+// class TreeDrawVaccines : public rjson::array_field_container_child<TreeDrawVaccineSettings>
+// {
+//  public:
+//     using rjson::array_field_container_child<TreeDrawVaccineSettings>::array_field_container_child;
+// };
 
 // ----------------------------------------------------------------------
 
-class TreeDrawMod : public rjson::v1::array_field_container_child_element
+class TreeDrawMod : public acmacs::settings::object
 {
  public:
-    inline TreeDrawMod(const rjson::v1::value& aData)
-        : rjson::v1::array_field_container_child_element(aData),
-          mod(*this, "mod", std::string{}),
-          d1(*this,  "d1", -1.0),
-          s1(*this,  "s1", std::string{}),
-          s2(*this,  "s2", std::string{}),
-          clade(*this,  "clade", std::string{}),
-          color(*this,  "color", std::string{}),
-          line_width(*this,  "line_width", -1.0),
-          seq_id(*this, "seq_id", std::string{}),
-          label(*this, "label", std::string{}),
-          label_color(*this, "label_color", "black"),
-          label_size(*this, "label_size", 10.0),
-          line_color(*this, "line_color", "black"),
-          label_style(*this, "label_style", {}),
-          label_offset(*this, "label_offset", {20, 20})
-        {}
+    using acmacs::settings::object::object;
 
-    rjson::v1::field_get_set<std::string> mod;            // root, hide_isolated_before, hide_if_cumulative_edge_length_bigger_than, hide_between, before2015-58P-or-146I-or-559I
-    rjson::v1::field_get_set<double> d1;                  // depends on mod
-    rjson::v1::field_get_set<std::string> s1;             // depends on mod
-    rjson::v1::field_get_set<std::string> s2;             // depends on mod
-    rjson::v1::field_get_set<std::string> clade;          // mark-clade-with-line mod
-    rjson::v1::field_get_set<std::string> color;          // mark-clade-with-line mod
-    rjson::v1::field_get_set<double> line_width;          // in pixels, mark-clade-with-line, mark-with-label
+    acmacs::settings::field<std::string>       mod{this, "mod", ""};            // root, hide_isolated_before, hide_if_cumulative_edge_length_bigger_than, hide_between, before2015-58P-or-146I-or-559I
+    acmacs::settings::field<std::string>       mod_help{this, "?mod"};
+    acmacs::settings::field<double>            d1{this, "d1"};
+    acmacs::settings::field<std::string>       s1{this, "s1"};
+    acmacs::settings::field<std::string>       s2{this, "s2"};
 
-    rjson::v1::field_get_set<std::string> seq_id;      // mark-with-label
-    rjson::v1::field_get_set<std::string> label;       // mark-with-label
-    rjson::v1::field_get_set<std::string> label_color; // mark-with-label
-    rjson::v1::field_get_set<double> label_size;       // mark-with-label
-    rjson::v1::field_get_set<std::string> line_color;  // mark-with-label
-    rjson::v1::field_get_set<acmacs::TextStyle> label_style;   // mark-with-label
-    rjson::v1::field_get_set<acmacs::Offset> label_offset;   // mark-with-label
+    // mark-clade-with-line mod
+    acmacs::settings::field<std::string>       clade{this, "clade"};
+    acmacs::settings::field<std::string>       color{this, "color"};
+    acmacs::settings::field<double> line_width{this, "line_width"}; // -1, in pixels, mark-clade-with-line, mark-with-label
+
+    // mark-with-label
+    acmacs::settings::field<std::string>       seq_id{this, "seq_id"};
+    acmacs::settings::field<std::string>       label{this, "label"};
+    acmacs::settings::field<std::string>       label_color{this, "label_color"}; // "black"
+    acmacs::settings::field<double>            label_size{this, "label_size"}; // 10.0
+    acmacs::settings::field<std::string>       line_color{this, "line_color"};
+    acmacs::settings::field<acmacs::TextStyle> label_style{this, "label_style"};
+    acmacs::settings::field<acmacs::Offset>    label_offset{this, "label_offset"}; // {20, 20}
 
 }; // class TreeDrawMod
 
-class TreeDrawMods : public rjson::v1::array_field_container_child<TreeDrawMod>
-{
- public:
-    using rjson::v1::array_field_container_child<TreeDrawMod>::array_field_container_child;
+// ----------------------------------------------------------------------
 
-    inline const TreeDrawMod find_mark_with_label(std::string aSeqId) const // not reference returned, TreeDrawMod is a proxy
+namespace acmacs::settings
+{
+    inline namespace v1
+    {
+        template <> inline void field<Tree::LadderizeMethod>::assign(rjson::value& to, const Tree::LadderizeMethod& from)
         {
-            auto p = std::find_if(begin(), end(), [&](const auto& e) { return e.mod == "mark-with-label" && e.seq_id == aSeqId; });
-            if (p == end())
-                throw std::runtime_error("Invalid tree.mods settings: cannot find mark-with-label for " + aSeqId);
-            return *p;
+            switch (from) {
+              case Tree::LadderizeMethod::NumberOfLeaves:
+                  to = "number-of-leaves";
+                  break;
+              case Tree::LadderizeMethod::MaxEdgeLength:
+                  to = "max-edge-length";
+                  break;
+            }
         }
 
-}; // class TreeDrawMods
+        template <> inline Tree::LadderizeMethod field<Tree::LadderizeMethod>::extract(const rjson::value& from) const
+        {
+            if (from == "number-of-leaves")
+                return Tree::LadderizeMethod::NumberOfLeaves;
+            else if (from == "max-edge-length")
+                return Tree::LadderizeMethod::MaxEdgeLength;
+            else
+                throw std::runtime_error("Unrecognized Tree::LadderizeMethod: " + rjson::to_string(from));
+        }
+    }
+}
 
 // ----------------------------------------------------------------------
 
-// serializing Tree::LadderizeMethod from tree.hh
-namespace rjson
-{
-    namespace v1
-    {
-        template <> struct content_type<Tree::LadderizeMethod>
-        {
-            using type = string;
-        };
-
-        template <> inline field_get_set<Tree::LadderizeMethod>::operator Tree::LadderizeMethod() const
-        {
-            try {
-                const std::string_view method_s = get_value_ref();
-                if (method_s == "number-of-leaves")
-                    return Tree::LadderizeMethod::NumberOfLeaves;
-                else if (method_s == "max-edge-length")
-                    return Tree::LadderizeMethod::MaxEdgeLength;
-                else
-                    throw std::exception{}; // std::runtime_error("Unrecognized ladderize method: " + method_s);
-            }
-            catch (std::exception& /*err*/) {
-                std::cerr << "ERROR: cannot convert json to Tree::LadderizeMethod: " << get_value_ref().to_json() << '\n';
-                return {};
-            }
-        }
-
-        template <> inline value to_value<Tree::LadderizeMethod>(const Tree::LadderizeMethod& aLadderizeMethod)
-        {
-            switch (aLadderizeMethod) {
-                case Tree::LadderizeMethod::NumberOfLeaves:
-                    return string{"number-of-leaves"};
-                case Tree::LadderizeMethod::MaxEdgeLength:
-                    return string{"max-edge-length"};
-            }
-            return string{"number-of-leaves"};
-        }
-
-        template <> inline value to_value<Tree::LadderizeMethod>(Tree::LadderizeMethod&& aLadderizeMethod)
-        {
-            return to_value<Tree::LadderizeMethod>(const_cast<const Tree::LadderizeMethod&>(aLadderizeMethod));
-        }
-
-    } // namespace v1
-} // namespace rjson
-
-class TreeDrawSettings : public rjson::v1::field_container_child
+class TreeDrawSettings : public acmacs::settings::object
 {
  public:
-    TreeDrawSettings(rjson::v1::field_container_parent& aParent, std::string aFieldName);
+    TreeDrawSettings(acmacs::settings::base& parent) : acmacs::settings::object::object(parent)
+        {
+            auto mod = mods.append();
+            mod->mod_help = "hide-if-cumulative-edge-length-bigger-than";
+            mod->d1 = 0.04;
+        }
 
-    rjson::v1::field_get_set<Tree::LadderizeMethod> ladderize;
-    rjson::v1::field_get_set<std::string> ladderize_help;
-    TreeDrawMods mods;
-    rjson::v1::field_get_set<std::vector<std::string>> mods_help;
-    rjson::v1::field_get_set<bool> force_line_width;
-    rjson::v1::field_get_set<double> line_width;
-    rjson::v1::field_get_set<double> root_edge;
-    rjson::v1::field_get_set<Color> line_color;
-    rjson::v1::field_get_set<acmacs::TextStyle> label_style;
-    rjson::v1::field_get_set<double> name_offset;         // offset of the label from the line right end, in W widths
-    rjson::v1::field_get_set<std::string> color_nodes;    // black, continent, position number (e.g. 162)
-    rjson::v1::field_get_set<std::map<std::string, std::string>> color_for_aa;    // for "color_nodes": "<position-number>"
-    rjson::v1::field_get_set<double> right_padding;       // padding at the right to add space for the mark_with_line (for BVic del and triple-del mutants)
-    AATransitionDrawSettings aa_transition;
-    LegendSettings legend;
+    acmacs::settings::field<Tree::LadderizeMethod>              ladderize{this, "ladderize", Tree::LadderizeMethod::NumberOfLeaves};
+    acmacs::settings::field<std::string>                        ladderize_help{this, "ladderize?", "number-of-leaves or max-edge-length"};
+    acmacs::settings::field_array_of<TreeDrawMod>               mods{this, "mods"};
+    acmacs::settings::field_array<std::string>                  mods_help{this, "mods_help",
+                                                                          {"mods is a list of objects:", "{mod: root, s1: new-root}",
+                                                                           "{mod: hide-isolated-before, s1: date}",
+                                                                           "{mod: hide-if-cumulative-edge-length-bigger-than, d1: cumulative-length-threshold}",
+                                                                           "{mod: before2015-58P-or-146I-or-559I}",
+                                                                           "{mod: hide-between, s1: first-name-to-hide, s2: last-name-to-hide} - after ladderizing",
+                                                                           "{mod: hide-one, s1: name-to-hide} - after ladderizing",
+                                                                           "{mod: mark-with-line, s1: name-to-mark, s2: color-to-mark, d1: line-width-in-pixels}",
+                                                                           "{mod: mark-clade-with-line, clade: , color: , line_width: line-width-in-pixels}",
+                                                                           "{mod: mark-with-label, seq_id:, label:, line_color:, line_width:, label_offset:, label_size:, labeL_color:, label_style: }"}};
+    acmacs::settings::field<bool>                               force_line_width{this, "force_line_width", false};
+    acmacs::settings::field<double>                             line_width{this, "line_width", 1};
+    acmacs::settings::field<double>                             root_edge{this, "root_edge", 0};
+    acmacs::settings::field<Color>                              line_color{this, "line_color", "black"};
+    acmacs::settings::field<acmacs::TextStyle>                  label_style{this, "label_style", {}};
+    acmacs::settings::field<double>                             name_offset{this, "name_offset", 0.3};         // offset of the label from the line right end, in W widths
+    acmacs::settings::field<std::string>                        color_nodes{this, "color_nodes", "continent"};    // black, continent, position number (e.g. 162)
+    acmacs::settings::field<std::map<std::string, std::string>> color_for_aa{this, "color_for_aa"};            // for "color_nodes": "<position-number>"
+    acmacs::settings::field<double>                             right_padding{this, "right_padding", 0};       // padding at the right to add space for the mark_with_line (for BVic del and triple-del mutants)
+    acmacs::settings::field_object<AATransitionDrawSettings>    aa_transition{this, "aa_transition"};
+    acmacs::settings::field_object<LegendSettings>              legend{this, "legend"};
 
-    void remove_for_signature_page_settings();
+    const acmacs::settings::const_array_element<TreeDrawMod> find_mark_with_label_mod(std::string aSeqId) const
+    {
+        if (auto found = mods.find_if([&](const auto& val) { return val.mod == "mark-with-label" && val.seq_id == aSeqId; }); found)
+            return *found;
+        throw std::runtime_error("Invalid tree.mods settings: cannot find mark-with-label for " + aSeqId);
+    }
+
+    void remove_for_signature_page_settings()
+    {
+        ladderize.remove();
+        ladderize_help.remove();
+        mods.remove();
+        mods_help.remove();
+        force_line_width.remove();
+        line_width.remove();
+        root_edge.remove();
+        line_color.remove();
+        label_style.remove();
+        name_offset.remove();
+        color_nodes.remove();
+        legend.remove();
+        aa_transition->remove_for_signature_page_settings();
+    }
 
 }; // class TreeDrawSettings
 
 // ----------------------------------------------------------------------
 
-class HzSection : public rjson::v1::array_field_container_child_element
+class HzSection : public acmacs::settings::object
 {
  public:
-    HzSection(const rjson::v1::value& aData);
+    using acmacs::settings::object::object;
     // HzSection(std::string aName = std::string{}, bool aShowLine = true);
     // HzSection(const Node& aFirst, bool aShow, bool aShowLine, bool aShowMap);
-      // inline HzSection(const HzSection&) = default;
-    // inline HzSection(HzSection&&) = default;
-    // inline HzSection& operator=(const HzSection&) = default;
 
-    rjson::v1::field_get_set<bool> show;
-    rjson::v1::field_get_set<bool> show_line;
-    rjson::v1::field_get_set<bool> show_label_in_time_series;
-    rjson::v1::field_get_set<bool> show_map;
-    rjson::v1::field_get_set<std::string> name;           // first seq_id
-    rjson::v1::field_get_set<std::string> label;          // antigenic map label, empty - generate automatically
-
-    rjson::v1::array_field_container_child<std::string> triggering_clades; // clades that trigger this hz line
-    rjson::v1::array_field_container_child<size_t> triggering_aa_pos;      // aa pos triggering this line
-
-      // not stored in settings
-    // const Node* first;
-    // const Node* last;
-    // std::string index;
+    acmacs::settings::field<bool>              show{this, "show", true};
+    acmacs::settings::field<bool>              show_line{this, "show_line", true};
+    acmacs::settings::field<bool>              show_label_in_time_series{this, "show_label_in_time_series", true};
+    acmacs::settings::field<bool>              show_map{this, "show_map", true};
+    acmacs::settings::field<std::string>       name{this, "name", ""};           // first seq_id
+    acmacs::settings::field<std::string>       label{this, "label", ""};          // antigenic map label, empty - generate automatically
+    acmacs::settings::field_array<std::string> triggering_clades{this, "triggering_clades"}; // clades that trigger this hz line
+    acmacs::settings::field_array<size_t>      triggering_aa_pos{this, "triggering_aa_pos"};      // aa pos triggering this line
 };
 
-class HzSections : public rjson::v1::field_container_child
+// ----------------------------------------------------------------------
+
+class HzSections : public acmacs::settings::object
 {
  public:
-    HzSections(rjson::v1::field_container_parent& aParent, std::string aFieldName);
+    using acmacs::settings::object::object;
 
-    rjson::v1::field_get_set<double> vertical_gap;
-    rjson::v1::field_get_set<Color> line_color;
-    rjson::v1::field_get_set<double> line_width;
-    rjson::v1::field_get_set<double> ts_label_size;
-    rjson::v1::field_get_set<acmacs::TextStyle> ts_label_style;
-    rjson::v1::field_get_set<Color> ts_label_color;
-    rjson::v1::array_field_container_child<HzSection> sections;
-    rjson::v1::field_get_set<bool> show_labels_in_time_series_in_tree_mode;
+    acmacs::settings::field<double>             vertical_gap{this, "vertical_gap", 20};
+    acmacs::settings::field<Color>              line_color{this, "line_color", "grey63"};
+    acmacs::settings::field<double>             line_width{this, "line_width", 1};
+    acmacs::settings::field<double>             ts_label_size{this, "ts_label_size", 10};
+    acmacs::settings::field<acmacs::TextStyle>  ts_label_style{this, "ts_label_style", {}};
+    acmacs::settings::field<Color>              ts_label_color{this, "ts_label_color", "black"};
+    acmacs::settings::field_array_of<HzSection> sections{this, "sections"};
+    acmacs::settings::field<bool>               show_labels_in_time_series_in_tree_mode{this, "show_labels_in_time_series_in_tree_mode", false};
 
       // not stored
 
@@ -307,9 +339,11 @@ class HzSections : public rjson::v1::field_container_child
     void add(const Node& node, bool show_line, std::string clade, size_t aa_pos);
     void add(const Tree& tree, const Node& first, const Node& last, bool show_line, std::string clade, size_t aa_pos);
 
-    inline size_t shown_maps() const
+    size_t shown_maps() const
         {
-            return std::accumulate(sections.begin(), sections.end(), 0U, [](size_t a, const HzSection& section) -> size_t { return a + (section.show_map ? 1 : 0); });
+            size_t result = 0;
+            sections.for_each([&result](const HzSection& section) { if (section.show_map) ++result; });
+            return result;
         }
 
 };
