@@ -145,6 +145,7 @@ void SignaturePageDraw::init_layout(bool show_aa_at_pos)
 
 void SignaturePageDraw::init_settings()
 {
+    mSettings->inject_default();
     mSettings->signature_page->bottom = mSettings->signature_page->top;
 
     std::cout << "\nINFO: INIT:\n  signature_page.top " << mSettings->signature_page->top << "\n  signature_page.bottom " << mSettings->signature_page->bottom << '\n';

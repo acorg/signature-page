@@ -73,25 +73,10 @@ class SignaturePageDrawSettings : public acmacs::settings::object
         left{this, "left", 50},
         right{this, "right", 20},
         tree_margin_right{this, "tree_margin_right", 0},
-        mapped_antigens_margin_right{this, "mapped_antigens_margin_right", 30},
+        mapped_antigens_margin_right{this, "mapped_antigens_margin_right"}, //, 30},
         time_series_width{this, "time_series_width", 400},
         clades_width{this, "clades_width", 100},
-        antigenic_maps_width{this, "antigenic_maps_width", 300};
-
-    //v1 Layout get_layout() const
-    //v1     {
-    //v1         const std::string_view layout_s = layout.get_value_ref();
-    //v1         if (layout_s == "auto")
-    //v1             return Layout::Auto;
-    //v1         else if (layout_s == "tree-ts-clades")
-    //v1             return Layout::TreeTSClades;
-    //v1         else if (layout_s == "tree-aa-ts-clades")
-    //v1             return Layout::TreeAATSClades;
-    //v1         else if (layout_s == "tree-clades-ts-maps")
-    //v1             return Layout::TreeCladesTSMaps;
-    //v1         else
-    //v1             throw std::runtime_error("Unrecognized layout: " + std::string(layout_s));
-    //v1     }
+        antigenic_maps_width{this, "antigenic_maps_width"}; // , 300};
 
 }; // class SignaturePageDrawSettings
 
