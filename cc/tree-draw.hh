@@ -47,11 +47,11 @@ class AATransitionIndividualSettings : public acmacs::settings::object
   public:
     using acmacs::settings::object::object;
 
-    void set_label_disabled_offset(std::string aLabel, std::string aFirstLeafSeqid, acmacs::Offset&& aLabelOffset)
+    void set_label_disabled_offset(std::string aLabel, std::string aFirstLeafSeqid, acmacs::Offset&& /*aLabelOffset*/)
     {
         label = aLabel;
         first_leaf_seq_id = aFirstLeafSeqid;
-        label_offset_commented = std::move(aLabelOffset);
+          // label_offset_commented = std::move(aLabelOffset);
     }
 
     acmacs::settings::field<std::string> label{this, "label", ""};

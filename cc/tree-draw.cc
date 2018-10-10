@@ -55,9 +55,7 @@ void TreeDraw::init_settings(const Clades* aClades)
 {
     mInitializeSettings = true;
 
-      // set_line_no();    // line_no is necessary to sort detected hz sections, but set_line_no is called by SignaturePageDraw::init_settings(), so this call is redundant
     mHzSections.detect_hz_lines_for_clades(mTree, aClades, true);
-    // mHzSections.auto_detect(mTree, aClades); // makes no sense
 
 } // TreeDraw::init_settings
 
@@ -108,9 +106,6 @@ void TreeDraw::ladderize()
 
 bool TreeDraw::apply_mods()
 {
-    // std::cout << "TREE-mod: unhide" << std::endl;
-    // unhide();                   // reset previous mods
-    //const_cast<const TreeDrawSettings&>
     (mSettings).mods.for_each([this] (const auto& mod) { // const_cast to support situation when mods was not set
         const auto mod_mod = static_cast<std::string>(mod.mod);
         if (mod_mod == "root") {
@@ -165,7 +160,6 @@ void TreeDraw::draw()
     std::cout << "Tree surface: " << mSurface.viewport() << std::endl;
     const double line_width = mSettings.line_width;
     mLineWidth = mSettings.force_line_width ? line_width : std::min(line_width, mVerticalStep * 0.5);
-      // std::cout << "Tree line width: " << mLineWidth.valeu() << "  Settings: " << mSettings.line_width << "  vertical_step/2: " << mVerticalStep * 0.5 << std::endl;
     fit_labels_into_viewport();
 
     double vertical_gap = 0;
@@ -926,8 +920,7 @@ void HzSections::add(const Tree& tree, const Node& first, const Node& last, bool
 // ----------------------------------------------------------------------
 
 AATransitionIndividualSettingsForLabel::AATransitionIndividualSettingsForLabel(const AATransitionPerBranchDrawSettings& src)
-    : // label(src.label), first_leaf_seq_id(src.first_leaf_seq_id),
-    show(src.show), size(src.size), color(src.color),
+    : show(src.show), size(src.size), color(src.color),
       style(src.style), interline(src.interline), label_offset(src.label_offset),
       label_connection_line_width(src.label_connection_line_width), label_connection_line_color(src.label_connection_line_color)
 {
@@ -938,8 +931,6 @@ AATransitionIndividualSettingsForLabel::AATransitionIndividualSettingsForLabel(c
 
 void AATransitionIndividualSettingsForLabel::update(const AATransitionIndividualSettings& src)
 {
-    // label = src.label;
-    // first_leaf_seq_id = src.first_leaf_seq_id;
     show = src.show;
     size = src.size;
     color = src.color;
@@ -955,16 +946,6 @@ void AATransitionIndividualSettingsForLabel::update(const AATransitionIndividual
 
 AATransitionIndividualSettingsForLabel AATransitionPerBranchDrawSettings::settings_for_label(const AA_TransitionLabels& aLabels, std::string aFirstLeafSeqid) const
 {
-//v1 #pragma GCC diagnostic push
-//v1 #ifdef __clang__
-//v1 #pragma GCC diagnostic ignored "-Wexit-time-destructors"
-//v1 #endif
-//v1     static rjson::value settings{rjson::object{}};
-//v1     static AATransitionIndividualSettings result{settings};
-//v1 #pragma GCC diagnostic pop
-//v1
-//v1     settings = data();
-
     AATransitionIndividualSettingsForLabel result(*this);
     auto match_entry = [label = aLabels.label(), aFirstLeafSeqid](const AATransitionIndividualSettings& entry) {
                            return entry.label == label && (entry.first_leaf_seq_id == "" || entry.first_leaf_seq_id == aFirstLeafSeqid);

@@ -270,52 +270,6 @@ class AntigenicMapMod : public acmacs::settings::object
 
     acmacs::Viewport get_viewport(const acmacs::Viewport& aOrigViewport) const;
 
-    //v1 template <typename Result> Result get_or_default(std::string aName, Result&& aDefault) const
-    //v1     {
-    //v1         return rjson::get_or(operator[](aName), std::forward<Result>(aDefault));
-    //v1     }
-
-    //v1 std::string_view get_or_default(std::string aName, const char* aDefault) const
-    //v1     {
-    //v1         return rjson::get_or(operator[](aName), aDefault);
-    //v1     }
-
-    //v1 // //$ inline std::string name() const { return get("N", rjson::v1::string{}); }
-    //v1 // //$ inline const rjson::v1::array& mods() const { return get("mods", rjson::v1::array{}); }
-    //v1 // //$ inline Location offset() const { const rjson::v1::array& ar = get("offset", rjson::v1::array{0.0, 0.0}); return {ar[0], ar[1]}; }
-    //v1 // //$ inline Color get_color(std::string aName, const char* aDefault) const { return static_cast<std::string>(get(aName, rjson::v1::string{aDefault})); }
-    //v1 // //$ inline double get(std::string aName, double aDefault) const { return get(aName, rjson::v1::value{rjson::v1::number{aDefault}}); }
-    //v1 // //$ inline bool get(std::string aName, bool aDefault) const { return get(aName, rjson::v1::value{rjson::v1::boolean{aDefault}}); }
-    //v1 // //$ inline std::string get(std::string aName, const char* aDefault) const { return get(aName, rjson::v1::value{rjson::v1::string{aDefault}}); }
-    //v1
-    //v1 // //$ inline Location offset() const { const rjson::v1::array& ar = get("offset", rjson::v1::array{0.0, 0.0}); return {ar[0], ar[1]}; }
-    //v1 // //$ inline double get(std::string aName, double aDefault) const { return get_or_default(aName, rjson::v1::value{rjson::v1::number{aDefault}}); }
-    //v1 // //$ inline bool get(std::string aName, bool aDefault) const { return get(aName, rjson::v1::value{rjson::v1::boolean{aDefault}}); }
-    //v1 // //$ inline std::string get(std::string aName, const char* aDefault) const { return get(aName, rjson::v1::value{rjson::v1::string{aDefault}}); }
-
-    //v1 const rjson::value& mods() const
-    //v1     {
-    //v1         return get_or_empty_array("mods");
-    //v1     }
-
-    //v1 Color get_color(std::string aName, Color&& aDefault) const
-    //v1     {
-    //v1         if (const rjson::value& val = operator[](aName); !val.is_null())
-    //v1             return Color(static_cast<std::string_view>(val));
-    //v1         else
-    //v1             return aDefault;
-    //v1     }
-
-    //v1 acmacs::Offset offset() const
-    //v1     {
-    //v1         if (const rjson::value& ar = operator[]("offset"); !ar.is_null())
-    //v1             return {ar[0], ar[1]};
-    //v1         else
-    //v1             return {};
-    //v1     }
-
-    //v1 acmacs::Viewport get_viewport(const acmacs::Viewport& aOrigViewport) const; // settings.cc
-
 }; // class AntigenicMapMod
 
 // ----------------------------------------------------------------------

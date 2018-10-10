@@ -61,12 +61,6 @@ class CladeDrawSettings : public acmacs::settings::object
 
     constexpr static const int NoSlot = -1;
 
-//v1 CladeDrawSettings(const rjson::value& aData, std::string aName = std::string{}, bool aShow = true);
-//v1 CladeDrawSettings(const CladeDrawSettings&) = default;
-//v1 CladeDrawSettings(CladeDrawSettings&&) = default;
-//v1 CladeDrawSettings& operator=(const CladeDrawSettings&) = delete; // see rjson::array_field_container_child_element
-//v1 CladeDrawSettings& operator=(CladeDrawSettings&&) = delete; // see rjson::array_field_container_child_element
-
     acmacs::settings::field<std::string>                    name{this, "name", ""};
     acmacs::settings::field<std::string>                    display_name{this, "display_name", ""};
     acmacs::settings::field<bool>                           show{this, "show", true};

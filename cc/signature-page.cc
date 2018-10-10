@@ -214,11 +214,11 @@ void SignaturePageDraw::write_initialized_settings(std::string aFilename)
 
 // ----------------------------------------------------------------------
 
-void SignaturePageDraw::tree(std::string aTreeFilename)
+void SignaturePageDraw::tree(std::string aTreeFilename, seqdb::Seqdb::ignore_not_found ignore)
 {
     tree::tree_import(aTreeFilename, *mTree);
     if (mSeqdb)
-        mTree->match_seqdb(*mSeqdb);
+        mTree->match_seqdb(*mSeqdb, ignore);
 
 } // SignaturePageDraw::tree
 

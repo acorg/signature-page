@@ -2,6 +2,7 @@
 
 #include <memory>
 
+#include "seqdb/seqdb.hh"
 #include "antigenic-maps-draw.hh"
 #include "chart-draw.hh"
 
@@ -94,7 +95,7 @@ class SignaturePageDraw
     void init_settings();
     void write_initialized_settings(std::string aFilename); // removes redundant settings entries depending on layout!
     Settings& settings() { return *mSettings; }
-    void tree(std::string aTreeFilename);
+    void tree(std::string aTreeFilename, seqdb::Seqdb::ignore_not_found ignore = seqdb::Seqdb::ignore_not_found::no);
     Tree& tree() { return *mTree; }
     const TreeDraw& tree_draw() const { return *mTreeDraw; }
     void chart(std::string aChartFilename) { mChartFilename = aChartFilename; }

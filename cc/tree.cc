@@ -8,10 +8,10 @@
 
 // ----------------------------------------------------------------------
 
-void Tree::match_seqdb(const seqdb::Seqdb& seqdb)
+void Tree::match_seqdb(const seqdb::Seqdb& seqdb, seqdb::Seqdb::ignore_not_found ignore)
 {
-    auto match = [&seqdb](Node& node) {
-        node.data.assign(seqdb.find_by_seq_id(node.seq_id));
+    auto match = [&seqdb,ignore](Node& node) {
+        node.data.assign(seqdb.find_by_seq_id(node.seq_id, ignore));
     };
     tree::iterate_leaf(*this, match);
 

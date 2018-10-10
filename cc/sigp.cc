@@ -35,6 +35,7 @@ int main(int argc, const char *argv[])
                 {"--no-draw", false}, // bool_switch(&aOptions.no_draw)->default_value(false), "do not generate pdf")
                 {"--chart", ""}, // value<std::string>(&aOptions.chart_filename), "path to a chart for the signature page")
 
+                {"--ignore-seqdb-match-errors", false, "for testing purposes"},
                 {"--open", false},
                 {"-v", false},
                 {"--verbose", false},
@@ -66,7 +67,7 @@ int main(int argc, const char *argv[])
             if (args["-s"])
                 load_settings(args["-s"]);
 
-            signature_page.tree(std::string(args[0]));
+            signature_page.tree(std::string(args[0]), args["--ignore-seqdb-match-errors"] ? seqdb::Seqdb::ignore_not_found::yes : seqdb::Seqdb::ignore_not_found::no);
             if (args["--chart"])
                 signature_page.chart(args["--chart"].str()); // before make_surface!
             signature_page.make_surface(std::string(args[1]), args["--init-settings"], args["--show-aa-at-pos"], !args["--no-draw"]); // before init_layout!
