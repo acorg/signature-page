@@ -38,7 +38,7 @@ class Settings : public acmacs::settings::toplevel
     acmacs::settings::field_array_of<SettingsMod>              mods{this, "mods"};
     acmacs::settings::field_object<SignaturePageDrawSettings>  signature_page{this, "signature_page"};
     acmacs::settings::field_object<TitleDrawSettings>          title{this, "title"};
-    acmacs::settings::field_object<TreeDrawSettings>           tree_draw{this, "tree_draw"};
+    acmacs::settings::field_object<TreeDrawSettings>           tree_draw{this, "tree"};
     acmacs::settings::field_object<TimeSeriesDrawSettings>     time_series{this, "time_series"};
     acmacs::settings::field_object<CladesDrawSettings>         clades{this, "clades"};
     acmacs::settings::field_object<HzSections>                 hz_sections{this, "hz_sections"};
