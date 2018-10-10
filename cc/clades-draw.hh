@@ -95,7 +95,7 @@ class CladesDrawSettings : public acmacs::settings::object
  public:
     CladesDrawSettings(acmacs::settings::base& parent) : acmacs::settings::object::object(parent) { clades.append(); }
 
-    CladeDrawSettings for_clade(std::string name) const;
+    acmacs::settings::const_array_element<CladeDrawSettings> for_clade(std::string name) const;
 
     acmacs::settings::field_array_of<CladeDrawSettings> clades{this, "clades"};
     acmacs::settings::field<double>                     slot_width{this, "slot_width", 10};

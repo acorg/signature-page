@@ -230,7 +230,7 @@ class TreeDrawSettings : public acmacs::settings::object
             mod->d1 = 0.04;
         }
 
-    acmacs::settings::field<Tree::LadderizeMethod>              ladderize{this, "ladderize"};
+    acmacs::settings::field<Tree::LadderizeMethod>              ladderize{this, "ladderize", Tree::LadderizeMethod::NumberOfLeaves};
     acmacs::settings::field<std::string>                        ladderize_help{this, "ladderize?", "number-of-leaves or max-edge-length"};
     acmacs::settings::field_array_of<TreeDrawMod>               mods{this, "mods"};
     acmacs::settings::field_array<std::string>                  mods_help{this, "mods_help",
