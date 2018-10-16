@@ -394,7 +394,7 @@ void AntigenicMapsLayoutDrawAce::serum_circle(const AntigenicMapMod& mod, std::s
 //                 else if (field_name == "no")
 //                     matcher.no(item_value); // size_t
 //                 else if (field_name == "show") {
-//                     const bool show = item_value.get_bool();
+//                     const bool show = static_cast<bool>(item_value);
 //                     matcher.show(show);
 //                     if (!show)
 //                         matcher.hide_label(chart_draw());

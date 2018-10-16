@@ -69,7 +69,7 @@ namespace rjson
             {
                 const value& val = get_value_ref();
                 if constexpr (std::is_same_v<FValue, bool>)
-                    return val.get_bool();
+                    return static_cast<bool>(val);
                 else
                     return static_cast<FValue>(val);
             }
