@@ -176,6 +176,9 @@ void SignaturePageDraw::init_settings()
         mSettings->tree_draw->legend->width = 180;
         mSettings->hz_sections->vertical_gap = 15;
         mSettings->signature_page->clades_width = 150;
+        if (const auto virus_type = mTree->virus_type(); virus_type == "A(H3N2)")
+            mSettings->signature_page->clades_width = 160;
+
         // for (auto& section: mSettings->hz_sections.sections) {
         //     section.show_label_in_time_series = false;
         // }
