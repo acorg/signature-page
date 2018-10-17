@@ -12,21 +12,27 @@ void TimeSeriesDraw::prepare()
     std::map<Date, size_t> sequences_per_month;
     mTree.sequences_per_month(sequences_per_month);
     if (!sequences_per_month.empty()) {
-        if (mSettings.begin.empty()) {
-            for (Date d = sequences_per_month.crbegin()->first; sequences_per_month.find(d) != sequences_per_month.end(); d.decrement_month()) {
-                mSettings.begin = d;
-            }
-        }
-        if (mSettings.end.empty()) {
-            for (auto ms = sequences_per_month.crbegin(); mSettings.end.empty() && ms != sequences_per_month.crend(); ++ms) {
-                if (ms->second)
-                    mSettings.end = ms->first;
-            }
-        }
-
         std::cout << "INFO: Sequences per month:" << '\n';
         for (const auto& e: sequences_per_month) {
             std::cout << "  " << e.first << " " << e.second << '\n';
+        }
+
+        const auto today = Date::today();
+        if (mSettings.begin.empty()) {
+            for (const auto& entry : sequences_per_month) {
+                if (entry.second && months_between_dates(entry.first, today) < 25) {
+                    mSettings.begin = entry.first;
+                    break;
+                }
+            }
+        }
+        if (mSettings.end.empty()) {
+            for (auto ms = sequences_per_month.crbegin(); ms != sequences_per_month.crend(); ++ms) {
+                if (ms->second && ms->first <= today) {
+                    mSettings.end = ms->first;
+                    break;
+                }
+            }
         }
 
         mNumberOfMonths = static_cast<size_t>(months_between_dates(Date{mSettings.begin}, Date{mSettings.end})) + 2;
@@ -114,11 +120,12 @@ void TimeSeriesDraw::draw_dashes(double month_width)
     const double base_x = month_width * (1.0 - mSettings.dash_width) / 2;
     const Coloring& coloring = mTreeDraw.coloring();
 
+    const Date begin{mSettings.begin}, end{mSettings.end};
     auto draw_dash = [&](const Node& aNode) {
         if (aNode.draw.shown && !aNode.data.date().empty()) {
             try {
-                const int month_no = months_between_dates(Date{mSettings.begin}, Date{aNode.data.date()});
-                if (month_no >= 0) {
+                if (const Date node_date{aNode.data.date()}; node_date >= begin && node_date <= end) {
+                    const int month_no = months_between_dates(begin, node_date);
                     const acmacs::Location2D a{base_x + month_width * month_no, aNode.draw.vertical_pos};
                     mSurface.line(a, {a.x() + month_width * mSettings.dash_width, a.y()}, coloring.color(aNode), Pixels{mSettings.dash_line_width}, acmacs::surface::LineCap::Round);
                 }
