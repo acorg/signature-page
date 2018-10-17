@@ -57,6 +57,12 @@ void TreeDraw::init_settings(const Clades* aClades)
 
     mHzSections.detect_hz_lines_for_clades(mTree, aClades, true);
 
+    if (const auto virus_type = mTree.virus_type(); virus_type == "A(H3N2)") {
+        auto mod = mSettings.mods.append();
+        mod->mod = "hide-if-cumulative-edge-length-bigger-than";
+        mod->d1 = 0.04;
+    }
+
 } // TreeDraw::init_settings
 
 // ----------------------------------------------------------------------
