@@ -83,6 +83,13 @@ void TreeDraw::init_settings(const Clades* aClades)
             mod->line_width = 0.2;
         }
     }
+    else if (virus_type == "B/Yam") {
+        {
+            auto mod = mSettings.mods.append();
+            mod->mod = "hide-if-cumulative-edge-length-bigger-than";
+            mod->d1 = 0.04;
+        }
+    }
     // else {
     //     std::cerr << "DEBUG: mTree.virus_type() " << virus_type << DEBUG_LINE_FUNC << '\n';
     // }
