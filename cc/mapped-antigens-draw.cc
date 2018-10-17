@@ -12,7 +12,7 @@ void MappedAntigensDraw::prepare()
 {
     const auto matched_names = mTree.match(mChart.chart());
     if (matched_names)
-        std::cout << "INFO: tree sequences found in the chart: " << matched_names << std::endl;
+        std::cout << "INFO: tree sequences found in the chart: " << matched_names << '\n';
     // else
     //     std::cerr << "WARNING: No tree sequences found in the chart" << DEBUG_LINE_FUNC << '\n';
 
@@ -41,18 +41,18 @@ void MappedAntigensDraw::prepare()
     // ti.report();
 
     // if (matched_names.size())
-    //     std::cout << "Tree sequences found in the chart: " << matched_names.size() << std::endl;
+    //     std::cout << "Tree sequences found in the chart: " << matched_names.size() << '\n';
     // else
     //     std::cerr << "WARNING: No tree sequences found in the chart" << DEBUG_LINE_FUNC << '\n';
 
-    // // std::cerr << "DEBUG: Matched names:" << std::endl << "  ";
+    // // std::cerr << "DEBUG: Matched names:" << '\n' << "  ";
     // // std::copy(matched_names.begin(), matched_names.end(), polyfill::make_ostream_joiner(std::cerr, "\n  "));
-    // // std::cerr << std::endl << std::endl;
+    // // std::cerr << '\n' << '\n';
 
-    // // std::cerr << "DEBUG: Not matched names:" << std::endl;
+    // // std::cerr << "DEBUG: Not matched names:" << '\n';
     // // for (const auto& point: mChart.points()) {
     // //     if (point.attributes.antigen && matched_names.find(point.name) == matched_names.end())
-    // //         std::cerr << "  " << point.name << std::endl;
+    // //         std::cerr << "  " << point.name << '\n';
     // // }
 
 } // MappedAntigensDraw::prepare

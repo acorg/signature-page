@@ -109,35 +109,35 @@ bool TreeDraw::apply_mods()
     (mSettings).mods.for_each([this] (const auto& mod) { // const_cast to support situation when mods was not set
         const auto mod_mod = static_cast<std::string>(mod.mod);
         if (mod_mod == "root") {
-            std::cout << "TREE-mod: " << mod_mod << " " << mod.s1 << std::endl;
+            std::cout << "TREE-mod: " << mod_mod << " " << mod.s1 << '\n';
             mTree.re_root(mod.s1);
         }
         else if (mod_mod == "hide-isolated-before") {
-            std::cout << "TREE-mod: " << mod_mod << " " << mod.s1 << std::endl;
+            std::cout << "TREE-mod: " << mod_mod << " " << mod.s1 << '\n';
             hide_isolated_before(mod.s1);
         }
         else if (mod_mod == "hide-if-cumulative-edge-length-bigger-than") {
-            std::cout << "TREE-mod: " << mod_mod << " " << mod.d1 << std::endl;
+            std::cout << "TREE-mod: " << mod_mod << " " << mod.d1 << '\n';
             hide_if_cumulative_edge_length_bigger_than(mod.d1);
         }
         else if (mod_mod == "before2015-58P-or-146I-or-559I") {
-            std::cout << "TREE-mod: " << mod_mod << std::endl;
+            std::cout << "TREE-mod: " << mod_mod << '\n';
             hide_before2015_58P_or_146I_or_559I();
         }
         else if (mod_mod == "hide-between") {
-            std::cout << "TREE-mod: " << mod_mod << " \"" << mod.s1 << "\" \"" << mod.s2 << "\"" << std::endl;
+            std::cout << "TREE-mod: " << mod_mod << " \"" << mod.s1 << "\" \"" << mod.s2 << "\"" << '\n';
             hide_between(mod.s1, mod.s2);
         }
         else if (mod_mod == "hide-one") {
-            std::cout << "TREE-mod: " << mod_mod << " \"" << mod.s1 << "\"" << std::endl;
+            std::cout << "TREE-mod: " << mod_mod << " \"" << mod.s1 << "\"" << '\n';
             hide_one(mod.s1);
         }
         else if (mod_mod == "mark-with-line") {
-            std::cout << "TREE-mod: " << mod_mod << " \"" << mod.s1 << "\" \"" << mod.s2 << "\" " << mod.d1 << std::endl;
+            std::cout << "TREE-mod: " << mod_mod << " \"" << mod.s1 << "\" \"" << mod.s2 << "\" " << mod.d1 << '\n';
             mark_with_line(mod.s1, Color(mod.s2), Pixels{mod.d1});
         }
         else if (mod_mod == "mark-clade-with-line") {
-            std::cout << "TREE-mod: " << mod_mod << " \"" << mod.clade << "\" \"" << mod.color << "\" " << mod.line_width << std::endl;
+            std::cout << "TREE-mod: " << mod_mod << " \"" << mod.clade << "\" \"" << mod.color << "\" " << mod.line_width << '\n';
             mark_clade_with_line(mod.clade, Color(mod.color), Pixels{mod.line_width});
         }
         else if (mod_mod == "mark-with-label") {
@@ -157,7 +157,7 @@ bool TreeDraw::apply_mods()
 
 void TreeDraw::draw()
 {
-    std::cout << "Tree surface: " << mSurface.viewport() << std::endl;
+    std::cout << "Tree surface: " << mSurface.viewport() << '\n';
     const double line_width = mSettings.line_width;
     mLineWidth = mSettings.force_line_width ? line_width : std::min(line_width, mVerticalStep * 0.5);
     fit_labels_into_viewport();
@@ -270,7 +270,7 @@ void TreeDraw::hide_between(std::string aFirst, std::string aLast)
             throw std::runtime_error("tree hide_between: last node not found: " + aLast);
         if (hidden == 0)
             throw std::runtime_error("tree hide_between: no nodes hidden");
-        std::cout << "leaf nodes hidden: " << hidden << std::endl;
+        std::cout << "leaf nodes hidden: " << hidden << '\n';
     }
     else {
         std::cerr << "WARNING: node hiding cancelled\n";
@@ -293,7 +293,7 @@ void TreeDraw::hide_one(std::string aName)
     tree::iterate_leaf_post(mTree, hide_show_leaf, hide_branch);
     if (hidden == 0)
         throw std::runtime_error("tree hide_between: no nodes hidden");
-    std::cout << "leaf nodes hidden: " << hidden << std::endl;
+    std::cout << "leaf nodes hidden: " << hidden << '\n';
 
 } // TreeDraw::hide_one
 
@@ -313,7 +313,7 @@ void TreeDraw::mark_with_line(std::string aName, Color aColor, Pixels aLineWidth
     if (marked == 0)
         std::cerr << "WARNING: not found to mark with line: " << aName << '\n';
     else
-        std::cout << "leaf nodes marked: " << marked << std::endl;
+        std::cout << "leaf nodes marked: " << marked << '\n';
 
 } // TreeDraw::mark_with_line
 
@@ -325,7 +325,7 @@ void TreeDraw::mark_with_label(const TreeDrawMod& aMod)
     if (node) {
         if (node->draw.shown) {
             node->draw.mark_with_label = true;
-            std::cout << "INFO: mark-with-label: " << aMod.seq_id << " \"" << aMod.label << "\" " << aMod.line_width << std::endl;        }
+            std::cout << "INFO: mark-with-label: " << aMod.seq_id << " \"" << aMod.label << "\" " << aMod.line_width << '\n';        }
         else {
             std::cerr << "WARNING: cannot mark-with-label " << aMod.seq_id << ": node not shown\n";
         }
@@ -352,7 +352,7 @@ void TreeDraw::mark_clade_with_line(std::string aClade, Color aColor, Pixels aLi
     if (marked == 0)
         std::cerr << "WARNING: not found to mark with line for clade: " << aClade << '\n';
     else
-        std::cout << "Clade " << aClade << " leaf nodes marked: " << marked << std::endl;
+        std::cout << "Clade " << aClade << " leaf nodes marked: " << marked << '\n';
 
 } // TreeDraw::mark_clade_with_line
 
@@ -374,7 +374,7 @@ void TreeDraw::hide_branch(Node& aNode)
 
 // void TreeDraw::hide_leaves(bool aForce)
 // {
-//     std::cout << "TREE: hide_leaves " << aForce << std::endl;
+//     std::cout << "TREE: hide_leaves " << aForce << '\n';
 //     if (aForce || !hiding_leaves_done) {
 //         auto hide_show_leaf = [this](Node& aNode) {
 //             aNode.draw.shown = true; // ! (aNode.data.date() < mSettings.hide_isolated_before || aNode.data.cumulative_edge_length > mSettings.hide_if_cumulative_edge_length_bigger_than || this->hide_leaf_if(aNode));
@@ -411,7 +411,7 @@ void TreeDraw::set_line_no()
     tree::iterate_leaf(mTree, set_line_no);
     if (auto& last_leaf = find_last_leaf(mTree); last_leaf.draw.line_no == 0) // last leaf is perhaps hidden but we need its line_no later to figure out correct shown tree height
         last_leaf.draw.line_no = current_line - 1;
-    std::cout << "INFO: TREE-lines: " << (current_line - 1) << std::endl;
+    std::cout << "INFO: TREE-lines: " << (current_line - 1) << '\n';
 
 } // TreeDraw::set_line_no
 
@@ -425,7 +425,7 @@ void TreeDraw::set_vertical_pos()
     auto set_leaf_vertical_pos = [&](Node& aNode) {
         if (aNode.draw.shown) {
             if (aNode.draw.hz_section_index != NodeDrawData::HzSectionNoIndex && mHzSections.show && mHzSections.sections[aNode.draw.hz_section_index]->show) {
-                std::cout << "INFO: TREE-hz-section: " << aNode.draw.hz_section_index << " " << aNode.seq_id << std::endl;
+                std::cout << "INFO: TREE-hz-section: " << aNode.draw.hz_section_index << " " << aNode.seq_id << '\n';
                 if (!topmost_node)
                     vertical_pos += mHzSections.vertical_gap;
             }
@@ -471,17 +471,17 @@ size_t TreeDraw::prepare_hz_sections()
                     ++number_of_hz_sections;
                 }
                 else {
-                    std::cerr << "WARNING: HzSection ignored because its node is hidden: " << section->name << std::endl;
+                    std::cerr << "WARNING: HzSection ignored because its node is hidden: " << section->name << '\n';
                 }
             }
             else {
-                std::cerr << "WARNING: HzSection seq_id not found: " << section->name << std::endl;
+                std::cerr << "WARNING: HzSection seq_id not found: " << section->name << '\n';
             }
         }
     }
     // if (number_of_hz_sections == 0)
     //     number_of_hz_sections = 1;
-    std::cout << "INFO: HZ sections: " << number_of_hz_sections << std::endl;
+    std::cout << "INFO: HZ sections: " << number_of_hz_sections << '\n';
     return number_of_hz_sections;
 
 } // TreeDraw::prepare_hz_sections
@@ -507,7 +507,7 @@ void TreeDraw::fit_labels_into_viewport()
     Timeit ti("TreeDraw::fit_labels_into_viewport: ");
     for (double label_offset = max_label_offset(); label_offset > canvas_width; label_offset = max_label_offset()) {
         const double scale = std::min(canvas_width / label_offset, 0.99); // to avoid too much looping
-        std::cout << "INFO: canvas:" << canvas_width << " label_right:" << label_offset << " scale: " << scale << std::endl;
+        std::cout << "INFO: canvas:" << canvas_width << " label_right:" << label_offset << " scale: " << scale << '\n';
         mHorizontalStep *= scale;
         mFontSize *= scale;
     }
@@ -709,11 +709,11 @@ void HzSections::sort(const Tree& aTree)
     for (size_t sec_no = 0; sec_no < node_refs.size(); ++sec_no) {
         if (node_refs[sec_no].first == nullptr) {
             if (sections[sec_no]->name != "")
-                std::cerr << "WARNING: HZ section removed (leaf node not found): " << sections[sec_no]->name << std::endl;
+                std::cerr << "WARNING: HZ section removed (leaf node not found): " << sections[sec_no]->name << '\n';
             to_remove.push_back(sec_no);
         }
         else if (!node_refs[sec_no].first->draw.shown) {
-            std::cerr << "WARNING: HZ section removed (leaf node not shown): " << sections[sec_no]->name << std::endl;
+            std::cerr << "WARNING: HZ section removed (leaf node not shown): " << sections[sec_no]->name << '\n';
             to_remove.push_back(sec_no);
         }
     }
@@ -820,11 +820,11 @@ void HzSections::report_html(std::string filename) const
 //         const auto nodes = aTree.leaf_nodes_sorted_by_distance_from_previous();
 
 //           // size_t i = 0;
-//           // std::cout << "HZ lines detection (distance_from_previous):" << std::endl;
+//           // std::cout << "HZ lines detection (distance_from_previous):" << '\n';
 //           // for (const auto node: nodes) {
 //           //     std::cout << std::fixed << std::setprecision(8) << std::setw(14) << node->data.distance_from_previous << ' ' << node->seq_id
 //           //               << (node->draw.shown ? "" : " *HIDDEN*")
-//           //               << std::endl;
+//           //               << '\n';
 //           //     if (++i > 10)
 //           //         break;
 //           // }

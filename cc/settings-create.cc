@@ -7,7 +7,7 @@
 int main(int argc, const char *argv[])
 {
     if (argc != 2) {
-        std::cerr << "Usage: " << argv[0] << " <settings.json>" << std::endl;
+        std::cerr << "Usage: " << argv[0] << " <settings.json>" << '\n';
         return 1;
     }
     Settings settings;

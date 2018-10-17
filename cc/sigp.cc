@@ -30,6 +30,8 @@ int main(int argc, const char *argv[])
                 {"--aa-at-pos-small-section-threshold", 3, "if --init-settings and --show-aa-at-pos, elminate small sections having no more leaf nodes than this value"},
                 {"--not-show-hz-sections", false},
                 {"--hz-sections-report", false},
+                {"--report-first-node-of-subtree", "", "filename or - to report subtree data"},
+                {"--subtree-threshold", 10, "min number of leaf nodes in a subtree for --report-first-node-of-subtree"},
                 // {"--hz-sections-report-html", "", "html file to generate hz sections report to"},
                 {"--list-ladderized", ""},
                 {"--no-draw", false}, // bool_switch(&aOptions.no_draw)->default_value(false), "do not generate pdf")
@@ -81,8 +83,14 @@ int main(int argc, const char *argv[])
                 signature_page.tree().report_cumulative_edge_length(out);
             }
             if (args["--list-ladderized"]) {
+                std::cout << "INFO: listing ladderized " << args["--list-ladderized"].str() << '\n';
                 acmacs::file::ofstream out(args["--list-ladderized"]);
                 signature_page.tree().list_strains(out);
+            }
+            if (args["--report-first-node-of-subtree"]) {
+                std::cout << "INFO: reporting first-node-of-subtree to " << args["--report-first-node-of-subtree"].str() << '\n';
+                acmacs::file::ofstream out(args["--report-first-node-of-subtree"]);
+                signature_page.tree().report_first_node_of_subtree(out, args["--subtree-threshold"]);
             }
             if (!args["--no-draw"])
                 signature_page.draw(args["--report-hz-section_antigens"], args["--init-settings"], args["--aa-at-pos-hz-section-threshold"], args["--aa-at-pos-small-section-threshold"]);

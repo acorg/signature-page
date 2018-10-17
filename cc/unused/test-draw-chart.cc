@@ -34,7 +34,7 @@ int main(int argc, const char *argv[])
         try {
             auto chart = std::unique_ptr<sdb::Chart>{dynamic_cast<sdb::Chart*>(sdb::read_chart_from_sdb(options.chart_filename))};
             auto viewport = chart->viewport();
-            std::cout << viewport << std::endl;
+            std::cout << viewport << '\n';
 
             sdb::DrawSerum draw_serum;
             sdb::DrawVaccineAntigen draw_vaccine;
@@ -85,7 +85,7 @@ int main(int argc, const char *argv[])
             aSurface.rectangle(viewport.origin, viewport.size, BLACK, Pixels{2});
         }
         catch (std::exception& err) {
-            std::cerr << err.what() << std::endl;
+            std::cerr << err.what() << '\n';
             exit_code = 1;
         }
     }
@@ -111,21 +111,21 @@ int get_args(int argc, const char *argv[], Options& aOptions)
     try {
         store(command_line_parser(argc, argv).options(desc).positional(pos_opt).run(), vm);
         if (vm.count("help")) {
-            std::cerr << desc << std::endl;
+            std::cerr << desc << '\n';
             return 1;
         }
         notify(vm);
         return 0;
     }
     catch(required_option& e) {
-        std::cerr << "ERROR: " << e.what() << std::endl;
-        std::cerr << desc << std::endl;
-          // std::cerr << "Usage: " << argv[0] << " <tree.json> <output.pdf>" << std::endl;
+        std::cerr << "ERROR: " << e.what() << '\n';
+        std::cerr << desc << '\n';
+          // std::cerr << "Usage: " << argv[0] << " <tree.json> <output.pdf>" << '\n';
         return 2;
     }
     catch(error& e) {
-        std::cerr << "ERROR: " << e.what() << std::endl;
-        std::cerr << desc << std::endl;
+        std::cerr << "ERROR: " << e.what() << '\n';
+        std::cerr << desc << '\n';
         return 3;
     }
 

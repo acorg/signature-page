@@ -152,6 +152,8 @@ void CladesDraw::assign_slots()
 using clade_update_t = std::tuple<std::string, int, bool>; // display_name, slot, show
 using clades_update_t = std::map<std::string, clade_update_t>; // name -> [display_name, slot]
 static const clades_update_t sCladesFixer = {
+      // H1
+    {"6B", {"6B", 4, true}},
       // H3
     {"GLY", {"GLY", 0, false}},
     {"NO-GLY", {"NO-GLY", 0, false}},

@@ -33,7 +33,7 @@ void AntigenicMapsDrawBase::layout(AntigenicMapsLayout* aLayout)
 
 void AntigenicMapsDrawBase::init_settings()
 {
-    // std::cerr << "DEBUG: AntigenicMapsDrawBase::init_settings" << std::endl;
+    // std::cerr << "DEBUG: AntigenicMapsDrawBase::init_settings" << '\n';
     const size_t number_sections = hz_sections().shown_maps();
     switch (number_sections) {
       case 0:
@@ -60,7 +60,7 @@ void AntigenicMapsDrawBase::init_settings()
     const double map_width = 150; // height is not available at this moment mSurface.viewport().size.height / (maps_per_column + settings().gap * (maps_per_column - 1));
     signature_page_settings().antigenic_maps_width = map_width * settings().columns + (settings().columns - 1) * settings().gap;
 
-    std::cout << "INFO: antigenic maps: columns:" << settings().columns << " maps_per_column:" << maps_per_column << " map_width:" << map_width << " width:" << signature_page_settings().antigenic_maps_width << std::endl;
+    std::cout << "INFO: antigenic maps: columns:" << settings().columns << " maps_per_column:" << maps_per_column << " map_width:" << map_width << " width:" << signature_page_settings().antigenic_maps_width << '\n';
 
     chart().init_settings();
 
@@ -78,7 +78,7 @@ void AntigenicMapsDrawBase::draw(acmacs::surface::Surface& aMappedAntigensDrawSu
 
 void AntigenicMapsDrawBase::prepare()
 {
-      // std::cerr << "DEBUG: AntigenicMapsDrawBase::prepare" << std::endl;
+      // std::cerr << "DEBUG: AntigenicMapsDrawBase::prepare" << '\n';
     if (static_cast<std::string>(settings().layout) == "labelled_grid") {
         make_layout();
     }
@@ -379,7 +379,7 @@ void AntigenicMapsDrawSettings::viewport(const acmacs::Viewport& aViewport)
         else
             target.set({aViewport.origin.x(), aViewport.origin.y(), aViewport.size.width, aViewport.size.height});
     };
-      // std::cerr << "DEBUG: AntigenicMapsDrawSettings::viewport" << std::endl;
+      // std::cerr << "DEBUG: AntigenicMapsDrawSettings::viewport" << '\n';
     if (auto vpmod = mods.find_if([](const auto& mod) -> bool { return mod.name == "viewport"; }); !vpmod) {
         auto mod = mods.append();
         mod->name = "viewport";

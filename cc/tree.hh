@@ -160,7 +160,7 @@ class Tree : public Node
         // const double was = mMaxCumulativeEdgeLength;
         mMaxCumulativeEdgeLength = -1;
         Node::compute_cumulative_edge_length(0, mMaxCumulativeEdgeLength);
-        // std::cout << "TREE: compute_cumulative_edge_length " << std::setprecision(10) << was << " --> " << mMaxCumulativeEdgeLength << std::endl;
+        // std::cout << "TREE: compute_cumulative_edge_length " << std::setprecision(10) << was << " --> " << mMaxCumulativeEdgeLength << '\n';
     }
 
     void compute_distance_from_previous();
@@ -171,6 +171,7 @@ class Tree : public Node
 
     void report_cumulative_edge_length(std::ostream& out);
     void list_strains(std::ostream& out);
+    void report_first_node_of_subtree(std::ostream& out, size_t leaf_nodes_threshold);
 
     std::pair<double, double> cumulative_edge_minmax() const
         {

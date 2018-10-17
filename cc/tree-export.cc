@@ -223,7 +223,7 @@ class TreeRootHandler : public HandlerBase
                       mTreeType = TreeType::PhylogeneticV2;
                   }
                   else {
-                      std::cerr << "ERROR: Unsupported version: \"" << std::string(str, length) << '"' << std::endl;
+                      std::cerr << "ERROR: Unsupported version: \"" << std::string(str, length) << '"' << '\n';
                       throw json_reader::Failure();
                   }
                   break;
@@ -291,7 +291,7 @@ Tree tree::tree_import(std::string aFilename, std::shared_ptr<acmacs::chart::Cha
     if (chart) {
         const auto matched_names = tree.match(*chart);
         if (matched_names)
-            std::cout << "INFO: tree sequences found in the chart: " << matched_names << std::endl;
+            std::cout << "INFO: tree sequences found in the chart: " << matched_names << '\n';
     }
     tree.set_number_strains();
     tree.ladderize(aLadderizeMethod);

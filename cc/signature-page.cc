@@ -83,7 +83,7 @@ void SignaturePageDraw::make_surface(std::string aFilename, bool init_settings, 
           break;
     }
     mSurface = std::make_unique<acmacs::surface::PdfCairo>(draw_map ? aFilename : std::string{}, width, height);
-    std::cout << "INFO: Surface: " << width << " x " << height << std::endl;
+    std::cout << "INFO: Surface: " << width << " x " << height << '\n';
 
     mTreeDraw = std::make_unique<TreeDraw>(mSurface->subsurface(false), *mTree, *mSettings->tree_draw, *mSettings->hz_sections);
     mTimeSeriesDraw = std::make_unique<TimeSeriesDraw>(mSurface->subsurface(false), *mTree, *mTreeDraw, *mSettings->hz_sections, *mSettings->time_series);

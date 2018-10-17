@@ -93,7 +93,7 @@ void ColoringByPos::report() const
     std::cout << "ColoringByPos: " << mUsed.size();
     for (const auto& u: mUsed)
         std::cout << " [" << u.first << ' ' << u.second.first << ' ' << u.second.second << ']';
-    std::cout << std::endl;
+    std::cout << '\n';
 
 } // ColoringByPos::report
 

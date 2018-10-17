@@ -21,7 +21,7 @@ void Tree::match_seqdb(const seqdb::Seqdb& seqdb, seqdb::Seqdb::ignore_not_found
 
 void Tree::ladderize(Tree::LadderizeMethod aLadderizeMethod)
 {
-      // std::cerr << "DEBUG: Tree: ladderizing" << std::endl;
+      // std::cerr << "DEBUG: Tree: ladderizing" << '\n';
 
     auto set_max_edge = [](Node& aNode) {
         aNode.data.ladderize_max_edge_length = aNode.edge_length;
@@ -81,7 +81,7 @@ void Tree::ladderize(Tree::LadderizeMethod aLadderizeMethod)
 
 void Tree::set_number_strains()
 {
-    // std::cerr << "DEBUG: Tree: set number strains" << std::endl;
+    // std::cerr << "DEBUG: Tree: set number strains" << '\n';
 
     auto set_number_strains = [](Node& aNode) {
         aNode.data.number_strains = 0;
@@ -98,7 +98,7 @@ void Tree::set_number_strains()
 
 void Tree::set_continents()
 {
-    // std::cerr << "DEBUG: Tree: set continents" << std::endl;
+    // std::cerr << "DEBUG: Tree: set continents" << '\n';
 
     tree::iterate_leaf(*this, [](Node& aNode) { aNode.data.set_continent(aNode.seq_id); });
 
@@ -173,7 +173,7 @@ void Tree::report_cumulative_edge_length(std::ostream& out)
     for (const auto& node: nodes) {
         out << std::fixed << std::setprecision(8) << std::setw(10) << node->data.cumulative_edge_length
             << " (" << std::fixed << std::setprecision(2) << std::setw(5) << (node->data.cumulative_edge_length / min_edge_length) << ") "
-            << node->seq_id << std::endl;
+            << node->seq_id << '\n';
     }
 
 } // Tree::report_cumulative_edge_length
@@ -184,10 +184,33 @@ void Tree::list_strains(std::ostream& out)
 {
     out << "Strains in order in the tree, distance to previous\n";
     compute_distance_from_previous();
-    auto report = [&out](const Node& aNode) { out << aNode.seq_id << ' ' << aNode.data.distance_from_previous << std::endl; };
+    auto report = [&out](const Node& aNode) { out << aNode.seq_id << ' ' << aNode.data.distance_from_previous << '\n'; };
     tree::iterate_leaf(*this, report);
 
 } // Tree::list_strains
+
+// ----------------------------------------------------------------------
+
+void Tree::report_first_node_of_subtree(std::ostream& out, size_t leaf_nodes_threshold)
+{
+    out << "first nodes of subtrees having more than " << (leaf_nodes_threshold > 0 ? leaf_nodes_threshold - 1 : leaf_nodes_threshold) << " leaves\n";
+    bool report_leaf = false;
+    auto pre_report = [&out, leaf_nodes_threshold, &report_leaf](const Node& aNode) {
+        if (aNode.data.number_strains >= leaf_nodes_threshold) {
+            out << "leaves: " << aNode.data.number_strains << '\n';
+            out << "transitions: " << aNode.data.aa_transitions << '\n';
+            report_leaf = true;
+        }
+    };
+    auto leaf_report = [&out, &report_leaf](const Node& aNode) {
+        if (report_leaf) {
+            out << aNode.seq_id << "\n\n";
+            report_leaf = false;
+        }
+    };
+    tree::iterate_leaf_pre(*this, leaf_report, pre_report);
+
+} // Tree::report_first_node_of_subtree
 
 // ----------------------------------------------------------------------
 

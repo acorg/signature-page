@@ -9,7 +9,7 @@
 int main(int argc, const char *argv[])
 {
     if (argc < 2 || argc > 3) {
-        std::cerr << "Usage: " << argv[0] << " <settings.json> [<output-settings.json>]" << std::endl;
+        std::cerr << "Usage: " << argv[0] << " <settings.json> [<output-settings.json>]" << '\n';
         return 1;
     }
     try {
@@ -21,12 +21,12 @@ int main(int argc, const char *argv[])
         else
             output = static_cast<std::string>(acmacs::file::temp{".json"});
         write_settings(settings, output);
-          // std::cout << static_cast<std::string>(output) << std::endl;
+          // std::cout << static_cast<std::string>(output) << '\n';
         if (std::system((std::string{"/usr/bin/diff -b '"} + argv[1] + "' '" + static_cast<std::string>(output) + "'").c_str()))
             throw std::runtime_error("FAILED");
     }
     catch (std::exception& err) {
-        std::cerr << err.what() << std::endl;
+        std::cerr << err.what() << '\n';
         return 2;
     }
     return 0;

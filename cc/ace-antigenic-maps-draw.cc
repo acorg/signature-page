@@ -22,7 +22,7 @@ void AntigenicMapsDraw::make_layout()
 
 void AntigenicMapsLayoutDrawAce::prepare_apply_mods()
 {
-    // std::cerr << "DEBUG: [ace] AntigenicMapsLayoutDrawAce::prepare_apply_mods" << std::endl;
+    // std::cerr << "DEBUG: [ace] AntigenicMapsLayoutDrawAce::prepare_apply_mods" << '\n';
     settings().mods.for_each([this](const auto& mod) {
         try {
             if (mod.name == "rotate_degrees") {
@@ -155,7 +155,7 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, std
         }
         else if (mod.name == "tracked_sera") {
             const auto tracked_indices = tracked_sera(aSectionIndex);
-            std::cout << "INFO: tracked_sera: " << tracked_indices << std::endl;
+            std::cout << "INFO: tracked_sera: " << tracked_indices << '\n';
             for (auto [serum_index, ignored]: tracked_indices)
                 make_tracked_serum(serum_index, Pixels{mod.size.get_or(5.0)}, mod.outline.get_or("black"), Pixels{mod.outline_width.get_or(0.5)}, *mod.label);
         }
@@ -233,7 +233,7 @@ void AntigenicMapsLayoutDrawAce::make_tracked_serum(size_t serum_index, Pixels s
                 label.offset({item_value[0], item_value[1]});
             }
             else if (field_name.empty() || (field_name.front() != '?' && field_name.back() != '?'))
-                std::cerr << "WARNING: make_tracked_serum label: unrecognized key \"" << field_name << '"' << std::endl;
+                std::cerr << "WARNING: make_tracked_serum label: unrecognized key \"" << field_name << '"' << '\n';
         });
     }
 
@@ -402,14 +402,14 @@ void AntigenicMapsLayoutDrawAce::serum_circle(const AntigenicMapMod& mod, std::s
 //                 else if (field_name == "label")
 //                     add_label(std::shared_ptr<VaccineMatcherLabel>{matcher.label(chart_draw())}, item_value);
 //                 else if (field_name != "type" && field_name != "passage" && field_name != "name" && (field_name.empty() || (field_name.front() != '?' && field_name.back() != '?')))
-//                     std::cerr << "WARNING: mark_vaccines: unrecognized key \"" << field_name << '"' << std::endl;
+//                     std::cerr << "WARNING: mark_vaccines: unrecognized key \"" << field_name << '"' << '\n';
 //             });
 //         });
-//         // std::cerr << "DEBUG: Vaccines:" << std::endl << vaccs.report(2) << std::endl;
+//         // std::cerr << "DEBUG: Vaccines:" << '\n' << vaccs.report(2) << '\n';
 //         vaccs.plot(chart_draw());
 //     }
 //     catch (std::exception&) {
-//         std::cerr << "WARNING: cannot mark vaccines: invalid vaccine settings: " << vaccine_mod << std::endl;
+//         std::cerr << "WARNING: cannot mark vaccines: invalid vaccine settings: " << vaccine_mod << '\n';
 //     }
 
 // } // AntigenicMapsLayoutDrawAce::mark_vaccines
@@ -473,7 +473,7 @@ void AntigenicMapsLayoutDrawAce::add_label(std::shared_ptr<VaccineMatcherLabel> 
         else if (field_name == "offset")
             label->offset({item_value[0], item_value[1]});
         else if (field_name.empty() || (field_name.front() != '?' && field_name.back() != '?'))
-            std::cerr << "WARNING: mark_vaccines label: unrecognized key \"" << field_name << '"' << std::endl;
+            std::cerr << "WARNING: mark_vaccines label: unrecognized key \"" << field_name << '"' << '\n';
     });
 
 } // AntigenicMapsLayoutDrawAce::add_label

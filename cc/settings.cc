@@ -25,7 +25,7 @@ Settings::Settings()
 
 void read_settings(Settings& aSettings, std::string aFilename)
 {
-    std::cout << "INFO: reading settings from " << aFilename << std::endl;
+    std::cout << "INFO: reading settings from " << aFilename << '\n';
     aSettings.update_from_file(aFilename);
     aSettings.upgrade();
 
@@ -45,7 +45,7 @@ void Settings::upgrade()             // upgrade to the new version in case old v
 
 void write_settings(const Settings& aSettings, std::string aFilename)
 {
-    std::cout << "INFO: writing settings to " << aFilename << std::endl;
+    std::cout << "INFO: writing settings to " << aFilename << '\n';
     aSettings.write_to_file(aFilename);
 
 } // write_settings

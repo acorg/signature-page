@@ -18,7 +18,7 @@ void AntigenicMapsLayoutDraw::prepare()
     prepare_apply_mods();
     const acmacs::Viewport& viewport = mAntigenicMapsDraw.chart().viewport();
     settings().viewport(viewport);
-    std::cout << "INFO: Using viewport: " << viewport << std::endl;
+    std::cout << "INFO: Using viewport: " << viewport << '\n';
 
 } // AntigenicMapsLayoutDraw::prepare
 
@@ -85,12 +85,12 @@ AntigenicMapsLayout::~AntigenicMapsLayout()
 
 void LabelledGridBase::draw(acmacs::surface::Surface& aMappedAntigensDrawSurface, bool report_antigens_in_hz_sections)
 {
-      // std::cerr << "DEBUG: AntigenicMapsLayoutDraw::draw" << std::endl;
+      // std::cerr << "DEBUG: AntigenicMapsLayoutDraw::draw" << '\n';
 
     layout_draw().prepare_chart_for_all_sections();
     const AntigenicMapsDrawSettings& settings = layout_draw().settings();
     acmacs::surface::Surface& surface = layout_draw().surface();
-    // std::cerr << "DEBUG: Maps " << surface << std::endl;
+    // std::cerr << "DEBUG: Maps " << surface << '\n';
 
     const double map_width = (surface.viewport().size.width - (settings.columns - 1) * settings.gap) / settings.columns;
 
@@ -101,9 +101,9 @@ void LabelledGridBase::draw(acmacs::surface::Surface& aMappedAntigensDrawSurface
             acmacs::surface::Surface& map_surface = surface.subsurface({column * (map_width + settings.gap), row * (map_width + settings.gap)},
                                                                        Scaled{map_width}, layout_draw().viewport(), true);
             const std::string map_letter = layout_draw().hz_sections().node_refs[section_index].index;
-            std::cout << "===============================\nINFO: MAP " << section_index << ' ' << map_letter << ": " << map_surface << std::endl;
-            // std::cerr << "DEBUG: Map " << map_surface << std::endl;
-            // std::cerr << "DEBUG: origin_offset: " << map_surface.origin_offset() << "  scale: " << map_surface.scale() << std::endl;
+            std::cout << "===============================\nINFO: MAP " << section_index << ' ' << map_letter << ": " << map_surface << '\n';
+            // std::cerr << "DEBUG: Map " << map_surface << '\n';
+            // std::cerr << "DEBUG: origin_offset: " << map_surface.origin_offset() << "  scale: " << map_surface.scale() << '\n';
             layout_draw().prepare_drawing_chart(section_index, map_letter, report_antigens_in_hz_sections);
             layout_draw().draw_chart(map_surface, section_index);
             draw_mapped_antigens_section(section_index, aMappedAntigensDrawSurface);
@@ -115,7 +115,7 @@ void LabelledGridBase::draw(acmacs::surface::Surface& aMappedAntigensDrawSurface
             ++shown_maps;
         }
         else {
-            std::cout << "===============================\nINFO: MAP " << section_index << ": not shown" << std::endl;
+            std::cout << "===============================\nINFO: MAP " << section_index << ": not shown" << '\n';
         }
     }
 
@@ -124,7 +124,7 @@ void LabelledGridBase::draw(acmacs::surface::Surface& aMappedAntigensDrawSurface
         const size_t rows = shown_maps / settings.columns + ((shown_maps % settings.columns) ? 1 : 0);
         const double maps_height = map_width * rows + (rows - 1) * settings.gap;
         const double suggested_surface_width = antigenic_maps_width * surface.viewport().size.height / maps_height;
-        std::cout << "Map area height: " << maps_height << std::endl;
+        std::cout << "Map area height: " << maps_height << '\n';
         if (std::abs((antigenic_maps_width - suggested_surface_width) / antigenic_maps_width) > 0.01) {
             std::cout << "Change signature_page.antigenic_maps_width from " << antigenic_maps_width << " to " << suggested_surface_width << '\n'
                       << "  If you use --init-settings changed width will be saved there" << '\n';
