@@ -198,7 +198,9 @@ void Tree::report_first_node_of_subtree(std::ostream& out, size_t leaf_nodes_thr
     auto pre_report = [&out, leaf_nodes_threshold, &report_leaf](const Node& aNode) {
         if (aNode.data.number_strains >= leaf_nodes_threshold) {
             out << "leaves: " << aNode.data.number_strains << '\n';
-            out << "transitions: " << aNode.data.aa_transitions << '\n';
+            if (aNode.data.aa_transitions) {
+                out << "transitions: " << aNode.data.aa_transitions << '\n';
+            }
             report_leaf = true;
         }
     };
