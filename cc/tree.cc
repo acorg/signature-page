@@ -461,18 +461,18 @@ std::string Tree::virus_type() const
     if (virus_type == "B") {    // infer lineage
         std::string lineage;
         auto find_lineage = [&lineage](const Node& aNode) -> bool {
-            if (std::string_view(aNode.seq_id.data(), 27) == "B/SOUTH%20AUSTRALIA/81/2012" || std::string_view(aNode.seq_id.data(), 19) == "B/IRELAND/3154/2016") {
+            if (std::string_view(aNode.seq_id.data(), 27) == "B/SOUTH%20AUSTRALIA/81/2012" || std::string_view(aNode.seq_id.data(), 19) == "B/IRELAND/3154/2016" || std::string_view(aNode.seq_id.data(), 19) == "B/VICTORIA/830/2013") {
                 lineage = "/Vic";
                 return true;
             }
-            else if (std::string_view(aNode.seq_id.data(), 18) == "B/PHUKET/3073/2013") {
+            else if (std::string_view(aNode.seq_id.data(), 18) == "B/PHUKET/3073/2013" || std::string_view(aNode.seq_id.data(), 23) == "B/CHRISTCHURCH/503/2013") {
                 lineage = "/Yam";
                 return true;
             }
             return false;
         };
         tree::iterate_leaf_stop(*this, find_lineage);
-        std::cout << "INFO: B lineage: " << lineage << '\n';
+          // std::cout << "INFO: B lineage: " << lineage << '\n';
         virus_type += lineage;
     }
 

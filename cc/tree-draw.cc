@@ -62,6 +62,30 @@ void TreeDraw::init_settings(const Clades* aClades)
         mod->mod = "hide-if-cumulative-edge-length-bigger-than";
         mod->d1 = 0.04;
     }
+    else if (virus_type == "B/Vic") {
+        {
+            auto mod = mSettings.mods.append();
+            mod->mod = "hide-if-cumulative-edge-length-bigger-than";
+            mod->d1 = 0.0191;
+        }
+        {
+            auto mod = mSettings.mods.append();
+            mod->mod = "mark-clade-with-line";
+            mod->clade = "DEL2017";
+            mod->color = "#A0A0A0";
+            mod->line_width = 0.2;
+        }
+        {
+            auto mod = mSettings.mods.append();
+            mod->mod = "mark-clade-with-line";
+            mod->clade = "TRIPLEDEL2017";
+            mod->color = "#606060";
+            mod->line_width = 0.2;
+        }
+    }
+    // else {
+    //     std::cerr << "DEBUG: mTree.virus_type() " << virus_type << DEBUG_LINE_FUNC << '\n';
+    // }
 
 } // TreeDraw::init_settings
 
