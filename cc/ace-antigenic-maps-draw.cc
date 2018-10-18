@@ -192,9 +192,9 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, std
     // tracked_antigen_colored_by_clade
 
     std::string title = hz_sections().node_refs[aSectionIndex].index + "."; // std::string(1, 'A' + static_cast<char>(aSectionNo)) + ".";
-    const HzSection& section = *hz_sections().sections[aSectionIndex];
-    if (!section.label.empty())
-        title += " " + static_cast<std::string>(section.label);
+    auto section = hz_sections().sections[aSectionIndex];
+    if (!section->label.empty())
+        title += " " + static_cast<std::string>(section->label);
     // std::cerr << "DEBUG: map title: " << title << '\n';
     chart_draw().title().remove_all_lines().show(true).add_line(title);
 
