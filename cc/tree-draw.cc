@@ -55,7 +55,8 @@ void TreeDraw::init_settings(const Clades* aClades)
 {
     mInitializeSettings = true;
 
-    mHzSections.detect_hz_lines_for_clades(mTree, aClades, true);
+    if (hz_sections().sections.empty())
+        mHzSections.detect_hz_lines_for_clades(mTree, aClades, true);
 
     if (const auto virus_type = mTree.virus_type(); virus_type == "A(H3N2)") {
         auto mod = mSettings.mods.append();
@@ -462,7 +463,7 @@ void TreeDraw::set_vertical_pos()
     auto set_leaf_vertical_pos = [&](Node& aNode) {
         if (aNode.draw.shown) {
             if (aNode.draw.hz_section_index != NodeDrawData::HzSectionNoIndex && mHzSections.show && mHzSections.sections[aNode.draw.hz_section_index]->show) {
-                std::cout << "INFO: TREE-hz-section: " << aNode.draw.hz_section_index << " " << aNode.seq_id << '\n';
+                std::cout << "INFO: TREE-hz-section: " << aNode.draw.hz_section_index << " " << aNode.seq_id << '\n'; // ' ' << *mHzSections.sections[aNode.draw.hz_section_index] << '\n';
                 if (!topmost_node)
                     vertical_pos += mHzSections.vertical_gap;
             }
@@ -916,8 +917,9 @@ void HzSections::detect_hz_lines_for_clades(Tree& aTree, const Clades* aClades, 
 
 void HzSections::add(std::string seq_id, bool show_line, std::string clade, size_t aa_pos)
 {
+    std::cerr << "DEBUG: hz sections " << sections.size() << DEBUG_LINE_FUNC << '\n';
     if (auto found = sections.find_if([&seq_id](const auto& sect) { return sect.name == seq_id; }); !found) {
-          // std::cerr << "DEBUG: add hz section: " << seq_id << '\n';
+        // std::cerr << "DEBUG: add hz section: " << seq_id << '\n';
         auto sec = sections.append();
         sec->name = seq_id;
         sec->show_line = show_line;
@@ -931,7 +933,7 @@ void HzSections::add(std::string seq_id, bool show_line, std::string clade, size
             (*found)->triggering_clades.append(clade);
         if (aa_pos > 0)
             (*found)->triggering_aa_pos.append(aa_pos);
-        std::cerr << "DEBUG: " << seq_id << ' ' << (*found)->triggering_clades << ' '  << (*found)->triggering_aa_pos << '\n';
+        // std::cerr << "DEBUG: hz section found: " << seq_id << ' ' << (*found)->triggering_clades << ' ' << (*found)->triggering_aa_pos << '\n';
     }
 
 } // HzSections::add
