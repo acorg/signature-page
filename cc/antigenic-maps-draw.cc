@@ -121,6 +121,8 @@ acmacs::Viewport AntigenicMapMod::get_viewport(const acmacs::Viewport& aOrigView
             case 3:
                 result.set({aOrigViewport.left() + rel[0], aOrigViewport.top() + rel[1]}, aOrigViewport.size.width + rel[2]);
                 break;
+            case 0:
+                break;
             default:
                 throw std::exception{};
         }
@@ -137,6 +139,8 @@ acmacs::Viewport AntigenicMapMod::get_viewport(const acmacs::Viewport& aOrigView
                 break;
             case 4:
                 result.set(acmacs::Location2D{viewport[0], viewport[1]}, acmacs::Size{viewport[2], viewport[3]});
+                break;
+            case 0:
                 break;
             default:
                 throw std::exception{};
