@@ -4,13 +4,28 @@
 
 // ----------------------------------------------------------------------
 
+#pragma GCC diagnostic push
+#ifdef __clang__
+#pragma GCC diagnostic ignored "-Wexit-time-destructors"
+#pragma GCC diagnostic ignored "-Wglobal-constructors"
+#endif
+
+static const std::map<std::string, const char*> lab_name_normalizer = {{"MELB", "VIDRL"}, {"NIMR", "Crick"}};
+
+#pragma GCC diagnostic pop
+
 void TitleDraw::init_settings()
 {
     std::string title = mTree.virus_type();
     if (mChart) {
-        if (!title.empty())
-            title += " ";
-        title += mChart->lab();
+        std::string lab = mChart->lab();
+        if (auto found = lab_name_normalizer.find(lab); found != lab_name_normalizer.end())
+            lab = found->second;
+        if (!lab.empty()) {
+            if (!title.empty())
+                title += " ";
+            title += lab;
+        }
         mSettings.offset = acmacs::Offset{10, 10};
     }
     else {
