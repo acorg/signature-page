@@ -105,9 +105,8 @@ void LabelledGridBase::draw(acmacs::surface::Surface& aMappedAntigensDrawSurface
             acmacs::surface::Surface& map_surface = surface.subsurface({column * (map_width + settings.gap), row * (map_width + settings.gap)},
                                                                        Scaled{map_width}, layout_draw().viewport(), true);
             const std::string map_letter = layout_draw().hz_sections().node_refs[section_index].index;
-            std::cout << "===============================\nINFO: MAP " << section_index << ' ' << map_letter << ": " << map_surface << '\n';
-            // std::cerr << "DEBUG: Map " << map_surface << '\n';
-            // std::cerr << "DEBUG: origin_offset: " << map_surface.origin_offset() << "  scale: " << map_surface.scale() << '\n';
+            std::cout << "===============================\nINFO: MAP " << section_index << ' ' << map_letter << ' ' << section->name << '\n';
+            // std::cerr << "DEBUG: Map " << map_surface << " origin_offset: " << map_surface.origin_offset() << "  scale: " << map_surface.scale() << '\n';
             layout_draw().prepare_drawing_chart(section_index, map_letter, report_antigens_in_hz_sections);
             layout_draw().draw_chart(map_surface, section_index);
             draw_mapped_antigens_section(section_index, aMappedAntigensDrawSurface);
@@ -119,7 +118,7 @@ void LabelledGridBase::draw(acmacs::surface::Surface& aMappedAntigensDrawSurface
             ++shown_maps;
         }
         else {
-            std::cout << "===============================\nINFO: MAP " << section_index << ": not shown" << '\n';
+            std::cout << "===============================\nINFO: MAP " << section_index << ' ' << section->name << ": not shown" << '\n';
         }
     }
 

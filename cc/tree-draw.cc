@@ -917,7 +917,7 @@ void HzSections::detect_hz_lines_for_clades(Tree& aTree, const Clades* aClades, 
 
 void HzSections::add(std::string seq_id, bool show_line, std::string clade, size_t aa_pos)
 {
-    std::cerr << "DEBUG: hz sections " << sections.size() << DEBUG_LINE_FUNC << '\n';
+    // std::cerr << "DEBUG: hz sections " << sections.size() << DEBUG_LINE_FUNC << '\n';
     if (auto found = sections.find_if([&seq_id](const auto& sect) { return sect.name == seq_id; }); !found) {
         // std::cerr << "DEBUG: add hz section: " << seq_id << '\n';
         auto sec = sections.append();
