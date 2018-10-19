@@ -56,17 +56,19 @@ void AntigenicMapsDrawBase::init_settings()
           settings().columns = 3;
           break;
     }
-    size_t maps_per_column = number_sections / settings().columns + ((number_sections % settings().columns) == 0 ? 0 : 1);
+    const size_t maps_per_column = number_sections / settings().columns + ((number_sections % settings().columns) == 0 ? 0 : 1);
     const double map_width = 150; // height is not available at this moment mSurface.viewport().size.height / (maps_per_column + settings().gap * (maps_per_column - 1));
+    signature_page_settings().antigenic_maps_width = map_width * settings().columns + (settings().columns - 1) * settings().gap;
     switch (settings().columns) {
       case 2:
-          signature_page_settings().antigenic_maps_width = 579;
+          switch (maps_per_column) {
+            case 2:
+              signature_page_settings().antigenic_maps_width = 579;
+              break;
+          }
           break;
       case 3:
           signature_page_settings().antigenic_maps_width = 579;
-          break;
-      default:
-          signature_page_settings().antigenic_maps_width = map_width * settings().columns + (settings().columns - 1) * settings().gap;
           break;
     }
 
