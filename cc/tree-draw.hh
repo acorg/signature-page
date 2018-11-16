@@ -168,6 +168,7 @@ class TreeDrawMod : public acmacs::settings::object
 
     acmacs::settings::field<std::string>       mod{this, "mod", ""};            // root, hide_isolated_before, hide_if_cumulative_edge_length_bigger_than, hide_between, before2015-58P-or-146I-or-559I
     acmacs::settings::field<std::string>       mod_help{this, "?mod"};
+    acmacs::settings::field<std::string>       help{this, "?"};
     acmacs::settings::field<double>            d1{this, "d1"};
     acmacs::settings::field<std::string>       s1{this, "s1"};
     acmacs::settings::field<std::string>       s2{this, "s2"};

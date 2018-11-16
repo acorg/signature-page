@@ -132,9 +132,22 @@ void SignaturePageDraw::init_layout(bool show_aa_at_pos)
         mSettings->signature_page->left = 50;
         mSettings->signature_page->right = 0;
         mSettings->signature_page->layout = SignaturePageLayout::TreeTSClades;
-        mSettings->signature_page->time_series_width = 300;
-        mSettings->signature_page->clades_width = 100;
         mSettings->signature_page->tree_margin_right = 10;
+        mSettings->signature_page->time_series_width = 300;
+        if (const auto virus_type = mTree->virus_type(); virus_type == "A(H3N2)") {
+            mSettings->signature_page->time_series_width = 250;
+            mSettings->signature_page->clades_width = 160;
+        }
+        else if (virus_type == "A(H1N1)") {
+            mSettings->signature_page->clades_width = 100;
+        }
+        else if (virus_type == "B/Vic") {
+            mSettings->signature_page->clades_width = 50;
+        }
+        else if (virus_type == "B/Yam") {
+            mSettings->signature_page->left = 70;
+            mSettings->signature_page->clades_width = 50;
+        }
     }
 
     // std::cerr << "DEBUG: init_layout signature_page " << mSettings->signature_page << '\n';
@@ -175,9 +188,6 @@ void SignaturePageDraw::init_settings()
     else {                      // just tree
         mSettings->tree_draw->legend->width = 180;
         mSettings->hz_sections->vertical_gap = 15;
-        mSettings->signature_page->clades_width = 150;
-        if (const auto virus_type = mTree->virus_type(); virus_type == "A(H3N2)")
-            mSettings->signature_page->clades_width = 160;
 
         // for (auto& section: mSettings->hz_sections.sections) {
         //     section.show_label_in_time_series = false;

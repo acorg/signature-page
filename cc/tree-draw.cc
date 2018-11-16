@@ -63,6 +63,11 @@ void TreeDraw::init_settings(const Clades* aClades)
         mod->mod = "hide-if-cumulative-edge-length-bigger-than";
         mod->d1 = 0.04;
     }
+    else if (virus_type == "A(H1N1)") {
+        auto mod = mSettings.mods.append();
+        mod->mod = "hide-if-cumulative-edge-length-bigger-than";
+        mod->d1 = 0.021;
+    }
     else if (virus_type == "B/Vic") {
         {
             auto mod = mSettings.mods.append();
@@ -83,12 +88,17 @@ void TreeDraw::init_settings(const Clades* aClades)
             mod->color = "#606060";
             mod->line_width = 0.2;
         }
+        {
+            auto mod = mSettings.mods.append();
+            mod->mod = "before2015-58P-or-146I-or-559I";
+            mod->help = "hides 1B";
+        }
     }
     else if (virus_type == "B/Yam") {
         {
             auto mod = mSettings.mods.append();
             mod->mod = "hide-if-cumulative-edge-length-bigger-than";
-            mod->d1 = 0.04;
+            mod->d1 = 0.043;
         }
     }
     // else {
