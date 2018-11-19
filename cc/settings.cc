@@ -59,13 +59,45 @@ class PrettyHandlerSigpSettings : public rjson::PrettyHandler
     std::vector<rjson::object::content_t::const_iterator> sorted(const rjson::object& val) const override
     {
         auto result = rjson::PrettyHandler::sorted(val);
-        if (!result.empty()) {
-            if (result.front()->first == "first_leaf_seq_id")
-                std::sort(result.begin(), result.end(), [](const auto& e1, const auto& e2) -> bool { return e1->first > e2->first; });
-        }
+        std::sort(result.begin(), result.end(), [](const auto& e1, const auto& e2) -> bool { return replace_key(e1->first) < replace_key(e2->first); });
         return result;
     }
+
+ private:
+    static const std::map<std::string, std::string> top_level_keys_for_sorting_;
+
+    static std::string replace_key(std::string key)
+        {
+            if (auto found = top_level_keys_for_sorting_.find(key); found != top_level_keys_for_sorting_.end())
+                return found->second;
+            else
+                return key;
+        }
 };
+
+#pragma GCC diagnostic push
+#ifdef __clang__
+#pragma GCC diagnostic ignored "-Wexit-time-destructors"
+#pragma GCC diagnostic ignored "-Wglobal-constructors"
+#endif
+
+const std::map<std::string, std::string> PrettyHandlerSigpSettings::top_level_keys_for_sorting_ = {
+    // top level
+    {"signature_page", "0 signature_page"},
+    {"time_series", "1 time_series"},
+    {"title", "2 title"},
+    {"tree", "3 tree"},
+
+    // by_aa_label
+    {"label_offset", "0 label_offset"},
+    {"label", "1 label"},
+
+    // time series
+    {"begin", "0 begin"},
+    {"end", "1 end"},
+};
+
+#pragma GCC diagnostic pop
 
 // ----------------------------------------------------------------------
 
