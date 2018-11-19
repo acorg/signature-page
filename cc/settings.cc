@@ -103,7 +103,8 @@ const std::map<std::string, std::string> PrettyHandlerSigpSettings::top_level_ke
 std::vector<std::string> PrettyHandlerSigpSettings::simple_keys_ = {
     "label_offset",
     "offset",
-    "triggering_clades"
+    "triggering_clades",
+    "vaccine"
 };
 
 #pragma GCC diagnostic pop
