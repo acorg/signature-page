@@ -217,6 +217,7 @@ void SignaturePageDraw::write_initialized_settings(std::string aFilename)
           break;
       case SignaturePageLayout::TreeTSClades:
       case SignaturePageLayout::TreeAATSClades:
+          settings().tree_draw->remove_for_tree_settings();
           settings().antigenic_maps.remove();
           settings().mapped_antigens.remove();
           break;

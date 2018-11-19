@@ -3,6 +3,7 @@
 #include "acmacs-base/debug.hh"
 #include "acmacs-base/float.hh"
 #include "acmacs-base/read-file.hh"
+#include "acmacs-base/date.hh"
 
 #include "settings.hh"
 using namespace std::string_literals;
@@ -46,6 +47,7 @@ void Settings::upgrade()             // upgrade to the new version in case old v
 void write_settings(const Settings& aSettings, std::string aFilename)
 {
     std::cout << "INFO: writing settings to " << aFilename << '\n';
+    aSettings.timestamp = current_date_time();
     aSettings.write_to_file(aFilename);
 
 } // write_settings

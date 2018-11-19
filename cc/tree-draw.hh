@@ -67,6 +67,28 @@ class AATransitionIndividualSettings : public acmacs::settings::object
 
     acmacs::settings::field<acmacs::Offset> label_offset_commented{this, "?label_offset"};
 
+    void remove_for_tree_settings()
+    {
+        show.remove();
+        size.remove();
+        color.remove();
+        style.remove();
+        interline.remove();
+        label_connection_line_width.remove();
+        label_connection_line_color.remove();
+    }
+
+    void remove_for_signature_page_settings()
+    {
+        show.remove();
+        size.remove();
+        color.remove();
+        style.remove();
+        interline.remove();
+        label_connection_line_width.remove();
+        label_connection_line_color.remove();
+    }
+
 }; // class AATransitionIndividualSettings
 
 // ----------------------------------------------------------------------
@@ -90,6 +112,19 @@ class AATransitionPerBranchDrawSettings : public acmacs::settings::object
 
     AATransitionIndividualSettingsForLabel settings_for_label(const AA_TransitionLabels& aLabels, std::string aFirstLeafSeqid) const;
 
+    void remove_for_tree_settings()
+    {
+        show.remove();
+        size.remove();
+        color.remove();
+        style.remove();
+        interline.remove();
+        label_connection_line_width.remove();
+        label_connection_line_color.remove();
+        for (size_t index = 0; index < by_aa_label.size(); ++index)
+            by_aa_label[index]->remove_for_tree_settings();
+    }
+
     void remove_for_signature_page_settings()
     {
         show.remove();
@@ -102,6 +137,8 @@ class AATransitionPerBranchDrawSettings : public acmacs::settings::object
         scatter_label_offset_help.remove();
         label_connection_line_width.remove();
         label_connection_line_color.remove();
+        for (size_t index = 0; index < by_aa_label.size(); ++index)
+            by_aa_label[index]->remove_for_signature_page_settings();
     }
 
 }; // class AATransitionPerBranchDrawSettings
@@ -121,6 +158,8 @@ class AATransitionDrawSettings : public acmacs::settings::object
     acmacs::settings::field<bool>                                     show_node_for_left_line{this, "show_node_for_left_line", false};
     acmacs::settings::field<Color>                                    node_for_left_line_color{this, "node_for_left_line_color", "green"};
     acmacs::settings::field<double>                                   node_for_left_line_width{this, "node_for_left_line_width", 1};
+
+    void remove_for_tree_settings() { per_branch->remove_for_tree_settings(); }
 
     void remove_for_signature_page_settings()
     {
@@ -262,6 +301,8 @@ class TreeDrawSettings : public acmacs::settings::object
             return *found;
         throw std::runtime_error("Invalid tree.mods settings: cannot find mark-with-label for " + aSeqId);
     }
+
+    void remove_for_tree_settings() { aa_transition->remove_for_tree_settings(); }
 
     void remove_for_signature_page_settings()
     {

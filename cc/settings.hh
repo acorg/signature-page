@@ -35,6 +35,7 @@ class Settings : public acmacs::settings::toplevel
     Settings();
 
     acmacs::settings::field<std::string>                       version{this, "  version", SETTINGS_VERSION_4};
+    mutable acmacs::settings::field<std::string>               timestamp{this, "  timestamp"};
     acmacs::settings::field_array_of<SettingsMod>              mods{this, "mods"};
     acmacs::settings::field_object<SignaturePageDrawSettings>  signature_page{this, "signature_page"};
     acmacs::settings::field_object<TitleDrawSettings>          title{this, "title"};
