@@ -44,11 +44,26 @@ void Settings::upgrade()             // upgrade to the new version in case old v
 
 // ----------------------------------------------------------------------
 
+class PrettyHandlerSigpSettings : public rjson::PrettyHandler
+{
+ public:
+    PrettyHandlerSigpSettings() = default;
+
+    using rjson::PrettyHandler::is_simple;
+
+    bool is_simple(const rjson::object& val, dive a_dive) const override
+    {
+        return val.empty() || (a_dive == dive::yes && val.all_of([this](const auto& kv) -> bool { return kv.first == "label_offset" ? true : is_simple(kv.second, dive::no); }));
+    }
+};
+
+// ----------------------------------------------------------------------
+
 void write_settings(const Settings& aSettings, std::string aFilename)
 {
     std::cout << "INFO: writing settings to " << aFilename << '\n';
     aSettings.timestamp = current_date_time();
-    aSettings.write_to_file(aFilename);
+    aSettings.write_to_file(aFilename, rjson::emacs_indent::yes, PrettyHandlerSigpSettings{});
 
 } // write_settings
 
