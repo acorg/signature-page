@@ -55,6 +55,16 @@ class PrettyHandlerSigpSettings : public rjson::PrettyHandler
     {
         return val.empty() || (a_dive == dive::yes && val.all_of([this](const auto& kv) -> bool { return kv.first == "label_offset" ? true : is_simple(kv.second, dive::no); }));
     }
+
+    std::vector<rjson::object::content_t::const_iterator> sorted(const rjson::object& val) const override
+    {
+        auto result = rjson::PrettyHandler::sorted(val);
+        if (!result.empty()) {
+            if (result.front()->first == "first_leaf_seq_id")
+                std::sort(result.begin(), result.end(), [](const auto& e1, const auto& e2) -> bool { return e1->first > e2->first; });
+        }
+        return result;
+    }
 };
 
 // ----------------------------------------------------------------------
