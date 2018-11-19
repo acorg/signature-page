@@ -23,6 +23,8 @@ class TitleDrawSettings : public acmacs::settings::object
     acmacs::settings::field<acmacs::TextStyle> style{this, "style", {}};
     acmacs::settings::field<acmacs::Offset>    offset{this, "offset", {10, 30}};
 
+    void remove_for_tree_settings();
+
 }; // class TitleDrawSettings
 
 // ----------------------------------------------------------------------

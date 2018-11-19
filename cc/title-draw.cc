@@ -52,6 +52,14 @@ void TitleDraw::draw()
 } // TitleDraw::draw
 
 // ----------------------------------------------------------------------
+
+void TitleDrawSettings::remove_for_tree_settings()
+{
+    style.remove();
+
+} // TitleDrawSettings::remove_for_tree_settings
+
+// ----------------------------------------------------------------------
 /// Local Variables:
 /// eval: (if (fboundp 'eu-rename-buffer) (eu-rename-buffer))
 /// End:

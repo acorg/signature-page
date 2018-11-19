@@ -29,6 +29,8 @@ class TimeSeriesDrawSettings : public acmacs::settings::object
     acmacs::settings::field<double>            dash_width{this, "dash_width", 0.5};
     acmacs::settings::field<double>            dash_line_width{this, "dash_line_width", 1};
 
+    void remove_for_tree_settings();
+    
 }; // class TimeSeriesDrawSettings
 
 // ----------------------------------------------------------------------

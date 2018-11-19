@@ -193,6 +193,17 @@ void TimeSeriesDraw::draw_hz_section_label(size_t aSectionIndex, double aY)
 // } // TimeSeriesDraw::hide_hz_section_labels_in_time_series
 
 // ----------------------------------------------------------------------
+
+void TimeSeriesDrawSettings::remove_for_tree_settings()
+{
+    label_style.remove();
+
+} // TimeSeriesDrawSettings::remove_for_tree_settings
+
+// ----------------------------------------------------------------------
+
+
+// ----------------------------------------------------------------------
 /// Local Variables:
 /// eval: (if (fboundp 'eu-rename-buffer) (eu-rename-buffer))
 /// End:

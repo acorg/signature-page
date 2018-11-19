@@ -53,7 +53,9 @@ class PrettyHandlerSigpSettings : public rjson::PrettyHandler
 
     bool is_simple(const rjson::object& val, dive a_dive) const override
     {
-        return val.empty() || (a_dive == dive::yes && val.all_of([this](const auto& kv) -> bool { return kv.first == "label_offset" ? true : is_simple(kv.second, dive::no); }));
+        return val.empty() || (a_dive == dive::yes && val.all_of([this](const auto& kv) -> bool {
+                   return std::find(simple_keys_.begin(), simple_keys_.end(), kv.first) != simple_keys_.end() ? true : is_simple(kv.second, dive::no);
+               }));
     }
 
     std::vector<rjson::object::content_t::const_iterator> sorted(const rjson::object& val) const override
@@ -65,6 +67,7 @@ class PrettyHandlerSigpSettings : public rjson::PrettyHandler
 
  private:
     static const std::map<std::string, std::string> top_level_keys_for_sorting_;
+    static std::vector<std::string> simple_keys_;
 
     static std::string replace_key(std::string key)
         {
@@ -95,6 +98,12 @@ const std::map<std::string, std::string> PrettyHandlerSigpSettings::top_level_ke
     // time series
     {"begin", "0 begin"},
     {"end", "1 end"},
+};
+
+std::vector<std::string> PrettyHandlerSigpSettings::simple_keys_ = {
+    "label_offset",
+    "offset",
+    "triggering_clades"
 };
 
 #pragma GCC diagnostic pop
