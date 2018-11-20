@@ -19,7 +19,6 @@ class ChartDrawInterface : public ChartDrawBase
     void init_settings() override;
     const acmacs::Viewport& viewport() const override { return mChartDraw.viewport(); }
     virtual void viewport(const acmacs::Viewport& aViewport) { mChartDraw.viewport(aViewport); }
-    std::string lab() const override { return chart().info()->lab(acmacs::chart::Info::Compute::Yes); }
     void draw(acmacs::surface::Surface& aSurface) const override { mChartDraw.draw(aSurface); }
 
     std::optional<size_t> find_antigen(std::string aName) const override { return chart().antigens()->find_by_full_name(aName); }

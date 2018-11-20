@@ -172,9 +172,8 @@ acmacs::Viewport AntigenicMapMod::get_viewport(const acmacs::Viewport& aOrigView
 AntigenicMapsDrawSettings::AntigenicMapsDrawSettings(acmacs::settings::base& parent)
     : acmacs::settings::object(parent)
 {
-    auto m1 = mods.append();
-    m1->name = "viewport";
-    m1->rel.set({0, 0, 0});
+    add_viewport_mod();
+
     auto m2 = mods.append();
     m2->name = "point_scale";
     m2->scale = 1.0;
@@ -387,7 +386,17 @@ AntigenicMapsDrawSettings::AntigenicMapsDrawSettings(acmacs::settings::base& par
 
 // ----------------------------------------------------------------------
 
-void AntigenicMapsDrawSettings::viewport(const acmacs::Viewport& aViewport)
+void AntigenicMapsDrawSettings::add_viewport_mod()
+{
+    auto m1 = mods.append();
+    m1->name = "viewport";
+    m1->rel.set({0, 0, 0});
+
+} // AntigenicMapsDrawSettings::add_viewport_mod
+
+// ----------------------------------------------------------------------
+
+void AntigenicMapsDrawSettings::viewport(const acmacs::Viewport& aViewport, const std::vector<double>& rel)
 {
     auto make_setting_list = [&aViewport](acmacs::settings::field_array<double>& target) -> void {
         if (float_equal(aViewport.size.width, aViewport.size.height))
@@ -395,14 +404,17 @@ void AntigenicMapsDrawSettings::viewport(const acmacs::Viewport& aViewport)
         else
             target.set({aViewport.origin.x(), aViewport.origin.y(), aViewport.size.width, aViewport.size.height});
     };
-      // std::cerr << "DEBUG: AntigenicMapsDrawSettings::viewport" << '\n';
+    // std::cerr << "DEBUG: AntigenicMapsDrawSettings::viewport" << '\n';
     if (auto vpmod = mods.find_if([](const auto& mod) -> bool { return mod.name == "viewport"; }); !vpmod) {
         auto mod = mods.append();
         mod->name = "viewport";
-        make_setting_list(mod->viewport);
+        make_setting_list(mod->viewport_commented);
+        mod->rel.set(rel.begin(), rel.end());
     }
-    else
-        make_setting_list((*vpmod)->viewport);
+    else {
+        make_setting_list((*vpmod)->viewport_commented);
+        (*vpmod)->rel.set(rel.begin(), rel.end());
+    }
 
 } // AntigenicMapsDrawSettings::viewport
 

@@ -16,8 +16,14 @@ void AntigenicMapsLayoutDraw::prepare()
 {
     find_sequenced_antigens();
     prepare_apply_mods();
+
     const acmacs::Viewport& viewport = mAntigenicMapsDraw.chart().viewport();
-    settings().viewport(viewport);
+    std::vector<double> rel{0, 0, 0};
+    if (const auto lab_vt_a = mAntigenicMapsDraw.chart().lab() + ' ' + mAntigenicMapsDraw.chart().virus_type() + ' ' + mAntigenicMapsDraw.chart().assay();
+        lab_vt_a == "CDC A(H3N2) HI") {
+        rel.assign({4, 5, -7});
+    }
+    settings().viewport(viewport, rel);
     std::cout << "INFO: Using viewport: " << viewport << '\n';
 
 } // AntigenicMapsLayoutDraw::prepare

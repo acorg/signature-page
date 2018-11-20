@@ -114,6 +114,16 @@ void SignaturePageDraw::init_layout(bool show_aa_at_pos)
         mSettings->signature_page->clades_width = 20;
         mSettings->signature_page->tree_margin_right = 10;
         mSettings->signature_page->mapped_antigens_margin_right = 10;
+        if (const auto virus_type = mTree->virus_type(); virus_type == "A(H3N2)") {
+            mSettings->signature_page->time_series_width = 100;
+            mSettings->signature_page->clades_width = 35;
+        }
+        else if (virus_type == "A(H1N1)") {
+        }
+        else if (virus_type == "B/Vic") {
+        }
+        else if (virus_type == "B/Yam") {
+        }
     }
     else if (show_aa_at_pos) {
         mSettings->signature_page->top = 60;

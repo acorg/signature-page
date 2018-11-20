@@ -250,7 +250,7 @@ class AntigenicMapMod : public acmacs::settings::object
 
     acmacs::settings::field<std::string> name{this, "N"};
     acmacs::settings::field<std::string> name_commented{this, "?N"};
-    acmacs::settings::field_array<double> rel{this, "rel"}, viewport{this, "viewport"}; // viewport
+    acmacs::settings::field_array<double> rel{this, "rel"}, viewport{this, "viewport"}, viewport_commented{this, "?viewport"}; // viewport
     acmacs::settings::field<double> outline_scale{this, "outline_scale"}, scale{this, "scale"}; // point_scale
     acmacs::settings::field<Color> outline{this, "outline"}, fill{this, "fill"}, text_color{this, "text_color"}, color{this, "color"};
     acmacs::settings::field<double> outline_width{this, "outline_width"}, size{this, "size"}, text_size{this, "text_size"}, line_width{this, "line_width"};
@@ -286,7 +286,10 @@ class AntigenicMapsDrawSettings : public acmacs::settings::object
     acmacs::settings::field<double>                   mapped_antigens_section_line_width{this, "mapped_antigens_section_line_width", 1};
     acmacs::settings::field_array_of<AntigenicMapMod> mods{this, "mods"};
 
-    void viewport(const acmacs::Viewport& aViewport);
+    void viewport(const acmacs::Viewport& aViewport, const std::vector<double>& rel /* = {0, 0, 0} */);
+
+ private:
+    void add_viewport_mod();
 
 }; // class AntigenicMapsDrawSettings
 
