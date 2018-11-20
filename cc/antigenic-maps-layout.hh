@@ -13,6 +13,7 @@ class AntigenicMapsLayoutDraw
     inline AntigenicMapsLayoutDraw(AntigenicMapsDrawBase& aAntigenicMapsDraw) : mAntigenicMapsDraw(aAntigenicMapsDraw) {}
     virtual ~AntigenicMapsLayoutDraw();
 
+    virtual void init_settings();
     virtual void prepare();
     virtual void prepare_apply_mods() = 0;
     virtual void prepare_chart_for_all_sections() = 0;
@@ -52,7 +53,8 @@ class AntigenicMapsLayout
     virtual ~AntigenicMapsLayout();
 
     virtual AntigenicMapsLayoutDraw& layout_draw() = 0;
-    virtual inline void prepare() { layout_draw().prepare(); }
+    virtual void prepare() { layout_draw().prepare(); }
+    virtual void init_settings() { layout_draw().init_settings(); }
     virtual void draw(acmacs::surface::Surface& aMappedAntigensDrawSurface, bool report_antigens_in_hz_sections) = 0;
 
 }; // class AntigenicMapsLayout

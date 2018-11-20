@@ -74,6 +74,9 @@ void AntigenicMapsDrawBase::init_settings()
 
     std::cout << "INFO: antigenic maps: columns:" << settings().columns << " maps_per_column:" << maps_per_column << " map_width:" << map_width << " width:" << signature_page_settings().antigenic_maps_width << '\n';
 
+    if (!mLayout)
+        make_layout();
+    layout().init_settings();
     chart().init_settings();
 
 } // AntigenicMapsDrawBase::init_settings
@@ -90,13 +93,9 @@ void AntigenicMapsDrawBase::draw(acmacs::surface::Surface& aMappedAntigensDrawSu
 
 void AntigenicMapsDrawBase::prepare()
 {
-      // std::cerr << "DEBUG: AntigenicMapsDrawBase::prepare" << '\n';
-    if (static_cast<std::string>(settings().layout) == "labelled_grid") {
+    // std::cerr << "DEBUG: AntigenicMapsDrawBase::prepare" << '\n';
+    if (!mLayout)
         make_layout();
-    }
-    else {
-        throw std::runtime_error("Unrecognized antigenic maps layout: " + static_cast<std::string>(settings().layout));
-    }
     layout().prepare();
 
 } // AntigenicMapsDrawBase::prepare
@@ -396,7 +395,7 @@ void AntigenicMapsDrawSettings::add_viewport_mod()
 
 // ----------------------------------------------------------------------
 
-void AntigenicMapsDrawSettings::viewport(const acmacs::Viewport& aViewport, const std::vector<double>& rel)
+void AntigenicMapsDrawSettings::viewport(const acmacs::Viewport& aViewport)
 {
     auto make_setting_list = [&aViewport](acmacs::settings::field_array<double>& target) -> void {
         if (float_equal(aViewport.size.width, aViewport.size.height))
@@ -409,17 +408,27 @@ void AntigenicMapsDrawSettings::viewport(const acmacs::Viewport& aViewport, cons
         auto mod = mods.append();
         mod->name = "viewport";
         make_setting_list(mod->viewport_commented);
-        mod->rel.set(rel.begin(), rel.end());
     }
     else {
         make_setting_list((*vpmod)->viewport_commented);
-        (*vpmod)->rel.set(rel.begin(), rel.end());
     }
 
 } // AntigenicMapsDrawSettings::viewport
 
 // ----------------------------------------------------------------------
 
+void AntigenicMapsDrawSettings::viewport_rel(const std::vector<double>& rel)
+{
+    if (auto vpmod = mods.find_if([](const auto& mod) -> bool { return mod.name == "viewport"; }); !vpmod) {
+        auto mod = mods.append();
+        mod->name = "viewport";
+        mod->rel.set(rel.begin(), rel.end());
+    }
+    else {
+        (*vpmod)->rel.set(rel.begin(), rel.end());
+    }
+
+} // AntigenicMapsDrawSettings::viewport_rel
 
 // ----------------------------------------------------------------------
 /// Local Variables:

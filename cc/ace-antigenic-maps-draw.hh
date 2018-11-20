@@ -18,6 +18,7 @@ class ChartDrawInterface : public ChartDrawBase
 
     void init_settings() override;
     const acmacs::Viewport& viewport() const override { return mChartDraw.viewport(); }
+    const acmacs::Viewport& calculate_viewport() override { return mChartDraw.calculate_viewport(); }
     virtual void viewport(const acmacs::Viewport& aViewport) { mChartDraw.viewport(aViewport); }
     void draw(acmacs::surface::Surface& aSurface) const override { mChartDraw.draw(aSurface); }
 

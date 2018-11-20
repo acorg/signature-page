@@ -286,7 +286,8 @@ class AntigenicMapsDrawSettings : public acmacs::settings::object
     acmacs::settings::field<double>                   mapped_antigens_section_line_width{this, "mapped_antigens_section_line_width", 1};
     acmacs::settings::field_array_of<AntigenicMapMod> mods{this, "mods"};
 
-    void viewport(const acmacs::Viewport& aViewport, const std::vector<double>& rel /* = {0, 0, 0} */);
+    void viewport(const acmacs::Viewport& aViewport);
+    void viewport_rel(const std::vector<double>& rel);
 
  private:
     void add_viewport_mod();

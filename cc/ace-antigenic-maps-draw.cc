@@ -14,7 +14,12 @@ void ChartDrawInterface::init_settings()
 
 void AntigenicMapsDraw::make_layout()
 {
-    layout(new LabelledGrid(*this));
+    if (static_cast<std::string>(settings().layout) == "labelled_grid") {
+        layout(new LabelledGrid(*this));
+    }
+    else {
+        throw std::runtime_error("Unrecognized antigenic maps layout: " + static_cast<std::string>(settings().layout));
+    }
 
 } // AntigenicMapsDraw::make_layout
 
@@ -22,7 +27,7 @@ void AntigenicMapsDraw::make_layout()
 
 void AntigenicMapsLayoutDrawAce::prepare_apply_mods()
 {
-    // std::cerr << "DEBUG: [ace] AntigenicMapsLayoutDrawAce::prepare_apply_mods" << '\n';
+      // std::cerr << "DEBUG: AntigenicMapsLayoutDrawAce::prepare_apply_mods\n";
     settings().mods.for_each([this](const auto& mod) {
         try {
             if (!mod.name.is_set_or_has_default()) {

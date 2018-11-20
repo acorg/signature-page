@@ -18,6 +18,7 @@ class ChartDrawBase
 
     virtual void init_settings() = 0;
     virtual const acmacs::Viewport& viewport() const = 0;
+    virtual const acmacs::Viewport& calculate_viewport() = 0;
     virtual void draw(acmacs::surface::Surface& aSurface) const = 0;
 
     std::string lab() const { return chart().info()->lab(acmacs::chart::Info::Compute::Yes); }
