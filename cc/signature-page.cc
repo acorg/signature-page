@@ -15,6 +15,7 @@
 #include "mapped-antigens-draw.hh"
 #include "antigenic-maps-draw.hh"
 #include "title-draw.hh"
+#include "settings-initializer.hh"
 
 // ----------------------------------------------------------------------
 
@@ -103,19 +104,22 @@ void SignaturePageDraw::make_surface(std::string aFilename, bool init_settings, 
 
 // ----------------------------------------------------------------------
 
-void SignaturePageDraw::init_layout(bool show_aa_at_pos)
+void SignaturePageDraw::init_layout(const SettingsInitializer& settings_initilizer)
 {
+    mSettings->signature_page->time_series_width = settings_initilizer.time_series_width();
+
+    const bool show_aa_at_pos = false;
     if (!mChartFilename.empty()) {
         mSettings->signature_page->top = 23;
         mSettings->signature_page->bottom = 23;
         mSettings->signature_page->left = 10;
         mSettings->signature_page->layout = SignaturePageLayout::TreeCladesTSMaps;
-        mSettings->signature_page->time_series_width = 140;
+          // mSettings->signature_page->time_series_width = 140;
         mSettings->signature_page->clades_width = 20;
         mSettings->signature_page->tree_margin_right = 10;
         mSettings->signature_page->mapped_antigens_margin_right = 10;
         if (const auto virus_type = mTree->virus_type(); virus_type == "A(H3N2)") {
-            mSettings->signature_page->time_series_width = 100;
+              // mSettings->signature_page->time_series_width = 100;
             mSettings->signature_page->clades_width = 35;
         }
         else if (virus_type == "A(H1N1)") {
@@ -131,7 +135,7 @@ void SignaturePageDraw::init_layout(bool show_aa_at_pos)
         mSettings->signature_page->left = 50;
         mSettings->signature_page->right = 0;
         mSettings->signature_page->layout = SignaturePageLayout::TreeAATSClades;
-        mSettings->signature_page->time_series_width = 150;
+          // mSettings->signature_page->time_series_width = 150;
         mSettings->signature_page->clades_width = 50;
         mSettings->signature_page->tree_margin_right = 10;
         mSettings->aa_at_pos->width = 500;
@@ -143,9 +147,9 @@ void SignaturePageDraw::init_layout(bool show_aa_at_pos)
         mSettings->signature_page->right = 0;
         mSettings->signature_page->layout = SignaturePageLayout::TreeTSClades;
         mSettings->signature_page->tree_margin_right = 10;
-        mSettings->signature_page->time_series_width = 300;
+          // mSettings->signature_page->time_series_width = 300;
         if (const auto virus_type = mTree->virus_type(); virus_type == "A(H3N2)") {
-            mSettings->signature_page->time_series_width = 250;
+              // mSettings->signature_page->time_series_width = 250;
             mSettings->signature_page->clades_width = 160;
         }
         else if (virus_type == "A(H1N1)") {
@@ -166,12 +170,19 @@ void SignaturePageDraw::init_layout(bool show_aa_at_pos)
 
 // ----------------------------------------------------------------------
 
-void SignaturePageDraw::init_settings()
+void SignaturePageDraw::init_settings(bool show_aa_at_pos)
 {
     mSettings->inject_default();
     mSettings->signature_page->bottom = mSettings->signature_page->top;
 
-      // std::cout << "\nINFO: INIT:\n  signature_page.top " << mSettings->signature_page->top << "\n  signature_page.bottom " << mSettings->signature_page->bottom << '\n';
+    const auto virus_type = mTree->virus_type();
+    const auto lab = mAntigenicMapsDraw ? mAntigenicMapsDraw->chart().lab() : std::string{};
+    const auto assay = mAntigenicMapsDraw ? mAntigenicMapsDraw->chart().assay() : std::string{};
+    auto settings_initilizer = settings_initilizer_factory(lab, virus_type, assay, show_aa_at_pos);
+
+    init_layout(*settings_initilizer);
+
+    // std::cout << "\nINFO: INIT:\n  signature_page.top " << mSettings->signature_page->top << "\n  signature_page.bottom " << mSettings->signature_page->bottom << '\n';
 
     if (mTitleDraw)
         mTitleDraw->init_settings();
@@ -189,13 +200,13 @@ void SignaturePageDraw::init_settings()
         mSettings->hz_sections->vertical_gap = 15;
         mSettings->clades->clades.for_each([](auto& clade) { clade.label_offset = acmacs::Offset{1, 0}; });
         if (mAntigenicMapsDraw)
-            mAntigenicMapsDraw->init_settings();
+            mAntigenicMapsDraw->init_settings(*settings_initilizer);
     }
     else if (mSettings->aa_at_pos->width > 0.0) { // tree and aa-at-pos
         mSettings->tree_draw->legend->width = 100;
         mSettings->hz_sections->vertical_gap = 15;
     }
-    else {                      // just tree
+    else { // just tree
         mSettings->tree_draw->legend->width = 180;
         mSettings->hz_sections->vertical_gap = 15;
 

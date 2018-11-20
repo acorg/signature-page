@@ -31,7 +31,7 @@ void AntigenicMapsDrawBase::layout(AntigenicMapsLayout* aLayout)
 
 // ----------------------------------------------------------------------
 
-void AntigenicMapsDrawBase::init_settings()
+void AntigenicMapsDrawBase::init_settings(const SettingsInitializer& settings_initilizer)
 {
     // std::cerr << "DEBUG: AntigenicMapsDrawBase::init_settings" << '\n';
     const size_t number_sections = hz_sections().shown_maps();
@@ -76,7 +76,7 @@ void AntigenicMapsDrawBase::init_settings()
 
     if (!mLayout)
         make_layout();
-    layout().init_settings();
+    layout().init_settings(settings_initilizer);
     chart().init_settings();
 
 } // AntigenicMapsDrawBase::init_settings

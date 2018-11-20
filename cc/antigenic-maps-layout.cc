@@ -3,6 +3,7 @@
 //#include "tree.hh"
 #include "tree-draw.hh"
 #include "signature-page.hh"
+#include "settings-initializer.hh"
 
 // ----------------------------------------------------------------------
 
@@ -12,15 +13,10 @@ AntigenicMapsLayoutDraw::~AntigenicMapsLayoutDraw()
 
 // ----------------------------------------------------------------------
 
-void AntigenicMapsLayoutDraw::init_settings()
+void AntigenicMapsLayoutDraw::init_settings(const SettingsInitializer& settings_initilizer)
 {
-    std::vector<double> rel{0, 0, 0};
-    if (const auto lab_vt_a = mAntigenicMapsDraw.chart().lab() + ' ' + mAntigenicMapsDraw.chart().virus_type() + ' ' + mAntigenicMapsDraw.chart().assay();
-        lab_vt_a == "CDC A(H3N2) HI") {
-        rel.assign({4, 5, -7});
-    }
     settings().viewport(mAntigenicMapsDraw.chart().calculate_viewport());
-    settings().viewport_rel(rel);
+    settings().viewport_rel(settings_initilizer.viewport_rel());
 
 } // AntigenicMapsLayoutDraw::init_settings
 

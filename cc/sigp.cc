@@ -74,8 +74,7 @@ int main(int argc, const char *argv[])
                 signature_page.chart(args["--chart"].str()); // before make_surface!
             signature_page.make_surface(std::string(args[1]), args["--init-settings"], args["--show-aa-at-pos"], !args["--no-draw"]); // before init_layout!
             if (args["--init-settings"]) {
-                signature_page.init_layout(args["--show-aa-at-pos"]);
-                signature_page.init_settings();
+                signature_page.init_settings(args["--show-aa-at-pos"]);
             }
             signature_page.prepare(!args["--not-show-hz-sections"]);
             if (args["--report-cumulative"]) {

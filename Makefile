@@ -20,7 +20,7 @@ SIGNATURE_PAGE_SOURCES = \
   signature-page.cc tree-draw.cc time-series-draw.cc clades-draw.cc \
   mapped-antigens-draw.cc aa-at-pos-draw.cc antigenic-maps-layout.cc \
   antigenic-maps-draw.cc ace-antigenic-maps-draw.cc \
-  title-draw.cc coloring.cc settings.cc
+  title-draw.cc coloring.cc settings.cc settings-initializer.cc
 
 SIGP_SOURCES = sigp.cc $(SIGNATURE_PAGE_SOURCES)
 SETTINGS_CREATE_SOURCES = settings-create.cc  $(SIGNATURE_PAGE_SOURCES)

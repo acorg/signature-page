@@ -22,6 +22,7 @@ class AntigenicMapsDrawSettings;
 class MappedAntigensDraw;
 class ChartDrawBase;
 class AntigenicMapsLayout;
+class SettingsInitializer;
 
 // ----------------------------------------------------------------------
 
@@ -31,7 +32,7 @@ class AntigenicMapsDrawBase
     AntigenicMapsDrawBase(acmacs::surface::Surface& aSurface, Tree& aTree, HzSections& aHzSections, SignaturePageDrawSettings& aSignaturePageDrawSettings, AntigenicMapsDrawSettings& aSettings);
     virtual ~AntigenicMapsDrawBase();
 
-    virtual void init_settings();
+    virtual void init_settings(const SettingsInitializer& settings_initilizer);
     virtual void prepare();
     virtual void draw(acmacs::surface::Surface& aMappedAntigensDrawSurface, bool report_antigens_in_hz_sections);
     virtual ChartDrawBase& chart() = 0;
