@@ -115,17 +115,6 @@ void SignaturePageDraw::init_settings(bool show_aa_at_pos)
 
     settings_initilizer->update(*mSettings->signature_page);
 
-    if (mTitleDraw)
-        mTitleDraw->init_settings(*settings_initilizer);
-    if (mTreeDraw)
-        mTreeDraw->ladderize(); // ladderize and set_line_no before init clades!
-    if (mCladesDraw)
-        mCladesDraw->init_settings(*settings_initilizer);
-    if (mTreeDraw)
-        mTreeDraw->init_settings(mCladesDraw ? mCladesDraw->clades() : nullptr, *settings_initilizer);
-    if (mTimeSeriesDraw)
-        mTimeSeriesDraw->init_settings(*settings_initilizer);
-
     if (!mChartFilename.empty()) {
         mSettings->signature_page->layout = SignaturePageLayout::TreeCladesTSMaps;
         if (mAntigenicMapsDraw)
@@ -136,11 +125,24 @@ void SignaturePageDraw::init_settings(bool show_aa_at_pos)
     }
     else {
         mSettings->signature_page->layout = SignaturePageLayout::TreeTSClades;
-        if (mTreeDraw)
-            mTreeDraw->detect_hz_lines_for_clades(mCladesDraw ? mCladesDraw->clades() : nullptr, true);
     }
 
-    std::cerr << "DEBUG: " << mSettings->pretty() << DEBUG_LINE_FUNC << '\n';
+    if (mTitleDraw)
+        mTitleDraw->init_settings(*settings_initilizer);
+    if (mTreeDraw)
+        mTreeDraw->ladderize(); // ladderize and set_line_no before init clades!
+    if (mCladesDraw)
+        mCladesDraw->init_settings(*settings_initilizer);
+    if (mTreeDraw) {
+        auto clades = mCladesDraw ? mCladesDraw->clades() : nullptr;
+        if (mSettings->signature_page->layout == SignaturePageLayout::TreeTSClades)
+            mTreeDraw->detect_hz_lines_for_clades(clades, true);
+        mTreeDraw->init_settings(clades, *settings_initilizer);
+    }
+    if (mTimeSeriesDraw)
+        mTimeSeriesDraw->init_settings(*settings_initilizer);
+
+    // std::cerr << "DEBUG: " << mSettings->hz_sections->pretty() << DEBUG_LINE_FUNC << '\n';
 
 } // SignaturePageDraw::init_settings
 
