@@ -880,9 +880,9 @@ void HzSections::detect_hz_lines_for_clades(Tree& aTree, const Clades* aClades, 
 
 // ----------------------------------------------------------------------
 
-void HzSections::add(std::string seq_id, bool show_line, std::string clade, size_t aa_pos, bool first_in_clade)
+acmacs::settings::array_element<HzSection> HzSections::add(std::string seq_id, bool show_line, std::string clade, size_t aa_pos, bool first_in_clade)
 {
-      // std::cerr << "DEBUG: hz sections " << sections.size() << DEBUG_LINE_FUNC << '\n';
+    // std::cerr << "DEBUG: hz sections " << sections.size() << DEBUG_LINE_FUNC << '\n';
     const std::string clade_tag = string::concat(clade, ':', first_in_clade ? "first" : "last");
     if (auto found = sections.find_if([&seq_id](const auto& sect) { return sect.name == seq_id; }); !found) {
         // std::cerr << "DEBUG: add hz section: " << seq_id << '\n';
@@ -893,6 +893,7 @@ void HzSections::add(std::string seq_id, bool show_line, std::string clade, size
             sec->triggering_clades.append(clade_tag);
         if (aa_pos > 0)
             sec->triggering_aa_pos.append(aa_pos);
+        return sec;
     }
     else {
         if (!clade.empty())
@@ -900,6 +901,7 @@ void HzSections::add(std::string seq_id, bool show_line, std::string clade, size
         if (aa_pos > 0)
             (*found)->triggering_aa_pos.append(aa_pos);
         // std::cerr << "DEBUG: hz section found: " << seq_id << ' ' << (*found)->triggering_clades << ' ' << (*found)->triggering_aa_pos << '\n';
+        return *found;
     }
 
 } // HzSections::add

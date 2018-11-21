@@ -208,14 +208,30 @@ namespace
             tree_draw.hz_sections().sections.for_each([](auto& section) {
                 if (section.triggering_clades.contains("first-leaf:first") || section.triggering_clades.contains("2A1:first") || section.triggering_clades.contains("2A1A:last"))
                     section.show_map = false;
+                else if (section.triggering_clades.contains("3C.3A:first"))
+                    section.label = "3C.3a";
+                else if (section.triggering_clades.contains("2A4:first"))
+                    section.label = "2a4";
+                else if (section.triggering_clades.contains("2A3:first"))
+                    section.label = "2a3";
+                else if (section.triggering_clades.contains("2A1A:first"))
+                    section.label = "2a1a";
+                else if (section.triggering_clades.contains("2A1B:first"))
+                    section.label = "2a1b 135T";
+                else if (section.triggering_clades.contains("2A2:first"))
+                    section.label = "2a2";
             });
 
             tree_draw.tree().make_aa_transitions();
-            tree::iterate_pre(tree_draw.tree(), [](const Node& node) {
-                // if (!node.data.aa_transitions.empty())
-                //     std::cerr << "DEBUG: " << node.data.aa_transitions << ' ' << node.data.number_strains << DEBUG_LINE_FUNC << '\n';
-                if (node.data.aa_transitions.size() == 1 && node.data.aa_transitions[0].display_name() == "T135K" && node.data.number_strains > 200) {
-                    std::cerr << "DEBUG: " << node.data.aa_transitions << ' ' << node.data.number_strains << DEBUG_LINE_FUNC << '\n';
+            tree::iterate_pre(tree_draw.tree(), [&tree_draw](const Node& node) {
+                if (node.data.aa_transitions.size() == 1 && node.data.aa_transitions.contains("T135K") && node.data.number_strains > 200) {
+                    auto section = tree_draw.hz_sections().add(find_first_leaf(node).seq_id, true, std::string{}, 0, true);
+                    section->label = "2a1b 135K";
+                      // std::cerr << "DEBUG: " << node.data.aa_transitions << ' ' << node.data.number_strains << DEBUG_LINE_FUNC << '\n';
+                }
+                else if (node.data.aa_transitions.contains("K135N") && node.data.number_strains > 100) {
+                    auto section = tree_draw.hz_sections().add(find_first_leaf(node).seq_id, true, std::string{}, 0, true);
+                    section->label = "2a1b 135N";
                 }
             });
         }

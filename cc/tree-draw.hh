@@ -378,7 +378,7 @@ class HzSections : public acmacs::settings::object
     void report_html(std::string filename) const;
     // void auto_detect(Tree& aTree, const Clades* aClades);
     void detect_hz_lines_for_clades(Tree& aTree, const Clades* aClades, bool aForce);
-    void add(std::string seq_id, bool show_line, std::string clade, size_t aa_pos, bool first_in_clade);
+    acmacs::settings::array_element<HzSection> add(std::string seq_id, bool show_line, std::string clade, size_t aa_pos, bool first_in_clade);
     void add(const Tree& tree, const Node& first, const Node& last, bool show_line, std::string clade, size_t aa_pos);
 
     size_t shown_maps() const
