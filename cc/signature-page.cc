@@ -106,65 +106,14 @@ void SignaturePageDraw::make_surface(std::string aFilename, bool init_settings, 
 
 void SignaturePageDraw::init_layout(const SettingsInitializer& settings_initilizer)
 {
-    mSettings->signature_page->time_series_width = settings_initilizer.time_series_width();
+    settings_initilizer.update(*mSettings->signature_page);
 
-    const bool show_aa_at_pos = false;
-    if (!mChartFilename.empty()) {
-        mSettings->signature_page->top = 23;
-        mSettings->signature_page->bottom = 23;
-        mSettings->signature_page->left = 10;
+    if (!mChartFilename.empty())
         mSettings->signature_page->layout = SignaturePageLayout::TreeCladesTSMaps;
-          // mSettings->signature_page->time_series_width = 140;
-        mSettings->signature_page->clades_width = 20;
-        mSettings->signature_page->tree_margin_right = 10;
-        mSettings->signature_page->mapped_antigens_margin_right = 10;
-        if (const auto virus_type = mTree->virus_type(); virus_type == "A(H3N2)") {
-              // mSettings->signature_page->time_series_width = 100;
-            mSettings->signature_page->clades_width = 35;
-        }
-        else if (virus_type == "A(H1N1)") {
-        }
-        else if (virus_type == "B/Vic") {
-        }
-        else if (virus_type == "B/Yam") {
-        }
-    }
-    else if (show_aa_at_pos) {
-        mSettings->signature_page->top = 60;
-        mSettings->signature_page->bottom = 60;
-        mSettings->signature_page->left = 50;
-        mSettings->signature_page->right = 0;
+    else if (settings_initilizer.show_aa_at_pos())
         mSettings->signature_page->layout = SignaturePageLayout::TreeAATSClades;
-          // mSettings->signature_page->time_series_width = 150;
-        mSettings->signature_page->clades_width = 50;
-        mSettings->signature_page->tree_margin_right = 10;
-        mSettings->aa_at_pos->width = 500;
-    }
-    else {
-        mSettings->signature_page->top = 60;
-        mSettings->signature_page->bottom = 60;
-        mSettings->signature_page->left = 50;
-        mSettings->signature_page->right = 0;
+    else
         mSettings->signature_page->layout = SignaturePageLayout::TreeTSClades;
-        mSettings->signature_page->tree_margin_right = 10;
-          // mSettings->signature_page->time_series_width = 300;
-        if (const auto virus_type = mTree->virus_type(); virus_type == "A(H3N2)") {
-              // mSettings->signature_page->time_series_width = 250;
-            mSettings->signature_page->clades_width = 160;
-        }
-        else if (virus_type == "A(H1N1)") {
-            mSettings->signature_page->clades_width = 100;
-        }
-        else if (virus_type == "B/Vic") {
-            mSettings->signature_page->clades_width = 50;
-        }
-        else if (virus_type == "B/Yam") {
-            mSettings->signature_page->left = 70;
-            mSettings->signature_page->clades_width = 50;
-        }
-    }
-
-    // std::cerr << "DEBUG: init_layout signature_page " << mSettings->signature_page << '\n';
 
 } // SignaturePageDraw::init_layout
 
