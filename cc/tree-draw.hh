@@ -411,6 +411,11 @@ class TreeDraw
     void set_line_no();
     acmacs::surface::Surface& surface() { return mSurface; }
     const HzSections& hz_sections() const { return mHzSections; }
+    HzSections& hz_sections() { return mHzSections; }
+    const TreeDrawSettings& settings() const { return mSettings; }
+    TreeDrawSettings& settings() { return mSettings; }
+    const Tree& tree() const { return mTree; }
+    Tree& tree() { return mTree; }
 
     static constexpr const size_t sFirstLineNo = 1; // line of the first node is 1, we have 1 line space at the top and bottom of the tree
 

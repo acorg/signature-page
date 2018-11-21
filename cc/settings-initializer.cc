@@ -22,7 +22,7 @@ namespace
 
         void update(TitleDrawSettings& settings) const override { settings.title = virus_type(); }
         void update(CladesDrawSettings& /*settings*/) const override {}
-        void update(TreeDrawSettings& /*settings*/, HzSections& /*hz_sections*/) const override {}
+        void update(TreeDraw& /*tree_draw*/) const override {}
 
         void update(CladesDrawSettings& settings, std::pair<const std::string, CladeData>& clade) const override
         {
@@ -69,10 +69,10 @@ namespace
             settings.tree_margin_right = 10;
         }
 
-        void update(TreeDrawSettings& settings, HzSections& hz_sections) const override
+        void update(TreeDraw& tree_draw) const override
         {
-            Default::update(settings, hz_sections);
-            settings.legend->width = 100;
+            Default::update(tree_draw);
+            tree_draw.settings().legend->width = 100;
         }
 
         bool show_aa_at_pos() const override { return false; }
@@ -104,7 +104,11 @@ namespace
             settings.offset = acmacs::Offset{10, 10};
         }
 
-        void update(TreeDrawSettings& settings, HzSections& hz_sections) const override { Default::update(settings, hz_sections); settings.legend->width = 100; }
+        void update(TreeDraw& tree_draw) const override
+        {
+            Default::update(tree_draw);
+            tree_draw.settings().legend->width = 100;
+        }
 
         void update(CladesDrawSettings& settings) const override
         {
@@ -141,7 +145,11 @@ namespace
             settings.time_series_width = 300;
         }
 
-        void update(TreeDrawSettings& settings, HzSections& hz_sections) const override { Default::update(settings, hz_sections); settings.legend->width = 180; }
+        void update(TreeDraw& tree_draw) const override
+        {
+            Default::update(tree_draw);
+            tree_draw.settings().legend->width = 180;
+        }
     };
 
     // ----------------------------------------------------------------------
@@ -157,10 +165,10 @@ namespace
             settings.clades_width = 100;
         }
 
-        void update(TreeDrawSettings& settings, HzSections& hz_sections) const override
+        void update(TreeDraw& tree_draw) const override
         {
-            TreeOnly::update(settings, hz_sections);
-            auto mod = settings.mods.append();
+            TreeOnly::update(tree_draw);
+            auto mod = tree_draw.settings().mods.append();
             mod->mod = "hide-if-cumulative-edge-length-bigger-than";
             mod->d1 = 0.021;
         }
@@ -189,17 +197,26 @@ namespace
             settings.clades_width = 160;
         }
 
-        void update(TreeDrawSettings& settings, HzSections& hz_sections) const override
+        void update(TreeDraw& tree_draw) const override
         {
-            TreeOnly::update(settings, hz_sections);
+            TreeOnly::update(tree_draw);
 
-            auto mod = settings.mods.append();
+            auto mod = tree_draw.settings().mods.append();
             mod->mod = "hide-if-cumulative-edge-length-bigger-than";
             mod->d1 = 0.04;
 
-            hz_sections.sections.for_each([](auto& section) {
+            tree_draw.hz_sections().sections.for_each([](auto& section) {
                 if (section.triggering_clades.contains("first-leaf:first") || section.triggering_clades.contains("2A1:first") || section.triggering_clades.contains("2A1A:last"))
                     section.show_map = false;
+            });
+
+            tree_draw.tree().make_aa_transitions();
+            tree::iterate_pre(tree_draw.tree(), [](const Node& node) {
+                // if (!node.data.aa_transitions.empty())
+                //     std::cerr << "DEBUG: " << node.data.aa_transitions << ' ' << node.data.number_strains << DEBUG_LINE_FUNC << '\n';
+                if (node.data.aa_transitions.size() == 1 && node.data.aa_transitions[0].display_name() == "T135K" && node.data.number_strains > 200) {
+                    std::cerr << "DEBUG: " << node.data.aa_transitions << ' ' << node.data.number_strains << DEBUG_LINE_FUNC << '\n';
+                }
             });
         }
 
@@ -281,30 +298,30 @@ namespace
             settings.clades_width = 50;
         }
 
-        void update(TreeDrawSettings& settings, HzSections& hz_sections) const override
+        void update(TreeDraw& tree_draw) const override
         {
-            TreeOnly::update(settings, hz_sections);
+            TreeOnly::update(tree_draw);
             {
-                auto mod = settings.mods.append();
+                auto mod = tree_draw.settings().mods.append();
                 mod->mod = "hide-if-cumulative-edge-length-bigger-than";
                 mod->d1 = 0.0191;
             }
             {
-                auto mod = settings.mods.append();
+                auto mod = tree_draw.settings().mods.append();
                 mod->mod = "mark-clade-with-line";
                 mod->clade = "DEL2017";
                 mod->color = "#A0A0A0";
                 mod->line_width = 0.2;
             }
             {
-                auto mod = settings.mods.append();
+                auto mod = tree_draw.settings().mods.append();
                 mod->mod = "mark-clade-with-line";
                 mod->clade = "TRIPLEDEL2017";
                 mod->color = "#606060";
                 mod->line_width = 0.2;
             }
             {
-                auto mod = settings.mods.append();
+                auto mod = tree_draw.settings().mods.append();
                 mod->mod = "before2015-58P-or-146I-or-559I";
                 mod->help = "hides 1B";
             }
@@ -334,10 +351,10 @@ namespace
             settings.clades_width = 50;
         }
 
-        void update(TreeDrawSettings& settings, HzSections& hz_sections) const override
+        void update(TreeDraw& tree_draw) const override
         {
-            TreeOnly::update(settings, hz_sections);
-            auto mod = settings.mods.append();
+            TreeOnly::update(tree_draw);
+            auto mod = tree_draw.settings().mods.append();
             mod->mod = "hide-if-cumulative-edge-length-bigger-than";
             mod->d1 = 0.043;
         }
