@@ -102,37 +102,37 @@ class CladesDrawSettings : public acmacs::settings::object
 class CladeSection
 {
  public:
-    inline CladeSection(const Node* node) : first(node), last(node) {}
+    CladeSection(const Node* node) : first(node), last(node) {}
     const Node* first;
     const Node* last;
 };
 
 class CladeData
 {
- public:
+  public:
     using slot_type = int;
     using seq_ids_entry_t = std::pair<std::string, std::string>;
     using seq_ids_t = std::vector<seq_ids_entry_t>;
 
-    inline CladeData() : slot{CladeDrawSettings::NoSlot} {}
-    inline CladeData(const Node& node) : sections{{&node}}, slot{CladeDrawSettings::NoSlot} {}
+    CladeData() : slot{CladeDrawSettings::NoSlot} {}
+    CladeData(const Node& node) : sections{{&node}}, slot{CladeDrawSettings::NoSlot} {}
 
     void extend(const Node& node, size_t section_inclusion_tolerance);
     void remove_small_sections(size_t section_exclusion_tolerance);
 
-    inline const Node* first() const { return sections.front().first; }
-    inline size_t first_line() const { return first()->draw.line_no; }
-    inline const Node* last() const { return sections.back().last; }
-    inline size_t last_line() const { return last()->draw.line_no; }
+    const Node* first() const { return sections.front().first; }
+    size_t first_line() const { return first()->draw.line_no; }
+    const Node* last() const { return sections.back().last; }
+    size_t last_line() const { return last()->draw.line_no; }
 
-    inline bool shown() const { return slot != CladeDrawSettings::NoSlot; }
+    bool shown() const { return slot != CladeDrawSettings::NoSlot; }
 
-    inline seq_ids_t seq_ids() const
-        {
-            seq_ids_t result;
-            std::transform(std::begin(sections), std::end(sections), std::back_inserter(result), [](const auto& sec) -> seq_ids_entry_t { return {sec.first->seq_id, sec.last->seq_id}; });
-            return result;
-        }
+    seq_ids_t seq_ids() const
+    {
+        seq_ids_t result;
+        std::transform(std::begin(sections), std::end(sections), std::back_inserter(result), [](const auto& sec) -> seq_ids_entry_t { return {sec.first->seq_id, sec.last->seq_id}; });
+        return result;
+    }
 
     std::vector<CladeSection> sections;
     slot_type slot;
@@ -148,7 +148,7 @@ std::ostream& operator << (std::ostream& out, const CladeData& clade);
 class CladesDraw
 {
  public:
-    inline CladesDraw(acmacs::surface::Surface& aSurface, Tree& aTree, const TreeDraw& aTreeDraw, const TimeSeriesDraw& aTimeSeriesDraw, CladesDrawSettings& aSettings)
+    CladesDraw(acmacs::surface::Surface& aSurface, Tree& aTree, const TreeDraw& aTreeDraw, const TimeSeriesDraw& aTimeSeriesDraw, CladesDrawSettings& aSettings)
         : mSurface(aSurface), mTree(aTree), mTreeDraw(aTreeDraw), mTimeSeriesDraw(aTimeSeriesDraw), mSettings(aSettings) {}
 
     void prepare();

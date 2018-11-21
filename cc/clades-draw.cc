@@ -164,6 +164,7 @@ void CladesDraw::draw()
         const auto for_clade = mSettings.for_clade(name_clade.first);
         if (clade.shown() && for_clade->show) {
             for (const auto& section: clade.sections) {
+                  // std::cerr << "DEBUG: Clade section " << name_clade.first << '\n' << section.first->draw.vertical_pos << ' ' << section.first->seq_id << '\n' << section.last->draw.vertical_pos << ' ' << section.last->seq_id << DEBUG_LINE_FUNC << '\n';
                 const double top = section.first->draw.vertical_pos - mTreeDraw.vertical_step() / 2;
                 const double bottom = section.last->draw.vertical_pos + mTreeDraw.vertical_step() / 2;
                 const double label_height = mSurface.text_size("W", Pixels{for_clade->label_size}, for_clade->label_style).height;
