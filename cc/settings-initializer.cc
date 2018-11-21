@@ -197,8 +197,11 @@ namespace
             mod->mod = "hide-if-cumulative-edge-length-bigger-than";
             mod->d1 = 0.04;
 
-            // if (auto found = hz_sections.sections.find_if([](const auto& section) {section.triggering_aa_pos}); found) {
-            // }
+            const auto f1 = [](const auto& section) { return section.triggering_clades.contains("2A1") && section.triggering_clades.contains("2A3"); };
+            if (auto found = hz_sections.sections.find_if(f1); found) {
+                (*found)->show_map = false;
+                (*found)->show_label_in_time_series = false;
+            }
         }
 
       protected:

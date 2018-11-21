@@ -59,6 +59,7 @@ void TreeDraw::init_settings(const Clades* aClades, const SettingsInitializer& s
         mHzSections.detect_hz_lines_for_clades(mTree, aClades, true);
     mHzSections.vertical_gap = 15;
     settings_initilizer.update(mSettings, mHzSections);
+    std::cerr << "DEBUG: " << mHzSections.to_json() << DEBUG_LINE_FUNC << '\n';
 
 } // TreeDraw::init_settings
 

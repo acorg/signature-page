@@ -140,6 +140,8 @@ void SignaturePageDraw::init_settings(bool show_aa_at_pos)
             mTreeDraw->detect_hz_lines_for_clades(mCladesDraw ? mCladesDraw->clades() : nullptr, true);
     }
 
+    std::cerr << "DEBUG: " << mSettings->pretty() << DEBUG_LINE_FUNC << '\n';
+
 } // SignaturePageDraw::init_settings
 
 // ----------------------------------------------------------------------
@@ -150,22 +152,22 @@ void SignaturePageDraw::write_initialized_settings(std::string aFilename)
     if (layout == SignaturePageLayout::Auto)
         layout = mSurface->aspect() > 1 ? SignaturePageLayout::TreeCladesTSMaps : SignaturePageLayout::TreeTSClades;
     switch (layout) {
-      case SignaturePageLayout::Auto:
-          break;
-      case SignaturePageLayout::TreeCladesTSMaps:
-          settings().tree_draw->remove_for_signature_page_settings();
-          settings().time_series.remove();
-          settings().clades.remove();
-          settings().hz_sections.remove();
-          break;
-      case SignaturePageLayout::TreeTSClades:
-      case SignaturePageLayout::TreeAATSClades:
-          settings().tree_draw->remove_for_tree_settings();
-          settings().time_series->remove_for_tree_settings();
-          settings().title->remove_for_tree_settings();
-          settings().antigenic_maps.remove();
-          settings().mapped_antigens.remove();
-          break;
+        case SignaturePageLayout::Auto:
+            break;
+        case SignaturePageLayout::TreeCladesTSMaps:
+            settings().tree_draw->remove_for_signature_page_settings();
+            settings().time_series.remove();
+            settings().clades.remove();
+            settings().hz_sections.remove();
+            break;
+        case SignaturePageLayout::TreeTSClades:
+        case SignaturePageLayout::TreeAATSClades:
+            settings().tree_draw->remove_for_tree_settings();
+            settings().time_series->remove_for_tree_settings();
+            settings().title->remove_for_tree_settings();
+            settings().antigenic_maps.remove();
+            settings().mapped_antigens.remove();
+            break;
     }
     write_settings(settings(), aFilename);
 
