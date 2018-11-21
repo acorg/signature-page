@@ -9,6 +9,7 @@
 #include "tree-draw.hh"
 #include "tree.hh"
 #include "coloring.hh"
+#include "settings-initializer.hh"
 
 // ----------------------------------------------------------------------
 
@@ -51,59 +52,12 @@ void TreeDraw::make_coloring()
 
 // ----------------------------------------------------------------------
 
-void TreeDraw::init_settings(const Clades* aClades)
+void TreeDraw::init_settings(const Clades* aClades, const SettingsInitializer& settings_initilizer)
 {
     mInitializeSettings = true;
-
     if (hz_sections().sections.empty())
         mHzSections.detect_hz_lines_for_clades(mTree, aClades, true);
-
-    if (const auto virus_type = mTree.virus_type(); virus_type == "A(H3N2)") {
-        auto mod = mSettings.mods.append();
-        mod->mod = "hide-if-cumulative-edge-length-bigger-than";
-        mod->d1 = 0.04;
-    }
-    else if (virus_type == "A(H1N1)") {
-        auto mod = mSettings.mods.append();
-        mod->mod = "hide-if-cumulative-edge-length-bigger-than";
-        mod->d1 = 0.021;
-    }
-    else if (virus_type == "B/Vic") {
-        {
-            auto mod = mSettings.mods.append();
-            mod->mod = "hide-if-cumulative-edge-length-bigger-than";
-            mod->d1 = 0.0191;
-        }
-        {
-            auto mod = mSettings.mods.append();
-            mod->mod = "mark-clade-with-line";
-            mod->clade = "DEL2017";
-            mod->color = "#A0A0A0";
-            mod->line_width = 0.2;
-        }
-        {
-            auto mod = mSettings.mods.append();
-            mod->mod = "mark-clade-with-line";
-            mod->clade = "TRIPLEDEL2017";
-            mod->color = "#606060";
-            mod->line_width = 0.2;
-        }
-        {
-            auto mod = mSettings.mods.append();
-            mod->mod = "before2015-58P-or-146I-or-559I";
-            mod->help = "hides 1B";
-        }
-    }
-    else if (virus_type == "B/Yam") {
-        {
-            auto mod = mSettings.mods.append();
-            mod->mod = "hide-if-cumulative-edge-length-bigger-than";
-            mod->d1 = 0.043;
-        }
-    }
-    // else {
-    //     std::cerr << "DEBUG: mTree.virus_type() " << virus_type << DEBUG_LINE_FUNC << '\n';
-    // }
+    settings_initilizer.update(mSettings);
 
 } // TreeDraw::init_settings
 

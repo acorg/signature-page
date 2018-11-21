@@ -32,9 +32,8 @@ class TitleDrawSettings : public acmacs::settings::object
 
 class TitleDraw
 {
- public:
-    inline TitleDraw(acmacs::surface::Surface& aSurface, const Tree& aTree, const ChartDrawBase* aChart, TitleDrawSettings& aSettings)
-        : mSurface(aSurface), mTree(aTree), mChart(aChart), mSettings(aSettings) {}
+  public:
+    TitleDraw(acmacs::surface::Surface& aSurface, TitleDrawSettings& aSettings) : mSurface(aSurface), mSettings(aSettings) {}
 
     void init_settings(const SettingsInitializer& settings_initilizer);
     void prepare();
@@ -42,10 +41,8 @@ class TitleDraw
 
     inline acmacs::surface::Surface& surface() { return mSurface; }
 
- private:
+  private:
     acmacs::surface::Surface& mSurface;
-    const Tree& mTree;
-    const ChartDrawBase* mChart;
     TitleDrawSettings& mSettings;
 
 }; // class TitleDraw

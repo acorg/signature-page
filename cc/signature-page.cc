@@ -94,10 +94,10 @@ void SignaturePageDraw::make_surface(std::string aFilename, bool init_settings, 
     if (!mChartFilename.empty()) {
         mAntigenicMapsDraw = std::unique_ptr<AntigenicMapsDrawBase>(make_antigenic_maps_draw(mChartFilename, mSurface->subsurface(false), *mTree, *mSettings->hz_sections, *mSettings->signature_page, *mSettings->antigenic_maps));
         mMappedAntigensDraw = std::make_unique<MappedAntigensDraw>(mSurface->subsurface(false), *mTree, mAntigenicMapsDraw->chart(), *mSettings->mapped_antigens);
-        mTitleDraw = std::make_unique<TitleDraw>(mSurface->subsurface(false), *mTree, &mAntigenicMapsDraw->chart(), *mSettings->title);
+        mTitleDraw = std::make_unique<TitleDraw>(mSurface->subsurface(false), *mSettings->title);
     }
     else {
-        mTitleDraw = std::make_unique<TitleDraw>(mSurface->subsurface(false), *mTree, nullptr, *mSettings->title);
+        mTitleDraw = std::make_unique<TitleDraw>(mSurface->subsurface(false), *mSettings->title);
     }
 
 } // SignaturePageDraw::make_surface
@@ -130,7 +130,7 @@ void SignaturePageDraw::init_settings(bool show_aa_at_pos)
     if (mCladesDraw)
         mCladesDraw->init_settings(*settings_initilizer);
     if (mTreeDraw)
-        mTreeDraw->init_settings(mCladesDraw ? mCladesDraw->clades() : nullptr);
+        mTreeDraw->init_settings(mCladesDraw ? mCladesDraw->clades() : nullptr, *settings_initilizer);
     if (mTimeSeriesDraw)
         mTimeSeriesDraw->init_settings();
 

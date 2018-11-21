@@ -3,6 +3,7 @@
 #include "signature-page.hh"
 #include "title-draw.hh"
 #include "clades-draw.hh"
+#include "tree-draw.hh"
 
 // ----------------------------------------------------------------------
 
@@ -15,7 +16,8 @@ namespace
 
         void update(SignaturePageDrawSettings& settings) const override { settings.time_series_width = 100; }
         void update(TitleDrawSettings& settings) const override { settings.title = virus_type(); }
-        void update(CladesDrawSettings& settings) const override {}
+        void update(CladesDrawSettings& /*settings*/) const override {}
+        void update(TreeDrawSettings& /*settings*/) const override {}
 
         void update(CladesDrawSettings& settings, std::pair<const std::string, CladeData>& clade) const override
         {
@@ -134,8 +136,15 @@ namespace
             settings.clades_width = 100;
         }
 
+        void update(TreeDrawSettings& settings) const override
+        {
+            auto mod = settings.mods.append();
+            mod->mod = "hide-if-cumulative-edge-length-bigger-than";
+            mod->d1 = 0.021;
+        }
+
       protected:
-        void update_settings_clade(CladesDrawSettings& settings, std::pair<const std::string, CladeData>& clade, CladeDrawSettings& settings_clade) const override
+        void update_settings_clade(CladesDrawSettings& /*settings*/, std::pair<const std::string, CladeData>& clade, CladeDrawSettings& settings_clade) const override
         {
             if (clade.first == "6B") {
                 clade.second.slot = settings_clade.slot = 4;
@@ -157,8 +166,15 @@ namespace
             settings.clades_width = 160;
         }
 
+        void update(TreeDrawSettings& settings) const override
+        {
+            auto mod = settings.mods.append();
+            mod->mod = "hide-if-cumulative-edge-length-bigger-than";
+            mod->d1 = 0.04;
+        }
+
       protected:
-        void update_settings_clade(CladesDrawSettings& settings, std::pair<const std::string, CladeData>& clade, CladeDrawSettings& settings_clade) const override
+        void update_settings_clade(CladesDrawSettings& /*settings*/, std::pair<const std::string, CladeData>& clade, CladeDrawSettings& settings_clade) const override
         {
             if (clade.first == "GLY" || clade.first == "NO-GLY") {
                 settings_clade.show = false;
@@ -231,8 +247,36 @@ namespace
             settings.clades_width = 50;
         }
 
+        void update(TreeDrawSettings& settings) const override
+        {
+            {
+                auto mod = settings.mods.append();
+                mod->mod = "hide-if-cumulative-edge-length-bigger-than";
+                mod->d1 = 0.0191;
+            }
+            {
+                auto mod = settings.mods.append();
+                mod->mod = "mark-clade-with-line";
+                mod->clade = "DEL2017";
+                mod->color = "#A0A0A0";
+                mod->line_width = 0.2;
+            }
+            {
+                auto mod = settings.mods.append();
+                mod->mod = "mark-clade-with-line";
+                mod->clade = "TRIPLEDEL2017";
+                mod->color = "#606060";
+                mod->line_width = 0.2;
+            }
+            {
+                auto mod = settings.mods.append();
+                mod->mod = "before2015-58P-or-146I-or-559I";
+                mod->help = "hides 1B";
+            }
+        }
+
       protected:
-        void update_settings_clade(CladesDrawSettings& settings, std::pair<const std::string, CladeData>& clade, CladeDrawSettings& settings_clade) const override
+        void update_settings_clade(CladesDrawSettings& /*settings*/, std::pair<const std::string, CladeData>& clade, CladeDrawSettings& settings_clade) const override
         {
             if (clade.first == "DEL2017" || clade.first == "TRIPLEDEL2017") {
                 settings_clade.show = false;
@@ -252,6 +296,13 @@ namespace
             TreeOnly::update(settings);
             settings.left = 70;
             settings.clades_width = 50;
+        }
+
+        void update(TreeDrawSettings& settings) const override
+        {
+            auto mod = settings.mods.append();
+            mod->mod = "hide-if-cumulative-edge-length-bigger-than";
+            mod->d1 = 0.043;
         }
 
       protected:
