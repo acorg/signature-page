@@ -10,6 +10,7 @@ class TitleDrawSettings;
 class CladesDrawSettings;
 class CladeData;
 class TreeDrawSettings;
+class HzSections;
 
 // ----------------------------------------------------------------------
 
@@ -24,7 +25,7 @@ class SettingsInitializer
     virtual void update(TitleDrawSettings& settings) const = 0;
     virtual void update(CladesDrawSettings& settings) const = 0;
     virtual void update(CladesDrawSettings& settings, std::pair<const std::string, CladeData>& clade) const = 0;
-    virtual void update(TreeDrawSettings& settings) const = 0;
+    virtual void update(TreeDrawSettings& settings, HzSections& hz_sections) const = 0;
 
     virtual std::vector<double> viewport_rel() const = 0;
 };

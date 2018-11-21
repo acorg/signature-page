@@ -22,7 +22,7 @@ namespace
 
         void update(TitleDrawSettings& settings) const override { settings.title = virus_type(); }
         void update(CladesDrawSettings& /*settings*/) const override {}
-        void update(TreeDrawSettings& /*settings*/) const override {}
+        void update(TreeDrawSettings& /*settings*/, HzSections& /*hz_sections*/) const override {}
 
         void update(CladesDrawSettings& settings, std::pair<const std::string, CladeData>& clade) const override
         {
@@ -69,7 +69,11 @@ namespace
             settings.tree_margin_right = 10;
         }
 
-        void update(TreeDrawSettings& settings) const override { settings.legend->width = 100; }
+        void update(TreeDrawSettings& settings, HzSections& hz_sections) const override
+        {
+            Default::update(settings, hz_sections);
+            settings.legend->width = 100;
+        }
 
         bool show_aa_at_pos() const override { return false; }
     };
@@ -100,7 +104,7 @@ namespace
             settings.offset = acmacs::Offset{10, 10};
         }
 
-        void update(TreeDrawSettings& settings) const override { settings.legend->width = 100; }
+        void update(TreeDrawSettings& settings, HzSections& hz_sections) const override { Default::update(settings, hz_sections); settings.legend->width = 100; }
 
         void update(CladesDrawSettings& settings) const override
         {
@@ -137,7 +141,7 @@ namespace
             settings.time_series_width = 300;
         }
 
-        void update(TreeDrawSettings& settings) const override { settings.legend->width = 180; }
+        void update(TreeDrawSettings& settings, HzSections& hz_sections) const override { Default::update(settings, hz_sections); settings.legend->width = 180; }
     };
 
     // ----------------------------------------------------------------------
@@ -153,9 +157,9 @@ namespace
             settings.clades_width = 100;
         }
 
-        void update(TreeDrawSettings& settings) const override
+        void update(TreeDrawSettings& settings, HzSections& hz_sections) const override
         {
-            TreeOnly::update(settings);
+            TreeOnly::update(settings, hz_sections);
             auto mod = settings.mods.append();
             mod->mod = "hide-if-cumulative-edge-length-bigger-than";
             mod->d1 = 0.021;
@@ -185,12 +189,16 @@ namespace
             settings.clades_width = 160;
         }
 
-        void update(TreeDrawSettings& settings) const override
+        void update(TreeDrawSettings& settings, HzSections& hz_sections) const override
         {
-            TreeOnly::update(settings);
+            TreeOnly::update(settings, hz_sections);
+
             auto mod = settings.mods.append();
             mod->mod = "hide-if-cumulative-edge-length-bigger-than";
             mod->d1 = 0.04;
+
+            // if (auto found = hz_sections.sections.find_if([](const auto& section) {section.triggering_aa_pos}); found) {
+            // }
         }
 
       protected:
@@ -198,6 +206,9 @@ namespace
         {
             TreeOnly::update_settings_clade(settings, clade, settings_clade);
             if (clade.first == "GLY" || clade.first == "NO-GLY") {
+                settings_clade.show = false;
+            }
+            else if (clade.first == "3C.3") {
                 settings_clade.show = false;
             }
             else if (clade.first == "3C.3A") {
@@ -268,9 +279,9 @@ namespace
             settings.clades_width = 50;
         }
 
-        void update(TreeDrawSettings& settings) const override
+        void update(TreeDrawSettings& settings, HzSections& hz_sections) const override
         {
-            TreeOnly::update(settings);
+            TreeOnly::update(settings, hz_sections);
             {
                 auto mod = settings.mods.append();
                 mod->mod = "hide-if-cumulative-edge-length-bigger-than";
@@ -321,9 +332,9 @@ namespace
             settings.clades_width = 50;
         }
 
-        void update(TreeDrawSettings& settings) const override
+        void update(TreeDrawSettings& settings, HzSections& hz_sections) const override
         {
-            TreeOnly::update(settings);
+            TreeOnly::update(settings, hz_sections);
             auto mod = settings.mods.append();
             mod->mod = "hide-if-cumulative-edge-length-bigger-than";
             mod->d1 = 0.043;
