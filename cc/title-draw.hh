@@ -9,6 +9,7 @@
 
 class Tree;
 class ChartDrawBase;
+class SettingsInitializer;
 
 // ----------------------------------------------------------------------
 
@@ -35,7 +36,7 @@ class TitleDraw
     inline TitleDraw(acmacs::surface::Surface& aSurface, const Tree& aTree, const ChartDrawBase* aChart, TitleDrawSettings& aSettings)
         : mSurface(aSurface), mTree(aTree), mChart(aChart), mSettings(aSettings) {}
 
-    void init_settings();
+    void init_settings(const SettingsInitializer& settings_initilizer);
     void prepare();
     void draw();
 

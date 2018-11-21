@@ -103,6 +103,7 @@ const std::map<std::string, std::string> PrettyHandlerSigpSettings::top_level_ke
 std::vector<std::string> PrettyHandlerSigpSettings::simple_keys_ = {
     "label_offset",
     "offset",
+    "style",
     "triggering_clades",
     "vaccine"
 };

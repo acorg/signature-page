@@ -121,7 +121,6 @@ class SignaturePageDraw
     void make_layout_tree_ts_clades();
     void make_layout_tree_clades_ts_maps();
     void draw_mods();
-    void init_layout(const SettingsInitializer& settings_initilizer);
 
 }; // class SignaturePageDraw
 

@@ -6,14 +6,24 @@
 // ----------------------------------------------------------------------
 
 class SignaturePageDrawSettings;
+class TitleDrawSettings;
+class CladesDrawSettings;
+class CladeData;
+
+// ----------------------------------------------------------------------
 
 class SettingsInitializer
 {
  public:
     virtual ~SettingsInitializer() = default;
 
-    virtual void update(SignaturePageDrawSettings& settings) const = 0;
     virtual bool show_aa_at_pos() const = 0;
+
+    virtual void update(SignaturePageDrawSettings& settings) const = 0;
+    virtual void update(TitleDrawSettings& settings) const = 0;
+    virtual void update(CladesDrawSettings& settings) const = 0;
+    virtual void update(CladesDrawSettings& settings, std::pair<const std::string, CladeData>& clade) const = 0;
+
     virtual std::vector<double> viewport_rel() const = 0;
 };
 

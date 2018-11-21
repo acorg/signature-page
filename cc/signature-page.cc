@@ -104,21 +104,6 @@ void SignaturePageDraw::make_surface(std::string aFilename, bool init_settings, 
 
 // ----------------------------------------------------------------------
 
-void SignaturePageDraw::init_layout(const SettingsInitializer& settings_initilizer)
-{
-    settings_initilizer.update(*mSettings->signature_page);
-
-    if (!mChartFilename.empty())
-        mSettings->signature_page->layout = SignaturePageLayout::TreeCladesTSMaps;
-    else if (settings_initilizer.show_aa_at_pos())
-        mSettings->signature_page->layout = SignaturePageLayout::TreeAATSClades;
-    else
-        mSettings->signature_page->layout = SignaturePageLayout::TreeTSClades;
-
-} // SignaturePageDraw::init_layout
-
-// ----------------------------------------------------------------------
-
 void SignaturePageDraw::init_settings(bool show_aa_at_pos)
 {
     mSettings->inject_default();
@@ -129,16 +114,21 @@ void SignaturePageDraw::init_settings(bool show_aa_at_pos)
     const auto assay = mAntigenicMapsDraw ? mAntigenicMapsDraw->chart().assay() : std::string{};
     auto settings_initilizer = settings_initilizer_factory(lab, virus_type, assay, show_aa_at_pos);
 
-    init_layout(*settings_initilizer);
+    if (!mChartFilename.empty())
+        mSettings->signature_page->layout = SignaturePageLayout::TreeCladesTSMaps;
+    else if (settings_initilizer->show_aa_at_pos())
+        mSettings->signature_page->layout = SignaturePageLayout::TreeAATSClades;
+    else
+        mSettings->signature_page->layout = SignaturePageLayout::TreeTSClades;
 
-    // std::cout << "\nINFO: INIT:\n  signature_page.top " << mSettings->signature_page->top << "\n  signature_page.bottom " << mSettings->signature_page->bottom << '\n';
+    settings_initilizer->update(*mSettings->signature_page);
 
     if (mTitleDraw)
-        mTitleDraw->init_settings();
+        mTitleDraw->init_settings(*settings_initilizer);
     if (mTreeDraw)
         mTreeDraw->ladderize(); // ladderize and set_line_no before init clades!
     if (mCladesDraw)
-        mCladesDraw->init_settings();
+        mCladesDraw->init_settings(*settings_initilizer);
     if (mTreeDraw)
         mTreeDraw->init_settings(mCladesDraw ? mCladesDraw->clades() : nullptr);
     if (mTimeSeriesDraw)

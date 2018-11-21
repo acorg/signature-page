@@ -13,6 +13,7 @@
 
 class TreeDraw;
 class TimeSeriesDraw;
+class SettingsInitializer;
 
 // ----------------------------------------------------------------------
 
@@ -153,9 +154,9 @@ class CladesDraw
     void prepare();
     void draw();
 
-    void init_settings();
-    inline acmacs::surface::Surface& surface() { return mSurface; }
-    inline const Clades* clades() const { return &mClades; }
+    void init_settings(const SettingsInitializer& settings_initilizer);
+    acmacs::surface::Surface& surface() { return mSurface; }
+    const Clades* clades() const { return &mClades; }
 
  private:
     acmacs::surface::Surface& mSurface;

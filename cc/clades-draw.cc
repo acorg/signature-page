@@ -5,6 +5,7 @@
 #include "clades-draw.hh"
 #include "tree-draw.hh"
 #include "time-series-draw.hh"
+#include "settings-initializer.hh"
 
 // ----------------------------------------------------------------------
 
@@ -143,63 +144,12 @@ void CladesDraw::assign_slots()
 
 // ----------------------------------------------------------------------
 
-#pragma GCC diagnostic push
-#ifdef __clang__
-#pragma GCC diagnostic ignored "-Wexit-time-destructors"
-#pragma GCC diagnostic ignored "-Wglobal-constructors"
-#endif
-
-using clade_update_t = std::tuple<std::string, int, bool>; // display_name, slot, show
-using clades_update_t = std::map<std::string, clade_update_t>; // name -> [display_name, slot]
-static const clades_update_t sCladesFixer = {
-      // H1
-    {"6B", {"6B", 4, true}},
-      // H3
-    {"GLY", {"GLY", 0, false}},
-    {"NO-GLY", {"NO-GLY", 0, false}},
-    {"3C.3", {"3C.3", 0, true}},
-    {"3C.3A", {"3C.3a", 0, true}},
-    {"3C.3B", {"3C.3b", 0, true}},
-    {"3C.2A", {"3C.2a", 7, true}},
-    {"2A1", {"2a1", 4, true}},
-    {"2A1A", {"2a1a", 0, true}},
-    {"2A1B", {"2a1b", 0, true}},
-    {"2A2", {"2a2", 0, true}},
-    {"2A3", {"2a3", 0, true}},
-    {"2A4", {"2a4", 0, true}},
-      // B/Vic
-    {"DEL2017", {"DEL2017", 0, false}},
-    {"TRIPLEDEL2017", {"TRIPLEDEL2017", 0, false}},
-
-};
-
-#pragma GCC diagnostic pop
-
-void CladesDraw::init_settings()
+void CladesDraw::init_settings(const SettingsInitializer& settings_initilizer)
 {
     collect();
-    for (auto& clade : mClades) {
-        auto matcher = [&](const auto& c) { return static_cast<std::string>(c.name) == clade.first; };
-        auto get_settings_clade = [&matcher, &clade, this]() {
-            if (auto settings_clade = mSettings.clades.find_if(matcher); !settings_clade) {
-                auto new_clade = mSettings.clades.append();
-                new_clade->name = clade.first;
-                return mSettings.clades.find_if(matcher);
-            }
-            else
-                return settings_clade;
-        };
-
-        if (auto settings_clade = get_settings_clade(); settings_clade) {
-            if (const auto clade_fixer = sCladesFixer.find(clade.first); clade_fixer != sCladesFixer.end()) {
-                const auto [display_name, slot, show] = clade_fixer->second;
-                (*settings_clade)->display_name = display_name;
-                clade.second.slot = slot;
-                (*settings_clade)->show = show;
-            }
-            (*settings_clade)->slot = clade.second.slot;
-        }
-    }
+    settings_initilizer.update(mSettings);
+    for (auto& clade : mClades)
+        settings_initilizer.update(mSettings, clade);
 
 } // CladesDraw::init_settings
 
