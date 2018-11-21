@@ -47,7 +47,7 @@ void TimeSeriesDraw::prepare()
 
 // ----------------------------------------------------------------------
 
-void TimeSeriesDraw::init_settings()
+void TimeSeriesDraw::init_settings(const SettingsInitializer& /*settings_initilizer*/)
 {
 
 } // TimeSeriesDraw::init_settings

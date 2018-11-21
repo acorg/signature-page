@@ -14,7 +14,12 @@ namespace
       public:
         Default(std::string lab, std::string virus_type, std::string assay) : lab_{lab}, virus_type_{virus_type}, assay_{assay} {}
 
-        void update(SignaturePageDrawSettings& settings) const override { settings.time_series_width = 100; }
+        void update(SignaturePageDrawSettings& settings) const override
+        {
+            settings.time_series_width = 100;
+            settings.bottom = settings.top;
+        }
+
         void update(TitleDrawSettings& settings) const override { settings.title = virus_type(); }
         void update(CladesDrawSettings& /*settings*/) const override {}
         void update(TreeDrawSettings& /*settings*/) const override {}
@@ -64,6 +69,8 @@ namespace
             settings.tree_margin_right = 10;
         }
 
+        void update(TreeDrawSettings& settings) const override { settings.legend->width = 100; }
+
         bool show_aa_at_pos() const override { return false; }
     };
 
@@ -91,6 +98,14 @@ namespace
             Default::update(settings);
             settings.title = string::join(" ", {virus_type(), fixed_lab()});
             settings.offset = acmacs::Offset{10, 10};
+        }
+
+        void update(TreeDrawSettings& settings) const override { settings.legend->width = 100; }
+
+        void update(CladesDrawSettings& settings) const override
+        {
+            Default::update(settings);
+            settings.clades.for_each([](auto& clade) { clade.label_offset = acmacs::Offset{1, 0}; });
         }
 
       protected:
@@ -121,6 +136,8 @@ namespace
             settings.tree_margin_right = 10;
             settings.time_series_width = 300;
         }
+
+        void update(TreeDrawSettings& settings) const override { settings.legend->width = 180; }
     };
 
     // ----------------------------------------------------------------------
@@ -138,14 +155,16 @@ namespace
 
         void update(TreeDrawSettings& settings) const override
         {
+            TreeOnly::update(settings);
             auto mod = settings.mods.append();
             mod->mod = "hide-if-cumulative-edge-length-bigger-than";
             mod->d1 = 0.021;
         }
 
       protected:
-        void update_settings_clade(CladesDrawSettings& /*settings*/, std::pair<const std::string, CladeData>& clade, CladeDrawSettings& settings_clade) const override
+        void update_settings_clade(CladesDrawSettings& settings, std::pair<const std::string, CladeData>& clade, CladeDrawSettings& settings_clade) const override
         {
+            TreeOnly::update_settings_clade(settings, clade, settings_clade);
             if (clade.first == "6B") {
                 clade.second.slot = settings_clade.slot = 4;
             }
@@ -168,14 +187,16 @@ namespace
 
         void update(TreeDrawSettings& settings) const override
         {
+            TreeOnly::update(settings);
             auto mod = settings.mods.append();
             mod->mod = "hide-if-cumulative-edge-length-bigger-than";
             mod->d1 = 0.04;
         }
 
       protected:
-        void update_settings_clade(CladesDrawSettings& /*settings*/, std::pair<const std::string, CladeData>& clade, CladeDrawSettings& settings_clade) const override
+        void update_settings_clade(CladesDrawSettings& settings, std::pair<const std::string, CladeData>& clade, CladeDrawSettings& settings_clade) const override
         {
+            TreeOnly::update_settings_clade(settings, clade, settings_clade);
             if (clade.first == "GLY" || clade.first == "NO-GLY") {
                 settings_clade.show = false;
             }
@@ -249,6 +270,7 @@ namespace
 
         void update(TreeDrawSettings& settings) const override
         {
+            TreeOnly::update(settings);
             {
                 auto mod = settings.mods.append();
                 mod->mod = "hide-if-cumulative-edge-length-bigger-than";
@@ -276,8 +298,9 @@ namespace
         }
 
       protected:
-        void update_settings_clade(CladesDrawSettings& /*settings*/, std::pair<const std::string, CladeData>& clade, CladeDrawSettings& settings_clade) const override
+        void update_settings_clade(CladesDrawSettings& settings, std::pair<const std::string, CladeData>& clade, CladeDrawSettings& settings_clade) const override
         {
+            TreeOnly::update_settings_clade(settings, clade, settings_clade);
             if (clade.first == "DEL2017" || clade.first == "TRIPLEDEL2017") {
                 settings_clade.show = false;
             }
@@ -300,13 +323,17 @@ namespace
 
         void update(TreeDrawSettings& settings) const override
         {
+            TreeOnly::update(settings);
             auto mod = settings.mods.append();
             mod->mod = "hide-if-cumulative-edge-length-bigger-than";
             mod->d1 = 0.043;
         }
 
       protected:
-        void update_settings_clade(CladesDrawSettings& /*settings*/, std::pair<const std::string, CladeData>& /*clade*/, CladeDrawSettings& /*settings_clade*/) const override {}
+        // void update_settings_clade(CladesDrawSettings& settings, std::pair<const std::string, CladeData>& clade, CladeDrawSettings& settings_clade) const override
+        //     {
+        //         TreeOnly::update_settings_clade(settings, clade, settings_clade);
+        //     }
     };
 
     // ----------------------------------------------------------------------

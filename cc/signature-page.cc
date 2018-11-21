@@ -107,19 +107,11 @@ void SignaturePageDraw::make_surface(std::string aFilename, bool init_settings, 
 void SignaturePageDraw::init_settings(bool show_aa_at_pos)
 {
     mSettings->inject_default();
-    mSettings->signature_page->bottom = mSettings->signature_page->top;
 
     const auto virus_type = mTree->virus_type();
     const auto lab = mAntigenicMapsDraw ? mAntigenicMapsDraw->chart().lab() : std::string{};
     const auto assay = mAntigenicMapsDraw ? mAntigenicMapsDraw->chart().assay() : std::string{};
     auto settings_initilizer = settings_initilizer_factory(lab, virus_type, assay, show_aa_at_pos);
-
-    if (!mChartFilename.empty())
-        mSettings->signature_page->layout = SignaturePageLayout::TreeCladesTSMaps;
-    else if (settings_initilizer->show_aa_at_pos())
-        mSettings->signature_page->layout = SignaturePageLayout::TreeAATSClades;
-    else
-        mSettings->signature_page->layout = SignaturePageLayout::TreeTSClades;
 
     settings_initilizer->update(*mSettings->signature_page);
 
@@ -132,27 +124,18 @@ void SignaturePageDraw::init_settings(bool show_aa_at_pos)
     if (mTreeDraw)
         mTreeDraw->init_settings(mCladesDraw ? mCladesDraw->clades() : nullptr, *settings_initilizer);
     if (mTimeSeriesDraw)
-        mTimeSeriesDraw->init_settings();
+        mTimeSeriesDraw->init_settings(*settings_initilizer);
 
-    if (!mChartFilename.empty() && mSurface->aspect() > 1) { // with maps
-        mSettings->tree_draw->legend->width = 100;
-        mSettings->hz_sections->vertical_gap = 15;
-        mSettings->clades->clades.for_each([](auto& clade) { clade.label_offset = acmacs::Offset{1, 0}; });
+    if (!mChartFilename.empty()) {
+        mSettings->signature_page->layout = SignaturePageLayout::TreeCladesTSMaps;
         if (mAntigenicMapsDraw)
             mAntigenicMapsDraw->init_settings(*settings_initilizer);
     }
-    else if (mSettings->aa_at_pos->width > 0.0) { // tree and aa-at-pos
-        mSettings->tree_draw->legend->width = 100;
-        mSettings->hz_sections->vertical_gap = 15;
+    else if (settings_initilizer->show_aa_at_pos()) {
+        mSettings->signature_page->layout = SignaturePageLayout::TreeAATSClades;
     }
-    else { // just tree
-        mSettings->tree_draw->legend->width = 180;
-        mSettings->hz_sections->vertical_gap = 15;
-
-        // for (auto& section: mSettings->hz_sections.sections) {
-        //     section.show_label_in_time_series = false;
-        // }
-
+    else {
+        mSettings->signature_page->layout = SignaturePageLayout::TreeTSClades;
         if (mTreeDraw)
             mTreeDraw->detect_hz_lines_for_clades(mCladesDraw ? mCladesDraw->clades() : nullptr, true);
     }

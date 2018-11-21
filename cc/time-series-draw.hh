@@ -11,6 +11,7 @@ class Tree;
 class TreeDraw;
 class HzSection;
 class HzSections;
+class SettingsInitializer;
 
 // ----------------------------------------------------------------------
 
@@ -30,7 +31,7 @@ class TimeSeriesDrawSettings : public acmacs::settings::object
     acmacs::settings::field<double>            dash_line_width{this, "dash_line_width", 1};
 
     void remove_for_tree_settings();
-    
+
 }; // class TimeSeriesDrawSettings
 
 // ----------------------------------------------------------------------
@@ -47,7 +48,7 @@ class TimeSeriesDraw
     inline const acmacs::Size& size() const { return mSurface.viewport().size; }
     inline acmacs::Location2D origin_in_parent() const { return mSurface.origin_in_parent(); }
 
-    void init_settings();
+    void init_settings(const SettingsInitializer& settings_initilizer);
     inline acmacs::surface::Surface& surface() { return mSurface; }
     inline void tree_mode(bool aTreeMode) { mTreeMode = aTreeMode; }
     // void hide_hz_section_labels_in_time_series();

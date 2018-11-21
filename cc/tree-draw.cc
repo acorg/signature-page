@@ -57,6 +57,7 @@ void TreeDraw::init_settings(const Clades* aClades, const SettingsInitializer& s
     mInitializeSettings = true;
     if (hz_sections().sections.empty())
         mHzSections.detect_hz_lines_for_clades(mTree, aClades, true);
+    mHzSections.vertical_gap = 15;
     settings_initilizer.update(mSettings);
 
 } // TreeDraw::init_settings
