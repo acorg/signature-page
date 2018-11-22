@@ -361,6 +361,14 @@ namespace
             settings.time_series_width = 100;
             settings.clades_width = 35;
         }
+
+        void update(TreeDraw& tree_draw) const override
+            {
+                WithMap::update(tree_draw);
+                tree_draw.settings().legend->offset = acmacs::Offset{0, 950};
+                tree_draw.settings().legend->width = 150;
+            }
+
     };
 
     class H3_HI_CDC : public H3_WithMap
@@ -368,9 +376,63 @@ namespace
       public:
         using H3_WithMap::H3_WithMap;
 
-          // void update(SignaturePageDrawSettings& settings) const override { H3_WithMap::update(settings); }
-
         std::vector<double> viewport_rel() const override { return {4, 5, -7}; }
+    };
+
+    class H3_HI_MELB : public H3_WithMap
+    {
+      public:
+        using H3_WithMap::H3_WithMap;
+
+        // std::vector<double> viewport_rel() const override { return {4, 4, -8}; }
+    };
+
+    class H3_HI_NIID : public H3_WithMap
+    {
+      public:
+        using H3_WithMap::H3_WithMap;
+
+        // std::vector<double> viewport_rel() const override { return {4, 4, -8}; }
+    };
+
+    class H3_HI_NIMR : public H3_WithMap
+    {
+      public:
+        using H3_WithMap::H3_WithMap;
+
+        // std::vector<double> viewport_rel() const override { return {4, 4, -8}; }
+    };
+
+    class H3_NEUT_CDC : public H3_WithMap
+    {
+      public:
+        using H3_WithMap::H3_WithMap;
+
+        // std::vector<double> viewport_rel() const override { return {4, 5, -7}; }
+    };
+
+    class H3_NEUT_MELB : public H3_WithMap
+    {
+      public:
+        using H3_WithMap::H3_WithMap;
+
+        // std::vector<double> viewport_rel() const override { return {4, 4, -8}; }
+    };
+
+    class H3_NEUT_NIID : public H3_WithMap
+    {
+      public:
+        using H3_WithMap::H3_WithMap;
+
+        // std::vector<double> viewport_rel() const override { return {4, 4, -8}; }
+    };
+
+    class H3_NEUT_NIMR : public H3_WithMap
+    {
+      public:
+        using H3_WithMap::H3_WithMap;
+
+        // std::vector<double> viewport_rel() const override { return {4, 4, -8}; }
     };
 
     // ----------------------------------------------------------------------
@@ -488,9 +550,17 @@ static const std::array settings_constructors {
 
     std::pair{    " A(H3N2) ",   maker<H3_TreeOnly>()},
     std::pair{ "CDC A(H3N2) HI", maker<H3_HI_CDC>()},
+    std::pair{"MELB A(H3N2) HI", maker<H3_HI_MELB>()},
+    std::pair{"NIID A(H3N2) HI", maker<H3_HI_NIID>()},
+    std::pair{"NIMR A(H3N2) HI", maker<H3_HI_NIMR>()},
 
-    std::pair{    " B/Vic ",     maker<BVic_TreeOnly>()},
-    std::pair{    " B/Yam ",     maker<BYam_TreeOnly>()}
+    std::pair{ "CDC A(H3N2) FOCUS REDUCTION", maker<H3_NEUT_CDC>()},
+    std::pair{"MELB A(H3N2) FOCUS REDUCTION", maker<H3_NEUT_MELB>()},
+    std::pair{"NIID A(H3N2) MN", maker<H3_NEUT_NIID>()},
+    std::pair{"NIMR A(H3N2) PLAQUE REDUCTION NEUTRALISATION", maker<H3_NEUT_NIMR>()},
+
+    std::pair{    " B/Vic ",       maker<BVic_TreeOnly>()},
+    std::pair{    " B/Yam ",       maker<BYam_TreeOnly>()}
 };
 
 #pragma GCC diagnostic pop
@@ -502,6 +572,7 @@ std::unique_ptr<SettingsInitializer> settings_initilizer_factory(std::string lab
     const auto tag = string::concat(lab, ' ', virus_type, ' ', assay);
     if (auto found = std::find_if(settings_constructors.begin(), settings_constructors.end(), [&tag](const auto& entry) { return entry.first == tag; }); found != settings_constructors.end())
         return found->second->make(lab, virus_type, assay);
+    std::cerr << "WARNING: No settings initializer for tag " << tag << '\n';
     return std::make_unique<Default>(lab, virus_type, assay);
 
 } // settings_initilizer_factory
