@@ -268,9 +268,12 @@ class HzSection : public acmacs::settings::object
     acmacs::settings::field<bool>              show_label_in_time_series{this, "show_label_in_time_series", true};
     acmacs::settings::field<bool>              show_map{this, "show_map", true};
     acmacs::settings::field<std::string>       name{this, "name", ""};           // first seq_id
+    acmacs::settings::field<std::string>       name_commented{this, "?name", ""}; // first seq_id
     acmacs::settings::field<std::string>       label{this, "label", ""};          // antigenic map label, empty - generate automatically
     acmacs::settings::field_array<std::string> triggering_clades{this, "triggering_clades"}; // clades that trigger this hz line
     acmacs::settings::field_array<size_t>      triggering_aa_pos{this, "triggering_aa_pos"};      // aa pos triggering this line
+
+    void comment_out() { name_commented = name; name = ""; show = false; }
 };
 
 // ----------------------------------------------------------------------

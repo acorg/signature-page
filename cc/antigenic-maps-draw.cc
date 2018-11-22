@@ -273,15 +273,15 @@ AntigenicMapsDrawSettings::AntigenicMapsDrawSettings(acmacs::settings::base& par
         mod->label->size = 9.0;
     };
 
-    add_vaccine(true,  "previous",  "cell",         BLUE,  WHITE, false);
-    add_vaccine(true,  "previous",  "egg",          BLUE,  WHITE, false);
-    add_vaccine(false, "previous",  "reassortant",  BLUE,  WHITE, false);
-    add_vaccine(true,  "current",   "cell",         RED,   WHITE, false);
-    add_vaccine(true,  "current",   "egg",          RED,   WHITE, false);
-    add_vaccine(true,  "current",   "reassortant",  GREEN, WHITE, false);
-    add_vaccine(true,  "surrogate", "cell",         PINK,  WHITE, false);
-    add_vaccine(true,  "surrogate", "egg",          PINK,  WHITE, false);
-    add_vaccine(true,  "surrogate", "reassortant",  PINK,  WHITE, false);
+    add_vaccine(true,  "previous",  "cell",         BLUE,  WHITE, true);
+    add_vaccine(true,  "previous",  "egg",          BLUE,  WHITE, true);
+    add_vaccine(false, "previous",  "reassortant",  BLUE,  WHITE, true);
+    add_vaccine(true,  "current",   "cell",         RED,   WHITE, true);
+    add_vaccine(true,  "current",   "egg",          RED,   WHITE, true);
+    add_vaccine(true,  "current",   "reassortant",  GREEN, WHITE, true);
+    add_vaccine(true,  "surrogate", "cell",         PINK,  WHITE, true);
+    add_vaccine(true,  "surrogate", "egg",          PINK,  WHITE, true);
+    add_vaccine(true,  "surrogate", "reassortant",  PINK,  WHITE, true);
 
 } // AntigenicMapsDrawSettings::AntigenicMapsDrawSettings
 

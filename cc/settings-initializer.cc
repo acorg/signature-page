@@ -387,13 +387,13 @@ namespace
         // std::vector<double> viewport_rel() const override { return {4, 4, -8}; }
     };
 
-    class H3_HI_NIID : public H3_WithMap
-    {
-      public:
-        using H3_WithMap::H3_WithMap;
+    // class H3_HI_NIID : public H3_WithMap
+    // {
+    //   public:
+    //     using H3_WithMap::H3_WithMap;
 
-        // std::vector<double> viewport_rel() const override { return {4, 4, -8}; }
-    };
+    //     // std::vector<double> viewport_rel() const override { return {4, 4, -8}; }
+    // };
 
     class H3_HI_NIMR : public H3_WithMap
     {
@@ -475,16 +475,92 @@ namespace
                 mod->mod = "before2015-58P-or-146I-or-559I";
                 mod->help = "hides 1B";
             }
+
+            bool del2017_shown = false;
+            tree_draw.hz_sections().sections.for_each([&del2017_shown](auto& section) {
+                if (section.triggering_clades.contains("DEL2017:first")) {
+                    if (del2017_shown) {
+                        section.comment_out();
+                    }
+                    else {
+                        section.show_line = true;
+                        section.label = "2-Del";
+                        del2017_shown = true;
+                    }
+                }
+                else if (section.triggering_clades.contains("TRIPLEDEL2017:first")) {
+                    section.show_line = true;
+                    section.label = "3-Del";
+                }
+                else if (section.triggering_clades.contains("TRIPLEDEL2017:last"))
+                    section.show_line = true;
+                else if (section.triggering_clades.contains("DEL2017:last") || section.triggering_clades.contains("1:first") || section.triggering_clades.contains("1:last"))
+                    section.comment_out();
+            });
+
         }
 
       protected:
         void update_settings_clade(CladesDrawSettings& settings, std::pair<const std::string, CladeData>& clade, CladeDrawSettings& settings_clade) const override
         {
             TreeOnly::update_settings_clade(settings, clade, settings_clade);
-            if (clade.first == "DEL2017" || clade.first == "TRIPLEDEL2017") {
+            if (clade.first == "DEL2017" || clade.first == "TRIPLEDEL2017" || clade.first == "1") {
                 settings_clade.show = false;
             }
         }
+    };
+
+    class BVic_WithMap : public WithMap
+    {
+      public:
+        using WithMap::WithMap;
+
+        // void update(SignaturePageDrawSettings& settings) const override
+        // {
+        //     WithMap::update(settings);
+        //     // settings.time_series_width = 100;
+        //     // settings.clades_width = 35;
+        // }
+
+        void update(TreeDraw& tree_draw) const override
+            {
+                WithMap::update(tree_draw);
+                tree_draw.settings().legend->offset = acmacs::Offset{0, 950};
+                tree_draw.settings().legend->width = 150;
+            }
+
+    };
+
+    class BVic_HI_CDC : public BVic_WithMap
+    {
+      public:
+        using BVic_WithMap::BVic_WithMap;
+
+        std::vector<double> viewport_rel() const override { return {2, 2, -4}; }
+    };
+
+    class BVic_HI_MELB : public BVic_WithMap
+    {
+      public:
+        using BVic_WithMap::BVic_WithMap;
+
+        std::vector<double> viewport_rel() const override { return {4, 6.5, -7}; }
+    };
+
+    class BVic_HI_NIID : public BVic_WithMap
+    {
+      public:
+        using BVic_WithMap::BVic_WithMap;
+
+        // std::vector<double> viewport_rel() const override { return {4, 4, -8}; }
+    };
+
+    class BVic_HI_NIMR : public BVic_WithMap
+    {
+      public:
+        using BVic_WithMap::BVic_WithMap;
+
+        std::vector<double> viewport_rel() const override { return {5, 5, -7}; }
     };
 
     // ----------------------------------------------------------------------
@@ -514,6 +590,59 @@ namespace
         //     {
         //         TreeOnly::update_settings_clade(settings, clade, settings_clade);
         //     }
+    };
+
+    class BYam_WithMap : public WithMap
+    {
+      public:
+        using WithMap::WithMap;
+
+        // void update(SignaturePageDrawSettings& settings) const override
+        // {
+        //     WithMap::update(settings);
+        //     // settings.time_series_width = 100;
+        //     // settings.clades_width = 35;
+        // }
+
+        void update(TreeDraw& tree_draw) const override
+            {
+                WithMap::update(tree_draw);
+                tree_draw.settings().legend->offset = acmacs::Offset{0, 950};
+                tree_draw.settings().legend->width = 150;
+            }
+
+    };
+
+    class BYam_HI_CDC : public BYam_WithMap
+    {
+      public:
+        using BYam_WithMap::BYam_WithMap;
+
+        // std::vector<double> viewport_rel() const override { return {4, 5, -7}; }
+    };
+
+    class BYam_HI_MELB : public BYam_WithMap
+    {
+      public:
+        using BYam_WithMap::BYam_WithMap;
+
+        // std::vector<double> viewport_rel() const override { return {4, 4, -8}; }
+    };
+
+    class BYam_HI_NIID : public BYam_WithMap
+    {
+      public:
+        using BYam_WithMap::BYam_WithMap;
+
+        // std::vector<double> viewport_rel() const override { return {4, 4, -8}; }
+    };
+
+    class BYam_HI_NIMR : public BYam_WithMap
+    {
+      public:
+        using BYam_WithMap::BYam_WithMap;
+
+        // std::vector<double> viewport_rel() const override { return {4, 4, -8}; }
     };
 
     // ----------------------------------------------------------------------
@@ -551,7 +680,7 @@ static const std::array settings_constructors {
     std::pair{    " A(H3N2) ",   maker<H3_TreeOnly>()},
     std::pair{ "CDC A(H3N2) HI", maker<H3_HI_CDC>()},
     std::pair{"MELB A(H3N2) HI", maker<H3_HI_MELB>()},
-    std::pair{"NIID A(H3N2) HI", maker<H3_HI_NIID>()},
+      // std::pair{"NIID A(H3N2) HI", maker<H3_HI_NIID>()},
     std::pair{"NIMR A(H3N2) HI", maker<H3_HI_NIMR>()},
 
     std::pair{ "CDC A(H3N2) FOCUS REDUCTION", maker<H3_NEUT_CDC>()},
@@ -559,8 +688,17 @@ static const std::array settings_constructors {
     std::pair{"NIID A(H3N2) MN", maker<H3_NEUT_NIID>()},
     std::pair{"NIMR A(H3N2) PLAQUE REDUCTION NEUTRALISATION", maker<H3_NEUT_NIMR>()},
 
-    std::pair{    " B/Vic ",       maker<BVic_TreeOnly>()},
-    std::pair{    " B/Yam ",       maker<BYam_TreeOnly>()}
+    std::pair{    " B/Vic ",     maker<BVic_TreeOnly>()},
+    std::pair{ "CDC B/Vic HI",   maker<BVic_HI_CDC>()},
+    std::pair{"MELB B/Vic HI",   maker<BVic_HI_MELB>()},
+    std::pair{"NIID B/Vic HI",   maker<BVic_HI_NIID>()},
+    std::pair{"NIMR B/Vic HI",   maker<BVic_HI_NIMR>()},
+
+    std::pair{    " B/Yam ",     maker<BYam_TreeOnly>()},
+    std::pair{ "CDC B/Yam HI",   maker<BYam_HI_CDC>()},
+    std::pair{"MELB B/Yam HI",   maker<BYam_HI_MELB>()},
+    std::pair{"NIID B/Yam HI",   maker<BYam_HI_NIID>()},
+    std::pair{"NIMR B/Yam HI",   maker<BYam_HI_NIMR>()},
 };
 
 #pragma GCC diagnostic pop
