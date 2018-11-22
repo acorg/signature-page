@@ -433,6 +433,7 @@ void AntigenicMapsLayoutDrawAce::serum_circle(const AntigenicMapMod& mod, std::s
 
 void AntigenicMapsLayoutDrawAce::mark_antigens(const AntigenicMapMod& mod)
 {
+      // std::cerr << "DEBUG: mark_antigens " << mod.get() << DEBUG_LINE_FUNC << '\n';
     ModAntigens applicator(mod.get());
     applicator.apply(chart_draw(), rjson::value{});
 

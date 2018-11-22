@@ -58,6 +58,7 @@ void TreeDraw::init_settings(const Clades* aClades, const SettingsInitializer& s
     if (hz_sections().sections.empty())
         mHzSections.detect_hz_lines_for_clades(mTree, aClades, true);
     mHzSections.vertical_gap = 15;
+    tree().make_aa_transitions();
     settings_initilizer.update(*this);
 
 } // TreeDraw::init_settings
@@ -694,6 +695,104 @@ void TreeDraw::report_aa_transitions()
     }
 
 } // TreeDraw::report_aa_transitions
+
+// ----------------------------------------------------------------------
+
+void TreeDrawSettings::remove_for_signature_page_settings()
+{
+    ladderize.remove();
+    ladderize_help.remove();
+    mods.remove();
+    mods_help.remove();
+    force_line_width.remove();
+    line_width.remove();
+    root_edge.remove();
+    line_color.remove();
+    label_style.remove();
+    name_offset.remove();
+    color_nodes.remove();
+      // legend position changes in sig page // legend.remove();
+    aa_transition->remove_for_signature_page_settings();
+
+} // TreeDrawSettings::remove_for_signature_page_settings
+
+// ----------------------------------------------------------------------
+
+void AATransitionIndividualSettings::remove_for_tree_settings()
+{
+    show.remove();
+    size.remove();
+    color.remove();
+    style.remove();
+    interline.remove();
+    label_connection_line_width.remove();
+    label_connection_line_color.remove();
+
+} // AATransitionIndividualSettings::remove_for_tree_settings
+
+// ----------------------------------------------------------------------
+
+void AATransitionIndividualSettings::remove_for_signature_page_settings()
+{
+    show.remove();
+    size.remove();
+    color.remove();
+    style.remove();
+    interline.remove();
+    label_connection_line_width.remove();
+    label_connection_line_color.remove();
+
+} // AATransitionIndividualSettings::remove_for_signature_page_settings
+
+// ----------------------------------------------------------------------
+
+void AATransitionPerBranchDrawSettings::remove_for_tree_settings()
+{
+    show.remove();
+    size.remove();
+    color.remove();
+    style.remove();
+    interline.remove();
+    label_connection_line_width.remove();
+    label_connection_line_color.remove();
+    for (size_t index = 0; index < by_aa_label.size(); ++index)
+        by_aa_label[index]->remove_for_tree_settings();
+
+} // AATransitionPerBranchDrawSettings::remove_for_tree_settings
+
+// ----------------------------------------------------------------------
+
+void AATransitionPerBranchDrawSettings::remove_for_signature_page_settings()
+{
+    show.remove();
+    size.remove();
+    color.remove();
+    style.remove();
+    interline.remove();
+    label_offset.remove();
+    scatter_label_offset.remove();
+    scatter_label_offset_help.remove();
+    label_connection_line_width.remove();
+    label_connection_line_color.remove();
+    for (size_t index = 0; index < by_aa_label.size(); ++index)
+        by_aa_label[index]->remove_for_signature_page_settings();
+
+} // AATransitionPerBranchDrawSettings::remove_for_signature_page_settings
+
+// ----------------------------------------------------------------------
+
+void AATransitionDrawSettings::remove_for_signature_page_settings()
+{
+    show.remove();
+    number_strains_threshold.remove();
+    number_strains_threshold_help.remove();
+    show_empty_left.remove();
+    show_node_for_left_line.remove();
+    node_for_left_line_color.remove();
+    node_for_left_line_width.remove();
+    per_branch->remove_for_signature_page_settings();
+
+} // AATransitionDrawSettings::remove_for_signature_page_settings
 
 // ----------------------------------------------------------------------
 

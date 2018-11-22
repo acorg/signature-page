@@ -39,9 +39,9 @@ void AntigenicMapsDrawBase::init_settings(const SettingsInitializer& settings_in
       case 0:
       case 1:
       case 2:
-      case 3:
           settings().columns = 1;
           break;
+      case 3:
       case 4:
       case 5:
       case 6:
@@ -253,133 +253,35 @@ AntigenicMapsDrawSettings::AntigenicMapsDrawSettings(acmacs::settings::base& par
     m15->color = BLACK;
     m15->line_width = 1.0;
 
-    // vaccine spec via acmacs-map-draw/ModAntigens, since 2018-01-19
-    {
-        auto m16 = mods.append();
-        m16->name = "antigens";
-        m16->select->vaccine->type = "previous";
-        m16->select->vaccine->passage = "cell";
-        m16->fill = BLUE;
-        m16->outline = WHITE;
-        m16->size = 15.0;
-        m16->order = "raise";
-        m16->report = false;
-        m16->label->offset = acmacs::Offset{0, 1};
-        m16->label->name_type = "abbreviated_location_with_passage_type";
-        m16->label->size = 9.0;
-    }
-    {
-        auto m17 = mods.append();
-        m17->name = "antigens";
-        m17->select->vaccine->type = "previous";
-        m17->select->vaccine->passage = "egg";
-        m17->fill = BLUE;
-        m17->outline = WHITE;
-        m17->size = 15.0;
-        m17->order = "raise";
-        m17->report = false;
-        m17->label->offset = acmacs::Offset{0, 1};
-        m17->label->name_type = "abbreviated_location_with_passage_type";
-        m17->label->size = 9.0;
-    }
-    {
-        auto m18 = mods.append();
-        m18->name_commented = "antigens";
-        m18->select->vaccine->type = "previous";
-        m18->select->vaccine->passage = "reassortant";
-        m18->fill = BLUE;
-        m18->outline = WHITE;
-        m18->size = 15.0;
-        m18->order = "raise";
-        m18->report = false;
-        m18->label->offset = acmacs::Offset{0, 1};
-        m18->label->name_type = "abbreviated_location_with_passage_type";
-        m18->label->size = 9.0;
-    }
-    {
-        auto m19 = mods.append();
-        m19->name = "antigens";
-        m19->select->vaccine->type = "current";
-        m19->select->vaccine->passage = "cell";
-        m19->fill = RED;
-        m19->outline = WHITE;
-        m19->size = 15.0;
-        m19->order = "raise";
-        m19->report = false;
-        m19->label->offset = acmacs::Offset{0, 1};
-        m19->label->name_type = "abbreviated_location_with_passage_type";
-        m19->label->size = 9.0;
-    }
-    {
-        auto m20 = mods.append();
-        m20->name = "antigens";
-        m20->select->vaccine->type = "current";
-        m20->select->vaccine->passage = "egg";
-        m20->fill = RED;
-        m20->outline = WHITE;
-        m20->size = 15.0;
-        m20->order = "raise";
-        m20->report = false;
-        m20->label->offset = acmacs::Offset{0, 1};
-        m20->label->name_type = "abbreviated_location_with_passage_type";
-        m20->label->size = 9.0;
-    }
-    {
-        auto m21 = mods.append();
-        m21->name = "antigens";
-        m21->select->vaccine->type = "current";
-        m21->select->vaccine->passage = "reassortant";
-        m21->fill = GREEN;
-        m21->outline = WHITE;
-        m21->size = 15.0;
-        m21->order = "raise";
-        m21->report = false;
-        m21->label->offset = acmacs::Offset{0, 1};
-        m21->label->name_type = "abbreviated_location_with_passage_type";
-        m21->label->size = 9.0;
-    }
-    {
-        auto m22 = mods.append();
-        m22->name = "antigens";
-        m22->select->vaccine->type = "surrogate";
-        m22->select->vaccine->passage = "cell";
-        m22->fill = "pink";
-        m22->outline = WHITE;
-        m22->size = 15.0;
-        m22->order = "raise";
-        m22->report = false;
-        m22->label->offset = acmacs::Offset{0, 1};
-        m22->label->name_type = "abbreviated_location_with_passage_type";
-        m22->label->size = 9.0;
-    }
-    {
-        auto m23 = mods.append();
-        m23->name = "antigens";
-        m23->select->vaccine->type = "surrogate";
-        m23->select->vaccine->passage = "egg";
-        m23->fill = "pink";
-        m23->outline = WHITE;
-        m23->size = 15.0;
-        m23->order = "raise";
-        m23->report = false;
-        m23->label->offset = acmacs::Offset{0, 1};
-        m23->label->name_type = "abbreviated_location_with_passage_type";
-        m23->label->size = 9.0;
-    }
-    {
-        auto m24 = mods.append();
-        m24->name = "antigens";
-        m24->select->vaccine->type = "surrogate";
-        m24->select->vaccine->passage = "reassortant";
-        m24->fill = "pink";
-        m24->outline = WHITE;
-        m24->size = 15.0;
-        m24->order = "raise";
-        m24->report = false;
-        m24->label->offset = acmacs::Offset{0, 1};
-        m24->label->name_type = "abbreviated_location_with_passage_type";
-        m24->label->size = 9.0;
-    }
+      // vaccine spec via acmacs-map-draw/ModAntigens, since 2018-01-19
+    const auto add_vaccine = [this](bool shown, std::string type, std::string passage, Color fill, Color outline, bool report) {
+        auto mod = mods.append();
+        if (shown)
+            mod->name = "antigens";
+        else
+            mod->name_commented = "antigens";
+        mod->select->vaccine->type = type;
+        mod->select->vaccine->passage = passage;
+        mod->fill = fill;
+        mod->outline = outline;
+        mod->report = report;
+
+        mod->size = 15.0;
+        mod->order = "raise";
+        mod->label->offset = acmacs::Offset{0, 1};
+        mod->label->name_type = "abbreviated_location_with_passage_type";
+        mod->label->size = 9.0;
+    };
+
+    add_vaccine(true,  "previous",  "cell",         BLUE,  WHITE, false);
+    add_vaccine(true,  "previous",  "egg",          BLUE,  WHITE, false);
+    add_vaccine(false, "previous",  "reassortant",  BLUE,  WHITE, false);
+    add_vaccine(true,  "current",   "cell",         RED,   WHITE, false);
+    add_vaccine(true,  "current",   "egg",          RED,   WHITE, false);
+    add_vaccine(true,  "current",   "reassortant",  GREEN, WHITE, false);
+    add_vaccine(true,  "surrogate", "cell",         PINK,  WHITE, false);
+    add_vaccine(true,  "surrogate", "egg",          PINK,  WHITE, false);
+    add_vaccine(true,  "surrogate", "reassortant",  PINK,  WHITE, false);
 
 } // AntigenicMapsDrawSettings::AntigenicMapsDrawSettings
 

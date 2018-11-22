@@ -183,6 +183,15 @@ namespace
             // mod->mod_help = "hide-if-cumulative-edge-length-bigger-than";
             // mod->d1 = 0.021;
             // }
+
+            tree::iterate_pre(tree_draw.tree(), [&tree_draw](const Node& node) {
+                if (node.data.aa_transitions.contains("S164T") && node.data.number_strains > 200) {
+                    auto section = tree_draw.hz_sections().add(find_first_leaf(node).seq_id, true, std::string{}, 0, true);
+                }
+                // else if (node.data.aa_transitions.contains("S183P") && node.data.number_strains > 500) {
+                //     auto section = tree_draw.hz_sections().add(find_first_leaf(node).seq_id, true, std::string{}, 0, true);
+                // }
+            });
         }
 
       protected:
@@ -193,6 +202,58 @@ namespace
                 clade.second.slot = settings_clade.slot = 4;
             }
         }
+    };
+
+    class H1_WithMap : public WithMap
+    {
+      public:
+        using WithMap::WithMap;
+
+        void update(TreeDraw& tree_draw) const override
+            {
+                WithMap::update(tree_draw);
+                tree_draw.settings().legend->offset = acmacs::Offset{0, 950};
+                tree_draw.settings().legend->width = 150;
+            }
+
+        // void update(SignaturePageDrawSettings& settings) const override
+        // {
+        //     WithMap::update(settings);
+        //     // settings.time_series_width = 100;
+        //     // settings.clades_width = 35;
+        // }
+    };
+
+    class H1_HI_CDC : public H1_WithMap
+    {
+      public:
+        using H1_WithMap::H1_WithMap;
+
+        std::vector<double> viewport_rel() const override { return {6, 6, -10}; }
+    };
+
+    class H1_HI_MELB : public H1_WithMap
+    {
+      public:
+        using H1_WithMap::H1_WithMap;
+
+        // std::vector<double> viewport_rel() const override { return {4, 4, -8}; }
+    };
+
+    class H1_HI_NIID : public H1_WithMap
+    {
+      public:
+        using H1_WithMap::H1_WithMap;
+
+        // std::vector<double> viewport_rel() const override { return {4, 4, -8}; }
+    };
+
+    class H1_HI_NIMR : public H1_WithMap
+    {
+      public:
+        using H1_WithMap::H1_WithMap;
+
+        // std::vector<double> viewport_rel() const override { return {4, 4, -8}; }
     };
 
     // ----------------------------------------------------------------------
@@ -234,7 +295,6 @@ namespace
                     section.label = "2a2";
             });
 
-            tree_draw.tree().make_aa_transitions();
             tree::iterate_pre(tree_draw.tree(), [&tree_draw](const Node& node) {
                 if (node.data.aa_transitions.size() == 1 && node.data.aa_transitions.contains("T135K") && node.data.number_strains > 200) {
                     auto section = tree_draw.hz_sections().add(find_first_leaf(node).seq_id, true, std::string{}, 0, true);
@@ -308,7 +368,7 @@ namespace
       public:
         using H3_WithMap::H3_WithMap;
 
-        void update(SignaturePageDrawSettings& settings) const override { H3_WithMap::update(settings); }
+          // void update(SignaturePageDrawSettings& settings) const override { H3_WithMap::update(settings); }
 
         std::vector<double> viewport_rel() const override { return {4, 5, -7}; }
     };
@@ -400,22 +460,49 @@ namespace
 
 // ----------------------------------------------------------------------
 
+struct settings_constructor_base
+{
+    virtual ~settings_constructor_base() = default;
+    virtual std::unique_ptr<SettingsInitializer> make(std::string lab, std::string virus_type, std::string assay) const = 0;
+};
+
+template <typename T> struct settings_constructor : public settings_constructor_base
+{
+    std::unique_ptr<SettingsInitializer> make(std::string lab, std::string virus_type, std::string assay) const override { return std::make_unique<T>(lab, virus_type, assay); }
+};
+
+template <typename T> static inline std::unique_ptr<settings_constructor_base> maker() { return std::make_unique<settings_constructor<T>>(); }
+
+#pragma GCC diagnostic push
+#ifdef __clang__
+#pragma GCC diagnostic ignored "-Wexit-time-destructors"
+#pragma GCC diagnostic ignored "-Wglobal-constructors"
+#endif
+
+static const std::array settings_constructors {
+    std::pair{    " A(H1N1) ",   maker<H1_TreeOnly>()},
+    std::pair{ "CDC A(H1N1) HI", maker<H1_HI_CDC>()},
+    std::pair{"MELB A(H1N1) HI", maker<H1_HI_MELB>()},
+    std::pair{"NIID A(H1N1) HI", maker<H1_HI_NIID>()},
+    std::pair{"NIMR A(H1N1) HI", maker<H1_HI_NIMR>()},
+
+    std::pair{    " A(H3N2) ",   maker<H3_TreeOnly>()},
+    std::pair{ "CDC A(H3N2) HI", maker<H3_HI_CDC>()},
+
+    std::pair{    " B/Vic ",     maker<BVic_TreeOnly>()},
+    std::pair{    " B/Yam ",     maker<BYam_TreeOnly>()}
+};
+
+#pragma GCC diagnostic pop
+
 std::unique_ptr<SettingsInitializer> settings_initilizer_factory(std::string lab, std::string virus_type, std::string assay, bool show_aa_at_pos)
 {
     if (lab.empty() && show_aa_at_pos)
         return std::make_unique<AAAtPos>(lab, virus_type, assay);
-    else if (const auto tag = string::concat(lab, ' ', virus_type, ' ', assay); tag == "CDC A(H3N2) HI")
-        return std::make_unique<H3_HI_CDC>(lab, virus_type, assay);
-    else if (tag == " A(H3N2) ")
-        return std::make_unique<H3_TreeOnly>(lab, virus_type, assay);
-    else if (tag == " A(H1N1) ")
-        return std::make_unique<H1_TreeOnly>(lab, virus_type, assay);
-    else if (tag == " B/Vic ")
-        return std::make_unique<BVic_TreeOnly>(lab, virus_type, assay);
-    else if (tag == " B/Yam ")
-        return std::make_unique<BYam_TreeOnly>(lab, virus_type, assay);
-    else
-        return std::make_unique<Default>(lab, virus_type, assay);
+    const auto tag = string::concat(lab, ' ', virus_type, ' ', assay);
+    if (auto found = std::find_if(settings_constructors.begin(), settings_constructors.end(), [&tag](const auto& entry) { return entry.first == tag; }); found != settings_constructors.end())
+        return found->second->make(lab, virus_type, assay);
+    return std::make_unique<Default>(lab, virus_type, assay);
 
 } // settings_initilizer_factory
 
