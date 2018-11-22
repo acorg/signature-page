@@ -508,7 +508,7 @@ void TreeDraw::fit_labels_into_viewport()
     const double canvas_width = mSurface.viewport().size.width;
     std::cout << "INFO: viewport: " << mSurface.viewport() << '\n';
 
-    Timeit ti("TreeDraw::fit_labels_into_viewport: ");
+    // Timeit ti("DEBUG: TreeDraw::fit_labels_into_viewport: ");
     for (double label_offset = max_label_offset(); label_offset > canvas_width; label_offset = max_label_offset()) {
         const double scale = std::min(canvas_width / label_offset, 0.99); // to avoid too much looping
         std::cout << "INFO: canvas:" << canvas_width << " label_right:" << label_offset << " scale: " << scale << '\n';

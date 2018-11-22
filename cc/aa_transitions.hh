@@ -50,6 +50,12 @@ class AA_TransitionLabels : public std::vector<std::pair<std::string, const Node
         return mLabel;
     }
 
+    void add(std::string label, const Node* for_left)
+        {
+            if (std::find_if(begin(), end(), [&label](const auto& entry) { return entry.first == label; }) == end())
+                emplace_back(label, for_left);
+        }
+
   private:
     mutable std::string mLabel;
 
@@ -101,9 +107,8 @@ class AA_Transitions : public std::vector<AA_Transition>
     {
         AA_TransitionLabels labels;
         for (const auto& aa_transition : *this) {
-            if (show_empty_left || !aa_transition.empty_left()) {
-                labels.emplace_back(aa_transition.display_name(), aa_transition.for_left);
-            }
+            if (show_empty_left || !aa_transition.empty_left())
+                labels.add(aa_transition.display_name(), aa_transition.for_left);
         }
         return labels;
     }
