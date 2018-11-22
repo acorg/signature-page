@@ -213,6 +213,8 @@ class Tree : public Node
     // returns nullptr if not found
     Node* find_leaf_by_seqid(std::string aSeqId);
     const Node* find_leaf_by_line_no(size_t line_no) const;
+    const Node* find_previous_leaf(const Node& aNode, bool shown_only) const;
+    const Node* find_next_leaf(const Node& aNode, bool shown_only) const;
 
     void sequences_per_month(std::map<Date, size_t>& spm) const;
     std::string virus_type() const;

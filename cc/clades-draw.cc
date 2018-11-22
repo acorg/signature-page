@@ -157,6 +157,24 @@ void CladesDraw::init_settings(const SettingsInitializer& settings_initilizer)
 
 void CladesDraw::draw()
 {
+    const auto first_shown_node = [this](std::string clade_name, const Node& node) -> const Node& {
+        if (node.draw.shown)
+            return node;
+        std::cerr << "WARNING: clade " << clade_name << ": first node was not shown, node adjusted\n";
+        if (const auto* prev_shown = mTree.find_previous_leaf(node, true); prev_shown)
+            return *prev_shown;
+        return *mTree.find_next_leaf(node, true);
+    };
+
+    const auto last_shown_node = [this](std::string clade_name, const Node& node) -> const Node& {
+        if (node.draw.shown)
+            return node;
+        std::cerr << "WARNING: clade " << clade_name << ": last node was not shown, node adjusted\n";
+        if (const auto* next_shown = mTree.find_next_leaf(node, true); next_shown)
+            return *next_shown;
+        return *mTree.find_previous_leaf(node, true);
+    };
+
     auto draw_lines = mTimeSeriesDraw.origin_in_parent().x() < mSurface.origin_in_parent().x() ? &CladesDraw::draw_right : &CladesDraw::draw_left;
 
     for (const auto& name_clade: mClades) {
@@ -164,9 +182,11 @@ void CladesDraw::draw()
         const auto for_clade = mSettings.for_clade(name_clade.first);
         if (clade.shown() && for_clade->show) {
             for (const auto& section: clade.sections) {
-                  // std::cerr << "DEBUG: Clade section " << name_clade.first << '\n' << section.first->draw.vertical_pos << ' ' << section.first->seq_id << '\n' << section.last->draw.vertical_pos << ' ' << section.last->seq_id << DEBUG_LINE_FUNC << '\n';
-                const double top = section.first->draw.vertical_pos - mTreeDraw.vertical_step() / 2;
-                const double bottom = section.last->draw.vertical_pos + mTreeDraw.vertical_step() / 2;
+                const Node& section_first_node = first_shown_node(name_clade.first, *section.first);
+                const Node& section_last_node = last_shown_node(name_clade.first, *section.last);
+                // std::cerr << "DEBUG: Clade section " << name_clade.first << '\n' << section_first_node.draw.shown << ' ' << section_first_node.draw.line_no << ' ' << section_first_node.seq_id << '\n' << section_last_node.draw.shown << ' ' << section_last_node.draw.line_no << ' ' << section_last_node.seq_id << DEBUG_LINE_FUNC << '\n';
+                const double top = section_first_node.draw.vertical_pos - mTreeDraw.vertical_step() / 2;
+                const double bottom = section_last_node.draw.vertical_pos + mTreeDraw.vertical_step() / 2;
                 const double label_height = mSurface.text_size("W", Pixels{for_clade->label_size}, for_clade->label_style).height;
                 double label_vpos{0};
                 switch (static_cast<CladeDrawSettingsLabelPosition>(for_clade->label_position)) {

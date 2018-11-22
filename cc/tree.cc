@@ -397,7 +397,7 @@ Node* Tree::find_leaf_by_seqid(std::string aSeqId)
 const Node* Tree::find_leaf_by_line_no(size_t line_no) const
 {
     const Node* result = nullptr;
-    auto find_node = [&line_no,&result](const Node& aNode) -> bool {
+    const auto find_node = [&line_no,&result](const Node& aNode) -> bool {
         if (aNode.draw.shown && aNode.draw.line_no == line_no)
             result = &aNode;
         return result != nullptr;
@@ -406,6 +406,40 @@ const Node* Tree::find_leaf_by_line_no(size_t line_no) const
     return result;
 
 } // Tree::find_leaf_by_line_no
+
+// ----------------------------------------------------------------------
+
+const Node* Tree::find_previous_leaf(const Node& current_leaf, bool shown_only) const
+{
+    const Node* result = nullptr;
+    const auto find_node = [&current_leaf,&result,shown_only](const Node& aNode) -> bool {
+        if (&aNode == &current_leaf)
+            return true;
+        if (!shown_only || aNode.draw.shown)
+            result = &aNode;
+        return false;
+    };
+    tree::iterate_leaf_stop(*this, find_node);
+    return result;
+
+} // Tree::find_previous_leaf
+
+// ----------------------------------------------------------------------
+
+const Node* Tree::find_next_leaf(const Node& previous_leaf, bool shown_only) const
+{
+    const Node* result = nullptr;
+    auto find_node = [&previous_leaf,&result,shown_only,previous_found=false](const Node& aNode) mutable -> bool {
+        if (previous_found && (!shown_only || aNode.draw.shown))
+            result = &aNode;
+        else if (&aNode == &previous_leaf)
+            previous_found = true;
+        return result != nullptr;
+    };
+    tree::iterate_leaf_stop(*this, find_node);
+    return result;
+
+} // Tree::find_next_leaf
 
 // ----------------------------------------------------------------------
 
@@ -591,9 +625,6 @@ size_t Tree::match(const acmacs::chart::Chart& chart)
     return draw.matched_antigens;
 
 } // Tree::match
-
-// ----------------------------------------------------------------------
-
 
 // ----------------------------------------------------------------------
 /// Local Variables:
