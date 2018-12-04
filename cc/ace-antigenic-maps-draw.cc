@@ -276,7 +276,7 @@ acmacs::chart::PointIndexList AntigenicMapsLayoutDrawAce::tracked_antigens(size_
 void AntigenicMapsLayoutDrawAce::find_homologous_antigens_for_sera() const
 {
     if (!mHomologousAntigenForSeraFound) {
-        chart().set_homologous(acmacs::chart::Chart::find_homologous_for_big_chart::yes);
+        chart().set_homologous(acmacs::chart::find_homologous::strict);
         mHomologousAntigenForSeraFound = true;
     }
 
