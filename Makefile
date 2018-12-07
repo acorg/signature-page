@@ -45,7 +45,7 @@ ACMACSD_LIBS = \
   -L$(BOOST_LIB_PATH) -lboost_date_time $(CXX_LIBS)
 
 SETTINGS_CREATE_LDLIBS = $(ACMACSD_LIBS) $(XZ_LIBS)
-LDLIBS = $(ACMACSD_LIBS) $(CAIRO_LDLIBS) $(XZ_LIBS)
+LDLIBS = $(ACMACSD_LIBS) $(CAIRO_LIBS) $(XZ_LIBS)
 
 # ----------------------------------------------------------------------
 
@@ -63,7 +63,7 @@ test: install $(DIST)/sigp
 
 $(SIGNATURE_PAGE_PY_LIB): $(patsubst %.cc,$(BUILD)/%.o,$(SIGNATURE_PAGE_PY_SOURCES)) | $(DIST)
 	$(call echo_shared_lib,$@)
-	$(call make_shared_lib,$(SIGNATURE_PAGE_PY_LIB_NAME),$(SIGNATURE_PAGE_PY_LIB_MAJOR),$(SIGNATURE_PAGE_PY_LIB_MINOR)) $(LDFLAGS) -o $@ $^ $(LDLIBS) $(PYTHON_LDLIBS)
+	$(call make_shared_lib,$(SIGNATURE_PAGE_PY_LIB_NAME),$(SIGNATURE_PAGE_PY_LIB_MAJOR),$(SIGNATURE_PAGE_PY_LIB_MINOR)) $(LDFLAGS) -o $@ $^ $(LDLIBS) $(PYTHON_LIBS)
 
 $(DIST)/sigp-settings-create: $(patsubst %.cc,$(BUILD)/%.o,$(SETTINGS_CREATE_SOURCES)) | $(DIST)
 	$(call echo_link_exe,$@)
