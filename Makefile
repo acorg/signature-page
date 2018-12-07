@@ -31,6 +31,7 @@ TREE_CHART_SECTIONS_SOURCES = tree-chart-sections.cc tree.cc tree-export.cc
 
 all: install
 
+CONFIGURE_BOOST = 1
 CONFIGURE_CAIRO = 1
 include $(ACMACSD_ROOT)/share/Makefile.config
 
@@ -42,7 +43,7 @@ ACMACSD_LIBS = \
   $(AD_LIB)/$(call shared_lib_name,libseqdb,2,0) \
   $(AD_LIB)/$(call shared_lib_name,libacmacsdraw,1,0) \
   $(AD_LIB)/$(call shared_lib_name,libacmacsmapdraw,2,0) \
-  -L$(BOOST_LIB_PATH) -lboost_date_time $(CXX_LIBS)
+  $(L_BOOST) -lboost_date_time $(CXX_LIBS)
 
 SETTINGS_CREATE_LDLIBS = $(ACMACSD_LIBS) $(XZ_LIBS)
 LDLIBS = $(ACMACSD_LIBS) $(CAIRO_LIBS) $(XZ_LIBS)
