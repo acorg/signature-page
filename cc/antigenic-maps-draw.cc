@@ -106,7 +106,7 @@ AntigenicMapsDrawBase* make_antigenic_maps_draw(std::string aChartFilename, acma
 {
     std::string error;
     try {
-        return new AntigenicMapsDraw(aSurface, aTree, std::make_shared<acmacs::chart::ChartModify>(acmacs::chart::import_from_file(aChartFilename, acmacs::chart::Verify::None, report_time::No)), aHzSections, aSignaturePageDrawSettings, aSettings);
+        return new AntigenicMapsDraw(aSurface, aTree, std::make_shared<acmacs::chart::ChartModify>(acmacs::chart::import_from_file(aChartFilename, acmacs::chart::Verify::None, report_time::no)), aHzSections, aSignaturePageDrawSettings, aSettings);
     }
     catch (acmacs::chart::import_error& err) {
         error = err.what();

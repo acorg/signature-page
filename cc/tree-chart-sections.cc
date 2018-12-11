@@ -74,7 +74,7 @@ int main(int argc, const char* argv[])
         if (args["--seqdb"])
             seqdb::setup(args["--seqdb"].str(), verbose ? seqdb::report::yes : seqdb::report::no);
 
-        std::shared_ptr<acmacs::chart::Chart> chart = acmacs::chart::import_from_file(args[1], acmacs::chart::Verify::None, report_time::No);
+        std::shared_ptr<acmacs::chart::Chart> chart = acmacs::chart::import_from_file(args[1], acmacs::chart::Verify::None, report_time::no);
         Tree tree = tree::tree_import(std::string(args[0]), chart);
 
         if (args["--group-series-sets"]) {

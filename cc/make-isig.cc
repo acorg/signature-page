@@ -26,7 +26,7 @@ int main(int argc, const char* const* argv)
         Tree tree = tree::tree_import(source_tree_file);
           // tree.match_seqdb(seqdb);
 
-        auto chart = acmacs::chart::import_from_file(source_chart); // , acmacs::chart::Verify::None, report_time::No
+        auto chart = acmacs::chart::import_from_file(source_chart); // , acmacs::chart::Verify::None, report_time::no
         auto antigens = chart->antigens();
         const auto per_antigen = seqdb.match(*antigens, chart->info()->virus_type());
 

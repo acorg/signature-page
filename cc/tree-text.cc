@@ -40,7 +40,7 @@ int main(int argc, const char* argv[])
 
         std::shared_ptr<acmacs::chart::Chart> chart;
         if (args["--chart"])
-            chart = acmacs::chart::import_from_file(static_cast<std::string>(args["--chart"]), acmacs::chart::Verify::None, report_time::No);
+            chart = acmacs::chart::import_from_file(static_cast<std::string>(args["--chart"]), acmacs::chart::Verify::None, report_time::no);
 
         Tree tree = tree::tree_import(std::string(args[0]), chart);
 
