@@ -224,12 +224,20 @@ namespace
         // }
     };
 
+    class H1_HI_ALL : public H1_WithMap
+    {
+      public:
+        using H1_WithMap::H1_WithMap;
+
+        std::vector<double> viewport_rel() const override { return {9, 9, -16}; }
+    };
+
     class H1_HI_CDC : public H1_WithMap
     {
       public:
         using H1_WithMap::H1_WithMap;
 
-        std::vector<double> viewport_rel() const override { return {6, 6, -10}; }
+        std::vector<double> viewport_rel() const override { return {9, 9, -16}; }
     };
 
     class H1_HI_MELB : public H1_WithMap
@@ -237,7 +245,7 @@ namespace
       public:
         using H1_WithMap::H1_WithMap;
 
-        // std::vector<double> viewport_rel() const override { return {4, 4, -8}; }
+        std::vector<double> viewport_rel() const override { return {2, 2, -6}; }
     };
 
     class H1_HI_NIID : public H1_WithMap
@@ -245,7 +253,7 @@ namespace
       public:
         using H1_WithMap::H1_WithMap;
 
-        // std::vector<double> viewport_rel() const override { return {4, 4, -8}; }
+        std::vector<double> viewport_rel() const override { return {2, 3, -6}; }
     };
 
     class H1_HI_NIMR : public H1_WithMap
@@ -253,7 +261,7 @@ namespace
       public:
         using H1_WithMap::H1_WithMap;
 
-        // std::vector<double> viewport_rel() const override { return {4, 4, -8}; }
+        std::vector<double> viewport_rel() const override { return {4, 4, -7}; }
     };
 
     // ----------------------------------------------------------------------
@@ -672,6 +680,7 @@ template <typename T> static inline std::unique_ptr<settings_constructor_base> m
 
 static const std::array settings_constructors {
     std::pair{    " A(H1N1) ",   maker<H1_TreeOnly>()},
+    std::pair{"CDC+MELB+NIID+NIMR A(H1N1) HI", maker<H1_HI_ALL>()},
     std::pair{ "CDC A(H1N1) HI", maker<H1_HI_CDC>()},
     std::pair{"MELB A(H1N1) HI", maker<H1_HI_MELB>()},
     std::pair{"NIID A(H1N1) HI", maker<H1_HI_NIID>()},
