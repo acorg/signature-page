@@ -560,7 +560,7 @@ namespace
       public:
         using BVic_WithMap::BVic_WithMap;
 
-        // std::vector<double> viewport_rel() const override { return {4, 4, -8}; }
+        std::vector<double> viewport_rel() const override { return {3, 2, -3}; }
     };
 
     class BVic_HI_NIMR : public BVic_WithMap
