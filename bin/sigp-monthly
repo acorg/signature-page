@@ -1,15 +1,28 @@
 #! /usr/bin/env python3
 
-import sys, os, traceback
+import sys
 if f"{sys.version_info.major}.{sys.version_info.minor}" < "3.7": raise RuntimeError("Run script with python 3.7+")
 from pathlib import Path
-import subprocess
+import traceback, subprocess, datetime
 import logging; module_logger = logging.getLogger(__name__)
+
+# ----------------------------------------------------------------------
+
+sLabName = {"all": "CDC+Crick+NIID+VIDRL", "cdc": "CDC", "melb": "VIDRL", "niid": "NIID", "nimr": "Crick"}
+sSubtype = {"h1": "H1", "h3": "H3", "bv": "B/Vic", "by": "B/Yam"}
 
 # ----------------------------------------------------------------------
 
 def main(args):
     working_dir = Path(args.working_dir)
+    make_pdfs(working_dir)
+    update_report(working_dir)
+    update_index(working_dir)
+
+# ----------------------------------------------------------------------
+
+def make_pdfs(working_dir):
+    pdfs_generated = 0
     for subtype in ["h1", "h3", "bv", "by"]:
         # Tree
         tree_source = working_dir.joinpath(f"tree/{subtype}.tree.json.xz")
@@ -26,10 +39,13 @@ def main(args):
             sp_pdf = working_dir.joinpath(f"{lab}-{subtype}-{assay}.sp.pdf")
             if not sp_settings.exists():
                 subprocess.check_call(["sigp", "-s", tree_settings, "--init-settings", sp_settings, "--chart", chart, tree_source, sp_pdf])
+                pdfs_generated += 1
             else:
                 pdf_mtime = sp_pdf.stat().st_mtime
                 if not sp_pdf.exists() or pdf_mtime < tree_settings.stat().st_mtime or pdf_mtime < sp_settings.stat().st_mtime or pdf_mtime < tree_source.stat().st_mtime or pdf_mtime < chart.stat().st_mtime:
                     subprocess.check_call(["sigp", "-s", tree_settings, "-s", sp_settings, "--chart", chart, tree_source, sp_pdf, "--open"])
+                    pdfs_generated += 1
+    return pdfs_generated
 
 # ----------------------------------------------------------------------
 
@@ -42,6 +58,66 @@ def labs_assays_for_subtype(subtype):
         return [["hi", lab] for lab in ["cdc", "melb", "niid", "nimr"]]
     else:
         raise RuntimeError("Unrecognized subtype: " + subtype)
+
+# ----------------------------------------------------------------------
+
+def update_report(working_dir):
+    pass
+
+# ----------------------------------------------------------------------
+
+def update_index(working_dir):
+    index_file = working_dir.joinpath("index.html")
+    if not index_file.exists() or any(index_file.stat().st_mtime < pdf.stat().st_mtime for pdf in working_dir.glob("*.pdf")):
+        today = datetime.date.today().strftime("%Y-%m-%d")
+        report = ""
+        subtypes = ["h1", "h3", "bv", "by"]
+
+        prev_subtype_assay = None
+        def make_sig_page_li(lab, subtype, assay):
+            subtype_assay = f"{subtype}-{assay}"
+            nonlocal prev_subtype_assay
+            if prev_subtype_assay is not None and prev_subtype_assay != subtype_assay:
+                prefix = "<br>\n      "
+            else:
+                prefix = ""
+            prev_subtype_assay = subtype_assay
+            if working_dir.joinpath(f"{lab}-{subtype}-{assay}.sp.pdf").exists():
+                return prefix + f"<li><a href=\"{lab}-{subtype}-{assay}.sp.pdf\" >{sSubtype[subtype]} {assay.upper()} {sLabName[lab]}</a></li>"
+            else:
+                return prefix
+        sig_page_li = "\n      ".join(make_sig_page_li(lab, subtype, assay) for subtype in subtypes for assay, lab in labs_assays_for_subtype(subtype))
+
+        def make_tree_li(subtype):
+            if working_dir.joinpath(f"{subtype}.tree.pdf").exists():
+                return f"<li><a href=\"{subtype}.tree.pdf\">{sSubtype[subtype]} pdf</a></li>"
+            else:
+                return ""
+        tree_li = "\n      ".join(make_tree_li(subtype) for subtype in subtypes)
+
+        with index_file.open("w") as fd:
+            fd.write(sIndexTemplate.format(date=today, report=report, sig_page_li=sig_page_li, tree_li=tree_li))
+
+sIndexTemplate = """<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Signature pages {date}</title>
+  </head>
+  <body>
+    <h2>Signature pages {date}</h2>
+    <h3>Signature pages</h3>
+    {report}
+    <ol>
+      {sig_page_li}
+    </ol>
+    <h3>Trees and preparation data</h3>
+    <ol>
+      {tree_li}
+    </ol>
+  </body>
+</html>
+"""
 
 # ----------------------------------------------------------------------
 
