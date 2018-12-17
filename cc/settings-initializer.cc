@@ -458,11 +458,12 @@ namespace
 
         void update(TreeDraw& tree_draw) const override
         {
+            constexpr double cumulative_threshold = 0.0191;
             TreeOnly::update(tree_draw);
             {
                 auto mod = tree_draw.settings().mods.append();
                 mod->mod = "hide-if-cumulative-edge-length-bigger-than";
-                mod->d1 = 0.0191;
+                mod->d1 = cumulative_threshold;
             }
             {
                 auto mod = tree_draw.settings().mods.append();
@@ -485,15 +486,17 @@ namespace
             }
 
             bool del2017_shown = false;
-            tree_draw.hz_sections().sections.for_each([&del2017_shown](auto& section) {
+            tree_draw.hz_sections().sections.for_each([&del2017_shown, &tree_draw](auto& section) {
                 if (section.triggering_clades.contains("DEL2017:first")) {
-                    if (del2017_shown) {
-                        section.comment_out();
-                    }
-                    else {
+                    const auto* first_node = tree_draw.tree().find_leaf_by_seqid(section.name);
+                    const bool branch_too_long = first_node && first_node->data.cumulative_edge_length > cumulative_threshold;
+                    if (!del2017_shown && !branch_too_long) {
                         section.show_line = true;
                         section.label = "2-Del";
                         del2017_shown = true;
+                    }
+                    else {
+                        section.comment_out();
                     }
                 }
                 else if (section.triggering_clades.contains("TRIPLEDEL2017:first")) {
@@ -505,7 +508,6 @@ namespace
                 else if (section.triggering_clades.contains("DEL2017:last") || section.triggering_clades.contains("1:first") || section.triggering_clades.contains("1:last"))
                     section.comment_out();
             });
-
         }
 
       protected:

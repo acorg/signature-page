@@ -34,6 +34,7 @@ def make_pdfs(working_dir):
             subprocess.check_call(["sigp", "--init-settings", tree_settings, tree_source, tree_pdf])
         elif not tree_pdf.exists() or tree_pdf.stat().st_mtime < tree_settings.stat().st_mtime or tree_pdf.stat().st_mtime < tree_source.stat().st_mtime:
             subprocess.check_call(["sigp", "-s", tree_settings, tree_source, tree_pdf, "--open"])
+
         # Sigp
         for assay, lab in labs_assays_for_subtype(subtype):
             sp_settings = working_dir.joinpath(f"{lab}-{subtype}-{assay}.sp.settings.json")
