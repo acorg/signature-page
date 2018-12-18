@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <string>
+#include <optional>
 
 // ----------------------------------------------------------------------
 
@@ -27,6 +28,8 @@ class SettingsInitializer
     virtual void update(TreeDraw& tree_draw) const = 0;
 
     virtual std::vector<double> viewport_rel() const = 0;
+    virtual double rotate_degrees() const = 0;
+    virtual std::optional<std::string> flip() const = 0;
 };
 
 std::unique_ptr<SettingsInitializer> settings_initilizer_factory(std::string lab, std::string virus_type, std::string assay, bool show_aa_at_pos);

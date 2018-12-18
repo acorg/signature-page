@@ -168,8 +168,7 @@ acmacs::Viewport AntigenicMapMod::get_viewport(const acmacs::Viewport& aOrigView
 
 // ----------------------------------------------------------------------
 
-AntigenicMapsDrawSettings::AntigenicMapsDrawSettings(acmacs::settings::base& parent)
-    : acmacs::settings::object(parent)
+AntigenicMapsDrawSettings::AntigenicMapsDrawSettings(acmacs::settings::base& parent) : acmacs::settings::object(parent)
 {
     add_viewport_mod();
 
@@ -177,9 +176,16 @@ AntigenicMapsDrawSettings::AntigenicMapsDrawSettings(acmacs::settings::base& par
     m2->name = "point_scale";
     m2->scale = 1.0;
     m2->outline_scale = 1.0;
-    auto m3 = mods.append();
-    m3->name = "rotate";
-    m3->degrees = 0.0;
+    {
+        auto m = mods.append();
+        m->name_commented = "flip";
+        m->direction = "ns";
+    }
+    {
+        auto m3 = mods.append();
+        m3->name = "rotate";
+        m3->degrees = 0.0;
+    }
     auto m4 = mods.append();
     m4->name = "sera";
     m4->outline = "grey88";
@@ -253,7 +259,7 @@ AntigenicMapsDrawSettings::AntigenicMapsDrawSettings(acmacs::settings::base& par
     m15->color = BLACK;
     m15->line_width = 1.0;
 
-      // vaccine spec via acmacs-map-draw/ModAntigens, since 2018-01-19
+    // vaccine spec via acmacs-map-draw/ModAntigens, since 2018-01-19
     const auto add_vaccine = [this](bool shown, std::string type, std::string passage, Color fill, Color outline, bool report) {
         auto mod = mods.append();
         if (shown)
@@ -273,15 +279,15 @@ AntigenicMapsDrawSettings::AntigenicMapsDrawSettings(acmacs::settings::base& par
         mod->label->size = 9.0;
     };
 
-    add_vaccine(true,  "previous",  "cell",         BLUE,  WHITE, true);
-    add_vaccine(true,  "previous",  "egg",          BLUE,  WHITE, true);
-    add_vaccine(false, "previous",  "reassortant",  BLUE,  WHITE, true);
-    add_vaccine(true,  "current",   "cell",         RED,   WHITE, true);
-    add_vaccine(true,  "current",   "egg",          RED,   WHITE, true);
-    add_vaccine(true,  "current",   "reassortant",  GREEN, WHITE, true);
-    add_vaccine(true,  "surrogate", "cell",         PINK,  WHITE, true);
-    add_vaccine(true,  "surrogate", "egg",          PINK,  WHITE, true);
-    add_vaccine(true,  "surrogate", "reassortant",  PINK,  WHITE, true);
+    add_vaccine(true, "previous", "cell", BLUE, WHITE, true);
+    add_vaccine(true, "previous", "egg", BLUE, WHITE, true);
+    add_vaccine(false, "previous", "reassortant", BLUE, WHITE, true);
+    add_vaccine(true, "current", "cell", RED, WHITE, true);
+    add_vaccine(true, "current", "egg", RED, WHITE, true);
+    add_vaccine(true, "current", "reassortant", GREEN, WHITE, true);
+    add_vaccine(true, "surrogate", "cell", PINK, WHITE, true);
+    add_vaccine(true, "surrogate", "egg", PINK, WHITE, true);
+    add_vaccine(true, "surrogate", "reassortant", PINK, WHITE, true);
 
 } // AntigenicMapsDrawSettings::AntigenicMapsDrawSettings
 
@@ -321,7 +327,7 @@ void AntigenicMapsDrawSettings::viewport(const acmacs::Viewport& aViewport)
 
 void AntigenicMapsDrawSettings::viewport_rel(const std::vector<double>& rel)
 {
-    if (auto vpmod = mods.find_if([](const auto& mod) -> bool { return mod.name == "viewport"; }); !vpmod) {
+    if (auto vpmod = mods.find_if([](const auto& mod) -> bool { return mod.name.get_or("*") == "viewport"; }); !vpmod) {
         auto mod = mods.append();
         mod->name = "viewport";
         mod->rel.set(rel.begin(), rel.end());
@@ -331,6 +337,37 @@ void AntigenicMapsDrawSettings::viewport_rel(const std::vector<double>& rel)
     }
 
 } // AntigenicMapsDrawSettings::viewport_rel
+
+// ----------------------------------------------------------------------
+
+void AntigenicMapsDrawSettings::rotate_degrees(double degrees)
+{
+    if (auto vpmod = mods.find_if([](const auto& mod) -> bool { return mod.name.get_or("*") == "rotate"; }); !vpmod) {
+        auto mod = mods.append();
+        mod->name = "rotate";
+        mod->degrees = degrees;
+    }
+    else {
+        (*vpmod)->degrees = degrees;
+    }
+
+} // AntigenicMapsDrawSettings::rotate_degrees
+
+// ----------------------------------------------------------------------
+
+void AntigenicMapsDrawSettings::flip(std::string direction)
+{
+    if (auto vpmod = mods.find_if([](const auto& mod) -> bool { return mod.name.get_or("*") == "flip" || mod.name.get_or("*") == "?flip" || mod.name_commented.get_or("*") == "flip"; }); !vpmod) {
+        auto mod = mods.append();
+        mod->name = "flip";
+        mod->direction = direction;
+    }
+    else {
+        (*vpmod)->name = "flip"; // in case it was commented out
+        (*vpmod)->direction = direction;
+    }
+
+} // AntigenicMapsDrawSettings::flip
 
 // ----------------------------------------------------------------------
 /// Local Variables:

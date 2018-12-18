@@ -38,6 +38,8 @@ namespace
 
         bool show_aa_at_pos() const override { return false; }
         std::vector<double> viewport_rel() const override { return {0, 0, 0}; }
+        double rotate_degrees() const override { return 0; }
+        std::optional<std::string> flip() const override { return {}; }
 
       protected:
         std::string lab() const { return lab_; }
@@ -100,7 +102,10 @@ namespace
         void update(TitleDrawSettings& settings) const override
         {
             Default::update(settings);
-            settings.title = string::join(" ", {virus_type(), fixed_lab()});
+            if (virus_type() == "A(H3N2)")
+                settings.title = string::join(" ", {virus_type(), assay(), fixed_lab()});
+            else
+                settings.title = string::join(" ", {virus_type(), fixed_lab()});
             settings.offset = acmacs::Offset{10, 10};
         }
 
@@ -392,7 +397,7 @@ namespace
       public:
         using H3_WithMap::H3_WithMap;
 
-        // std::vector<double> viewport_rel() const override { return {4, 4, -8}; }
+        std::vector<double> viewport_rel() const override { return {4, 2, -5}; }
     };
 
     // class H3_HI_NIID : public H3_WithMap
@@ -408,7 +413,8 @@ namespace
       public:
         using H3_WithMap::H3_WithMap;
 
-        // std::vector<double> viewport_rel() const override { return {4, 4, -8}; }
+        std::vector<double> viewport_rel() const override { return {2, 1, -4}; }
+        double rotate_degrees() const override { return -70; }
     };
 
     class H3_NEUT_CDC : public H3_WithMap
@@ -424,7 +430,7 @@ namespace
       public:
         using H3_WithMap::H3_WithMap;
 
-        // std::vector<double> viewport_rel() const override { return {4, 4, -8}; }
+        std::vector<double> viewport_rel() const override { return {6, 4, -8}; }
     };
 
     class H3_NEUT_NIID : public H3_WithMap
@@ -563,6 +569,8 @@ namespace
         using BVic_WithMap::BVic_WithMap;
 
         std::vector<double> viewport_rel() const override { return {3, 2, -3}; }
+        double rotate_degrees() const override { return -90; }
+        std::optional<std::string> flip() const override { return "ns"; }
     };
 
     class BVic_HI_NIMR : public BVic_WithMap

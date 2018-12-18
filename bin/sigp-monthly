@@ -47,7 +47,7 @@ def make_pdfs(working_dir):
                 subprocess.check_call(["sigp", "-s", tree_settings] + cmd_is + ["--init-settings", sp_settings, "--chart", chart, tree_source, sp_pdf])
                 pdfs_generated += 1
             else:
-                pdf_mtime = sp_pdf.stat().st_mtime
+                pdf_mtime = sp_pdf.stat().st_mtime if sp_pdf.exists() else 0.0
                 if not sp_pdf.exists() or pdf_mtime < tree_settings.stat().st_mtime or pdf_mtime < sp_settings.stat().st_mtime or pdf_mtime < tree_source.stat().st_mtime or pdf_mtime < chart.stat().st_mtime:
                     subprocess.check_call(["sigp", "-s", tree_settings, "-s", sp_settings, "--chart", chart, tree_source, sp_pdf, "--open"])
                     pdfs_generated += 1

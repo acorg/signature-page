@@ -289,6 +289,8 @@ class AntigenicMapsDrawSettings : public acmacs::settings::object
 
     void viewport(const acmacs::Viewport& aViewport);
     void viewport_rel(const std::vector<double>& rel);
+    void rotate_degrees(double degrees);
+    void flip(std::string direction);
 
  private:
     void add_viewport_mod();

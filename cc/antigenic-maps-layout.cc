@@ -17,6 +17,9 @@ void AntigenicMapsLayoutDraw::init_settings(const SettingsInitializer& settings_
 {
     settings().viewport(mAntigenicMapsDraw.chart().calculate_viewport());
     settings().viewport_rel(settings_initilizer.viewport_rel());
+    settings().rotate_degrees(settings_initilizer.rotate_degrees());
+    if (const auto flip = settings_initilizer.flip(); flip)
+        settings().flip(*flip);
 
 } // AntigenicMapsLayoutDraw::init_settings
 
