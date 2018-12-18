@@ -9,6 +9,7 @@ import logging; module_logger = logging.getLogger(__name__)
 # ----------------------------------------------------------------------
 
 sLabName = {"all": "CDC+Crick+NIID+VIDRL", "cdc": "CDC", "melb": "VIDRL", "niid": "NIID", "nimr": "Crick"}
+sLabOrder = ["cdc", "nimr", "niid", "melb"]
 sSubtypes = ["h1", "h3", "bv", "by"]
 sSubtype = {"h1": "H1", "h3": "H3", "bv": "B/Vic", "by": "B/Yam"}
 sToday = datetime.date.today().strftime("%Y-%m-%d")
@@ -56,11 +57,11 @@ def make_pdfs(working_dir):
 
 def labs_assays_for_subtype(subtype):
     if subtype == "h1":
-        return [["hi", lab] for lab in ["all", "cdc", "melb", "niid", "nimr"]]
+        return [["hi", lab] for lab in ["all"] + sLabOrder]
     elif subtype == "h3":
-        return [["hi", lab] for lab in ["cdc", "melb", "nimr"]] + [["neut", lab] for lab in ["cdc", "melb", "niid", "nimr"]]
+        return [["hi", lab] for lab in ["cdc", "nimr", "melb"]] + [["neut", lab] for lab in sLabOrder]
     elif subtype == "bv" or subtype == "by":
-        return [["hi", lab] for lab in ["cdc", "melb", "niid", "nimr"]]
+        return [["hi", lab] for lab in sLabOrder]
     else:
         raise RuntimeError("Unrecognized subtype: " + subtype)
 
