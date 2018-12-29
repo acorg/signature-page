@@ -77,7 +77,7 @@ namespace
             tree_draw.settings().legend->width = 100;
         }
 
-        bool show_aa_at_pos() const override { return false; }
+        bool show_aa_at_pos() const override { return true; }
     };
 
     // ----------------------------------------------------------------------

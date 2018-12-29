@@ -8,6 +8,7 @@
 
 void AAAtPosDraw::prepare()
 {
+    // std::cerr << ">>> AAAtPosDraw::prepare " << mSettings.width << '\n';
     if (mSettings.width > 0.0) {
         if (!mSettings.positions.empty()) {
             positions_.resize(mSettings.positions.size());

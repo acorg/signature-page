@@ -122,6 +122,7 @@ void SignaturePageDraw::init_settings(bool show_aa_at_pos)
     }
     else if (settings_initilizer->show_aa_at_pos()) {
         mSettings->signature_page->layout = SignaturePageLayout::TreeAATSClades;
+        mSettings->aa_at_pos->width = 500;
     }
     else {
         mSettings->signature_page->layout = SignaturePageLayout::TreeTSClades;
