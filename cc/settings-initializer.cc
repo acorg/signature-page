@@ -78,6 +78,15 @@ namespace
         }
 
         bool show_aa_at_pos() const override { return true; }
+
+      protected:
+        void update_settings_clade(CladesDrawSettings& settings, std::pair<const std::string, CladeData>& clade, CladeDrawSettings& settings_clade) const override
+        {
+            Default::update_settings_clade(settings, clade, settings_clade);
+            if (clade.first == "GLY" || clade.first == "NO-GLY") {
+                settings_clade.show = false;
+            }
+        }
     };
 
     // ----------------------------------------------------------------------
