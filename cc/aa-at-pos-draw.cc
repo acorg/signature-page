@@ -114,7 +114,8 @@ struct AAPosSection
 void AAAtPosDraw::make_aa_pos_sections(bool init_settings, size_t hz_section_threshold)
 {
     if (!positions_.empty()) {
-        std::cout << "\nINFO: sections for positions (small sections eliminated [threshold: " << mSettings.small_section_threshold << "], adjacent sections merged, most frequent AA sections removed)\n";
+        std::cout << "\nINFO: sections for positions (small sections eliminated [threshold: " << mSettings.small_section_threshold << "], adjacent sections merged)\n";
+        // std::cout << "\nINFO: sections for positions (small sections eliminated [threshold: " << mSettings.small_section_threshold << "], adjacent sections merged, most frequent AA sections removed)\n";
         for (auto pos : positions_) {
             std::vector<AAPosSection> sections;
             tree::iterate_leaf(mTree, [&](const Node& node) {
@@ -154,12 +155,12 @@ void AAAtPosDraw::make_aa_pos_sections(bool init_settings, size_t hz_section_thr
                     ++section_it;
             }
 
-            // remove sections for the most frequent AA
-            std::map<char, size_t> aa_freq;
-            for (const auto& section : sections)
-                aa_freq[section.aa] += section.num_nodes;
-            const auto most_freq_aa = std::max_element(aa_freq.begin(), aa_freq.end(), [](const auto& e1, const auto& e2) { return e1.second < e2.second; })->first;
-            sections.erase(std::remove_if(sections.begin(), sections.end(), [most_freq_aa](const auto& section) { return section.aa == most_freq_aa; }), sections.end());
+            // // remove sections for the most frequent AA
+            // std::map<char, size_t> aa_freq;
+            // for (const auto& section : sections)
+            //     aa_freq[section.aa] += section.num_nodes;
+            // const auto most_freq_aa = std::max_element(aa_freq.begin(), aa_freq.end(), [](const auto& e1, const auto& e2) { return e1.second < e2.second; })->first;
+            // sections.erase(std::remove_if(sections.begin(), sections.end(), [most_freq_aa](const auto& section) { return section.aa == most_freq_aa; }), sections.end());
 
             if (init_settings) {
                 for (const auto& section : sections) {
@@ -181,9 +182,9 @@ void AAAtPosDraw::make_aa_pos_sections(bool init_settings, size_t hz_section_thr
                 }
             }
 
-            std::cout << ' ' << std::setw(3) << std::right << (pos + 1) << '\n';
+            std::cout << ' ' << std::setw(3) << std::right << (pos + 1) << "  size  first     --  last\n";
             for (const auto& section : sections)
-                std::cout << "   " << section.aa << ' ' << std::setw(4) << std::right << section.num_nodes << ' ' << section.first->seq_id << " -- " << section.last->seq_id << '\n';
+                std::cout << "    " << section.aa << ' ' << std::setw(4) << std::right << section.num_nodes << ' ' << section.first->seq_id << " -- " << section.last->seq_id << '\n';
         }
         std::cout << '\n';
     }

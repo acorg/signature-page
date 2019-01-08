@@ -29,13 +29,13 @@ void TimeSeriesDraw::prepare()
         if (mSettings.end.empty()) {
             for (auto ms = sequences_per_month.crbegin(); ms != sequences_per_month.crend(); ++ms) {
                 if (ms->second && ms->first <= today) {
-                    mSettings.end = ms->first;
+                    mSettings.end = ms->first.end_of_month();
                     break;
                 }
             }
         }
 
-        mNumberOfMonths = static_cast<size_t>(months_between_dates(Date{mSettings.begin}, Date{mSettings.end})) + 2;
+        mNumberOfMonths = static_cast<size_t>(calendar_months_between_dates_inclusive(Date{mSettings.begin}, Date{mSettings.end}));
         std::cout << "INFO: dates to show: " << mSettings.begin << " .. " << mSettings.end << "  months: " << mNumberOfMonths << DEBUG_LINE_FUNC << '\n';
     }
     else {
