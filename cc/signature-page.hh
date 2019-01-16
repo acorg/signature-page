@@ -99,6 +99,8 @@ class SignaturePageDraw
     Tree& tree() { return *mTree; }
     const TreeDraw& tree_draw() const { return *mTreeDraw; }
     void chart(std::string aChartFilename) { mChartFilename = aChartFilename; }
+    bool has_antigenic_maps_draw() const noexcept { return bool{mMappedAntigensDraw}; }
+    const AntigenicMapsDrawBase& antigenic_maps_draw() const { return *mAntigenicMapsDraw; }
 
     void prepare(bool show_hz_sections);
     void draw(bool report_antigens_in_hz_sections, bool init_settings, size_t hz_section_threshold, size_t aa_small_section_threshold);

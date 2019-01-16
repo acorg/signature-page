@@ -16,6 +16,7 @@ class Node;
 class Tree;
 class Coloring;
 class SettingsInitializer;
+class SignaturePageDraw;
 
 // ----------------------------------------------------------------------
 
@@ -228,6 +229,7 @@ class TreeDrawSettings : public acmacs::settings::object
                                                                            "{mod: hide-one, s1: name-to-hide} - after ladderizing",
                                                                            "{mod: mark-with-line, s1: name-to-mark, s2: color-to-mark, d1: line-width-in-pixels}",
                                                                            "{mod: mark-clade-with-line, clade: , color: , line_width: line-width-in-pixels}",
+                                                                           "{mod: mark-having-serum-with-line, color: , line_width: line-width-in-pixels}",
                                                                            "{mod: mark-with-label, seq_id:, label:, line_color:, line_width:, label_offset:, label_size:, labeL_color:, label_style: }"}};
     acmacs::settings::field<bool>                               force_line_width{this, "force_line_width", false};
     acmacs::settings::field<double>                             line_width{this, "line_width", 1};
@@ -328,7 +330,7 @@ class HzSections : public acmacs::settings::object
 class TreeDraw
 {
  public:
-    TreeDraw(acmacs::surface::Surface& aSurface, Tree& aTree, TreeDrawSettings& aSettings, HzSections& aHzSections);
+    TreeDraw(SignaturePageDraw& aSignaturePageDraw, acmacs::surface::Surface& aSurface, Tree& aTree, TreeDrawSettings& aSettings, HzSections& aHzSections);
     ~TreeDraw();
 
     void prepare();
@@ -361,6 +363,7 @@ class TreeDraw
         size_t number_strains;
     };
 
+    SignaturePageDraw& mSignaturePageDraw;
     acmacs::surface::Surface& mSurface;
     Tree& mTree;
     TreeDrawSettings& mSettings;
@@ -401,6 +404,7 @@ class TreeDraw
     void hide_one(std::string aName);
     void mark_with_line(std::string aName, Color aColor, Pixels aLineWidth);
     void mark_clade_with_line(std::string aClade, Color aColor, Pixels aLineWidth);
+    void mark_having_serum_with_line(Color aColor, Pixels aLineWidth);
     void mark_with_label(const TreeDrawMod& aMod);
     static void hide_branch(Node& aNode);
 

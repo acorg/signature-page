@@ -10,11 +10,12 @@
 #include "tree.hh"
 #include "coloring.hh"
 #include "settings-initializer.hh"
+#include "signature-page.hh"
 
 // ----------------------------------------------------------------------
 
-TreeDraw::TreeDraw(acmacs::surface::Surface& aSurface, Tree& aTree, TreeDrawSettings& aSettings, HzSections& aHzSections)
-    : mSurface(aSurface), mTree(aTree), mSettings(aSettings), mHzSections(aHzSections)
+TreeDraw::TreeDraw(SignaturePageDraw& aSignaturePageDraw, acmacs::surface::Surface& aSurface, Tree& aTree, TreeDrawSettings& aSettings, HzSections& aHzSections)
+    : mSignaturePageDraw(aSignaturePageDraw), mSurface(aSurface), mTree(aTree), mSettings(aSettings), mHzSections(aHzSections)
 {
     make_coloring();
 }
@@ -143,6 +144,10 @@ bool TreeDraw::apply_mods()
         else if (mod_mod == "mark-clade-with-line") {
             std::cout << "TREE-mod: " << mod_mod << " \"" << mod.clade << "\" \"" << mod.color << "\" " << mod.line_width << '\n';
             mark_clade_with_line(mod.clade, Color(mod.color), Pixels{mod.line_width});
+        }
+        else if (mod_mod == "mark-having-serum-with-line") {
+            std::cout << "TREE-mod: " << mod_mod << " \"" << mod.color << "\" " << mod.line_width << '\n';
+            mark_having_serum_with_line(Color(mod.color), Pixels{mod.line_width});
         }
         else if (mod_mod == "mark-with-label") {
             mark_with_label(mod);
@@ -354,11 +359,44 @@ void TreeDraw::mark_clade_with_line(std::string aClade, Color aColor, Pixels aLi
     };
     tree::iterate_leaf(mTree, mark_leaf);
     if (marked == 0)
-        std::cerr << "WARNING: not found to mark with line for clade: " << aClade << '\n';
+        std::cerr << "WARNING: no nodes found to mark with line for clade: " << aClade << '\n';
     else
         std::cout << "Clade " << aClade << " leaf nodes marked: " << marked << '\n';
 
 } // TreeDraw::mark_clade_with_line
+
+// ----------------------------------------------------------------------
+
+void TreeDraw::mark_having_serum_with_line(Color aColor, Pixels aLineWidth)
+{
+    if (mSignaturePageDraw.has_antigenic_maps_draw()) {
+        const auto& chart = mSignaturePageDraw.antigenic_maps_draw().chart().chart();
+        chart.set_homologous(acmacs::chart::find_homologous::relaxed_strict);
+        std::vector<bool> antigens_with_homologous_serum(chart.number_of_antigens(), false);
+        auto sera = chart.sera();
+        for (auto serum : *sera) {
+            for (auto ag_no : serum->homologous_antigens())
+                antigens_with_homologous_serum[ag_no] = true;
+        }
+        std::vector<std::string> marked;
+        auto mark_leaf = [&antigens_with_homologous_serum, &aColor, &aLineWidth, &marked](Node& aNode) {
+            if (aNode.draw.chart_antigen_index && antigens_with_homologous_serum[*aNode.draw.chart_antigen_index]) {
+                aNode.draw.mark_with_line = aColor;
+                aNode.draw.mark_with_line_width = aLineWidth;
+                marked.push_back(aNode.seq_id);
+            }
+        };
+        tree::iterate_leaf(mTree, mark_leaf);
+        if (marked.empty())
+            std::cerr << "WARNING: no nodes found to mark with line for antigens in chart having serum\n";
+        else {
+            std::cout << "INFO: leafs having serum marked: " << marked.size() << '\n';
+            for (const auto& name : marked)
+                std::cout << "    " << name << '\n';
+        }
+    }
+
+} // TreeDraw::mark_having_serum_with_line
 
 // ----------------------------------------------------------------------
 
