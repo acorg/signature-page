@@ -1,3 +1,4 @@
+#+STARTUP: showall
 * Making tree image from fasta file
 ** Source fasta file format
 Expected format corresponds to the gisaid output format:
