@@ -92,7 +92,7 @@ class SignaturePageDraw
 
     void load_settings(std::string aFilename);
     void make_surface(std::string aFilename, bool init_settings, bool show_aa_at_pos, bool draw_map);
-    void init_settings(bool show_aa_at_pos);
+    void init_settings(bool show_aa_at_pos, bool whocc_support);
     void write_initialized_settings(std::string aFilename); // removes redundant settings entries depending on layout!
     Settings& settings() { return *mSettings; }
     void tree(std::string aTreeFilename, seqdb::Seqdb::ignore_not_found ignore = seqdb::Seqdb::ignore_not_found::no);

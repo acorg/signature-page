@@ -91,6 +91,7 @@ class CladesDrawSettings : public acmacs::settings::object
     CladesDrawSettings(acmacs::settings::base& parent) : acmacs::settings::object::object(parent) { clades.append(); }
 
     acmacs::settings::const_array_element<CladeDrawSettings> for_clade(std::string name) const;
+    void hide_default_clade();
 
     acmacs::settings::field_array_of<CladeDrawSettings> clades{this, "clades"};
     acmacs::settings::field<double>                     slot_width{this, "slot_width", 10};
@@ -154,7 +155,7 @@ class CladesDraw
     void prepare();
     void draw();
 
-    void init_settings(const SettingsInitializer& settings_initilizer);
+    void init_settings(const SettingsInitializer& settings_initilizer, bool whocc_support);
     acmacs::surface::Surface& surface() { return mSurface; }
     const Clades* clades() const { return &mClades; }
 

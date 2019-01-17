@@ -21,11 +21,11 @@ class SettingsInitializer
 
     virtual bool show_aa_at_pos() const = 0;
 
-    virtual void update(SignaturePageDrawSettings& settings) const = 0;
+    virtual void update(SignaturePageDrawSettings& settings, bool whocc_support) const = 0;
     virtual void update(TitleDrawSettings& settings) const = 0;
-    virtual void update(CladesDrawSettings& settings) const = 0;
-    virtual void update(CladesDrawSettings& settings, std::pair<const std::string, CladeData>& clade) const = 0;
-    virtual void update(TreeDraw& tree_draw) const = 0;
+    virtual void update(CladesDrawSettings& settings, bool whocc_support) const = 0;
+    virtual void update(CladesDrawSettings& settings, std::pair<const std::string, CladeData>& clade, bool whocc_support) const = 0;
+    virtual void update(TreeDraw& tree_draw, bool whocc_support) const = 0;
 
     virtual std::vector<double> viewport_rel() const = 0;
     virtual double rotate_degrees() const = 0;

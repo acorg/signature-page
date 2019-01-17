@@ -23,6 +23,7 @@ int main(int argc, const char *argv[])
 
                 {"-s", argc_argv::strings{}}, //value<std::vector<std::string>>(&aOptions.settings_filename), "signature page drawing settings (json) filename")
                 {"--init-settings", ""}, // value<std::string>(&aOptions.init_settings_filename), "initialize signature page drawing settings (json) filename")
+                {"--no-whocc", false, "init settings without whocc defaults (clades, hz sections)"},
                 {"--report-cumulative", ""},
                 {"--report-hz-section_antigens", false}, // bool_switch(&aOptions.report_antigens_in_hz_sections)->default_value(false), "report antigens in each hz section")
                 {"--show-aa-at-pos", false, "show aa_at_pos section if --init-settings was used"},
@@ -74,7 +75,7 @@ int main(int argc, const char *argv[])
                 signature_page.chart(args["--chart"].str()); // before make_surface!
             signature_page.make_surface(std::string(args[1]), args["--init-settings"], args["--show-aa-at-pos"], !args["--no-draw"]); // before init_layout!
             if (args["--init-settings"]) {
-                signature_page.init_settings(args["--show-aa-at-pos"]);
+                signature_page.init_settings(args["--show-aa-at-pos"], !args["--no-whocc"]);
             }
             signature_page.prepare(!args["--not-show-hz-sections"]);
             if (args["--report-cumulative"]) {

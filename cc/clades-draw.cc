@@ -24,6 +24,16 @@ acmacs::settings::const_array_element<CladeDrawSettings> CladesDrawSettings::for
 
 // ----------------------------------------------------------------------
 
+void CladesDrawSettings::hide_default_clade()
+{
+    if (auto found = clades.find_if([](auto& c) -> bool { return c.name.empty(); }); found) {
+        (*found)->show = false;
+    }
+
+} // CladesDrawSettings::hide_default_clade
+
+// ----------------------------------------------------------------------
+
 void CladeData::extend(const Node& node, size_t section_inclusion_tolerance)
 {
     if (!sections.empty() && node.draw.line_no <= (sections.back().last->draw.line_no + section_inclusion_tolerance + 1)) {
@@ -144,12 +154,15 @@ void CladesDraw::assign_slots()
 
 // ----------------------------------------------------------------------
 
-void CladesDraw::init_settings(const SettingsInitializer& settings_initilizer)
+void CladesDraw::init_settings(const SettingsInitializer& settings_initilizer, bool whocc_support)
 {
-    collect();
-    settings_initilizer.update(mSettings);
-    for (auto& clade : mClades)
-        settings_initilizer.update(mSettings, clade);
+    if (whocc_support)
+        collect();
+    settings_initilizer.update(mSettings, whocc_support);
+    if (whocc_support) {
+        for (auto& clade : mClades)
+            settings_initilizer.update(mSettings, clade, whocc_support);
+    }
 
 } // CladesDraw::init_settings
 

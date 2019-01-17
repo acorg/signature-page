@@ -104,7 +104,7 @@ void SignaturePageDraw::make_surface(std::string aFilename, bool init_settings, 
 
 // ----------------------------------------------------------------------
 
-void SignaturePageDraw::init_settings(bool show_aa_at_pos)
+void SignaturePageDraw::init_settings(bool show_aa_at_pos, bool whocc_support)
 {
     mSettings->inject_default();
 
@@ -113,7 +113,7 @@ void SignaturePageDraw::init_settings(bool show_aa_at_pos)
     const auto assay = mAntigenicMapsDraw ? mAntigenicMapsDraw->chart().assay() : std::string{};
     auto settings_initilizer = settings_initilizer_factory(lab, virus_type, assay, show_aa_at_pos);
 
-    settings_initilizer->update(*mSettings->signature_page);
+    settings_initilizer->update(*mSettings->signature_page, whocc_support);
 
     if (!mChartFilename.empty()) {
         mSettings->signature_page->layout = SignaturePageLayout::TreeCladesTSMaps;
@@ -133,12 +133,12 @@ void SignaturePageDraw::init_settings(bool show_aa_at_pos)
     if (mTreeDraw)
         mTreeDraw->ladderize(); // ladderize and set_line_no before init clades!
     if (mCladesDraw)
-        mCladesDraw->init_settings(*settings_initilizer);
+        mCladesDraw->init_settings(*settings_initilizer, whocc_support);
     if (mTreeDraw) {
         auto clades = mCladesDraw ? mCladesDraw->clades() : nullptr;
         if (mSettings->signature_page->layout == SignaturePageLayout::TreeTSClades)
             mTreeDraw->detect_hz_lines_for_clades(clades, true);
-        mTreeDraw->init_settings(clades, *settings_initilizer);
+        mTreeDraw->init_settings(clades, *settings_initilizer, whocc_support);
     }
     if (mTimeSeriesDraw)
         mTimeSeriesDraw->init_settings(*settings_initilizer);

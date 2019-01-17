@@ -340,7 +340,7 @@ class TreeDraw
     const Coloring& coloring() const { return *mColoring; }
     double vertical_step() const { return mVerticalStep; }
 
-    void init_settings(const Clades* aClades, const SettingsInitializer& settings_initilizer);
+    void init_settings(const Clades* aClades, const SettingsInitializer& settings_initilizer, bool whocc_support);
     void ladderize();
     void detect_hz_lines_for_clades(const Clades* aClades, bool aForce = true);
     void set_line_no();

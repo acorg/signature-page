@@ -53,14 +53,14 @@ void TreeDraw::make_coloring()
 
 // ----------------------------------------------------------------------
 
-void TreeDraw::init_settings(const Clades* aClades, const SettingsInitializer& settings_initilizer)
+void TreeDraw::init_settings(const Clades* aClades, const SettingsInitializer& settings_initilizer, bool whocc_support)
 {
     mInitializeSettings = true;
     if (hz_sections().sections.empty())
         mHzSections.detect_hz_lines_for_clades(mTree, aClades, true);
     mHzSections.vertical_gap = 15;
     tree().make_aa_transitions();
-    settings_initilizer.update(*this);
+    settings_initilizer.update(*this, whocc_support);
 
 } // TreeDraw::init_settings
 

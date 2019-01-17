@@ -14,26 +14,34 @@ namespace
       public:
         Default(std::string lab, std::string virus_type, std::string assay) : lab_{lab}, virus_type_{virus_type}, assay_{assay} {}
 
-        void update(SignaturePageDrawSettings& settings) const override
+        void update(SignaturePageDrawSettings& settings, bool whocc_support) const override
         {
             settings.time_series_width = 100;
             settings.bottom = settings.top;
+            if (!whocc_support)
+                settings.clades_width = 0;
         }
 
         void update(TitleDrawSettings& settings) const override { settings.title = virus_type(); }
-        void update(CladesDrawSettings& /*settings*/) const override {}
-        void update(TreeDraw& /*tree_draw*/) const override {}
-
-        void update(CladesDrawSettings& settings, std::pair<const std::string, CladeData>& clade) const override
+        void update(TreeDraw& /*tree_draw*/, bool /*whocc_support*/) const override {}
+        void update(CladesDrawSettings& settings, bool whocc_support) const override
         {
-            auto matcher = [&](const auto& c) { return static_cast<std::string>(c.name) == clade.first; };
-            if (auto settings_clade = settings.clades.find_if(matcher); !settings_clade) {
-                auto new_clade = settings.clades.append();
-                new_clade->name = clade.first;
-                update_settings_clade(settings, clade, *new_clade);
+            if (!whocc_support)
+                settings.hide_default_clade();
+        }
+
+        void update(CladesDrawSettings& settings, std::pair<const std::string, CladeData>& clade, bool whocc_support) const override
+        {
+            if (whocc_support) {
+                auto matcher = [&](const auto& c) { return static_cast<std::string>(c.name) == clade.first; };
+                if (auto settings_clade = settings.clades.find_if(matcher); !settings_clade) {
+                    auto new_clade = settings.clades.append();
+                    new_clade->name = clade.first;
+                    update_settings_clade(settings, clade, *new_clade);
+                }
+                else
+                    update_settings_clade(settings, clade, **settings_clade);
             }
-            else
-                update_settings_clade(settings, clade, **settings_clade);
         }
 
         bool show_aa_at_pos() const override { return false; }
@@ -59,9 +67,9 @@ namespace
       public:
         using Default::Default;
 
-        void update(SignaturePageDrawSettings& settings) const override
+        void update(SignaturePageDrawSettings& settings, bool whocc_support) const override
         {
-            Default::update(settings);
+            Default::update(settings, whocc_support);
             settings.time_series_width = 150;
             settings.top = 60;
             settings.bottom = 60;
@@ -71,9 +79,9 @@ namespace
             settings.tree_margin_right = 10;
         }
 
-        void update(TreeDraw& tree_draw) const override
+        void update(TreeDraw& tree_draw, bool whocc_support) const override
         {
-            Default::update(tree_draw);
+            Default::update(tree_draw, whocc_support);
             tree_draw.settings().legend->width = 100;
         }
 
@@ -96,9 +104,9 @@ namespace
       public:
         using Default::Default;
 
-        void update(SignaturePageDrawSettings& settings) const override
+        void update(SignaturePageDrawSettings& settings, bool whocc_support) const override
         {
-            Default::update(settings);
+            Default::update(settings, whocc_support);
             settings.top = 23;
             settings.bottom = 23;
             settings.left = 10;
@@ -118,15 +126,15 @@ namespace
             settings.offset = acmacs::Offset{10, 10};
         }
 
-        void update(TreeDraw& tree_draw) const override
+        void update(TreeDraw& tree_draw, bool whocc_support) const override
         {
-            Default::update(tree_draw);
+            Default::update(tree_draw, whocc_support);
             tree_draw.settings().legend->width = 100;
         }
 
-        void update(CladesDrawSettings& settings) const override
+        void update(CladesDrawSettings& settings, bool whocc_support) const override
         {
-            Default::update(settings);
+            Default::update(settings, whocc_support);
             settings.clades.for_each([](auto& clade) { clade.label_offset = acmacs::Offset{1, 0}; });
         }
 
@@ -148,9 +156,9 @@ namespace
       public:
         using Default::Default;
 
-        void update(SignaturePageDrawSettings& settings) const override
+        void update(SignaturePageDrawSettings& settings, bool whocc_support) const override
         {
-            Default::update(settings);
+            Default::update(settings, whocc_support);
             settings.top = 60;
             settings.bottom = 60;
             settings.left = 50;
@@ -159,9 +167,9 @@ namespace
             settings.time_series_width = 300;
         }
 
-        void update(TreeDraw& tree_draw) const override
+        void update(TreeDraw& tree_draw, bool whocc_support) const override
         {
-            Default::update(tree_draw);
+            Default::update(tree_draw, whocc_support);
             tree_draw.settings().legend->width = 180;
         }
     };
@@ -173,39 +181,42 @@ namespace
       public:
         using TreeOnly::TreeOnly;
 
-        void update(SignaturePageDrawSettings& settings) const override
+        void update(SignaturePageDrawSettings& settings, bool whocc_support) const override
         {
-            TreeOnly::update(settings);
-            settings.clades_width = 100;
+            TreeOnly::update(settings, whocc_support);
+            if (whocc_support)
+                settings.clades_width = 100;
         }
 
-        void update(TreeDraw& tree_draw) const override
+        void update(TreeDraw& tree_draw, bool whocc_support) const override
         {
-            TreeOnly::update(tree_draw);
-            {
-            auto mod = tree_draw.settings().mods.append();
-            mod->mod = "hide-one";
-            mod->s1 = "A%28H1N1%29/PERTH/9/2018__MDCK2";
-            }
-            {
-            auto mod = tree_draw.settings().mods.append();
-            mod->mod = "hide-one";
-            mod->s1 = "A%28H1N1%29/PARANA/763/2018__OR";
-            }
-            // {
-            // auto mod = tree_draw.settings().mods.append();
-            // mod->mod_help = "hide-if-cumulative-edge-length-bigger-than";
-            // mod->d1 = 0.021;
-            // }
-
-            tree::iterate_pre(tree_draw.tree(), [&tree_draw](const Node& node) {
-                if (node.data.aa_transitions.contains("S164T") && node.data.number_strains > 200) {
-                    auto section = tree_draw.hz_sections().add(find_first_leaf(node).seq_id, true, std::string{}, 0, true);
+            TreeOnly::update(tree_draw, whocc_support);
+            if (whocc_support) {
+                {
+                    auto mod = tree_draw.settings().mods.append();
+                    mod->mod = "hide-one";
+                    mod->s1 = "A%28H1N1%29/PERTH/9/2018__MDCK2";
                 }
-                // else if (node.data.aa_transitions.contains("S183P") && node.data.number_strains > 500) {
-                //     auto section = tree_draw.hz_sections().add(find_first_leaf(node).seq_id, true, std::string{}, 0, true);
+                {
+                    auto mod = tree_draw.settings().mods.append();
+                    mod->mod = "hide-one";
+                    mod->s1 = "A%28H1N1%29/PARANA/763/2018__OR";
+                }
+                // {
+                // auto mod = tree_draw.settings().mods.append();
+                // mod->mod_help = "hide-if-cumulative-edge-length-bigger-than";
+                // mod->d1 = 0.021;
                 // }
-            });
+
+                tree::iterate_pre(tree_draw.tree(), [&tree_draw](const Node& node) {
+                    if (node.data.aa_transitions.contains("S164T") && node.data.number_strains > 200) {
+                        auto section = tree_draw.hz_sections().add(find_first_leaf(node).seq_id, true, std::string{}, 0, true);
+                    }
+                    // else if (node.data.aa_transitions.contains("S183P") && node.data.number_strains > 500) {
+                    //     auto section = tree_draw.hz_sections().add(find_first_leaf(node).seq_id, true, std::string{}, 0, true);
+                    // }
+                });
+            }
         }
 
       protected:
@@ -223,16 +234,16 @@ namespace
       public:
         using WithMap::WithMap;
 
-        void update(TreeDraw& tree_draw) const override
+        void update(TreeDraw& tree_draw, bool whocc_support) const override
             {
-                WithMap::update(tree_draw);
+                WithMap::update(tree_draw, whocc_support);
                 tree_draw.settings().legend->offset = acmacs::Offset{0, 950};
                 tree_draw.settings().legend->width = 150;
             }
 
-        // void update(SignaturePageDrawSettings& settings) const override
+        // void update(SignaturePageDrawSettings& settings, bool whocc_support) const override
         // {
-        //     WithMap::update(settings);
+        //     WithMap::update(settings, whocc_support);
         //     // settings.time_series_width = 100;
         //     // settings.clades_width = 35;
         // }
@@ -285,49 +296,53 @@ namespace
       public:
         using TreeOnly::TreeOnly;
 
-        void update(SignaturePageDrawSettings& settings) const override
+        void update(SignaturePageDrawSettings& settings, bool whocc_support) const override
         {
-            TreeOnly::update(settings);
-            settings.time_series_width = 250;
-            settings.clades_width = 160;
+            TreeOnly::update(settings, whocc_support);
+            if (whocc_support) {
+                settings.time_series_width = 250;
+                settings.clades_width = 160;
+            }
         }
 
-        void update(TreeDraw& tree_draw) const override
+        void update(TreeDraw& tree_draw, bool whocc_support) const override
         {
-            TreeOnly::update(tree_draw);
+            TreeOnly::update(tree_draw, whocc_support);
 
-            auto mod = tree_draw.settings().mods.append();
-            mod->mod = "hide-if-cumulative-edge-length-bigger-than";
-            mod->d1 = 0.04;
+            if (whocc_support) {
+                auto mod = tree_draw.settings().mods.append();
+                mod->mod = "hide-if-cumulative-edge-length-bigger-than";
+                mod->d1 = 0.04;
 
-            tree_draw.hz_sections().sections.for_each([](auto& section) {
-                if (section.triggering_clades.contains("first-leaf:first") || section.triggering_clades.contains("2A1:first") || section.triggering_clades.contains("2A1A:last"))
-                    section.show_map = false;
-                else if (section.triggering_clades.contains("3C.3A:first"))
-                    section.label = "3C.3a";
-                else if (section.triggering_clades.contains("2A4:first"))
-                    section.label = "2a4";
-                else if (section.triggering_clades.contains("2A3:first"))
-                    section.label = "2a3";
-                else if (section.triggering_clades.contains("2A1A:first"))
-                    section.label = "2a1a";
-                else if (section.triggering_clades.contains("2A1B:first"))
-                    section.label = "2a1b 135T";
-                else if (section.triggering_clades.contains("2A2:first"))
-                    section.label = "2a2";
-            });
+                tree_draw.hz_sections().sections.for_each([](auto& section) {
+                    if (section.triggering_clades.contains("first-leaf:first") || section.triggering_clades.contains("2A1:first") || section.triggering_clades.contains("2A1A:last"))
+                        section.show_map = false;
+                    else if (section.triggering_clades.contains("3C.3A:first"))
+                        section.label = "3C.3a";
+                    else if (section.triggering_clades.contains("2A4:first"))
+                        section.label = "2a4";
+                    else if (section.triggering_clades.contains("2A3:first"))
+                        section.label = "2a3";
+                    else if (section.triggering_clades.contains("2A1A:first"))
+                        section.label = "2a1a";
+                    else if (section.triggering_clades.contains("2A1B:first"))
+                        section.label = "2a1b 135T";
+                    else if (section.triggering_clades.contains("2A2:first"))
+                        section.label = "2a2";
+                });
 
-            tree::iterate_pre(tree_draw.tree(), [&tree_draw](const Node& node) {
-                if (node.data.aa_transitions.size() == 1 && node.data.aa_transitions.contains("T135K") && node.data.number_strains > 200) {
-                    auto section = tree_draw.hz_sections().add(find_first_leaf(node).seq_id, true, std::string{}, 0, true);
-                    section->label = "2a1b 135K";
-                      // std::cerr << "DEBUG: " << node.data.aa_transitions << ' ' << node.data.number_strains << DEBUG_LINE_FUNC << '\n';
-                }
-                else if (node.data.aa_transitions.contains("K135N") && node.data.number_strains > 100) {
-                    auto section = tree_draw.hz_sections().add(find_first_leaf(node).seq_id, true, std::string{}, 0, true);
-                    section->label = "2a1b 135N";
-                }
-            });
+                tree::iterate_pre(tree_draw.tree(), [&tree_draw](const Node& node) {
+                    if (node.data.aa_transitions.size() == 1 && node.data.aa_transitions.contains("T135K") && node.data.number_strains > 200) {
+                        auto section = tree_draw.hz_sections().add(find_first_leaf(node).seq_id, true, std::string{}, 0, true);
+                        section->label = "2a1b 135K";
+                        // std::cerr << "DEBUG: " << node.data.aa_transitions << ' ' << node.data.number_strains << DEBUG_LINE_FUNC << '\n';
+                    }
+                    else if (node.data.aa_transitions.contains("K135N") && node.data.number_strains > 100) {
+                        auto section = tree_draw.hz_sections().add(find_first_leaf(node).seq_id, true, std::string{}, 0, true);
+                        section->label = "2a1b 135N";
+                    }
+                });
+            }
         }
 
       protected:
@@ -377,16 +392,18 @@ namespace
       public:
         using WithMap::WithMap;
 
-        void update(SignaturePageDrawSettings& settings) const override
+        void update(SignaturePageDrawSettings& settings, bool whocc_support) const override
         {
-            WithMap::update(settings);
-            settings.time_series_width = 100;
-            settings.clades_width = 35;
+            WithMap::update(settings, whocc_support);
+            if (whocc_support) {
+                settings.time_series_width = 100;
+                settings.clades_width = 35;
+            }
         }
 
-        void update(TreeDraw& tree_draw) const override
+        void update(TreeDraw& tree_draw, bool whocc_support) const override
             {
-                WithMap::update(tree_draw);
+                WithMap::update(tree_draw, whocc_support);
                 tree_draw.settings().legend->offset = acmacs::Offset{0, 950};
                 tree_draw.settings().legend->width = 150;
             }
@@ -465,16 +482,18 @@ namespace
       public:
         using TreeOnly::TreeOnly;
 
-        void update(SignaturePageDrawSettings& settings) const override
+        void update(SignaturePageDrawSettings& settings, bool whocc_support) const override
         {
-            TreeOnly::update(settings);
-            settings.clades_width = 50;
+            TreeOnly::update(settings, whocc_support);
+            if (whocc_support) {
+                settings.clades_width = 50;
+            }
         }
 
-        void update(TreeDraw& tree_draw) const override
+        void update(TreeDraw& tree_draw, bool whocc_support) const override
         {
             constexpr double cumulative_threshold = 0.0191;
-            TreeOnly::update(tree_draw);
+            TreeOnly::update(tree_draw, whocc_support);
             {
                 auto mod = tree_draw.settings().mods.append();
                 mod->mod = "hide-if-cumulative-edge-length-bigger-than";
@@ -540,16 +559,16 @@ namespace
       public:
         using WithMap::WithMap;
 
-        // void update(SignaturePageDrawSettings& settings) const override
+        // void update(SignaturePageDrawSettings& settings, bool whocc_support) const override
         // {
-        //     WithMap::update(settings);
+        //     WithMap::update(settings, whocc_support);
         //     // settings.time_series_width = 100;
         //     // settings.clades_width = 35;
         // }
 
-        void update(TreeDraw& tree_draw) const override
+        void update(TreeDraw& tree_draw, bool whocc_support) const override
             {
-                WithMap::update(tree_draw);
+                WithMap::update(tree_draw, whocc_support);
                 tree_draw.settings().legend->offset = acmacs::Offset{0, 950};
                 tree_draw.settings().legend->width = 150;
             }
@@ -597,19 +616,23 @@ namespace
       public:
         using TreeOnly::TreeOnly;
 
-        void update(SignaturePageDrawSettings& settings) const override
+        void update(SignaturePageDrawSettings& settings, bool whocc_support) const override
         {
-            TreeOnly::update(settings);
-            settings.left = 70;
-            settings.clades_width = 50;
+            TreeOnly::update(settings, whocc_support);
+            if (whocc_support) {
+                settings.left = 70;
+                settings.clades_width = 50;
+            }
         }
 
-        void update(TreeDraw& tree_draw) const override
+        void update(TreeDraw& tree_draw, bool whocc_support) const override
         {
-            TreeOnly::update(tree_draw);
-            auto mod = tree_draw.settings().mods.append();
-            mod->mod = "hide-if-cumulative-edge-length-bigger-than";
-            mod->d1 = 0.043;
+            TreeOnly::update(tree_draw, whocc_support);
+            if (whocc_support) {
+                auto mod = tree_draw.settings().mods.append();
+                mod->mod = "hide-if-cumulative-edge-length-bigger-than";
+                mod->d1 = 0.043;
+            }
         }
 
       protected:
@@ -624,16 +647,16 @@ namespace
       public:
         using WithMap::WithMap;
 
-        // void update(SignaturePageDrawSettings& settings) const override
+        // void update(SignaturePageDrawSettings& settings, bool whocc_support) const override
         // {
-        //     WithMap::update(settings);
+        //     WithMap::update(settings, whocc_support);
         //     // settings.time_series_width = 100;
         //     // settings.clades_width = 35;
         // }
 
-        void update(TreeDraw& tree_draw) const override
+        void update(TreeDraw& tree_draw, bool whocc_support) const override
             {
-                WithMap::update(tree_draw);
+                WithMap::update(tree_draw, whocc_support);
                 tree_draw.settings().legend->offset = acmacs::Offset{0, 950};
                 tree_draw.settings().legend->width = 150;
             }
