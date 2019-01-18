@@ -74,6 +74,7 @@ void SignaturePageDraw::make_surface(std::string aFilename, bool init_settings, 
     switch (detect_layout(init_settings, show_aa_at_pos)) {
       case SignaturePageLayout::TreeCladesTSMaps:
       case SignaturePageLayout::TreeAATSClades:
+      case SignaturePageLayout::TreeTSCladesWide:
           width = 1360;         // ratio 1.6
           height = 850;
           break;
@@ -164,6 +165,7 @@ void SignaturePageDraw::write_initialized_settings(std::string aFilename)
             settings().hz_sections.remove();
             break;
         case SignaturePageLayout::TreeTSClades:
+        case SignaturePageLayout::TreeTSCladesWide:
         case SignaturePageLayout::TreeAATSClades:
             settings().tree_draw->remove_for_tree_settings();
             settings().time_series->remove_for_tree_settings();
@@ -194,6 +196,7 @@ void SignaturePageDraw::prepare(bool show_hz_sections)
     settings().hz_sections->show = show_hz_sections;
     switch (detect_layout(false, false)) {
       case SignaturePageLayout::TreeTSClades:
+      case SignaturePageLayout::TreeTSCladesWide:
       case SignaturePageLayout::TreeAATSClades:
       case SignaturePageLayout::Auto:
           make_layout_tree_ts_clades();

@@ -21,7 +21,7 @@ class SettingsInitializer;
 
 // ----------------------------------------------------------------------
 
-enum class SignaturePageLayout { Auto, TreeTSClades, TreeCladesTSMaps, TreeAATSClades };
+enum class SignaturePageLayout { Auto, TreeTSClades, TreeTSCladesWide, TreeCladesTSMaps, TreeAATSClades };
 
 namespace acmacs::settings
 {
@@ -35,6 +35,9 @@ namespace acmacs::settings
                   break;
               case SignaturePageLayout::TreeTSClades:
                   to = "tree-ts-clades";
+                  break;
+              case SignaturePageLayout::TreeTSCladesWide:
+                  to = "tree-ts-clades-wide";
                   break;
               case SignaturePageLayout::TreeCladesTSMaps:
                   to = "tree-clades-ts-maps";
@@ -51,6 +54,8 @@ namespace acmacs::settings
                 return SignaturePageLayout::Auto;
             else if (from == "tree-ts-clades")
                 return SignaturePageLayout::TreeTSClades;
+            else if (from == "tree-ts-clades-wide")
+                return SignaturePageLayout::TreeTSCladesWide;
             else if (from == "tree-aa-ts-clades")
                 return SignaturePageLayout::TreeAATSClades;
             else if (from == "tree-clades-ts-maps")
