@@ -227,6 +227,7 @@ class TreeDrawSettings : public acmacs::settings::object
                                                                            "{mod: before2015-58P-or-146I-or-559I}",
                                                                            "{mod: hide-between, s1: first-name-to-hide, s2: last-name-to-hide} - after ladderizing",
                                                                            "{mod: hide-one, s1: name-to-hide} - after ladderizing",
+                                                                           "{mod: hide-not-found-in-chart}",
                                                                            "{mod: mark-with-line, s1: name-to-mark, s2: color-to-mark, d1: line-width-in-pixels}",
                                                                            "{mod: mark-clade-with-line, clade: , color: , line_width: line-width-in-pixels}",
                                                                            "{mod: mark-having-serum-with-line, color: , line_width: line-width-in-pixels}",
@@ -402,6 +403,7 @@ class TreeDraw
     void hide_before2015_58P_or_146I_or_559I();
     void hide_between(std::string aFirst, std::string aLast);
     void hide_one(std::string aName);
+    void hide_not_found_in_chart();
     void mark_with_line(std::string aName, Color aColor, Pixels aLineWidth);
     void mark_clade_with_line(std::string aClade, Color aColor, Pixels aLineWidth);
     void mark_having_serum_with_line(Color aColor, Pixels aLineWidth);

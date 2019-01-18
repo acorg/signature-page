@@ -137,6 +137,10 @@ bool TreeDraw::apply_mods()
             std::cout << "TREE-mod: " << mod_mod << " \"" << mod.s1 << "\"" << '\n';
             hide_one(mod.s1);
         }
+        else if (mod_mod == "hide-not-found-in-chart") {
+            std::cout << "TREE-mod: " << mod_mod << '\n';
+            hide_not_found_in_chart();
+        }
         else if (mod_mod == "mark-with-line") {
             std::cout << "TREE-mod: " << mod_mod << " \"" << mod.s1 << "\" \"" << mod.s2 << "\" " << mod.d1 << '\n';
             mark_with_line(mod.s1, Color(mod.s2), Pixels{mod.d1});
@@ -279,7 +283,7 @@ void TreeDraw::hide_between(std::string aFirst, std::string aLast)
             throw std::runtime_error("tree hide_between: last node not found: " + aLast);
         if (hidden == 0)
             throw std::runtime_error("tree hide_between: no nodes hidden");
-        std::cout << "leaf nodes hidden: " << hidden << '\n';
+        std::cout << "INFO: hide_between [" << aFirst << "] [" << aLast << "]: leaf nodes hidden: " << hidden << '\n';
     }
     else {
         std::cerr << "WARNING: node hiding cancelled\n";
@@ -301,10 +305,29 @@ void TreeDraw::hide_one(std::string aName)
 
     tree::iterate_leaf_post(mTree, hide_show_leaf, hide_branch);
     if (hidden == 0)
-        throw std::runtime_error("tree hide_between: no nodes hidden");
-    std::cout << "leaf nodes hidden: " << hidden << '\n';
+        throw std::runtime_error("tree hide_one: no nodes hidden");
+    std::cout << "INFO: hide_one " << aName << ": leaf nodes hidden: " << hidden << '\n';
 
 } // TreeDraw::hide_one
+
+// ----------------------------------------------------------------------
+
+void TreeDraw::hide_not_found_in_chart()
+{
+    size_t hidden = 0;
+    auto hide_show_leaf = [&hidden](Node &aNode) {
+        if (!aNode.draw.chart_antigen_index) {
+            aNode.draw.shown = false;
+            ++hidden;
+        }
+    };
+
+    tree::iterate_leaf_post(mTree, hide_show_leaf, hide_branch);
+    if (hidden == 0)
+        throw std::runtime_error("tree hide_not_found_in_chart: no nodes hidden");
+    std::cout << "INFO: hide_not_found_in_chart: leaf nodes hidden: " << hidden << '\n';
+
+} // TreeDraw::hide_not_found_in_chart
 
 // ----------------------------------------------------------------------
 
