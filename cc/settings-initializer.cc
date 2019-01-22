@@ -317,8 +317,8 @@ namespace
                 tree_draw.hz_sections().sections.for_each([](auto& section) {
                     if (section.triggering_clades.contains("first-leaf:first") || section.triggering_clades.contains("2A1:first") || section.triggering_clades.contains("2A1A:last"))
                         section.show_map = false;
-                    else if (section.triggering_clades.contains("3C.3A:first"))
-                        section.label = "3C.3a";
+                    else if (section.triggering_clades.contains("3A:first"))
+                        section.label = "3a";
                     else if (section.triggering_clades.contains("2A4:first"))
                         section.label = "2a4";
                     else if (section.triggering_clades.contains("2A3:first"))
@@ -355,15 +355,15 @@ namespace
             else if (clade.first == "3C.3") {
                 settings_clade.show = false;
             }
-            else if (clade.first == "3C.3A") {
-                settings_clade.display_name = "3C.3a";
+            else if (clade.first == "3A") {
+                settings_clade.display_name = "3a";
             }
-            else if (clade.first == "3C.3B") {
-                settings_clade.display_name = "3C.3b";
+            else if (clade.first == "3B") {
+                settings_clade.display_name = "3b";
             }
-            else if (clade.first == "3C.2A") {
+            else if (clade.first == "2A") {
                 clade.second.slot = settings_clade.slot = 7;
-                settings_clade.display_name = "3C.2a";
+                settings_clade.display_name = "2a";
             }
             else if (clade.first == "2A1") {
                 clade.second.slot = settings_clade.slot = 4;
