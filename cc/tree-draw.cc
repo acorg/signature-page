@@ -750,8 +750,11 @@ void TreeDraw::report_aa_transitions()
             std::max_element(aa_transitions_.begin(), aa_transitions_.end(), [](const auto& e1, const auto& e2) -> bool { return e1.first_leaf.size() < e2.first_leaf.size(); })->first_leaf.size());
         std::cout << "AA transitions:\n";
         for (const auto& tr : aa_transitions_) {
-            std::cout << "  " << std::setw(transition_width + 1) << std::left << tr.transition << std::setw(node_width + 1) << std::left << tr.first_leaf << "strains:" << std::setw(4) << std::right
-                      << tr.number_strains << " [" << std::setprecision(0) << tr.origin.x() << ' ' << tr.origin.y() << "]\n";
+            std::cout << "  {\"label\": " << std::setw(transition_width + 4) << std::left << string::concat('"', tr.transition, "\",")
+                      << "\"label_offset\": [-40, 20], "
+                      << "\"first_leaf_seq_id\": " << std::setw(node_width + 4) << std::left << string::concat('"', tr.first_leaf, "\",")
+                      << "\"?strains\":" << std::setw(4) << std::right << tr.number_strains
+                      << ", \"?origin\": [" << std::setprecision(0) << tr.origin.x() << ',' << tr.origin.y() << "]},\n";
         }
     }
 
