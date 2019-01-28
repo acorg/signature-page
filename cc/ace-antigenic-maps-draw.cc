@@ -366,7 +366,7 @@ void AntigenicMapsLayoutDrawAce::serum_circle(const AntigenicMapMod& mod, std::s
         if (mod.serum.empty())
             throw std::runtime_error("invalid mod (\"serum\" not found): " + mod.to_json());
         const auto& chrt = chart();
-        auto serum_index = chrt.sera()->find_by_full_name(mod.serum);
+        auto serum_index = chrt.sera()->find_by_full_name(*mod.serum);
         if (!serum_index)
             throw std::runtime_error("serum not found: " + mod.to_json());
         const auto homologous_antigens_for_serum = chrt.serum(*serum_index)->homologous_antigens();
