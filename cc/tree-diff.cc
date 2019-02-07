@@ -27,16 +27,24 @@ int main(int argc, const char* argv[])
         const auto nodes1 = get_nodes(opt.tree1);
         const auto nodes2 = get_nodes(opt.tree2);
 
+        size_t left_only = 0;
         for (const auto& node1 : nodes1) {
-            if (nodes2.find(node1) == nodes2.end())
+            if (nodes2.find(node1) == nodes2.end()) {
                 std::cout << "< " << node1 << '\n';
+                ++left_only;
+            }
         }
 
+        size_t right_only = 0;
         for (const auto& node2 : nodes2) {
-            if (nodes1.find(node2) == nodes1.end())
+            if (nodes1.find(node2) == nodes1.end()) {
                 std::cout << "> " << node2 << '\n';
+                ++right_only;
+            }
         }
 
+        std::cout << "left only:  " << left_only << '\n';
+        std::cout << "right only: " << right_only << '\n';
         return 0;
     }
     catch (std::exception& err) {
