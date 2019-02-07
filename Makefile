@@ -8,7 +8,8 @@ TARGETS = \
   $(DIST)/make-isig \
   $(DIST)/tree-aa-info \
   $(DIST)/tree-text \
-  $(DIST)/tree-chart-sections
+  $(DIST)/tree-chart-sections \
+  $(DIST)/tree-diff
 
 SIGNATURE_PAGE_SOURCES = \
   tree.cc tree-export.cc \
@@ -26,6 +27,7 @@ MAKE_ISIG_SOURCES = make-isig.cc tree.cc tree-export.cc
 TREE_AA_INFO_SOURCES = tree-aa-info.cc tree.cc tree-export.cc
 TREE_TEXT_SOURCES = tree-text.cc tree.cc tree-export.cc
 TREE_CHART_SECTIONS_SOURCES = tree-chart-sections.cc tree.cc tree-export.cc
+TREE_DIFF_SOURCES = tree-diff.cc tree.cc tree-export.cc
 
 # ----------------------------------------------------------------------
 
@@ -92,6 +94,10 @@ $(DIST)/tree-text: $(patsubst %.cc,$(BUILD)/%.o,$(TREE_TEXT_SOURCES)) | $(DIST)
 	$(CXX) $(LDFLAGS) -o $@ $^ $(LDLIBS) $(AD_RPATH)
 
 $(DIST)/tree-chart-sections: $(patsubst %.cc,$(BUILD)/%.o,$(TREE_CHART_SECTIONS_SOURCES)) | $(DIST)
+	$(call echo_link_exe,$@)
+	$(CXX) $(LDFLAGS) -o $@ $^ $(LDLIBS) $(AD_RPATH)
+
+$(DIST)/tree-diff: $(patsubst %.cc,$(BUILD)/%.o,$(TREE_DIFF_SOURCES)) | $(DIST)
 	$(call echo_link_exe,$@)
 	$(CXX) $(LDFLAGS) -o $@ $^ $(LDLIBS) $(AD_RPATH)
 

@@ -52,9 +52,9 @@ template <typename RW> inline jsw::writer<RW>& operator <<(jsw::writer<RW>& writ
 
 // ----------------------------------------------------------------------
 
-void tree::export_to_json(std::string aFilename, const Tree& aTree, size_t aIndent)
+void tree::export_to_json(std::string_view aFilename, const Tree& aTree, size_t aIndent)
 {
-    jsw::export_to_json(aTree, aFilename, aIndent);
+    jsw::export_to_json(aTree, std::string(aFilename), aIndent);
 
 } // tree::export_to_json
 
@@ -265,16 +265,16 @@ class TreeRootHandler : public HandlerBase
 
 // ----------------------------------------------------------------------
 
-void tree::tree_import(std::string aFilename, Tree& aTree)
+void tree::tree_import(std::string_view aFilename, Tree& aTree)
 {
-    json_reader::read_from_file<Node, TreeRootHandler>(aFilename, aTree);
+    json_reader::read_from_file<Node, TreeRootHandler>(std::string(aFilename), aTree);
       // aTree.set_number_strains();
 
 } // tree::tree_import
 
 // ----------------------------------------------------------------------
 
-Tree tree::tree_import(std::string aFilename)
+Tree tree::tree_import(std::string_view aFilename)
 {
     Tree tree;
     tree_import(aFilename, tree);
@@ -283,7 +283,7 @@ Tree tree::tree_import(std::string aFilename)
 
 // ----------------------------------------------------------------------
 
-Tree tree::tree_import(std::string aFilename, std::shared_ptr<acmacs::chart::Chart> chart, Tree::LadderizeMethod aLadderizeMethod)
+Tree tree::tree_import(std::string_view aFilename, std::shared_ptr<acmacs::chart::Chart> chart, Tree::LadderizeMethod aLadderizeMethod)
 {
     Tree tree;
     tree_import(aFilename, tree);
@@ -303,7 +303,7 @@ Tree tree::tree_import(std::string aFilename, std::shared_ptr<acmacs::chart::Cha
 // ----------------------------------------------------------------------
 
 // https://en.wikipedia.org/wiki/Newick_format
-void tree::export_to_newick(std::string aFilename, const Tree& aTree, size_t aIndent) {
+void tree::export_to_newick(std::string_view aFilename, const Tree& aTree, size_t aIndent) {
     std::string result;
     std::function<void(const Node &, bool, size_t)> export_node;
     export_node = [&result, &export_node, aIndent](const Node& node, bool comma, size_t indent) {
