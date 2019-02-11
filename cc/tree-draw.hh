@@ -162,7 +162,8 @@ class TreeDrawMod : public acmacs::settings::object
     // mark-clade-with-line mod
     acmacs::settings::field<std::string>       clade{this, "clade"};
     acmacs::settings::field<std::string>       color{this, "color"};
-    acmacs::settings::field<double> line_width{this, "line_width"}; // -1, in pixels, mark-clade-with-line, mark-with-label
+    acmacs::settings::field<double>            line_width{this, "line_width"}; // -1, in pixels, mark-clade-with-line, mark-with-label
+    acmacs::settings::field<bool>              report{this, "report", false};
 
     // mark-with-label
     acmacs::settings::field<std::string>       seq_id{this, "seq_id"};
@@ -405,7 +406,7 @@ class TreeDraw
     void hide_one(std::string aName);
     void hide_not_found_in_chart();
     void mark_with_line(std::string aName, Color aColor, Pixels aLineWidth);
-    void mark_clade_with_line(std::string aClade, Color aColor, Pixels aLineWidth);
+    void mark_clade_with_line(std::string aClade, Color aColor, Pixels aLineWidth, bool aReport);
     void mark_having_serum_with_line(Color aColor, Pixels aLineWidth);
     void mark_with_label(const TreeDrawMod& aMod);
     static void hide_branch(Node& aNode);

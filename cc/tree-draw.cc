@@ -147,7 +147,7 @@ bool TreeDraw::apply_mods()
         }
         else if (mod_mod == "mark-clade-with-line") {
             std::cout << "TREE-mod: " << mod_mod << " \"" << mod.clade << "\" \"" << mod.color << "\" " << mod.line_width << '\n';
-            mark_clade_with_line(mod.clade, Color(mod.color), Pixels{mod.line_width});
+            mark_clade_with_line(mod.clade, Color(mod.color), Pixels{mod.line_width}, mod.report);
         }
         else if (mod_mod == "mark-having-serum-with-line") {
             std::cout << "TREE-mod: " << mod_mod << " \"" << mod.color << "\" " << mod.line_width << '\n';
@@ -370,14 +370,16 @@ void TreeDraw::mark_with_label(const TreeDrawMod& aMod)
 
 // ----------------------------------------------------------------------
 
-void TreeDraw::mark_clade_with_line(std::string aClade, Color aColor, Pixels aLineWidth)
+void TreeDraw::mark_clade_with_line(std::string aClade, Color aColor, Pixels aLineWidth, bool aReport)
 {
     size_t marked = 0;
-    auto mark_leaf = [aClade,&aColor,&aLineWidth,&marked](Node& aNode) {
+    auto mark_leaf = [aClade,&aColor,&aLineWidth,&marked,aReport](Node& aNode) {
         if (aNode.data.has_clade(aClade)) {
             aNode.draw.mark_with_line = aColor;
             aNode.draw.mark_with_line_width = aLineWidth;
             ++marked;
+            if (aReport)
+                std::cout << aClade << " clade node: " << aNode.seq_id << '\n';
         }
     };
     tree::iterate_leaf(mTree, mark_leaf);
