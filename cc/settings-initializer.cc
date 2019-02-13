@@ -742,6 +742,7 @@ static const std::array settings_constructors {
     std::pair{"MELB A(H3N2) FOCUS REDUCTION",                  maker<H3_NEUT_MELB>()},
     std::pair{"VIDRL A(H3N2) FOCUS REDUCTION",                 maker<H3_NEUT_MELB>()},
     std::pair{"NIID A(H3N2) MN",                               maker<H3_NEUT_NIID>()},
+    std::pair{"NIID A(H3N2) FOCUS REDUCTION",                  maker<H3_NEUT_NIID>()},
     std::pair{"NIMR A(H3N2) PLAQUE REDUCTION NEUTRALISATION",  maker<H3_NEUT_NIMR>()},
     std::pair{"Crick A(H3N2) PLAQUE REDUCTION NEUTRALISATION", maker<H3_NEUT_NIMR>()},
 
