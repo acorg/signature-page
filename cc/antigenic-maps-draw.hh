@@ -268,6 +268,7 @@ class AntigenicMapMod : public acmacs::settings::object
     acmacs::settings::field<std::string> map{this, "map"}, serum{this, "serum"}, radius_line_dash{this, "radius_line_dash"}; // serum_circle
     acmacs::settings::field<double> radius_line_width{this, "radius_line_width"}, serum_size{this, "serum_size"}, serum_outline_width{this, "serum_outline_width"}; // serum_circle
     acmacs::settings::field<Color> radius_line{this, "radius_line"}, serum_outline{this, "serum_outline"}; // serum_circle
+    acmacs::settings::field<double> serum_circle_radius_if_not_calculated{this, "serum_circle_radius_if_not_calculated"};
 
     acmacs::Viewport get_viewport(const acmacs::Viewport& aOrigViewport) const;
 

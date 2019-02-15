@@ -346,14 +346,24 @@ bool AntigenicMapsLayoutDrawAce::make_serum_circle(const AntigenicMapMod& mod, s
     std::transform(homologous_antigens.begin(), homologous_antigens.end(), radii.begin(),
                    [&](size_t ag_no) -> double { return chart().serum_circle_radius_empirical(ag_no, serum_no, 0, false); });
     std::sort(radii.begin(), radii.end());
-    const auto radius_p = std::find_if(radii.begin(), radii.end(), [](double r) -> bool { return r >= 0.0; });
-    const bool shown = radius_p != radii.end();
+
     auto serum = chart().serum(serum_no);
-    if (shown) {
-        std::cout << "INFO: serum circle for " << serum_no << ' ' << serum->full_name() << ' ' << serum->passage().passage_type() << " radius: " << *radius_p << " antigens: " << homologous_antigens << '\n';
-        auto& serum_circle = chart_draw().serum_circle(serum_no, Scaled{*radius_p});
+    double radius{-1.0};
+    Color outline_color{PINK};
+    if (const auto radius_p = std::find_if(radii.begin(), radii.end(), [](double r) -> bool { return r >= 0.0; }); radius_p != radii.end()) {
+        radius = *radius_p;
+        outline_color = serum_circle_outline(mod, serum->passage().is_egg(), false);
+    }
+    else if (mod.serum_circle_radius_if_not_calculated.is_set()) {
+        radius = mod.serum_circle_radius_if_not_calculated.get_or(-1);
+        std::cerr << "INFO: forced radius: " << radius << " (cannot be calculated)\n";
+        outline_color = serum_circle_outline(mod, serum->passage().is_egg(), true);
+    }
+    if (radius > 0) {
+        std::cout << "INFO: serum circle for " << serum_no << ' ' << serum->full_name() << ' ' << serum->passage().passage_type() << " radius: " << radius << " antigens: " << homologous_antigens << '\n';
+        auto& serum_circle = chart_draw().serum_circle(serum_no, Scaled{radius});
         serum_circle.fill(mod.fill.get_or(TRANSPARENT))
-                .outline(serum_circle_outline(mod, serum->passage().is_egg(), false), mod.outline_width.get_or(1.0))
+                .outline(outline_color, mod.outline_width.get_or(1.0))
                 .radius_line(mod.radius_line.get_or(TRANSPARENT), mod.radius_line_width.get_or(1.0));
         //.angles(mod.get["angle_degrees"][0] * math.pi / 180.0, mod.get["angle_degrees"][1] * math.pi / 180.0);
         const auto radius_line_dash = mod.radius_line_dash.get_or("");
@@ -371,7 +381,7 @@ bool AntigenicMapsLayoutDrawAce::make_serum_circle(const AntigenicMapMod& mod, s
         else
             std::cerr << " antigens: " << homologous_antigens << ": no radius\n";
     }
-    return shown;
+    return radius > 0;
 
 } // AntigenicMapsLayoutDrawAce::make_serum_circle
 
@@ -389,7 +399,7 @@ void AntigenicMapsLayoutDrawAce::serum_circle(const AntigenicMapMod& mod, std::s
             throw std::runtime_error("serum not found: " + mod.to_json());
         const auto homologous_antigens_for_serum = chrt.serum(*serum_index)->homologous_antigens();
         if (!homologous_antigens_for_serum.empty()) {
-            std::cerr << ">>> forced serum circle for serum: " << *serum_index << ' ' << mod.serum << '\n';
+            // std::cerr << ">>> forced serum circle for serum: " << *serum_index << ' ' << mod.serum << '\n';
             if (make_serum_circle(mod, *serum_index, homologous_antigens_for_serum)) {
                 make_tracked_serum(*serum_index, Pixels{mod.serum_size.get_or(5.0)},
                                    mod.serum_outline.get_or(serum_circle_outline(mod, chart().serum(*serum_index)->passage().is_egg(), false)),
