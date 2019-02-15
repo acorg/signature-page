@@ -398,16 +398,10 @@ void AntigenicMapsLayoutDrawAce::serum_circle(const AntigenicMapMod& mod, std::s
         if (!serum_index)
             throw std::runtime_error("serum not found: " + mod.to_json());
         const auto homologous_antigens_for_serum = chrt.serum(*serum_index)->homologous_antigens();
-        if (!homologous_antigens_for_serum.empty()) {
-            // std::cerr << ">>> forced serum circle for serum: " << *serum_index << ' ' << mod.serum << '\n';
-            if (make_serum_circle(mod, *serum_index, homologous_antigens_for_serum)) {
-                make_tracked_serum(*serum_index, Pixels{mod.serum_size.get_or(5.0)},
-                                   mod.serum_outline.get_or(serum_circle_outline(mod, chart().serum(*serum_index)->passage().is_egg(), false)),
-                                   Pixels{mod.serum_outline_width.get_or(0.5)}, *mod.label);
-            }
+        if (make_serum_circle(mod, *serum_index, homologous_antigens_for_serum)) {
+            make_tracked_serum(*serum_index, Pixels{mod.serum_size.get_or(5.0)}, mod.serum_outline.get_or(serum_circle_outline(mod, chart().serum(*serum_index)->passage().is_egg(), false)),
+                               Pixels{mod.serum_outline_width.get_or(0.5)}, *mod.label);
         }
-        else
-            std::cerr << "WARNING: no homologous antigens for serum (for forced serum circle): " << *serum_index << ' ' << mod.serum << '\n';
     }
 
 } // AntigenicMapsLayoutDrawAce::serum_circle
