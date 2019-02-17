@@ -344,7 +344,7 @@ bool AntigenicMapsLayoutDrawAce::make_serum_circle(const AntigenicMapMod& mod, s
 {
     std::vector<double> radii(homologous_antigens.size());
     std::transform(homologous_antigens.begin(), homologous_antigens.end(), radii.begin(),
-                   [&](size_t ag_no) -> double { return chart().serum_circle_radius_empirical(ag_no, serum_no, 0, false); });
+                   [&](size_t ag_no) -> double { return chart().serum_circle_radius_empirical(ag_no, serum_no, 0, mod.report.get_or(false)); });
     std::sort(radii.begin(), radii.end());
 
     auto serum = chart().serum(serum_no);
