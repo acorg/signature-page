@@ -673,7 +673,7 @@ void TreeDraw::draw_aa_transition(const Node& aNode, const acmacs::PointCoordina
                 }
 
                 const acmacs::PointCoordinates connection_line_start((aOrigin.x() + aRight) / 2, aOrigin.y());
-                acmacs::PointCoordinates connection_line_end(acmacs::PointCoordinates::with_nan_coordinates, 2);
+                acmacs::PointCoordinates connection_line_end(2);
                 const acmacs::Offset label_offset = branch_settings.label_offset;
                 if (label_offset.y() > 5)
                     connection_line_end = acmacs::PointCoordinates(aOrigin.x() + longest_label_size.width / 2 + offset.x(), aOrigin.y() - longest_label_size.height + offset.y());
