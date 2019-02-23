@@ -66,59 +66,60 @@ using HandlerBase = json_reader::HandlerBase<Node>;
 
 class NewickNodeHandler : public HandlerBase
 {
- public:
-    inline NewickNodeHandler(Node& aTarget)
-        : HandlerBase(aTarget), mKey(TreeJsonKey::Unknown) {}
+  public:
+    NewickNodeHandler(Node& aTarget) : HandlerBase(aTarget), mKey(TreeJsonKey::Unknown) {}
 
-    inline virtual HandlerBase* Key(const char* str, rapidjson::SizeType length)
-        {
-            HandlerBase* result = nullptr;
-            if (length == 1) {
-                mKey = static_cast<TreeJsonKey>(*str);
+    virtual HandlerBase* Key(const char* str, rapidjson::SizeType length)
+    {
+        HandlerBase* result = nullptr;
+        if (length == 1) {
+            mKey = static_cast<TreeJsonKey>(*str);
 #pragma GCC diagnostic push
 #ifdef __clang__
 #pragma GCC diagnostic ignored "-Wswitch-enum"
 #endif
-                switch (mKey) {
-                  case TreeJsonKey::EdgeLength:
-                  case TreeJsonKey::SeqId:
-                      break;
-                  case TreeJsonKey::Subtree:
-                      result = new json_reader::ListHandler<Node, Node, NewickNodeHandler>(mTarget, mTarget.subtree);
-                      break;
-                  default:
-                      result = HandlerBase::Key(str, length);
-                      break;
-                }
+            switch (mKey) {
+                case TreeJsonKey::EdgeLength:
+                case TreeJsonKey::SeqId:
+                    break;
+                case TreeJsonKey::Subtree:
+                    result = new json_reader::ListHandler<Node, Node, NewickNodeHandler>(mTarget, mTarget.subtree);
+                    break;
+                default:
+                    result = HandlerBase::Key(str, length);
+                    break;
+            }
 #pragma GCC diagnostic pop
-            }
-            else {
-                result = HandlerBase::Key(str, length);
-            }
-            return result;
         }
-
-    inline virtual HandlerBase* Double(double d)
-        {
-            if (mKey != TreeJsonKey::EdgeLength)
-                throw json_reader::Failure();
-            mTarget.edge_length = d;
-            return nullptr;
+        else {
+            result = HandlerBase::Key(str, length);
         }
+        return result;
+    }
 
-    inline virtual HandlerBase* String(const char* str, rapidjson::SizeType length)
-        {
-            if (mKey != TreeJsonKey::SeqId)
-                throw json_reader::Failure();
-            mTarget.seq_id.assign(str, length);
-            return nullptr;
-        }
+    virtual HandlerBase* Double(double d)
+    {
+        if (mKey != TreeJsonKey::EdgeLength)
+            throw json_reader::Failure();
+        mTarget.edge_length = d;
+        return nullptr;
+    }
 
- private:
+    virtual HandlerBase* String(const char* str, rapidjson::SizeType length)
+    {
+        if (mKey != TreeJsonKey::SeqId)
+            throw json_reader::Failure();
+        mTarget.seq_id.assign(str, length);
+        return nullptr;
+    }
+
+  private:
     TreeJsonKey mKey;
 
-    inline NewickNodeHandler(Node& , Node& aTarget) // for json_reader::ListHandler
-        : HandlerBase(aTarget), mKey(TreeJsonKey::Unknown) {}
+    NewickNodeHandler(Node&, Node& aTarget) // for json_reader::ListHandler
+        : HandlerBase(aTarget), mKey(TreeJsonKey::Unknown)
+    {
+    }
 
     friend class json_reader::ListHandler<Node, Node, NewickNodeHandler>;
 };
@@ -127,59 +128,60 @@ class NewickNodeHandler : public HandlerBase
 
 class PhylogeneticV2Handler : public HandlerBase
 {
- public:
-    inline PhylogeneticV2Handler(Node& aTarget)
-        : HandlerBase(aTarget) {}
+  public:
+    PhylogeneticV2Handler(Node& aTarget) : HandlerBase(aTarget) {}
 
-    inline virtual HandlerBase* Key(const char* str, rapidjson::SizeType length)
-        {
-            HandlerBase* result = nullptr;
-            if (length == 1) {
-                mKey = static_cast<TreeJsonKey>(*str);
+    virtual HandlerBase* Key(const char* str, rapidjson::SizeType length)
+    {
+        HandlerBase* result = nullptr;
+        if (length == 1) {
+            mKey = static_cast<TreeJsonKey>(*str);
 #pragma GCC diagnostic push
 #ifdef __clang__
 #pragma GCC diagnostic ignored "-Wswitch-enum"
 #endif
-                switch (mKey) {
-                  case TreeJsonKey::EdgeLength:
-                  case TreeJsonKey::SeqId:
-                      break;
-                  case TreeJsonKey::Subtree:
-                      result = new json_reader::ListHandler<Node, Node, PhylogeneticV2Handler>(mTarget, mTarget.subtree);
-                      break;
-                  default:
-                      result = HandlerBase::Key(str, length);
-                      break;
-                }
+            switch (mKey) {
+                case TreeJsonKey::EdgeLength:
+                case TreeJsonKey::SeqId:
+                    break;
+                case TreeJsonKey::Subtree:
+                    result = new json_reader::ListHandler<Node, Node, PhylogeneticV2Handler>(mTarget, mTarget.subtree);
+                    break;
+                default:
+                    result = HandlerBase::Key(str, length);
+                    break;
+            }
 #pragma GCC diagnostic pop
-            }
-            else {
-                result = HandlerBase::Key(str, length);
-            }
-            return result;
         }
-
-    inline virtual HandlerBase* Double(double d)
-        {
-            if (mKey != TreeJsonKey::EdgeLength)
-                throw json_reader::Failure();
-            mTarget.edge_length = d;
-            return nullptr;
+        else {
+            result = HandlerBase::Key(str, length);
         }
+        return result;
+    }
 
-    inline virtual HandlerBase* String(const char* str, rapidjson::SizeType length)
-        {
-            if (mKey != TreeJsonKey::SeqId)
-                throw json_reader::Failure();
-            mTarget.seq_id.assign(str, length);
-            return nullptr;
-        }
+    virtual HandlerBase* Double(double d)
+    {
+        if (mKey != TreeJsonKey::EdgeLength)
+            throw json_reader::Failure();
+        mTarget.edge_length = d;
+        return nullptr;
+    }
 
- private:
+    virtual HandlerBase* String(const char* str, rapidjson::SizeType length)
+    {
+        if (mKey != TreeJsonKey::SeqId)
+            throw json_reader::Failure();
+        mTarget.seq_id.assign(str, length);
+        return nullptr;
+    }
+
+  private:
     TreeJsonKey mKey;
 
-    inline PhylogeneticV2Handler(Node& , Node& aTarget) // for json_reader::ListHandler
-        : HandlerBase(aTarget), mKey(TreeJsonKey::Unknown) {}
+    PhylogeneticV2Handler(Node&, Node& aTarget) // for json_reader::ListHandler
+        : HandlerBase(aTarget), mKey(TreeJsonKey::Unknown)
+    {
+    }
 
     friend class json_reader::ListHandler<Node, Node, PhylogeneticV2Handler>;
 };
@@ -188,77 +190,77 @@ class PhylogeneticV2Handler : public HandlerBase
 
 class TreeRootHandler : public HandlerBase
 {
- private:
+  private:
     enum class Keys { Unknown, Version, Tree };
     enum class TreeType { Unknown, Newick, PhylogeneticV2 };
 
- public:
-    inline TreeRootHandler(Node& aTree) : HandlerBase{aTree}, mKey(Keys::Unknown), mTreeType(TreeType::Unknown) {}
+  public:
+    TreeRootHandler(Node& aTree) : HandlerBase{aTree}, mKey(Keys::Unknown), mTreeType(TreeType::Unknown) {}
 
-    inline virtual HandlerBase* Key(const char* str, rapidjson::SizeType length)
-        {
-            HandlerBase* result = nullptr;
-            const std::string found_key(str, length);
-            if (found_key == "  version") {
-                mKey = Keys::Version;
-            }
-            else if (found_key == "tree") {
-                mKey = Keys::Tree;
-            }
-            else {
-                result = HandlerBase::Key(str, length);
-            }
-            return result;
+    virtual HandlerBase* Key(const char* str, rapidjson::SizeType length)
+    {
+        HandlerBase* result = nullptr;
+        const std::string found_key(str, length);
+        if (found_key == "  version") {
+            mKey = Keys::Version;
         }
-
-    inline virtual HandlerBase* String(const char* str, rapidjson::SizeType length)
-        {
-            HandlerBase* result = nullptr;
-            switch (mKey) {
-              case Keys::Version:
-                  if (!strncmp(str, TREE_NEWICK_VERSION, std::min(length, static_cast<rapidjson::SizeType>(strlen(TREE_NEWICK_VERSION))))) {
-                      mTreeType = TreeType::Newick;
-                  }
-                  else if (!strncmp(str, TREE_PHYLOGENETIC_VERSION, std::min(length, static_cast<rapidjson::SizeType>(strlen(TREE_PHYLOGENETIC_VERSION))))) {
-                      mTreeType = TreeType::PhylogeneticV2;
-                  }
-                  else {
-                      std::cerr << "ERROR: Unsupported version: \"" << std::string(str, length) << '"' << '\n';
-                      throw json_reader::Failure();
-                  }
-                  break;
-              case Keys::Tree:
-              case Keys::Unknown:
-                  result = HandlerBase::String(str, length);
-            }
-            return result;
+        else if (found_key == "tree") {
+            mKey = Keys::Tree;
         }
+        else {
+            result = HandlerBase::Key(str, length);
+        }
+        return result;
+    }
 
-        inline virtual HandlerBase* StartObject()
-            {
-                HandlerBase* result = nullptr;
-                switch (mKey) {
-                  case Keys::Tree:
-                      switch (mTreeType) {
-                        case TreeType::Newick:
-                            result = new NewickNodeHandler(mTarget);
-                            break;
-                        case TreeType::PhylogeneticV2:
-                            result = new PhylogeneticV2Handler(mTarget);
-                            break;
-                        case TreeType::Unknown:
-                            throw json_reader::Failure();
-                      }
-                      break;
-                  case Keys::Unknown:
-                  case Keys::Version:
-                      result = HandlerBase::StartObject();
-                      break;
+    virtual HandlerBase* String(const char* str, rapidjson::SizeType length)
+    {
+        HandlerBase* result = nullptr;
+        switch (mKey) {
+            case Keys::Version:
+                if (!strncmp(str, TREE_NEWICK_VERSION, std::min(length, static_cast<rapidjson::SizeType>(strlen(TREE_NEWICK_VERSION))))) {
+                    mTreeType = TreeType::Newick;
                 }
-                return result;
-            }
+                else if (!strncmp(str, TREE_PHYLOGENETIC_VERSION, std::min(length, static_cast<rapidjson::SizeType>(strlen(TREE_PHYLOGENETIC_VERSION))))) {
+                    mTreeType = TreeType::PhylogeneticV2;
+                }
+                else {
+                    std::cerr << "ERROR: Unsupported version: \"" << std::string(str, length) << '"' << '\n';
+                    throw json_reader::Failure();
+                }
+                break;
+            case Keys::Tree:
+            case Keys::Unknown:
+                result = HandlerBase::String(str, length);
+        }
+        return result;
+    }
 
- private:
+    virtual HandlerBase* StartObject()
+    {
+        HandlerBase* result = nullptr;
+        switch (mKey) {
+            case Keys::Tree:
+                switch (mTreeType) {
+                    case TreeType::Newick:
+                        result = new NewickNodeHandler(mTarget);
+                        break;
+                    case TreeType::PhylogeneticV2:
+                        result = new PhylogeneticV2Handler(mTarget);
+                        break;
+                    case TreeType::Unknown:
+                        throw json_reader::Failure();
+                }
+                break;
+            case Keys::Unknown:
+            case Keys::Version:
+                result = HandlerBase::StartObject();
+                break;
+        }
+        return result;
+    }
+
+  private:
     Keys mKey;
     TreeType mTreeType;
 };
@@ -303,9 +305,10 @@ Tree tree::tree_import(std::string_view aFilename, std::shared_ptr<acmacs::chart
 // ----------------------------------------------------------------------
 
 // https://en.wikipedia.org/wiki/Newick_format
-void tree::export_to_newick(std::string_view aFilename, const Tree& aTree, size_t aIndent) {
+void tree::export_to_newick(std::string_view aFilename, const Tree& aTree, size_t aIndent)
+{
     std::string result;
-    std::function<void(const Node &, bool, size_t)> export_node;
+    std::function<void(const Node&, bool, size_t)> export_node;
     export_node = [&result, &export_node, aIndent](const Node& node, bool comma, size_t indent) {
         result.append(indent, ' ');
         if (node.subtree.empty()) {

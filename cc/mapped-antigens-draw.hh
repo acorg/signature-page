@@ -30,13 +30,13 @@ class MappedAntigensDrawSettings : public acmacs::settings::object
 class MappedAntigensDraw
 {
  public:
-    inline MappedAntigensDraw(acmacs::surface::Surface& aSurface, Tree& aTree, /* const TreeDraw& aTreeDraw, */ const ChartDrawBase& aChart, MappedAntigensDrawSettings& aSettings)
+    MappedAntigensDraw(acmacs::surface::Surface& aSurface, Tree& aTree, /* const TreeDraw& aTreeDraw, */ const ChartDrawBase& aChart, MappedAntigensDrawSettings& aSettings)
         : mSurface(aSurface), mTree(aTree), /* mTreeDraw(aTreeDraw), */ mChart(aChart), mSettings(aSettings) {}
 
     void prepare();
     void draw();
 
-    inline acmacs::surface::Surface& surface() { return mSurface; }
+    acmacs::surface::Surface& surface() { return mSurface; }
 
  private:
     acmacs::surface::Surface& mSurface;

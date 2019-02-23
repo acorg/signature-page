@@ -14,7 +14,7 @@ namespace acmacs::surface { class Surface; }
 class ChartDrawBase
 {
  public:
-    virtual inline ~ChartDrawBase() {}
+    virtual ~ChartDrawBase() = default;
 
     virtual void init_settings() = 0;
     virtual const acmacs::Viewport& viewport() const = 0;

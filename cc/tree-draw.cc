@@ -613,7 +613,7 @@ void TreeDraw::draw_node(const Node& aNode, double aOriginX, double& aVerticalGa
         if (aNode.is_leaf()) {
             const std::string text = aNode.display_name();
             const auto tsize = mSurface.text_size(text, mFontSize, mSettings.label_style);
-            const acmacs::Location2D text_origin{right + mNameOffset, aNode.draw.vertical_pos + tsize.height / 2};
+            const acmacs::PointCoordinates text_origin(right + mNameOffset, aNode.draw.vertical_pos + tsize.height / 2);
             mSurface.text(text_origin, text, mColoring->color(aNode), mFontSize, mSettings.label_style);
             if (text_origin.x() < 0 || text_origin.y() < 0) {
                 std::cerr << "WARNING: bad origin for a node label: " << text_origin << ' ' << text << " mNameOffset:" << mNameOffset << " aOriginX:" << aOriginX << '\n';
@@ -646,7 +646,7 @@ void TreeDraw::draw_node(const Node& aNode, double aOriginX, double& aVerticalGa
 
 // ----------------------------------------------------------------------
 
-void TreeDraw::draw_aa_transition(const Node& aNode, acmacs::Location2D aOrigin, double aRight)
+void TreeDraw::draw_aa_transition(const Node& aNode, const acmacs::PointCoordinates& aOrigin, double aRight)
 {
     auto& settings = mSettings.aa_transition;
     const auto& first_leaf = find_first_leaf(aNode);
@@ -659,30 +659,30 @@ void TreeDraw::draw_aa_transition(const Node& aNode, acmacs::Location2D aOrigin,
                 acmacs::Offset offset{node_line_width > longest_label_size.width ? (node_line_width - longest_label_size.width) / 2 : (node_line_width - longest_label_size.width),
                                       longest_label_size.height * branch_settings.interline};
                 offset += branch_settings.label_offset;
-                acmacs::Location2D origin = aOrigin + offset;
+                acmacs::PointCoordinates origin = aOrigin + offset;
                 for (const auto& label: labels) {
                     const auto label_width = mSurface.text_size(label.first, Pixels{branch_settings.size}, branch_settings.style).width;
-                    const acmacs::Location2D label_xy{origin.x() + (longest_label_size.width - label_width) / 2, origin.y()};
+                    const acmacs::PointCoordinates label_xy(origin.x() + (longest_label_size.width - label_width) / 2, origin.y());
                     mSurface.text(label_xy, label.first, branch_settings.color, Pixels{branch_settings.size}, branch_settings.style);
                     if (settings->show_node_for_left_line && label.second) {
-                        mSurface.line(acmacs::Location2D{},
-                                      acmacs::Location2D{mHorizontalStep * label.second->data.cumulative_edge_length, mVerticalStep * label.second->draw.line_no},
+                        mSurface.line(acmacs::PointCoordinates(0, 0),
+                                      acmacs::PointCoordinates(mHorizontalStep * label.second->data.cumulative_edge_length, mVerticalStep * label.second->draw.line_no),
                                       settings->node_for_left_line_color, Pixels{settings->node_for_left_line_width});
                     }
                     origin.y(origin.y() + longest_label_size.height * branch_settings.interline);
                 }
 
-                const acmacs::Location2D connection_line_start{(aOrigin.x() + aRight) / 2, aOrigin.y()};
-                acmacs::Location2D connection_line_end;
+                const acmacs::PointCoordinates connection_line_start((aOrigin.x() + aRight) / 2, aOrigin.y());
+                acmacs::PointCoordinates connection_line_end(acmacs::PointCoordinates::with_nan_coordinates, 2);
                 const acmacs::Offset label_offset = branch_settings.label_offset;
                 if (label_offset.y() > 5)
-                    connection_line_end = acmacs::Location2D{aOrigin.x() + longest_label_size.width / 2 + offset.x(), aOrigin.y() - longest_label_size.height + offset.y()};
+                    connection_line_end = acmacs::PointCoordinates(aOrigin.x() + longest_label_size.width / 2 + offset.x(), aOrigin.y() - longest_label_size.height + offset.y());
                 else if (label_offset.y() < -5)
-                    connection_line_end = acmacs::Location2D{aOrigin.x() + longest_label_size.width / 2 + offset.x(), aOrigin.y() + offset.y()};
+                    connection_line_end = acmacs::PointCoordinates(aOrigin.x() + longest_label_size.width / 2 + offset.x(), aOrigin.y() + offset.y());
                 else if (label_offset.x() > 0)
-                    connection_line_end = acmacs::Location2D{aOrigin.x() + offset.x(), aOrigin.y() + offset.y() - longest_label_size.height / 2};
+                    connection_line_end = acmacs::PointCoordinates(aOrigin.x() + offset.x(), aOrigin.y() + offset.y() - longest_label_size.height / 2);
                 else
-                    connection_line_end = acmacs::Location2D{aOrigin.x() + longest_label_size.width + offset.x(), aOrigin.y() + offset.y() - longest_label_size.height / 2};
+                    connection_line_end = acmacs::PointCoordinates(aOrigin.x() + longest_label_size.width + offset.x(), aOrigin.y() + offset.y() - longest_label_size.height / 2);
                 if (distance(connection_line_start, connection_line_end) > 10) {
                     mSurface.line(connection_line_start, connection_line_end, branch_settings.label_connection_line_color, mLineWidth /*branch_settings.label_connection_line_width*/);
                 }
@@ -701,14 +701,14 @@ void TreeDraw::draw_aa_transition(const Node& aNode, acmacs::Location2D aOrigin,
 
 // ----------------------------------------------------------------------
 
-void TreeDraw::draw_mark_with_label(const Node& aNode, acmacs::Location2D aTextOrigin)
+void TreeDraw::draw_mark_with_label(const Node& aNode, const acmacs::PointCoordinates& aTextOrigin)
 {
     if (aNode.draw.mark_with_label) {
           // std::cerr << "DEBUG: draw mark_with_label " << aNode.seq_id << '\n';
         const auto settings = mSettings.find_mark_with_label_mod(aNode.seq_id);
 
         const acmacs::Offset label_offset = settings->label_offset;
-        const acmacs::Location2D label_origin = aTextOrigin + label_offset;
+        const acmacs::PointCoordinates label_origin = aTextOrigin + label_offset;
         mSurface.text(label_origin, settings->label, Color{settings->label_color}, Pixels{settings->label_size}, settings->label_style);
         const auto vlsize = mSurface.text_size(settings->label, Pixels{settings->label_size}, acmacs::TextStyle{});
         const auto line_origin = label_origin + acmacs::Offset{vlsize.width / 2, label_offset.y() > 0 ? - vlsize.height : 0};
@@ -745,7 +745,8 @@ void TreeDraw::draw_legend()
 void TreeDraw::report_aa_transitions()
 {
     if (!aa_transitions_.empty()) {
-        std::sort(aa_transitions_.begin(), aa_transitions_.end(), [](const auto& e1, const auto& e2) -> bool { return e1.origin.y() < e2.origin.y(); });
+        std::cerr << "DEBUG: TreeDraw::report_aa_transitions\n";
+        std::sort(aa_transitions_.begin(), aa_transitions_.end()); // , [](const auto& e1, const auto& e2) -> bool { return e1.origin.y() < e2.origin.y(); });
         const auto transition_width = static_cast<int>(
             std::max_element(aa_transitions_.begin(), aa_transitions_.end(), [](const auto& e1, const auto& e2) -> bool { return e1.transition.size() < e2.transition.size(); })->transition.size());
         const auto node_width = static_cast<int>(
@@ -1121,7 +1122,7 @@ AATransitionIndividualSettingsForLabel AATransitionPerBranchDrawSettings::settin
     if (scatter_label_offset > 0.0) {
         std::random_device rand;
         constexpr const auto rand_size = static_cast<double>(rand.max() - rand.min());
-        const acmacs::Location2D old_label_offset = result.label_offset;
+        const acmacs::PointCoordinates old_label_offset = result.label_offset;
         result.label_offset.x(static_cast<double>(rand()) * scatter_label_offset * 2 / rand_size - scatter_label_offset + old_label_offset.x());
         result.label_offset.y(static_cast<double>(rand()) * scatter_label_offset * 2 / rand_size - scatter_label_offset + old_label_offset.y());
     }

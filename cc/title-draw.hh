@@ -39,7 +39,7 @@ class TitleDraw
     void prepare();
     void draw();
 
-    inline acmacs::surface::Surface& surface() { return mSurface; }
+    acmacs::surface::Surface& surface() { return mSurface; }
 
   private:
     acmacs::surface::Surface& mSurface;

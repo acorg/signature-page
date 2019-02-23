@@ -12,7 +12,7 @@ class SettingsInitializer;
 class AntigenicMapsLayoutDraw
 {
  public:
-    inline AntigenicMapsLayoutDraw(AntigenicMapsDrawBase& aAntigenicMapsDraw) : mAntigenicMapsDraw(aAntigenicMapsDraw) {}
+    AntigenicMapsLayoutDraw(AntigenicMapsDrawBase& aAntigenicMapsDraw) : mAntigenicMapsDraw(aAntigenicMapsDraw) {}
     virtual ~AntigenicMapsLayoutDraw();
 
     virtual void init_settings(const SettingsInitializer& settings_initilizer);
@@ -22,18 +22,18 @@ class AntigenicMapsLayoutDraw
     virtual void prepare_drawing_chart(size_t aSectionIndex, std::string map_letter, bool report_antigens_in_hz_sections) = 0;
     virtual void draw_chart(acmacs::surface::Surface& aSurface, size_t aSectionIndex) = 0;
 
-    inline AntigenicMapsDrawBase& antigenic_maps_draw() { return mAntigenicMapsDraw; }
-    inline const AntigenicMapsDrawBase& antigenic_maps_draw() const { return mAntigenicMapsDraw; }
-    inline AntigenicMapsDrawSettings& settings() { return mAntigenicMapsDraw.settings(); }
-    inline const AntigenicMapsDrawSettings& settings() const { return mAntigenicMapsDraw.settings(); }
-    inline auto& chart() { return mAntigenicMapsDraw.chart(); }
-    inline const auto& chart() const { return mAntigenicMapsDraw.chart(); }
-    inline acmacs::surface::Surface& surface() const { return mAntigenicMapsDraw.surface(); }
-    inline const auto& hz_sections() const { return mAntigenicMapsDraw.hz_sections(); }
-    inline const auto& signature_page_settings() const { return mAntigenicMapsDraw.signature_page_settings(); }
-    inline auto& signature_page_settings() { return mAntigenicMapsDraw.signature_page_settings(); }
+    AntigenicMapsDrawBase& antigenic_maps_draw() { return mAntigenicMapsDraw; }
+    const AntigenicMapsDrawBase& antigenic_maps_draw() const { return mAntigenicMapsDraw; }
+    AntigenicMapsDrawSettings& settings() { return mAntigenicMapsDraw.settings(); }
+    const AntigenicMapsDrawSettings& settings() const { return mAntigenicMapsDraw.settings(); }
+    auto& chart() { return mAntigenicMapsDraw.chart(); }
+    const auto& chart() const { return mAntigenicMapsDraw.chart(); }
+    acmacs::surface::Surface& surface() const { return mAntigenicMapsDraw.surface(); }
+    const auto& hz_sections() const { return mAntigenicMapsDraw.hz_sections(); }
+    const auto& signature_page_settings() const { return mAntigenicMapsDraw.signature_page_settings(); }
+    auto& signature_page_settings() { return mAntigenicMapsDraw.signature_page_settings(); }
     const acmacs::Viewport& viewport() const;
-    inline const auto& sequenced_antigens() const { return mSequencedAntigens; }
+    const auto& sequenced_antigens() const { return mSequencedAntigens; }
 
  protected:
     virtual void apply_mods_before(acmacs::surface::Surface& aSurface);

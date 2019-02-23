@@ -12,7 +12,7 @@ class ColoringByGeographyMapLegend : public Legend
 {
 
  public:
-    inline ColoringByGeographyMapLegend(const ColoringByContinent& aColoring) : Legend(), mColoring(aColoring) {}
+    ColoringByGeographyMapLegend(const ColoringByContinent& aColoring) : Legend(), mColoring(aColoring) {}
 
     virtual void draw(acmacs::surface::Surface& aSurface) const;
     virtual Size size() const;

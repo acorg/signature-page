@@ -18,7 +18,7 @@ class Coloring
     virtual ~Coloring() = default;
     virtual Color color(const Node&) const = 0;
     virtual Legend* legend() const = 0;
-    virtual inline void report() const {}
+    virtual void report() const {}
 };
 
 // ----------------------------------------------------------------------
@@ -26,7 +26,7 @@ class Coloring
 class ColoringBlack : public Coloring
 {
  public:
-    virtual inline Color color(const Node&) const { return 0; }
+    virtual Color color(const Node&) const { return 0; }
     virtual Legend* legend() const { return nullptr; }
 };
 
@@ -48,7 +48,7 @@ class ColoringByPos : public Coloring
  public:
     using UsedColors = std::map<char, std::pair<Color, size_t>>;
 
-    inline ColoringByPos(size_t aPos) : mPos(aPos - 1) {}
+    ColoringByPos(size_t aPos) : mPos(aPos - 1) {}
 
     virtual Color color(const Node& aNode) const;
     virtual Legend* legend() const;

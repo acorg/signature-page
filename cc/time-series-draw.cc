@@ -85,7 +85,7 @@ void TimeSeriesDraw::draw_labels(double month_width)
 
 // ----------------------------------------------------------------------
 
-void TimeSeriesDraw::draw_labels_at_side(acmacs::Location2D aOrigin, double month_width, double month_max_height)
+void TimeSeriesDraw::draw_labels_at_side(const acmacs::PointCoordinates& aOrigin, double month_width, double month_max_height)
 {
     try {
         Date current_month{mSettings.begin};
@@ -126,7 +126,7 @@ void TimeSeriesDraw::draw_dashes(double month_width)
             try {
                 if (const Date node_date{aNode.data.date()}; node_date >= begin && node_date <= end) {
                     const int month_no = months_between_dates(begin, node_date);
-                    const acmacs::Location2D a{base_x + month_width * month_no, aNode.draw.vertical_pos};
+                    const acmacs::PointCoordinates a(base_x + month_width * month_no, aNode.draw.vertical_pos);
                     mSurface.line(a, {a.x() + month_width * mSettings.dash_width, a.y()}, coloring.color(aNode), Pixels{mSettings.dash_line_width}, acmacs::surface::LineCap::Round);
                 }
             }

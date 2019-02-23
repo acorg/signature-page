@@ -39,18 +39,18 @@ class TimeSeriesDrawSettings : public acmacs::settings::object
 class TimeSeriesDraw
 {
  public:
-    inline TimeSeriesDraw(acmacs::surface::Surface& aSurface, Tree& aTree, const TreeDraw& aTreeDraw, HzSections& aHzSections, TimeSeriesDrawSettings& aSettings)
+    TimeSeriesDraw(acmacs::surface::Surface& aSurface, Tree& aTree, const TreeDraw& aTreeDraw, HzSections& aHzSections, TimeSeriesDrawSettings& aSettings)
         : mSurface(aSurface), mTree(aTree), mTreeDraw(aTreeDraw), mSettings(aSettings), mHzSections(aHzSections), mTreeMode(false) {}
 
     void prepare();
     void draw();
 
-    inline const acmacs::Size& size() const { return mSurface.viewport().size; }
-    inline acmacs::Location2D origin_in_parent() const { return mSurface.origin_in_parent(); }
+    const acmacs::Size& size() const { return mSurface.viewport().size; }
+    acmacs::PointCoordinates origin_in_parent() const { return mSurface.origin_in_parent(); }
 
     void init_settings(const SettingsInitializer& settings_initilizer);
-    inline acmacs::surface::Surface& surface() { return mSurface; }
-    inline void tree_mode(bool aTreeMode) { mTreeMode = aTreeMode; }
+    acmacs::surface::Surface& surface() { return mSurface; }
+    void tree_mode(bool aTreeMode) { mTreeMode = aTreeMode; }
     // void hide_hz_section_labels_in_time_series();
 
  private:
@@ -63,7 +63,7 @@ class TimeSeriesDraw
     bool mTreeMode;
 
     void draw_labels(double month_width);
-    void draw_labels_at_side(acmacs::Location2D aOrigin, double month_width, double month_max_height);
+    void draw_labels_at_side(const acmacs::PointCoordinates& aOrigin, double month_width, double month_max_height);
     void draw_month_separators(double month_width);
     void draw_dashes(double month_width);
     void draw_hz_section_lines();

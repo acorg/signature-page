@@ -18,7 +18,7 @@ class ColoringByContinentMapLegend : public Legend
 {
 
  public:
-    inline ColoringByContinentMapLegend() = default;
+    ColoringByContinentMapLegend() = default;
 
     virtual void draw(acmacs::surface::Surface& aSurface, const LegendSettings& /*aSettings*/) const
         {
@@ -102,14 +102,14 @@ void ColoringByPos::report() const
 class ColoringByPosLegend : public Legend
 {
  public:
-    inline ColoringByPosLegend(const ColoringByPos& aColoring)
+    ColoringByPosLegend(const ColoringByPos& aColoring)
         : Legend(), mColoring(aColoring), mTitle(std::to_string(mColoring.pos() + 1)) {}
 
     virtual void draw(acmacs::surface::Surface& aSurface, const LegendSettings& aSettings) const
         {
               // aSurface.border(0xA0FFA000, 1);
             const auto title_size = aSurface.text_size(mTitle, Pixels{aSettings.title_size}, aSettings.title_style);
-            acmacs::Location2D origin{0, title_size.height};
+            acmacs::PointCoordinates origin(0, title_size.height);
               //origin += Size((aSurface.text_size(mTitle, mFontSize, mStyle).width - label_size.width) / 2, label_size.height * mInterline);
             const auto text_size = aSurface.text_size("W", Pixels{aSettings.text_size}, aSettings.text_style);
             double max_width = 0;

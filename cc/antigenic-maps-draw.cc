@@ -149,7 +149,7 @@ acmacs::Viewport AntigenicMapMod::get_viewport(const acmacs::Viewport& aOrigView
                 result.set({viewport[0], viewport[1]}, viewport[2]);
                 break;
             case 4:
-                result.set(acmacs::Location2D{viewport[0], viewport[1]}, acmacs::Size{viewport[2], viewport[3]});
+                result.set(acmacs::PointCoordinates(viewport[0], viewport[1]), acmacs::Size{viewport[2], viewport[3]});
                 break;
             case 0:
                 break;

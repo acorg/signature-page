@@ -300,8 +300,8 @@ class HzSections : public acmacs::settings::object
 
     struct NodeRef
     {
-        inline NodeRef() = default;
-        inline NodeRef(const Node* aFirst) : first{aFirst} {}
+        NodeRef() = default;
+        NodeRef(const Node* aFirst) : first{aFirst} {}
         const Node* first = nullptr;
         const Node* last = nullptr;
         std::string index;
@@ -361,8 +361,9 @@ class TreeDraw
     {
         std::string first_leaf;
         std::string transition;
-        acmacs::Location2D origin;
+        acmacs::PointCoordinates origin;
         size_t number_strains;
+        bool operator<(const AA_Transition& rhs) const { return origin.y() < rhs.origin.y(); }
     };
 
     SignaturePageDraw& mSignaturePageDraw;
@@ -386,8 +387,8 @@ class TreeDraw
     size_t prepare_hz_sections();
     void draw_node(const Node& aNode, double aOriginX, double& aVerticalGap, double aEdgeLength = -1);
     void draw_legend();
-    void draw_aa_transition(const Node& aNode, acmacs::Location2D aOrigin, double aRight);
-    void draw_mark_with_label(const Node& aNode, acmacs::Location2D aTextOrigin);
+    void draw_aa_transition(const Node& aNode, const acmacs::PointCoordinates& aOrigin, double aRight);
+    void draw_mark_with_label(const Node& aNode, const acmacs::PointCoordinates& aTextOrigin);
     void report_aa_transitions();
 
     void fit_labels_into_viewport();
