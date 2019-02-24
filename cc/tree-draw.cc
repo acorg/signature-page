@@ -665,7 +665,7 @@ void TreeDraw::draw_aa_transition(const Node& aNode, const acmacs::PointCoordina
                     const acmacs::PointCoordinates label_xy(origin.x() + (longest_label_size.width - label_width) / 2, origin.y());
                     mSurface.text(label_xy, label.first, branch_settings.color, Pixels{branch_settings.size}, branch_settings.style);
                     if (settings->show_node_for_left_line && label.second) {
-                        mSurface.line(acmacs::PointCoordinates(0, 0),
+                        mSurface.line(acmacs::PointCoordinates::zero2D,
                                       acmacs::PointCoordinates(mHorizontalStep * label.second->data.cumulative_edge_length, mVerticalStep * label.second->draw.line_no),
                                       settings->node_for_left_line_color, Pixels{settings->node_for_left_line_width});
                     }

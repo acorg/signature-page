@@ -255,7 +255,7 @@ void SignaturePageDraw::make_layout_tree_ts_clades()
                                                      acmacs::Size{1000 * mSettings->aa_at_pos->width / section_height, 1000});
     mTimeSeriesDraw->surface().move_resize_viewport({ts_left, mSettings->signature_page->top}, ts_width, acmacs::Size{1000 * ts_width / section_height, 1000});
     mCladesDraw->surface().move_resize_viewport(acmacs::PointCoordinates(clades_left, mSettings->signature_page->top), clades_width, acmacs::Size{1000 * clades_width / section_height, 1000});
-    mTitleDraw->surface().move_resize_viewport(acmacs::PointCoordinates(0, 0), page_size.width, page_size);
+    mTitleDraw->surface().move_resize_viewport(acmacs::PointCoordinates::zero2D, page_size.width, page_size);
 
     std::cout << "INFO: Tree    " << mTreeDraw->surface() << '\n'
               << "INFO: AAatPos " << mAAAtPosDraw->surface() << '\n'
@@ -289,7 +289,7 @@ void SignaturePageDraw::make_layout_tree_clades_ts_maps()
     mMappedAntigensDraw->surface().move_resize_viewport(acmacs::PointCoordinates(mapped_antigens_left, mSettings->signature_page->top), mapped_antigens_width,
                                                         acmacs::Size{1000 * mapped_antigens_width / section_height, 1000});
     mAntigenicMapsDraw->surface().move_resize_viewport(acmacs::PointCoordinates(antigic_maps_left, mSettings->signature_page->top), antigic_maps_width, acmacs::Size{1000 * antigic_maps_width / section_height, 1000});
-    mTitleDraw->surface().move_resize_viewport(acmacs::PointCoordinates(0, 0), page_size.width, page_size);
+    mTitleDraw->surface().move_resize_viewport(acmacs::PointCoordinates::zero2D, page_size.width, page_size);
 
     std::cout << "INFO: Tree   " << mTreeDraw->surface() << '\n'
               << "INFO: TS     " << mTimeSeriesDraw->surface() << '\n'
@@ -337,7 +337,7 @@ void SignaturePageDraw::draw_mods()
         mSettings->mods.for_each([this](const SettingsMod& mod) {
             if (mod.name.is_set_or_has_default()) {
                 if (mod.name == "text") {
-                    mSurface->text(mod.offset.get_or(acmacs::Offset(0, 0)), mod.text.get_or(""), mod.color.get_or(BLACK),
+                    mSurface->text(mod.offset.get_or(acmacs::Offset(acmacs::PointCoordinates::zero2D)), mod.text.get_or(""), mod.color.get_or(BLACK),
                                    Pixels{mod.size.get_or(14.0)}, mod.style.get_or(acmacs::TextStyle{}));
                 }
                 else {
