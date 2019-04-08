@@ -218,8 +218,10 @@ class Tree : public Node
 
     void sequences_per_month(std::map<Date, size_t>& spm) const;
     std::string virus_type() const;
+    std::pair<std::string, std::string> virus_type_lineage() const;
 
     std::vector<const Node*> find_name(std::string aName) const;
+    std::vector<const Node*> find_nodes_matching(std::string aName) const; // returns list of nodes or empty list if nothing found
     void re_root(const std::vector<const Node*>& aNewRoot);
     // re-roots tree making the parent of the leaf node with the passed name root
     void re_root(std::string aName);

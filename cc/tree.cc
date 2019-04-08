@@ -479,6 +479,19 @@ void Tree::compute_distance_from_previous()
 
 std::string Tree::virus_type() const
 {
+    auto [virus_type, lineage] = virus_type_lineage();
+    if (!lineage.empty()) {
+        virus_type.append(1, '/');
+        virus_type.append(string::capitalize(lineage.substr(0, 3)));
+    }
+    return virus_type;
+
+} // Tree::virus_type
+
+// ----------------------------------------------------------------------
+
+std::pair<std::string, std::string> Tree::virus_type_lineage() const
+{
     std::string virus_type;
     auto find_virus_type = [&virus_type](const Node& aNode) -> bool {
         bool r = false;
@@ -492,29 +505,28 @@ std::string Tree::virus_type() const
     };
     tree::iterate_leaf_stop(*this, find_virus_type);
 
+    std::string lineage;
     if (virus_type == "B") {    // infer lineage
-        std::string lineage;
         auto find_lineage = [&lineage](const Node& aNode) -> bool {
             if (std::string_view(aNode.seq_id.data(), 27) == "B/SOUTH%20AUSTRALIA/81/2012" || std::string_view(aNode.seq_id.data(), 19) == "B/IRELAND/3154/2016" || std::string_view(aNode.seq_id.data(), 19) == "B/VICTORIA/830/2013") {
-                lineage = "/Vic";
+                lineage = "VICTORIA";
                 return true;
             }
             else if (std::string_view(aNode.seq_id.data(), 18) == "B/PHUKET/3073/2013" || std::string_view(aNode.seq_id.data(), 23) == "B/CHRISTCHURCH/503/2013") {
-                lineage = "/Yam";
+                lineage = "YAMAGATA";
                 return true;
             }
             return false;
         };
         tree::iterate_leaf_stop(*this, find_lineage);
-          // std::cout << "INFO: B lineage: " << lineage << '\n';
-        virus_type += lineage;
     }
 
-    return virus_type;
+    return {virus_type, lineage};
 
-} // Tree::virus_type
+} // Tree::virus_type_lineage
 
 // ----------------------------------------------------------------------
+
 
 std::vector<const Node*> Tree::find_name(std::string aName) const
 {
@@ -525,6 +537,20 @@ std::vector<const Node*> Tree::find_name(std::string aName) const
     return path;
 
 } // Tree::find_name
+
+// ----------------------------------------------------------------------
+
+std::vector<const Node*> Tree::find_nodes_matching(std::string name) const
+{
+    std::vector<const Node*> result;
+    const auto find_matching = [&result,&name](const Node& aNode) -> void {
+        if (const std::string seq_id = name_decode(aNode.seq_id); seq_id.find(name) != std::string::npos)
+            result.push_back(&aNode);
+    };
+    tree::iterate_leaf(*this, find_matching);
+    return result;
+
+} // Tree::find_name_substring
 
 // ----------------------------------------------------------------------
 

@@ -6,6 +6,7 @@
 #include "acmacs-base/timeit.hh"
 #include "acmacs-base/range.hh"
 #include "acmacs-draw/surface.hh"
+#include "hidb-5/vaccines.hh"
 #include "tree-draw.hh"
 #include "tree.hh"
 #include "coloring.hh"
@@ -87,6 +88,16 @@ void TreeDraw::prepare()
     mHorizontalStep = (canvas_size.width - mSettings.right_padding) / mTree.width();
     mVerticalStep = (canvas_size.height - (number_of_hz_sections - 1) * mHzSections.vertical_gap) / static_cast<double>(mTree.height() + 2); // +2 to add space at the top and bottom
     set_vertical_pos();
+
+    const auto [virus_type, lineage] = mTree.virus_type_lineage();
+    const auto& vaccines = hidb::vaccine_names(virus_type, lineage);
+    for (const auto& vac : vaccines) {
+        if (const auto nodes = mTree.find_nodes_matching(vac.name); !nodes.empty()) {
+            std::cerr << "DEBUG: vaccine " << vac.name << ' ' << nodes.size() << '\n';
+            for (const auto* node : nodes)
+                std::cerr << "   " << node->seq_id << ' ' << node->draw.line_no << '\n';
+        }
+    }
 
 } // TreeDraw::prepare
 

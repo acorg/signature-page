@@ -3,7 +3,6 @@
 #include <cstdlib>
 
 #include "acmacs-chart-2/chart-modify.hh"
-#include "hidb-5/hidb.hh"
 #include "acmacs-map-draw/draw.hh"
 #include "antigenic-maps-draw.hh"
 #include "chart-draw.hh"
