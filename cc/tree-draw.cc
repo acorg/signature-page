@@ -90,14 +90,20 @@ void TreeDraw::prepare()
     set_vertical_pos();
 
     const auto [virus_type, lineage] = mTree.virus_type_lineage();
-    const auto& vaccines = hidb::vaccine_names(virus_type, lineage);
-    for (const auto& vac : vaccines) {
-        if (const auto nodes = mTree.find_nodes_matching(vac.name); !nodes.empty()) {
-            std::cerr << "DEBUG: vaccine " << vac.name << ' ' << nodes.size() << '\n';
-            for (const auto* node : nodes)
-                std::cerr << "   " << node->seq_id << ' ' << node->draw.line_no << '\n';
+    if (!virus_type.empty()) {
+        // std::cerr << "DEBUG: vaccines " << virus_type << ' ' << lineage << '\n';
+        const auto& vaccines = hidb::vaccine_names(virus_type, lineage);
+        for (const auto& vac : vaccines) {
+            std::cerr << "DEBUG: vaccine " << vac.name << '\n';
+            if (const auto nodes = mTree.find_nodes_matching(vac.name); !nodes.empty()) {
+                std::cerr << "DEBUG: vaccine " << vac.name << ' ' << nodes.size() << '\n';
+                for (const auto* node : nodes)
+                    std::cerr << "   " << node->seq_id << ' ' << node->draw.line_no << '\n';
+            }
         }
     }
+    else
+        std::cerr << "WARNING: no virus_type inferred from the names in the tree\n";
 
 } // TreeDraw::prepare
 
