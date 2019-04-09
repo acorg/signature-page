@@ -48,7 +48,7 @@ const acmacs::Viewport& AntigenicMapsLayoutDraw::viewport() const
 
 void AntigenicMapsLayoutDraw::apply_mods_before(acmacs::surface::Surface& aSurface)
 {
-    settings().mods.for_each([&aSurface](const auto& mod) {
+    settings().mods.for_each([&aSurface](const auto& mod, size_t /*mod_no*/) {
         if (mod.name.is_set_or_has_default()) {
             if (mod.name == "background") {
                 const Color color = mod.color.get_or(WHITE);
@@ -67,7 +67,7 @@ void AntigenicMapsLayoutDraw::apply_mods_before(acmacs::surface::Surface& aSurfa
 
 void AntigenicMapsLayoutDraw::apply_mods_after(acmacs::surface::Surface& aSurface)
 {
-    settings().mods.for_each([&aSurface](const auto& mod) {
+    settings().mods.for_each([&aSurface](const auto& mod, size_t /*mod_no*/) {
         if (mod.name.is_set_or_has_default()) {
             if (mod.name == "border") {
                 const auto& v = aSurface.viewport();

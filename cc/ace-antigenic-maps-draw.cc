@@ -28,7 +28,7 @@ void AntigenicMapsDraw::make_layout()
 void AntigenicMapsLayoutDrawAce::prepare_apply_mods()
 {
       // std::cerr << "DEBUG: AntigenicMapsLayoutDrawAce::prepare_apply_mods\n";
-    settings().mods.for_each([this](const auto& mod) {
+    settings().mods.for_each([this](const auto& mod, size_t /*mod_no*/) {
         try {
             if (!mod.name.is_set_or_has_default()) {
                 if (!mod.name_commented.is_set_or_has_default())
@@ -98,7 +98,7 @@ void AntigenicMapsLayoutDrawAce::prepare_chart_for_all_sections()
 {
     chart_draw().mark_egg_antigens();
     chart_draw().mark_reassortant_antigens();
-    settings().mods.for_each([this](const auto& mod) {
+    settings().mods.for_each([this](const auto& mod, size_t /*mod_no*/) {
         if (mod.name.is_set_or_has_default()) {
             if (mod.name == "point_scale") {
                 chart_draw().scale_points(mod.scale.get_or(1.0), mod.outline_scale.get_or(1.0));
@@ -133,7 +133,7 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, std
     for (size_t serum_index = chart().number_of_antigens(); serum_index < (chart().number_of_antigens() + chart().number_of_sera()); ++serum_index)
         chart_draw().remove_label(serum_index);
 
-    settings().mods.for_each([this](const auto& mod) {
+    settings().mods.for_each([this](const auto& mod, size_t /*mod_no*/) {
         if (mod.name.is_set_or_has_default()) {
             if (mod.name == "sera") {
                 acmacs::PointStyle serum_style;
@@ -156,7 +156,7 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, std
         }
     });
 
-    settings().mods.for_each([this, aSectionIndex, report_antigens_in_hz_sections, map_letter](const AntigenicMapMod& mod) {
+    settings().mods.for_each([this, aSectionIndex, report_antigens_in_hz_sections, map_letter](const AntigenicMapMod& mod, size_t /*mod_no*/) {
         if (mod.name.is_set_or_has_default()) {
             if (mod.name == "tracked_antigens") {
                 const auto tracked_indices = tracked_antigens(aSectionIndex, report_antigens_in_hz_sections);

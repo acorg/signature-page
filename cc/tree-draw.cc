@@ -89,21 +89,21 @@ void TreeDraw::prepare()
     mVerticalStep = (canvas_size.height - (number_of_hz_sections - 1) * mHzSections.vertical_gap) / static_cast<double>(mTree.height() + 2); // +2 to add space at the top and bottom
     set_vertical_pos();
 
-    const auto [virus_type, lineage] = mTree.virus_type_lineage();
-    if (!virus_type.empty()) {
-        // std::cerr << "DEBUG: vaccines " << virus_type << ' ' << lineage << '\n';
-        const auto& vaccines = hidb::vaccine_names(virus_type, lineage);
-        for (const auto& vac : vaccines) {
-            std::cerr << "DEBUG: vaccine " << vac.name << '\n';
-            if (const auto nodes = mTree.find_nodes_matching(vac.name); !nodes.empty()) {
-                std::cerr << "DEBUG: vaccine " << vac.name << ' ' << nodes.size() << '\n';
-                for (const auto* node : nodes)
-                    std::cerr << "   " << node->seq_id << ' ' << node->draw.line_no << '\n';
-            }
-        }
-    }
-    else
-        std::cerr << "WARNING: no virus_type inferred from the names in the tree\n";
+    // const auto [virus_type, lineage] = mTree.virus_type_lineage();
+    // if (!virus_type.empty()) {
+    //     // std::cerr << "DEBUG: vaccines " << virus_type << ' ' << lineage << '\n';
+    //     const auto& vaccines = hidb::vaccine_names(virus_type, lineage);
+    //     for (const auto& vac : vaccines) {
+    //         std::cerr << "DEBUG: vaccine " << vac.name << '\n';
+    //         if (const auto nodes = mTree.find_nodes_matching(vac.name); !nodes.empty()) {
+    //             std::cerr << "DEBUG: vaccine " << vac.name << ' ' << nodes.size() << '\n';
+    //             for (const auto* node : nodes)
+    //                 std::cerr << "   " << node->seq_id << ' ' << node->draw.line_no << '\n';
+    //         }
+    //     }
+    // }
+    // else
+    //     std::cerr << "WARNING: no virus_type inferred from the names in the tree\n";
 
 } // TreeDraw::prepare
 
@@ -128,7 +128,7 @@ void TreeDraw::ladderize()
 
 bool TreeDraw::apply_mods()
 {
-    (mSettings).mods.for_each([this] (const auto& mod) { // const_cast to support situation when mods was not set
+    (mSettings).mods.for_each([this] (const auto& mod, size_t mod_no) { // const_cast to support situation when mods was not set
         const auto mod_mod = static_cast<std::string>(mod.mod);
         if (mod_mod == "root") {
             std::cout << "TREE-mod: " << mod_mod << " " << mod.s1 << '\n';
@@ -171,7 +171,7 @@ bool TreeDraw::apply_mods()
             mark_having_serum_with_line(Color(mod.color), Pixels{mod.line_width});
         }
         else if (mod_mod == "mark-with-label") {
-            mark_with_label(mod);
+            mark_with_label(mod, mod_no);
         }
         else if (mod_mod.empty() || mod_mod[0] == '?') {
               // commented out mod
@@ -368,19 +368,29 @@ void TreeDraw::mark_with_line(std::string aName, Color aColor, Pixels aLineWidth
 
 // ----------------------------------------------------------------------
 
-void TreeDraw::mark_with_label(const TreeDrawMod& aMod)
+void TreeDraw::mark_with_label(const TreeDrawMod& aMod, size_t mod_no)
 {
-    Node* node = mTree.find_leaf_by_seqid(aMod.seq_id);
-    if (node) {
+    const auto warn = [&aMod](std::string msg) {
+        std::cerr << "WARNING: cannot mark-with-label seq_id:\"" << aMod.seq_id << "\" name:\"" << aMod.name << "\": " << msg << '\n';
+    };
+
+    std::vector<Node*> nodes;
+    if (!aMod.seq_id.empty()) {
+        if (Node* node = mTree.find_leaf_by_seqid(aMod.seq_id); node)
+            nodes.push_back(node);
+    }
+    else if (!aMod.name.empty())
+        nodes = mTree.find_nodes_matching(aMod.name);
+
+    if (nodes.empty())
+        warn("no nodes matched");
+    for (Node* node : nodes) {
         if (node->draw.shown) {
-            node->draw.mark_with_label = true;
+            node->draw.mark_with_label = mod_no;
             std::cout << "INFO: mark-with-label: " << aMod.seq_id << " \"" << aMod.label << "\" " << aMod.line_width << '\n';        }
         else {
-            std::cerr << "WARNING: cannot mark-with-label " << aMod.seq_id << ": node not shown\n";
+            warn("node " + node->seq_id + " not shown");
         }
-    }
-    else {
-        std::cerr << "WARNING: cannot mark-with-label " << aMod.seq_id << ": node not found\n";
     }
 
 } // TreeDraw::mark_with_label
@@ -720,9 +730,9 @@ void TreeDraw::draw_aa_transition(const Node& aNode, const acmacs::PointCoordina
 
 void TreeDraw::draw_mark_with_label(const Node& aNode, const acmacs::PointCoordinates& aTextOrigin)
 {
-    if (aNode.draw.mark_with_label) {
-          // std::cerr << "DEBUG: draw mark_with_label " << aNode.seq_id << '\n';
-        const auto settings = mSettings.find_mark_with_label_mod(aNode.seq_id);
+    if (aNode.draw.mark_with_label.has_value()) {
+        std::cerr << "DEBUG: draw mark_with_label " << aNode.seq_id << ' ' << *aNode.draw.mark_with_label << '\n';
+        const auto settings = mSettings.find_mod(*aNode.draw.mark_with_label);
 
         const acmacs::Offset label_offset = settings->label_offset;
         const acmacs::PointCoordinates label_origin = aTextOrigin + label_offset;

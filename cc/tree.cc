@@ -552,6 +552,18 @@ std::vector<const Node*> Tree::find_nodes_matching(std::string name) const
 
 } // Tree::find_name_substring
 
+std::vector<Node*> Tree::find_nodes_matching(std::string name)
+{
+    std::vector<Node*> result;
+    const auto find_matching = [&result,&name](Node& aNode) -> void {
+        if (const std::string seq_id = name_decode(aNode.seq_id); seq_id.find(name) != std::string::npos)
+            result.push_back(&aNode);
+    };
+    tree::iterate_leaf(*this, find_matching);
+    return result;
+
+} // Tree::find_name_substring
+
 // ----------------------------------------------------------------------
 
 bool Node::find_name_r(std::string aName, std::vector<const Node*>& aPath) const

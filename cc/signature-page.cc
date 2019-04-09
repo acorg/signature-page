@@ -334,7 +334,7 @@ void SignaturePageDraw::draw(bool report_antigens_in_hz_sections, bool init_sett
 void SignaturePageDraw::draw_mods()
 {
     try {
-        mSettings->mods.for_each([this](const SettingsMod& mod) {
+        mSettings->mods.for_each([this](const SettingsMod& mod, size_t /*mod_no*/) {
             if (mod.name.is_set_or_has_default()) {
                 if (mod.name == "text") {
                     mSurface->text(mod.offset.get_or(acmacs::Offset(acmacs::PointCoordinates::zero2D)), mod.text.get_or(""), mod.color.get_or(BLACK),

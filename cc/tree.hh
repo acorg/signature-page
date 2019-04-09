@@ -6,6 +6,7 @@
 #include <vector>
 #include <map>
 #include <algorithm>
+#include <optional>
 
 #include "acmacs-base/date.hh"
 #include "acmacs-base/color.hh"
@@ -69,7 +70,7 @@ class NodeDrawData
     Pixels mark_with_line_width{0};
     std::optional<size_t> chart_antigen_index;
     size_t matched_antigens = 0; // for parent nodes only
-    bool mark_with_label = false;
+    std::optional<size_t> mark_with_label;
 
 }; // class NodeDrawData
 
@@ -222,6 +223,7 @@ class Tree : public Node
 
     std::vector<const Node*> find_name(std::string aName) const;
     std::vector<const Node*> find_nodes_matching(std::string aName) const; // returns list of nodes or empty list if nothing found
+    std::vector<Node*> find_nodes_matching(std::string aName); // returns list of nodes or empty list if nothing found
     void re_root(const std::vector<const Node*>& aNewRoot);
     // re-roots tree making the parent of the leaf node with the passed name root
     void re_root(std::string aName);

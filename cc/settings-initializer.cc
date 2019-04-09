@@ -135,7 +135,7 @@ namespace
         void update(CladesDrawSettings& settings, bool whocc_support) const override
         {
             Default::update(settings, whocc_support);
-            settings.clades.for_each([](auto& clade) { clade.label_offset = acmacs::Offset{1, 0}; });
+            settings.clades.for_each([](auto& clade, size_t /*no*/) { clade.label_offset = acmacs::Offset{1, 0}; });
         }
 
       protected:
@@ -314,7 +314,7 @@ namespace
                 mod->mod = "hide-if-cumulative-edge-length-bigger-than";
                 mod->d1 = 0.04;
 
-                tree_draw.hz_sections().sections.for_each([](auto& section) {
+                tree_draw.hz_sections().sections.for_each([](auto& section, size_t /*no*/) {
                     if (section.triggering_clades.contains("first-leaf:first") || section.triggering_clades.contains("2A1:first") || section.triggering_clades.contains("2A1A:last"))
                         section.show_map = false;
                     else if (section.triggering_clades.contains("3A:first"))
@@ -525,7 +525,7 @@ namespace
             }
 
             bool del2017_shown = false;
-            tree_draw.hz_sections().sections.for_each([&del2017_shown, &tree_draw](auto& section) {
+            tree_draw.hz_sections().sections.for_each([&del2017_shown, &tree_draw](auto& section, size_t /*no*/) {
                 if (section.triggering_clades.contains("DEL2017:first")) {
                     const auto* first_node = tree_draw.tree().find_leaf_by_seqid(section.name);
                     const bool branch_too_long = first_node && first_node->data.cumulative_edge_length > cumulative_threshold;

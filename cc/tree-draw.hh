@@ -166,7 +166,8 @@ class TreeDrawMod : public acmacs::settings::object
     acmacs::settings::field<bool>              report{this, "report", false};
 
     // mark-with-label
-    acmacs::settings::field<std::string>       seq_id{this, "seq_id"};
+    acmacs::settings::field<std::string>       seq_id{this, "seq_id", ""};
+    acmacs::settings::field<std::string>       name{this, "name", ""};
     acmacs::settings::field<std::string>       label{this, "label"};
     acmacs::settings::field<std::string>       label_color{this, "label_color"}; // "black"
     acmacs::settings::field<double>            label_size{this, "label_size"}; // 10.0
@@ -245,11 +246,16 @@ class TreeDrawSettings : public acmacs::settings::object
     acmacs::settings::field_object<AATransitionDrawSettings>    aa_transition{this, "aa_transition"};
     acmacs::settings::field_object<LegendSettings>              legend{this, "legend"};
 
-    const acmacs::settings::const_array_element<TreeDrawMod> find_mark_with_label_mod(std::string aSeqId) const
+    // const acmacs::settings::const_array_element<TreeDrawMod> find_mark_with_label_mod(std::string aSeqId) const
+    // {
+    //     if (auto found = mods.find_if([&](const auto& val) { return val.mod == "mark-with-label" && val.seq_id == aSeqId; }); found)
+    //         return *found;
+    //     throw std::runtime_error("Invalid tree.mods settings: cannot find mark-with-label for " + aSeqId);
+    // }
+
+    const acmacs::settings::const_array_element<TreeDrawMod> find_mod(size_t mod_no) const
     {
-        if (auto found = mods.find_if([&](const auto& val) { return val.mod == "mark-with-label" && val.seq_id == aSeqId; }); found)
-            return *found;
-        throw std::runtime_error("Invalid tree.mods settings: cannot find mark-with-label for " + aSeqId);
+        return mods[mod_no];
     }
 
     void remove_for_tree_settings() { aa_transition->remove_for_tree_settings(); }
@@ -321,7 +327,7 @@ class HzSections : public acmacs::settings::object
     size_t shown_maps() const
         {
             size_t result = 0;
-            sections.for_each([&result](const HzSection& section) { if (section.show_map) ++result; });
+            sections.for_each([&result](const HzSection& section, size_t) { if (section.show_map) ++result; });
             return result;
         }
 
@@ -409,7 +415,7 @@ class TreeDraw
     void mark_with_line(std::string aName, Color aColor, Pixels aLineWidth);
     void mark_clade_with_line(std::string aClade, Color aColor, Pixels aLineWidth, bool aReport);
     void mark_having_serum_with_line(Color aColor, Pixels aLineWidth);
-    void mark_with_label(const TreeDrawMod& aMod);
+    void mark_with_label(const TreeDrawMod& aMod, size_t mod_no);
     static void hide_branch(Node& aNode);
 
 }; // class TreeDraw
