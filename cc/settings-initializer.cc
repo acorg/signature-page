@@ -208,6 +208,21 @@ namespace
                 // mod->d1 = 0.021;
                 // }
 
+                {
+                    // most recent vaccine
+                    auto mod2 = tree_draw.settings().mods.append();
+                    mod2->mod = "mark-with-label";
+                    mod2->name = "MICHIGAN/45/2015";
+                    mod2->label = "A/Michigan/45/2015";
+                    mod2->label_color = "grey";
+                    mod2->label_size = 10.0;
+                    mod2->label_style = "";
+                    mod2->line_color = "grey";
+                    mod2->line_width = 0.0;
+                    mod2->collapse = 200;
+                    mod2->label_absolute_x = 70.0;
+                }
+
                 tree::iterate_pre(tree_draw.tree(), [&tree_draw](const Node& node) {
                     if (node.data.aa_transitions.contains("S164T") && node.data.number_strains > 200) {
                         auto section = tree_draw.hz_sections().add(find_first_leaf(node).seq_id, true, std::string{}, 0, true);
@@ -310,9 +325,22 @@ namespace
             TreeOnly::update(tree_draw, whocc_support);
 
             if (whocc_support) {
-                auto mod = tree_draw.settings().mods.append();
-                mod->mod = "hide-if-cumulative-edge-length-bigger-than";
-                mod->d1 = 0.04;
+                auto mod1 = tree_draw.settings().mods.append();
+                mod1->mod = "hide-if-cumulative-edge-length-bigger-than";
+                mod1->d1 = 0.04;
+
+                // most recent vaccine
+                auto mod2 = tree_draw.settings().mods.append();
+                mod2->mod = "mark-with-label";
+                mod2->name = "KANSAS/14/2017";
+                mod2->label = "A/Kansas/14/2017";
+                mod2->label_color = "grey";
+                mod2->label_size = 10.0;
+                mod2->label_style = "";
+                mod2->line_color = "grey";
+                mod2->line_width = 0.0;
+                mod2->collapse = 200;
+                mod2->label_absolute_x = 70.0;
 
                 tree_draw.hz_sections().sections.for_each([](auto& section, size_t /*no*/) {
                     if (section.triggering_clades.contains("first-leaf:first") || section.triggering_clades.contains("2A1:first") || section.triggering_clades.contains("2A1A:last"))
@@ -499,29 +527,46 @@ namespace
         {
             constexpr double cumulative_threshold = 0.0191;
             TreeOnly::update(tree_draw, whocc_support);
-            {
-                auto mod = tree_draw.settings().mods.append();
-                mod->mod = "hide-if-cumulative-edge-length-bigger-than";
-                mod->d1 = cumulative_threshold;
-            }
-            {
-                auto mod = tree_draw.settings().mods.append();
-                mod->mod = "mark-clade-with-line";
-                mod->clade = "DEL2017";
-                mod->color = "#A0A0A0";
-                mod->line_width = 0.2;
-            }
-            {
-                auto mod = tree_draw.settings().mods.append();
-                mod->mod = "mark-clade-with-line";
-                mod->clade = "TRIPLEDEL2017";
-                mod->color = "#606060";
-                mod->line_width = 0.2;
-            }
-            {
-                auto mod = tree_draw.settings().mods.append();
-                mod->mod = "before2015-58P-or-146I-or-559I";
-                mod->help = "hides 1B";
+            if (whocc_support) {
+                {
+                    auto mod = tree_draw.settings().mods.append();
+                    mod->mod = "hide-if-cumulative-edge-length-bigger-than";
+                    mod->d1 = cumulative_threshold;
+                }
+                {
+                    auto mod = tree_draw.settings().mods.append();
+                    mod->mod = "mark-clade-with-line";
+                    mod->clade = "DEL2017";
+                    mod->color = "#A0A0A0";
+                    mod->line_width = 0.2;
+                }
+                {
+                    auto mod = tree_draw.settings().mods.append();
+                    mod->mod = "mark-clade-with-line";
+                    mod->clade = "TRIPLEDEL2017";
+                    mod->color = "#606060";
+                    mod->line_width = 0.2;
+                }
+                {
+                    auto mod = tree_draw.settings().mods.append();
+                    mod->mod = "before2015-58P-or-146I-or-559I";
+                    mod->help = "hides 1B";
+                }
+
+                {
+                    // most recent vaccine
+                    auto mod2 = tree_draw.settings().mods.append();
+                    mod2->mod = "mark-with-label";
+                    mod2->name = "COLORADO/6/2017";
+                    mod2->label = "A/Colorado/6/2017";
+                    mod2->label_color = "grey";
+                    mod2->label_size = 10.0;
+                    mod2->label_style = "";
+                    mod2->line_color = "grey";
+                    mod2->line_width = 0.0;
+                    mod2->collapse = 200;
+                    mod2->label_absolute_x = 70.0;
+                }
             }
 
             bool del2017_shown = false;
@@ -634,9 +679,26 @@ namespace
         {
             TreeOnly::update(tree_draw, whocc_support);
             if (whocc_support) {
-                auto mod = tree_draw.settings().mods.append();
-                mod->mod = "hide-if-cumulative-edge-length-bigger-than";
-                mod->d1 = 0.043;
+                {
+                    auto mod = tree_draw.settings().mods.append();
+                    mod->mod = "hide-if-cumulative-edge-length-bigger-than";
+                    mod->d1 = 0.043;
+                }
+
+                {
+                    // most recent vaccine
+                    auto mod2 = tree_draw.settings().mods.append();
+                    mod2->mod = "mark-with-label";
+                    mod2->name = "PHUKET/3073/2013";
+                    mod2->label = "A/Phuket/3073/2013";
+                    mod2->label_color = "grey";
+                    mod2->label_size = 10.0;
+                    mod2->label_style = "";
+                    mod2->line_color = "grey";
+                    mod2->line_width = 0.0;
+                    mod2->collapse = 200;
+                    mod2->label_absolute_x = 70.0;
+                }
             }
         }
 
