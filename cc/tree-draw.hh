@@ -5,6 +5,8 @@
 #include <utility>
 #include <memory>
 #include <algorithm>
+#include <optional>
+#include <tuple>
 
 #include "acmacs-draw/surface.hh"
 #include "legend.hh"
@@ -174,6 +176,7 @@ class TreeDrawMod : public acmacs::settings::object
     acmacs::settings::field<std::string>       line_color{this, "line_color"};
     acmacs::settings::field<acmacs::TextStyle> label_style{this, "label_style"};
     acmacs::settings::field<acmacs::Offset>    label_offset{this, "label_offset"}; // {20, 20}
+    acmacs::settings::field<size_t>            collapse{this, "collapse", 10}; // do not draw the same label if it is too close (less than this number of lines) to the previously drawn label
 
 }; // class TreeDrawMod
 
@@ -233,7 +236,7 @@ class TreeDrawSettings : public acmacs::settings::object
                                                                            "{mod: mark-with-line, s1: name-to-mark, s2: color-to-mark, d1: line-width-in-pixels}",
                                                                            "{mod: mark-clade-with-line, clade: , color: , line_width: line-width-in-pixels}",
                                                                            "{mod: mark-having-serum-with-line, color: , line_width: line-width-in-pixels}",
-                                                                           "{mod: mark-with-label, seq_id:, label:, line_color:, line_width:, label_offset:, label_size:, labeL_color:, label_style: }"}};
+                                                                           "{mod: mark-with-label, seq_id:, name: <substring>, label:, line_color:, line_width:, label_offset:, label_size:, labeL_color:, label_style:, collapse: 10 }"}};
     acmacs::settings::field<bool>                               force_line_width{this, "force_line_width", false};
     acmacs::settings::field<double>                             line_width{this, "line_width", 1};
     acmacs::settings::field<double>                             root_edge{this, "root_edge", 0};
@@ -387,6 +390,7 @@ class TreeDraw
     Scaled mFontSize;
     double mNameOffset;
     bool mInitializeSettings = false;
+    std::optional<std::tuple<size_t, std::string>> last_marked_with_label_;
 
     bool apply_mods();          // returns if nodes were hidden
     void set_vertical_pos();
