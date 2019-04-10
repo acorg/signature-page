@@ -734,8 +734,10 @@ void TreeDraw::draw_mark_with_label(const Node& aNode, const acmacs::PointCoordi
         const auto settings = mSettings.find_mod(*aNode.draw.mark_with_label);
         if (!last_marked_with_label_.has_value() || std::get<std::string>(*last_marked_with_label_) != *settings->label || (aNode.draw.line_no - std::get<size_t>(*last_marked_with_label_)) > settings->collapse) {
             std::cerr << "INFO: draw_mark_with_label " << aNode.seq_id << " line:" << aNode.draw.line_no << " label: " << settings->label << " collapse:" << settings->collapse << '\n';
-            const acmacs::Offset label_offset = settings->label_offset;
-            const acmacs::PointCoordinates label_origin = aTextOrigin + label_offset;
+            const acmacs::Offset label_offset = settings->label_offset.get_or(acmacs::Offset{0.0, 0.0});
+            acmacs::PointCoordinates label_origin = aTextOrigin + label_offset;
+            if (settings->label_absolute_x.is_set_or_has_default())
+                label_origin[0] = settings->label_absolute_x;
             mSurface.text(label_origin, settings->label, Color{settings->label_color}, Pixels{settings->label_size}, settings->label_style);
             const auto vlsize = mSurface.text_size(settings->label, Pixels{settings->label_size}, acmacs::TextStyle{});
             const auto line_origin = label_origin + acmacs::Offset{vlsize.width / 2, label_offset.y() > 0 ? -vlsize.height : 0};
