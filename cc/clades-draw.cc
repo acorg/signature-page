@@ -79,6 +79,7 @@ std::ostream& operator << (std::ostream& out, const CladeData& clade)
 
 void CladesDraw::prepare()
 {
+    mClades.clear();        // remove clades collected during setting initialisation stage (if there was one), we need to re-collect them now again upon re-ladderizing the tree
     collect();
 
 } // CladesDraw::prepare
