@@ -39,6 +39,7 @@ struct AATransitionIndividualSettingsForLabel
     acmacs::TextStyle style;
     double interline;
     acmacs::Offset label_offset;
+    std::optional<double> label_absolute_x;
     double label_connection_line_width;
     Color label_connection_line_color;
 
@@ -66,6 +67,7 @@ class AATransitionIndividualSettings : public acmacs::settings::object
     acmacs::settings::field<acmacs::TextStyle> style{this, "style", {"Courier New"}};
     acmacs::settings::field<double> interline{this, "interline", 1.2};
     acmacs::settings::field<acmacs::Offset> label_offset{this, "label_offset", {-40, 20}};
+    acmacs::settings::field<double> label_absolute_x{this, "label_absolute_x"}; // if specified, ignore label_offset[0] and use this absolute x position
     acmacs::settings::field<double> label_connection_line_width{this, "label_connection_line_width", 0.1};
     acmacs::settings::field<Color> label_connection_line_color{this, "label_connection_line_color", "black"};
 

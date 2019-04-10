@@ -686,6 +686,9 @@ void TreeDraw::draw_aa_transition(const Node& aNode, const acmacs::PointCoordina
                                       longest_label_size.height * branch_settings.interline};
                 offset += branch_settings.label_offset;
                 acmacs::PointCoordinates origin = aOrigin + offset;
+                if (branch_settings.label_absolute_x.has_value())
+                    origin.x(*branch_settings.label_absolute_x);
+                acmacs::Rectangle label_box(origin.x(), origin.y() - longest_label_size.height, origin.x() + longest_label_size.width, origin.y());
                 for (const auto& label: labels) {
                     const auto label_width = mSurface.text_size(label.first, Pixels{branch_settings.size}, branch_settings.style).width;
                     const acmacs::PointCoordinates label_xy(origin.x() + (longest_label_size.width - label_width) / 2, origin.y());
@@ -695,27 +698,29 @@ void TreeDraw::draw_aa_transition(const Node& aNode, const acmacs::PointCoordina
                                       acmacs::PointCoordinates(mHorizontalStep * label.second->data.cumulative_edge_length, mVerticalStep * label.second->draw.line_no),
                                       settings->node_for_left_line_color, Pixels{settings->node_for_left_line_width});
                     }
+                    label_box.bottom_right.y(origin.y());
                     origin.y(origin.y() + longest_label_size.height * branch_settings.interline);
                 }
 
                 const acmacs::PointCoordinates connection_line_start((aOrigin.x() + aRight) / 2, aOrigin.y());
                 acmacs::PointCoordinates connection_line_end(2);
-                const acmacs::Offset label_offset = branch_settings.label_offset;
-                if (label_offset.y() > 5)
-                    connection_line_end = acmacs::PointCoordinates(aOrigin.x() + longest_label_size.width / 2 + offset.x(), aOrigin.y() - longest_label_size.height + offset.y());
-                else if (label_offset.y() < -5)
-                    connection_line_end = acmacs::PointCoordinates(aOrigin.x() + longest_label_size.width / 2 + offset.x(), aOrigin.y() + offset.y());
-                else if (label_offset.x() > 0)
-                    connection_line_end = acmacs::PointCoordinates(aOrigin.x() + offset.x(), aOrigin.y() + offset.y() - longest_label_size.height / 2);
-                else
-                    connection_line_end = acmacs::PointCoordinates(aOrigin.x() + longest_label_size.width + offset.x(), aOrigin.y() + offset.y() - longest_label_size.height / 2);
-                if (distance(connection_line_start, connection_line_end) > 10) {
-                    mSurface.line(connection_line_start, connection_line_end, branch_settings.label_connection_line_color, mLineWidth /*branch_settings.label_connection_line_width*/);
+                if (label_box.top_left.y() < aOrigin.y()) {
+                    if (label_box.bottom_right.y() < aOrigin.y())
+                        connection_line_end = label_box.bottom_middle();
+                    else if (label_box.bottom_right.x() < connection_line_start.x())
+                        connection_line_end = label_box.middle_right();
+                    else
+                        connection_line_end = label_box.middle_left();
+                }
+                else {
+                    connection_line_end = label_box.top_middle();
                 }
 
-                if (mInitializeSettings) {
+                if (distance(connection_line_start, connection_line_end) > 10)
+                    mSurface.line(connection_line_start, connection_line_end, branch_settings.label_connection_line_color, mLineWidth /*branch_settings.label_connection_line_width*/);
+
+                if (mInitializeSettings)
                     settings->per_branch->by_aa_label.append()->set_label_disabled_offset(labels.label(), first_leaf.seq_id, settings->per_branch->label_offset);
-                }
 
                 aa_transitions_.push_back({first_leaf.seq_id, labels.label(), origin, aNode.data.number_strains});
                 // std::cout << "AA transitions: " << labels.label() << " --> " << aNode.data.number_strains << " strains  label pos: " << origin << " first-leaf-seq-id:" << first_leaf.seq_id << '\n';
@@ -1133,6 +1138,8 @@ void AATransitionIndividualSettingsForLabel::update(const AATransitionIndividual
     style = src.style;
     interline = src.interline;
     label_offset = src.label_offset;
+    if (src.label_absolute_x.is_set_or_has_default())
+        label_absolute_x = src.label_absolute_x;
     label_connection_line_width = src.label_connection_line_width;
     label_connection_line_color = src.label_connection_line_color;
 
