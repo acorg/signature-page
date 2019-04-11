@@ -212,7 +212,7 @@ namespace
                     // most recent vaccine
                     auto mod2 = tree_draw.settings().mods.append();
                     mod2->mod = "mark-with-label";
-                    mod2->name = "MICHIGAN/45/2015";
+                    mod2->name = "/MICHIGAN/45/2015";
                     mod2->label = "A/Michigan/45/2015";
                     mod2->label_color = "grey";
                     mod2->label_size = 10.0;
@@ -332,7 +332,7 @@ namespace
                 // most recent vaccine
                 auto mod2 = tree_draw.settings().mods.append();
                 mod2->mod = "mark-with-label";
-                mod2->name = "KANSAS/14/2017";
+                mod2->name = "/KANSAS/14/2017";
                 mod2->label = "A/Kansas/14/2017";
                 mod2->label_color = "grey";
                 mod2->label_size = 10.0;
@@ -557,7 +557,7 @@ namespace
                     // most recent vaccine
                     auto mod2 = tree_draw.settings().mods.append();
                     mod2->mod = "mark-with-label";
-                    mod2->name = "COLORADO/6/2017";
+                    mod2->name = "/COLORADO/6/2017";
                     mod2->label = "A/Colorado/6/2017";
                     mod2->label_color = "grey";
                     mod2->label_size = 10.0;
@@ -689,7 +689,7 @@ namespace
                     // most recent vaccine
                     auto mod2 = tree_draw.settings().mods.append();
                     mod2->mod = "mark-with-label";
-                    mod2->name = "PHUKET/3073/2013";
+                    mod2->name = "/PHUKET/3073/2013";
                     mod2->label = "A/Phuket/3073/2013";
                     mod2->label_color = "grey";
                     mod2->label_size = 10.0;
