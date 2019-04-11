@@ -192,7 +192,7 @@ void SignaturePageDraw::tree(std::string aTreeFilename, seqdb::Seqdb::ignore_not
 
 void SignaturePageDraw::prepare(bool show_hz_sections)
 {
-    std::cout << "\nINFO: PREPARE:\n";
+    std::cout << "\nINFO: PREPARE **********************************************************************\n\n";
     settings().hz_sections->show = show_hz_sections;
     switch (detect_layout(false, false)) {
       case SignaturePageLayout::TreeTSClades:
@@ -303,7 +303,7 @@ void SignaturePageDraw::make_layout_tree_clades_ts_maps()
 
 void SignaturePageDraw::draw(bool report_antigens_in_hz_sections, bool init_settings, size_t hz_section_threshold, size_t aa_small_section_threshold)
 {
-    std::cout << "\nINFO: DRAW signature page\n";
+    std::cout << "\nINFO: DRAW **********************************************************************\n\n";
     const auto& v = mSurface->viewport();
     mSurface->rectangle_filled(v.origin, v.size, WHITE, Pixels{0}, WHITE);
 

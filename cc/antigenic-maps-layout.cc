@@ -1,3 +1,4 @@
+#include "acmacs-base/stream.hh"
 #include "antigenic-maps-layout.hh"
 #include "chart-draw.hh"
 //#include "tree.hh"
@@ -91,6 +92,11 @@ void AntigenicMapsLayoutDraw::find_sequenced_antigens()
     };
 
     tree::iterate_leaf(mAntigenicMapsDraw.tree(), find_antigens);
+
+    std::vector<size_t> antigens_per_section(20);
+    for (auto ag_sec : mSequencedAntigens)
+        ++antigens_per_section[ag_sec.second];
+    std::cerr << "DEBUG: antigens_per_section: " << antigens_per_section << '\n';
 
 } // AntigenicMapsLayoutDraw::find_sequenced_antigens
 

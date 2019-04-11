@@ -448,7 +448,7 @@ namespace
       public:
         using H3_WithMap::H3_WithMap;
 
-        std::vector<double> viewport_rel() const override { return {4, 5, -7}; }
+        // std::vector<double> viewport_rel() const override { return {4, 5, -7}; }
     };
 
     class H3_HI_MELB : public H3_WithMap
