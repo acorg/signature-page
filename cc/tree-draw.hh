@@ -285,6 +285,7 @@ class HzSection : public acmacs::settings::object
     acmacs::settings::field<bool>              show_map{this, "show_map", true};
     acmacs::settings::field<std::string>       name{this, "name", ""};           // first seq_id
     acmacs::settings::field<std::string>       name_commented{this, "?name", ""}; // first seq_id
+    acmacs::settings::field<std::string>       aa_transition{this, "aa_transition", ""};
     acmacs::settings::field<std::string>       label{this, "label", ""};          // antigenic map label, empty - generate automatically
     acmacs::settings::field_array<std::string> triggering_clades{this, "triggering_clades"}; // clades that trigger this hz line
     acmacs::settings::field_array<size_t>      triggering_aa_pos{this, "triggering_aa_pos"};      // aa pos triggering this line
@@ -327,9 +328,11 @@ class HzSections : public acmacs::settings::object
     void report_html(std::string filename) const;
     // void auto_detect(Tree& aTree, const Clades* aClades);
     void detect_hz_lines_for_clades(Tree& aTree, const Clades* aClades, bool aForce);
+    void convert_aa_transitions(); // to name based hz sections
     acmacs::settings::array_element<HzSection> add(std::string seq_id, bool show_line, std::string clade, size_t aa_pos, bool first_in_clade);
     void add(const Tree& tree, const Node& first, const Node& last, bool show_line, std::string clade, size_t aa_pos);
-
+    void remove(const std::vector<size_t>& to_remove);
+    
     size_t shown_maps() const
         {
             size_t result = 0;

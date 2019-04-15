@@ -550,6 +550,7 @@ void TreeDraw::set_vertical_pos()
 
 size_t TreeDraw::prepare_hz_sections()
 {
+    mHzSections.convert_aa_transitions(); // to name based hz sections
     mHzSections.sort(mTree);
 
     size_t number_of_hz_sections = 0;
@@ -574,7 +575,8 @@ size_t TreeDraw::prepare_hz_sections()
     }
     // if (number_of_hz_sections == 0)
     //     number_of_hz_sections = 1;
-    std::cout << "INFO: HZ sections: " << number_of_hz_sections << '\n';
+    std::cout << "INFO: HZ sections: " << number_of_hz_sections << ' ' << mHzSections.section_order.size() << '\n';
+    mHzSections.report(std::cout);
     return number_of_hz_sections;
 
 } // TreeDraw::prepare_hz_sections
@@ -899,6 +901,33 @@ void AATransitionDrawSettings::remove_for_signature_page_settings()
 
 // ----------------------------------------------------------------------
 
+void HzSections::remove(const std::vector<size_t>& to_remove)
+{
+    for (auto sec_p = to_remove.rbegin(); sec_p != to_remove.rend(); ++sec_p) {
+        sections.erase(*sec_p);
+        node_refs.erase(node_refs.begin() + static_cast<decltype(node_refs)::difference_type>(*sec_p));
+    }
+
+} // HzSections::remove
+
+// ----------------------------------------------------------------------
+
+void HzSections::convert_aa_transitions() // to name based hz sections
+{
+    std::cerr << "DEBUG: HzSections::convert_aa_transitions\n";
+    std::vector<size_t> to_remove;
+    sections.for_each([&to_remove](auto& section, size_t index) {
+        if (!section.aa_transition.empty()) {
+            std::cerr << "DEBUG:   section " << index << ' ' << section.name << ' ' << section.aa_transition << '\n';
+            // auto added = add(find_first_leaf(node).seq_id, true, std::string{}, 0, true);
+        }
+    });
+    remove(to_remove);
+
+} // HzSections::convert_aa_transitions
+
+// ----------------------------------------------------------------------
+
 void HzSections::sort(const Tree& aTree)
 {
     node_refs.resize(sections.size());
@@ -922,10 +951,7 @@ void HzSections::sort(const Tree& aTree)
             to_remove.push_back(sec_no);
         }
     }
-    for (auto sec_p = to_remove.rbegin(); sec_p != to_remove.rend(); ++sec_p) {
-        sections.erase(*sec_p);
-        node_refs.erase(node_refs.begin() + static_cast<decltype(node_refs)::difference_type>(*sec_p));
-    }
+    remove(to_remove);
     assert(sections.size() == node_refs.size());
 
     acmacs::fill_with_indexes(section_order, node_refs.size());
@@ -967,13 +993,13 @@ void HzSections::report(std::ostream& out) const
     out << "INFO: hz sections\n";
     for (auto section_index: section_order) {
         out << "  " << std::setw(4) << std::right << node_refs[section_index].first->draw.line_no << ' ' << node_refs[section_index].first->seq_id;
-        const auto& section = *sections[section_index];
-        if (!section.triggering_clades.empty()) {
-            out << "   clades: " << section.triggering_clades;
-        }
-        if (!section.triggering_aa_pos.empty()) {
-            out << "   aa-at: " << section.triggering_aa_pos;
-        }
+        // const auto& section = *sections[section_index];
+        // if (!section.triggering_clades.empty()) {
+        //     out << "   clades: " << section.triggering_clades;
+        // }
+        // if (!section.triggering_aa_pos.empty()) {
+        //     out << "   aa-at: " << section.triggering_aa_pos;
+        // }
         out << '\n';
     }
 
