@@ -927,7 +927,12 @@ void HzSections::convert_aa_transitions(Tree& tree) // to name based hz sections
 
 void HzSections::sort(const Tree& aTree)
 {
-    node_refs.resize(sections.size());
+    // std::cerr << "DEBUG: HzSections::sort\n";
+
+    // node_refs.resize(sections.size());
+    // sections.for_each([](auto& section, size_t section_index) {
+    //     std::cerr << "    section " << section_index << ' ' << section.name << ' ' << section.aa_transition << '\n';
+    // });
 
     auto set_first_node = [this](const Node& node) {
         if (auto sec_no = sections.find_index_if([&node](const auto& s) -> bool { return s.name == node.seq_id; }); sec_no)

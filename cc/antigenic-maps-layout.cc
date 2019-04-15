@@ -110,7 +110,7 @@ AntigenicMapsLayout::~AntigenicMapsLayout()
 
 void LabelledGridBase::draw(acmacs::surface::Surface& aMappedAntigensDrawSurface, bool report_antigens_in_hz_sections)
 {
-      // std::cerr << "DEBUG: AntigenicMapsLayoutDraw::draw" << '\n';
+    // std::cerr << "DEBUG: LabelledGridBase::draw antigenic_maps_width " << layout_draw().signature_page_settings().antigenic_maps_width << '\n';
 
     layout_draw().prepare_chart_for_all_sections();
     const AntigenicMapsDrawSettings& settings = layout_draw().settings();
@@ -149,7 +149,7 @@ void LabelledGridBase::draw(acmacs::surface::Surface& aMappedAntigensDrawSurface
         const double maps_height = map_width * rows + (rows - 1) * settings.gap;
         const double suggested_surface_width = antigenic_maps_width * surface.viewport().size.height / maps_height;
         std::cout << "Map area height: " << maps_height << '\n';
-        if (std::abs((antigenic_maps_width - suggested_surface_width) / antigenic_maps_width) > 0.01) {
+        if (std::abs((antigenic_maps_width - suggested_surface_width) / antigenic_maps_width) > 1) {
             std::cout << "Change signature_page.antigenic_maps_width from " << antigenic_maps_width << " to " << suggested_surface_width << '\n'
                       << "  If you use --init-settings changed width will be saved there" << '\n';
             layout_draw().signature_page_settings().antigenic_maps_width = suggested_surface_width;
