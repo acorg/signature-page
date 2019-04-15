@@ -575,7 +575,7 @@ size_t TreeDraw::prepare_hz_sections()
     }
     // if (number_of_hz_sections == 0)
     //     number_of_hz_sections = 1;
-    std::cout << "INFO: HZ sections: " << number_of_hz_sections << ' ' << mHzSections.section_order.size() << '\n';
+    // std::cout << "INFO: HZ sections: " << number_of_hz_sections << ' ' << mHzSections.section_order.size() << '\n';
     mHzSections.report(std::cout);
     return number_of_hz_sections;
 
@@ -903,7 +903,7 @@ void AATransitionDrawSettings::remove_for_signature_page_settings()
 
 void HzSections::convert_aa_transitions(Tree& tree) // to name based hz sections
 {
-    // std::cerr << "DEBUG: HzSections::convert_aa_transitions\n";
+    std::cerr << "DEBUG: HzSections::convert_aa_transitions\n";
     std::vector<size_t> to_remove;
     std::vector<std::pair<const Node*, std::string>> to_add;
     sections.for_each([&tree, &to_remove, &to_add](auto& section, size_t section_index) {
@@ -921,6 +921,10 @@ void HzSections::convert_aa_transitions(Tree& tree) // to name based hz sections
     for (const auto& node_to_add : to_add)
         add(tree, find_first_leaf(*node_to_add.first), find_last_leaf(*node_to_add.first), true, node_to_add.second, 0);
 
+    // sections.for_each([](auto& section, size_t) {
+    //     std::cerr << rjson::to_string(section.get(), rjson::show_empty_values::no) << '\n';
+    // });
+
 } // HzSections::convert_aa_transitions
 
 // ----------------------------------------------------------------------
@@ -928,11 +932,11 @@ void HzSections::convert_aa_transitions(Tree& tree) // to name based hz sections
 void HzSections::sort(const Tree& aTree)
 {
     // std::cerr << "DEBUG: HzSections::sort\n";
-
-    // node_refs.resize(sections.size());
     // sections.for_each([](auto& section, size_t section_index) {
     //     std::cerr << "    section " << section_index << ' ' << section.name << ' ' << section.aa_transition << '\n';
     // });
+
+    node_refs.resize(sections.size());
 
     auto set_first_node = [this](const Node& node) {
         if (auto sec_no = sections.find_index_if([&node](const auto& s) -> bool { return s.name == node.seq_id; }); sec_no)
@@ -995,7 +999,7 @@ void HzSections::sort(const Tree& aTree)
 
 void HzSections::report(std::ostream& out) const
 {
-    out << "INFO: hz sections\n";
+    out << "INFO: hz sections " << section_order.size() << '\n';
     for (auto section_index: section_order) {
         out << "  " << std::setw(4) << std::right << node_refs[section_index].first->draw.line_no << ' ' << node_refs[section_index].first->seq_id;
         // const auto& section = *sections[section_index];
@@ -1006,6 +1010,10 @@ void HzSections::report(std::ostream& out) const
         //     out << "   aa-at: " << section.triggering_aa_pos;
         // }
         out << '\n';
+    }
+
+    for (auto section_index: section_order) {
+        out << rjson::to_string(sections[section_index]->get(), rjson::show_empty_values::no) << '\n';
     }
 
 } // HzSections::report
@@ -1122,8 +1130,11 @@ acmacs::settings::array_element<HzSection> HzSections::add(std::string seq_id, b
         auto sec = sections.append();
         sec->name = seq_id;
         sec->show_line = show_line;
-        if (!clade.empty())
+        if (!clade.empty()) {
             sec->triggering_clades.append(clade_tag);
+            if (first_in_clade)
+                sec->label = clade;
+        }
         if (aa_pos > 0)
             sec->triggering_aa_pos.append(aa_pos);
         return sec;
