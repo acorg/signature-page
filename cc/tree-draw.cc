@@ -550,7 +550,7 @@ void TreeDraw::set_vertical_pos()
 
 size_t TreeDraw::prepare_hz_sections()
 {
-    mHzSections.convert_aa_transitions(); // to name based hz sections
+    mHzSections.convert_aa_transitions(mTree); // to name based hz sections
     mHzSections.sort(mTree);
 
     size_t number_of_hz_sections = 0;
@@ -901,28 +901,26 @@ void AATransitionDrawSettings::remove_for_signature_page_settings()
 
 // ----------------------------------------------------------------------
 
-void HzSections::remove(const std::vector<size_t>& to_remove)
+void HzSections::convert_aa_transitions(Tree& tree) // to name based hz sections
 {
-    for (auto sec_p = to_remove.rbegin(); sec_p != to_remove.rend(); ++sec_p) {
-        sections.erase(*sec_p);
-        node_refs.erase(node_refs.begin() + static_cast<decltype(node_refs)::difference_type>(*sec_p));
-    }
-
-} // HzSections::remove
-
-// ----------------------------------------------------------------------
-
-void HzSections::convert_aa_transitions() // to name based hz sections
-{
-    std::cerr << "DEBUG: HzSections::convert_aa_transitions\n";
+    // std::cerr << "DEBUG: HzSections::convert_aa_transitions\n";
     std::vector<size_t> to_remove;
-    sections.for_each([&to_remove](auto& section, size_t index) {
+    std::vector<const Node*> to_add;
+    sections.for_each([&tree, &to_remove, &to_add](auto& section, size_t section_index) {
         if (!section.aa_transition.empty()) {
-            std::cerr << "DEBUG:   section " << index << ' ' << section.name << ' ' << section.aa_transition << '\n';
-            // auto added = add(find_first_leaf(node).seq_id, true, std::string{}, 0, true);
+            // std::cerr << "DEBUG:   section " << section_index << ' ' << section.name << ' ' << section.aa_transition << '\n';
+            tree::iterate_pre(tree, [&to_add, &section](const Node& node) {
+                if (node.data.aa_transitions.contains(section.aa_transition) && node.data.number_strains > 200) {
+                    to_add.push_back(&node);
+                }
+            });
+            to_remove.push_back(section_index);
         }
     });
-    remove(to_remove);
+    for (auto sec_p = to_remove.rbegin(); sec_p != to_remove.rend(); ++sec_p)
+        sections.erase(*sec_p);
+    for (const Node* node_to_add : to_add)
+        add(tree, find_first_leaf(*node_to_add), find_last_leaf(*node_to_add), true, {}, 0);
 
 } // HzSections::convert_aa_transitions
 
@@ -951,7 +949,10 @@ void HzSections::sort(const Tree& aTree)
             to_remove.push_back(sec_no);
         }
     }
-    remove(to_remove);
+    for (auto sec_p = to_remove.rbegin(); sec_p != to_remove.rend(); ++sec_p) {
+        sections.erase(*sec_p);
+        node_refs.erase(node_refs.begin() + static_cast<decltype(node_refs)::difference_type>(*sec_p));
+    }
     assert(sections.size() == node_refs.size());
 
     acmacs::fill_with_indexes(section_order, node_refs.size());

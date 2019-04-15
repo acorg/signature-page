@@ -328,11 +328,10 @@ class HzSections : public acmacs::settings::object
     void report_html(std::string filename) const;
     // void auto_detect(Tree& aTree, const Clades* aClades);
     void detect_hz_lines_for_clades(Tree& aTree, const Clades* aClades, bool aForce);
-    void convert_aa_transitions(); // to name based hz sections
+    void convert_aa_transitions(Tree& tree); // to name based hz sections
     acmacs::settings::array_element<HzSection> add(std::string seq_id, bool show_line, std::string clade, size_t aa_pos, bool first_in_clade);
     void add(const Tree& tree, const Node& first, const Node& last, bool show_line, std::string clade, size_t aa_pos);
-    void remove(const std::vector<size_t>& to_remove);
-    
+
     size_t shown_maps() const
         {
             size_t result = 0;
