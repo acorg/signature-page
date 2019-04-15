@@ -192,16 +192,16 @@ namespace
         {
             TreeOnly::update(tree_draw, whocc_support);
             if (whocc_support) {
-                {
-                    auto mod = tree_draw.settings().mods.append();
-                    mod->mod = "hide-one";
-                    mod->s1 = "A%28H1N1%29/PERTH/9/2018__MDCK2";
-                }
-                {
-                    auto mod = tree_draw.settings().mods.append();
-                    mod->mod = "hide-one";
-                    mod->s1 = "A%28H1N1%29/PARANA/763/2018__OR";
-                }
+                // {
+                //     auto mod = tree_draw.settings().mods.append();
+                //     mod->mod = "hide-one";
+                //     mod->s1 = "A%28H1N1%29/PERTH/9/2018__MDCK2";
+                // }
+                // {
+                //     auto mod = tree_draw.settings().mods.append();
+                //     mod->mod = "hide-one";
+                //     mod->s1 = "A%28H1N1%29/PARANA/763/2018__OR";
+                // }
                 // {
                 // auto mod = tree_draw.settings().mods.append();
                 // mod->mod_help = "hide-if-cumulative-edge-length-bigger-than";
