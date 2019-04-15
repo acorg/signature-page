@@ -223,14 +223,15 @@ namespace
                     mod2->label_absolute_x = 70.0;
                 }
 
-                tree::iterate_pre(tree_draw.tree(), [&tree_draw](const Node& node) {
-                    if (node.data.aa_transitions.contains("S164T") && node.data.number_strains > 200) {
-                        auto section = tree_draw.hz_sections().add(find_first_leaf(node).seq_id, true, std::string{}, 0, true);
-                    }
-                    // else if (node.data.aa_transitions.contains("S183P") && node.data.number_strains > 500) {
-                    //     auto section = tree_draw.hz_sections().add(find_first_leaf(node).seq_id, true, std::string{}, 0, true);
-                    // }
-                });
+                // Code below does not work correctly, we should add
+                // real hz sections with aa_transitions (current code
+                // eventually adds replaced entries with node
+                // references). In reality we need to figure out node
+                // references upon ladderising.
+
+                // const std::array transitions_for_sections{"T120A", "S183P", "N129D", "N451T"};
+                // for (const auto& tr : transitions_for_sections)
+                //     tree_draw.hz_sections().add(tr, true);
             }
         }
 

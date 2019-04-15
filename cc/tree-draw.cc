@@ -905,22 +905,21 @@ void HzSections::convert_aa_transitions(Tree& tree) // to name based hz sections
 {
     // std::cerr << "DEBUG: HzSections::convert_aa_transitions\n";
     std::vector<size_t> to_remove;
-    std::vector<const Node*> to_add;
+    std::vector<std::pair<const Node*, std::string>> to_add;
     sections.for_each([&tree, &to_remove, &to_add](auto& section, size_t section_index) {
         if (!section.aa_transition.empty()) {
             // std::cerr << "DEBUG:   section " << section_index << ' ' << section.name << ' ' << section.aa_transition << '\n';
             tree::iterate_pre(tree, [&to_add, &section](const Node& node) {
-                if (node.data.aa_transitions.contains(section.aa_transition) && node.data.number_strains > 200) {
-                    to_add.push_back(&node);
-                }
+                if (node.data.aa_transitions.contains(section.aa_transition) && node.data.number_strains > 200)
+                    to_add.emplace_back(&node, *section.aa_transition);
             });
             to_remove.push_back(section_index);
         }
     });
     for (auto sec_p = to_remove.rbegin(); sec_p != to_remove.rend(); ++sec_p)
         sections.erase(*sec_p);
-    for (const Node* node_to_add : to_add)
-        add(tree, find_first_leaf(*node_to_add), find_last_leaf(*node_to_add), true, {}, 0);
+    for (const auto& node_to_add : to_add)
+        add(tree, find_first_leaf(*node_to_add.first), find_last_leaf(*node_to_add.first), true, node_to_add.second, 0);
 
 } // HzSections::convert_aa_transitions
 
@@ -1142,6 +1141,18 @@ void HzSections::add(const Tree& tree, const Node& first, const Node& last, bool
     add(first.seq_id, show_line, clade, aa_pos, true);
     if (const Node* next_node = tree.find_leaf_by_line_no(last.draw.line_no + 1); next_node)
         add(next_node->seq_id, show_line, clade, aa_pos, false);
+
+} // HzSections::add
+
+// ----------------------------------------------------------------------
+
+acmacs::settings::array_element<HzSection> HzSections::add(std::string aa_transition, bool show_line)
+{
+    auto sec = sections.append();
+    sec->aa_transition = aa_transition;
+    sec->show_line = show_line;
+    sec->triggering_clades.append(aa_transition);
+    return sec;
 
 } // HzSections::add
 

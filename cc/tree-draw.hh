@@ -331,6 +331,7 @@ class HzSections : public acmacs::settings::object
     void convert_aa_transitions(Tree& tree); // to name based hz sections
     acmacs::settings::array_element<HzSection> add(std::string seq_id, bool show_line, std::string clade, size_t aa_pos, bool first_in_clade);
     void add(const Tree& tree, const Node& first, const Node& last, bool show_line, std::string clade, size_t aa_pos);
+    acmacs::settings::array_element<HzSection> add(std::string aa_transition, bool show_line);
 
     size_t shown_maps() const
         {
