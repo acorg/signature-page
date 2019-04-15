@@ -270,7 +270,7 @@ namespace
       public:
         using H1_WithMap::H1_WithMap;
 
-        std::vector<double> viewport_rel() const override { return {9, 9, -16}; }
+        // std::vector<double> viewport_rel() const override { return {9, 9, -16}; }
     };
 
     class H1_HI_CDC : public H1_WithMap
@@ -278,7 +278,7 @@ namespace
       public:
         using H1_WithMap::H1_WithMap;
 
-        std::vector<double> viewport_rel() const override { return {9, 9, -16}; }
+        // std::vector<double> viewport_rel() const override { return {9, 9, -16}; }
     };
 
     class H1_HI_MELB : public H1_WithMap
@@ -286,7 +286,7 @@ namespace
       public:
         using H1_WithMap::H1_WithMap;
 
-        std::vector<double> viewport_rel() const override { return {2, 2, -6}; }
+        // std::vector<double> viewport_rel() const override { return {2, 2, -6}; }
     };
 
     class H1_HI_NIID : public H1_WithMap
@@ -294,7 +294,7 @@ namespace
       public:
         using H1_WithMap::H1_WithMap;
 
-        std::vector<double> viewport_rel() const override { return {2, 3, -6}; }
+        // std::vector<double> viewport_rel() const override { return {2, 3, -6}; }
     };
 
     class H1_HI_NIMR : public H1_WithMap
@@ -302,7 +302,7 @@ namespace
       public:
         using H1_WithMap::H1_WithMap;
 
-        std::vector<double> viewport_rel() const override { return {4, 4, -7}; }
+        // std::vector<double> viewport_rel() const override { return {4, 4, -7}; }
     };
 
     // ----------------------------------------------------------------------
@@ -631,7 +631,7 @@ namespace
       public:
         using BVic_WithMap::BVic_WithMap;
 
-        std::vector<double> viewport_rel() const override { return {2, 2, -4}; }
+        // std::vector<double> viewport_rel() const override { return {2, 2, -4}; }
     };
 
     class BVic_HI_MELB : public BVic_WithMap
@@ -639,7 +639,7 @@ namespace
       public:
         using BVic_WithMap::BVic_WithMap;
 
-        std::vector<double> viewport_rel() const override { return {4, 6.5, -7}; }
+        // std::vector<double> viewport_rel() const override { return {4, 6.5, -7}; }
     };
 
     class BVic_HI_NIID : public BVic_WithMap
@@ -647,9 +647,9 @@ namespace
       public:
         using BVic_WithMap::BVic_WithMap;
 
-        std::vector<double> viewport_rel() const override { return {3, 2, -3}; }
-        double rotate_degrees() const override { return -90; }
-        std::optional<std::string> flip() const override { return "ns"; }
+        // std::vector<double> viewport_rel() const override { return {3, 2, -3}; }
+        // double rotate_degrees() const override { return -90; }
+        // std::optional<std::string> flip() const override { return "ns"; }
     };
 
     class BVic_HI_NIMR : public BVic_WithMap
@@ -657,7 +657,7 @@ namespace
       public:
         using BVic_WithMap::BVic_WithMap;
 
-        std::vector<double> viewport_rel() const override { return {5, 5, -7}; }
+        // std::vector<double> viewport_rel() const override { return {5, 5, -7}; }
     };
 
     // ----------------------------------------------------------------------
