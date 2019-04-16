@@ -1024,9 +1024,8 @@ void HzSections::report(std::ostream& out) const
         out << '\n';
     }
 
-    for (auto section_index: section_order) {
-        out << rjson::to_string(sections[section_index]->get(), rjson::show_empty_values::no) << '\n';
-    }
+    for (auto section_index: section_order)
+        out << rjson::to_string(sections[section_index]->get(), rjson::show_empty_values::no) << ",\n";
 
 } // HzSections::report
 
