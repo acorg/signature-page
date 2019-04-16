@@ -332,6 +332,8 @@ class HzSections : public acmacs::settings::object
     acmacs::settings::array_element<HzSection> add(std::string seq_id, bool show_line, std::string clade, size_t aa_pos, bool first_in_clade);
     void add(const Tree& tree, const Node& first, const Node& last, bool show_line, std::string clade, size_t aa_pos);
     acmacs::settings::array_element<HzSection> add(std::string aa_transition, bool show_line);
+    auto find_section(std::string seq_id) const { return sections.find_if([&seq_id](const auto& sect) { return sect.name == seq_id; }); }
+    auto find_section(std::string seq_id)  { return sections.find_if([&seq_id](const auto& sect) { return sect.name == seq_id; }); }
 
     size_t shown_maps() const
         {
@@ -340,7 +342,7 @@ class HzSections : public acmacs::settings::object
             return result;
         }
 
-};
+}; // class HzSections
 
 // ----------------------------------------------------------------------
 

@@ -690,11 +690,23 @@ void TreeDraw::draw_aa_transition(const Node& aNode, const acmacs::PointCoordina
                 acmacs::PointCoordinates origin = aOrigin + offset;
                 if (branch_settings.label_absolute_x.has_value())
                     origin.x(*branch_settings.label_absolute_x);
+                acmacs::TextStyle label_style = branch_settings.style;
+                Color label_color = branch_settings.color;
+
+                // if the first leaf node of this node has hz line with map and that map has label the same as label of this node, show this node label in bold
+                const auto section_label_matches = [](std::string section_label, const auto& labels_to_match) -> bool {
+                    return std::any_of(std::begin(labels_to_match), std::end(labels_to_match), [&section_label](const auto& label) { return label.first == section_label; });
+                };
+                if (const auto section = mHzSections.find_section(find_first_leaf(aNode).seq_id); section && (*section)->show_map && section_label_matches((*section)->label, labels)) {
+                    label_style.weight = acmacs::FontWeight{acmacs::FontWeight::Bold};
+                    // label_color = BLUE;
+                }
+
                 acmacs::Rectangle label_box(origin.x(), origin.y() - longest_label_size.height, origin.x() + longest_label_size.width, origin.y());
                 for (const auto& label: labels) {
-                    const auto label_width = mSurface.text_size(label.first, Pixels{branch_settings.size}, branch_settings.style).width;
+                    const auto label_width = mSurface.text_size(label.first, Pixels{branch_settings.size}, label_style).width;
                     const acmacs::PointCoordinates label_xy(origin.x() + (longest_label_size.width - label_width) / 2, origin.y());
-                    mSurface.text(label_xy, label.first, branch_settings.color, Pixels{branch_settings.size}, branch_settings.style);
+                    mSurface.text(label_xy, label.first, label_color, Pixels{branch_settings.size}, label_style);
                     if (settings->show_node_for_left_line && label.second) {
                         mSurface.line(acmacs::PointCoordinates::zero2D,
                                       acmacs::PointCoordinates(mHorizontalStep * label.second->data.cumulative_edge_length, mVerticalStep * label.second->draw.line_no),
@@ -1125,7 +1137,8 @@ acmacs::settings::array_element<HzSection> HzSections::add(std::string seq_id, b
 {
     // std::cerr << "DEBUG: hz sections " << sections.size() << DEBUG_LINE_FUNC << '\n';
     const std::string clade_tag = string::concat(clade, ':', first_in_clade ? "first" : "last");
-    if (auto found = sections.find_if([&seq_id](const auto& sect) { return sect.name == seq_id; }); !found) {
+    // if (auto found = sections.find_if([&seq_id](const auto& sect) { return sect.name == seq_id; }); !found) {
+    if (auto found = find_section(seq_id); !found) {
         // std::cerr << "DEBUG: add hz section: " << seq_id << '\n';
         auto sec = sections.append();
         sec->name = seq_id;
