@@ -717,7 +717,7 @@ void TreeDraw::draw_aa_transition(const Node& aNode, const acmacs::PointCoordina
                 }
 
                 const acmacs::PointCoordinates connection_line_start((aOrigin.x() + aRight) / 2, aOrigin.y());
-                acmacs::PointCoordinates connection_line_end(2);
+                acmacs::PointCoordinates connection_line_end(acmacs::number_of_dimensions_t{2});
                 if (label_box.top_left.y() < aOrigin.y()) {
                     if (label_box.bottom_right.y() < aOrigin.y())
                         connection_line_end = label_box.bottom_middle();
@@ -756,7 +756,7 @@ void TreeDraw::draw_mark_with_label(const Node& aNode, const acmacs::PointCoordi
             const acmacs::Offset label_offset = settings->label_offset.get_or(acmacs::Offset{0.0, 0.0});
             acmacs::PointCoordinates label_origin = aTextOrigin + label_offset;
             if (settings->label_absolute_x.is_set_or_has_default())
-                label_origin[0] = settings->label_absolute_x;
+                label_origin.x(settings->label_absolute_x);
             mSurface.text(label_origin, settings->label, Color{settings->label_color}, Pixels{settings->label_size}, settings->label_style);
             const auto vlsize = mSurface.text_size(settings->label, Pixels{settings->label_size}, acmacs::TextStyle{});
             const auto line_origin = label_origin + acmacs::Offset{vlsize.width / 2, label_offset.y() > 0 ? -vlsize.height : 0};
