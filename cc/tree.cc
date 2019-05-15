@@ -1,7 +1,7 @@
 #include <iomanip>
 
 #include "acmacs-base/float.hh"
-#include "acmacs-base/virus-name.hh"
+#include "acmacs-virus/virus-name.hh"
 #include "acmacs-chart-2/chart.hh"
 #include "locationdb/locdb.hh"
 #include "signature-page/tree.hh"
