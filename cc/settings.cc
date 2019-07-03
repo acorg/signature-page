@@ -115,7 +115,7 @@ std::vector<std::string> PrettyHandlerSigpSettings::simple_keys_ = {
 void write_settings(const Settings& aSettings, std::string aFilename)
 {
     std::cout << "INFO: writing settings to " << aFilename << '\n';
-    aSettings.timestamp = current_date_time();
+    aSettings.timestamp = date::current_date_time();
     aSettings.write_to_file(aFilename, rjson::emacs_indent::yes, PrettyHandlerSigpSettings{});
 
 } // write_settings

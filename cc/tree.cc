@@ -443,12 +443,12 @@ const Node* Tree::find_next_leaf(const Node& previous_leaf, bool shown_only) con
 
 // ----------------------------------------------------------------------
 
-void Tree::sequences_per_month(std::map<Date, size_t>& spm) const
+void Tree::sequences_per_month(std::map<date::year_month_day, size_t>& spm) const
 {
     auto worker = [&spm](const Node& aNode) -> void {
         const auto d = aNode.data.date();
         if (!d.empty() && aNode.draw.shown) {
-            ++spm[Date(d).beginning_of_month()];
+            ++spm[date::beginning_of_month(date::from_string(d))];
         }
     };
     tree::iterate_leaf(*this, worker);

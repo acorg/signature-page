@@ -9,7 +9,7 @@
 
 void TimeSeriesDraw::prepare()
 {
-    std::map<Date, size_t> sequences_per_month;
+    std::map<date::year_month_day, size_t> sequences_per_month;
     mTree.sequences_per_month(sequences_per_month);
     if (!sequences_per_month.empty()) {
         std::cout << "INFO: Sequences per month:" << '\n';
@@ -17,11 +17,11 @@ void TimeSeriesDraw::prepare()
             std::cout << "  " << e.first << " " << e.second << '\n';
         }
 
-        const auto today = Date::today();
+        const auto today = date::today();
         if (mSettings.begin.empty()) {
             for (const auto& entry : sequences_per_month) {
                 if (entry.second && months_between_dates(entry.first, today) < 25) {
-                    mSettings.begin = entry.first;
+                    mSettings.begin = date::display(entry.first);
                     break;
                 }
             }
@@ -29,13 +29,13 @@ void TimeSeriesDraw::prepare()
         if (mSettings.end.empty()) {
             for (auto ms = sequences_per_month.crbegin(); ms != sequences_per_month.crend(); ++ms) {
                 if (ms->second && ms->first <= today) {
-                    mSettings.end = ms->first.end_of_month();
+                    mSettings.end = date::display(date::end_of_month(ms->first));
                     break;
                 }
             }
         }
 
-        mNumberOfMonths = static_cast<size_t>(calendar_months_between_dates_inclusive(Date{mSettings.begin}, Date{mSettings.end}));
+        mNumberOfMonths = static_cast<size_t>(calendar_months_between_dates_inclusive(date::from_string(*mSettings.begin), date::from_string(*mSettings.end)));
         std::cout << "INFO: dates to show: " << mSettings.begin << " .. " << mSettings.end << "  months: " << mNumberOfMonths << DEBUG_LINE_FUNC << '\n';
     }
     else {
@@ -88,11 +88,11 @@ void TimeSeriesDraw::draw_labels(double month_width)
 void TimeSeriesDraw::draw_labels_at_side(const acmacs::PointCoordinates& aOrigin, double month_width, double month_max_height)
 {
     try {
-        Date current_month{mSettings.begin};
-        for (size_t month_no = 0; month_no < mNumberOfMonths; ++month_no, current_month.increment_month()) {
+        auto current_month{date::from_string(*mSettings.begin)};
+        for (size_t month_no = 0; month_no < mNumberOfMonths; ++month_no, date::increment_month(current_month)) {
             const double left = aOrigin.x() + month_no * month_width;
-            mSurface.text({left, aOrigin.y()}, current_month.month_3(), 0, Pixels{mSettings.label_size}, mSettings.label_style, Rotation{M_PI_2});
-            mSurface.text({left, aOrigin.y() + month_max_height}, current_month.year_2(), 0, Pixels{mSettings.label_size}, mSettings.label_style, Rotation{M_PI_2});
+            mSurface.text({left, aOrigin.y()}, date::month_3(current_month), 0, Pixels{mSettings.label_size}, mSettings.label_style, Rotation{M_PI_2});
+            mSurface.text({left, aOrigin.y() + month_max_height}, date::year_2(current_month), 0, Pixels{mSettings.label_size}, mSettings.label_style, Rotation{M_PI_2});
         }
     }
     catch (std::exception& err) {
@@ -120,12 +120,12 @@ void TimeSeriesDraw::draw_dashes(double month_width)
     const double base_x = month_width * (1.0 - mSettings.dash_width) / 2;
     const Coloring& coloring = mTreeDraw.coloring();
 
-    const Date begin{mSettings.begin}, end{mSettings.end};
+    const auto begin{date::from_string(*mSettings.begin)}, end{date::from_string(*mSettings.end)};
     auto draw_dash = [&](const Node& aNode) {
         if (aNode.draw.shown && !aNode.data.date().empty()) {
             try {
-                if (const Date node_date{aNode.data.date()}; node_date >= begin && node_date <= end) {
-                    const int month_no = months_between_dates(begin, node_date);
+                if (const auto node_date{date::from_string(aNode.data.date())}; node_date >= begin && node_date <= end) {
+                    const int month_no = date::months_between_dates(begin, node_date);
                     const acmacs::PointCoordinates a(base_x + month_width * month_no, aNode.draw.vertical_pos);
                     mSurface.line(a, {a.x() + month_width * mSettings.dash_width, a.y()}, coloring.color(aNode), Pixels{mSettings.dash_line_width}, acmacs::surface::LineCap::Round);
                 }

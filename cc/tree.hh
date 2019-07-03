@@ -217,7 +217,7 @@ class Tree : public Node
     const Node* find_previous_leaf(const Node& aNode, bool shown_only) const;
     const Node* find_next_leaf(const Node& aNode, bool shown_only) const;
 
-    void sequences_per_month(std::map<Date, size_t>& spm) const;
+    void sequences_per_month(std::map<date::year_month_day, size_t>& spm) const;
     std::string virus_type() const;
     std::pair<std::string, std::string> virus_type_lineage() const;
 
