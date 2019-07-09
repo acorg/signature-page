@@ -1,48 +1,73 @@
-#+STARTUP: showall
-#+STARTUP: x-indent
-# Time-stamp: <2019-01-17 17:19:55 eu>
-* Making tree image from fasta file
-** Source fasta file format
-Expected format corresponds to the gisaid output format:
+# Time-stamp: <2019-07-09 16:26:56 eu>
+* Update seqdb: see [[file:~/AD/sources/acmacs-whocc/doc/gisaid.org::*already%20downloaded%20from%20gisaid:%20~/ac/sequences-2019][gisaid]]
+* albertine
+D=$(date +%Y-%m%d)
+mkdir -p /syn/eu/ac/results/signature-pages/${D}/{h1,h3,bv,by}
+cd /syn/eu/ac/results/signature-pages/${D}
+cp ~/AD/data/seqdb.json.xz .
 
->name |  isolation date | passage |  lab id | lab name | virus type and subtype | lineage
+* Export sequences (albertine)
+seqdb3 --db seqdb.json.xz --flu h1 --recent 4000 --nuc-hamming-distance-threshold 160 --base-seq "SWITZERLAND/9772556/2013" --nucs --wrap --most-common-length --name-format "{seq_id}" --fasta h1/source.fas
+seqdb3 --db seqdb.json.xz --flu h3 --recent 4000 --nuc-hamming-distance-threshold 160 --base-seq "HAWAII/22/2012 MDCK" --nucs --wrap --most-common-length --name-format "{seq_id}" --fasta h3/source.fas
+seqdb3 --db seqdb.json.xz --flu b --lineage vic --recent 4000 --nuc-hamming-distance-threshold 160 --base-seq "VICTORIA/830/2013" --nucs --wrap --most-common-length --name-format "{seq_id}" --fasta bv/source.fas
+seqdb3 --db seqdb.json.xz --flu b --lineage yam --recent 4000 --nuc-hamming-distance-threshold 160 --base-seq "CHRISTCHURCH/503/2013" --nucs --wrap --most-common-length --name-format "{seq_id}" --fasta by/source.fas
 
-e.g.
+* Run tree maker in each directory {h1,h3,bv,by}
+tree-maker init
+e tree-maker.config
+tree-maker wait
 
->B/Florida/56/2017 |  2017-06-03 | Original |  3025630379 | Centers for Disease Control and Prevention | B / H0N0 |  Victoria
+tree-maker state
 
->A/South Australia/112/2017 |  2017-06-01 | SIAT1 |  1706116 VW82509 | WHO Collaborating Centre for Reference and Research on Influenza | A / H3N2 |
+* OLD before 2019-07-09
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+** Making tree image from fasta file
+*** Source fasta file format
+ Expected format corresponds to the gisaid output format:
 
-If field value is unknown or not applicable, it may be left empty.
+ >name |  isolation date | passage |  lab id | lab name | virus type and subtype | lineage
 
-Field separator must be surrounded by spaces: " |  "
+ e.g.
 
-** Converting fasta file(s) into sequence database
+ >B/Florida/56/2017 |  2017-06-03 | Original |  3025630379 | Centers for Disease Control and Prevention | B / H0N0 |  Victoria
 
-$ seqdb-create --db <seqdb.json.xz> --clades source1.fas source2.fas ...
+ >A/South Australia/112/2017 |  2017-06-01 | SIAT1 |  1706116 VW82509 | WHO Collaborating Centre for Reference and Research on Influenza | A / H3N2 |
 
-** Export aligned fasta file for making a tree
+ If field value is unknown or not applicable, it may be left empty.
 
-$ seqdb-export --db <seqdb.json.xz> --flu <virus type: h1, h3, bvic, byam> --recent 4000 --hamming-distance-threshold 160 --tree-maker --base-seq <base-seq-name> tree-maker-source.fas
+ Field separator must be surrounded by spaces: " |  "
 
-base-seq-name - is an older name of the sequence in the sequence database that will become tree root.
-** Make tree
-You may use raxml, garli or any other program for making tree. The
-resulting tree must be in newick format or you need to convert the
-result to newick format yourself.
-** Convert newick tree to json
-$ tree-newick-to-json <tree.phy | xz -9e >tree.json.xz
-** Drawing tree
-*** Init settings
-$ sigp --seqdb <seqdb.json.xz> --init-settings tree.settings.json tree.json.xz tree.pdf
-*** Edit tree.settings.json
-*** Generate resultsing tree
-$ sigp --seqdb <seqdb.json.xz> -s tree.settings.json tree.json.xz tree.pdf
+*** Converting fasta file(s) into sequence database
+
+ $ seqdb-create --db <seqdb.json.xz> --clades source1.fas source2.fas ...
+
+*** Export aligned fasta file for making a tree
+
+ $ seqdb-export --db <seqdb.json.xz> --flu <virus type: h1, h3, bvic, byam> --recent 4000 --hamming-distance-threshold 160 --tree-maker --base-seq <base-seq-name> tree-maker-source.fas
+
+ base-seq-name - is an older name of the sequence in the sequence database that will become tree root.
+*** Make tree
+ You may use raxml, garli or any other program for making tree. The
+ resulting tree must be in newick format or you need to convert the
+ result to newick format yourself.
+*** Convert newick tree to json
+ $ tree-newick-to-json <tree.phy | xz -9e >tree.json.xz
+*** Drawing tree
+**** Init settings
+ $ sigp --seqdb <seqdb.json.xz> --init-settings tree.settings.json tree.json.xz tree.pdf
+**** Edit tree.settings.json
+**** Generate resultsing tree
+ $ sigp --seqdb <seqdb.json.xz> -s tree.settings.json tree.json.xz tree.pdf
 
 * COMMENT ---- local vars
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+#+STARTUP: showall indent
 # ======================================================================
 # Local Variables:
 # eval: (auto-fill-mode 0)
 # eval: (add-hook 'before-save-hook 'time-stamp)
 # End:
-
