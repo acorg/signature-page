@@ -1,4 +1,4 @@
-# Time-stamp: <2019-07-09 16:26:56 eu>
+# Time-stamp: <2019-07-09 16:32:42 eu>
 * Update seqdb: see [[file:~/AD/sources/acmacs-whocc/doc/gisaid.org::*already%20downloaded%20from%20gisaid:%20~/ac/sequences-2019][gisaid]]
 * albertine
 D=$(date +%Y-%m%d)
@@ -61,7 +61,7 @@ tree-maker state
 **** Generate resultsing tree
  $ sigp --seqdb <seqdb.json.xz> -s tree.settings.json tree.json.xz tree.pdf
 
-* COMMENT ---- local vars
+* COMMENT ========== local vars
 :PROPERTIES:
 :VISIBILITY: folded
 :END:
