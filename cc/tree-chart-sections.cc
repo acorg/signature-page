@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "acmacs-base/argc-argv.hh"
+#include "acmacs-base/argv.hh"
 #include "acmacs-base/json-writer.hh"
 #include "acmacs-chart-2/factory-import.hh"
 #include "tree.hh"
@@ -48,39 +48,40 @@ template <typename RW> inline json_writer::writer<RW>& operator<<(json_writer::w
 
 // ----------------------------------------------------------------------
 
+using namespace acmacs::argv;
+struct Options : public argv
+{
+    Options(int a_argc, const char* const a_argv[], on_error on_err = on_error::exit) : argv() { parse(a_argc, a_argv, on_err); }
+
+    option<str> db_dir{*this, "db-dir"};
+    option<str> seqdb{*this, "seqdb"};
+
+    option<size_t>    group_threshold{*this, "group-threshold", dflt{10UL}, desc{"minimum nuber of antigens in the group"}};
+    option<str>       group_series_sets{*this, "group-series-sets", desc{"write group-series-set-v1 json"}};
+
+    option<bool>      verbose{*this, 'v', "verbose"};
+
+    argument<str> tree_file{*this, arg_name{"tree.json[.xz]"}, mandatory};
+    argument<str> chart{*this, arg_name{"chart.ace"}, mandatory};
+};
+
 int main(int argc, const char* argv[])
 {
     using namespace std::string_literals;
     try {
-        argc_argv args(argc, argv,
-                       {
-                           {"--db-dir", ""},
-                           {"--seqdb", ""},
+        Options opt(argc, argv);
 
-                           {"--group-threshold", 10, "minimum nuber of antigens in the group"},
-                           {"--group-series-sets", "", "write group-series-set-v1 json"},
+        seqdb::setup_dbs(opt.db_dir, opt.verbose ? seqdb::report::yes : seqdb::report::no);
+        if (!opt.seqdb->empty())
+            seqdb::setup(opt.seqdb, opt.verbose ? seqdb::report::yes : seqdb::report::no);
 
-                           {"-v", false},
-                           {"--verbose", false},
-                           {"-h", false},
-                           {"--help", false},
-                       });
+        std::shared_ptr<acmacs::chart::Chart> chart = acmacs::chart::import_from_file(opt.chart);
+        Tree tree = tree::tree_import(opt.tree_file, chart);
 
-        if (args["-h"] || args["--help"] || args.number_of_arguments() != 2) {
-            throw std::runtime_error("Usage: "s + args.program() + " [options] <tree.json> <chart.ace>\n" + args.usage_options());
-        }
-        const bool verbose = args["-v"] || args["--verbose"];
-        seqdb::setup_dbs(args["--db-dir"].str(), verbose ? seqdb::report::yes : seqdb::report::no);
-        if (args["--seqdb"])
-            seqdb::setup(args["--seqdb"].str(), verbose ? seqdb::report::yes : seqdb::report::no);
-
-        std::shared_ptr<acmacs::chart::Chart> chart = acmacs::chart::import_from_file(args[1], acmacs::chart::Verify::None, report_time::no);
-        Tree tree = tree::tree_import(std::string(args[0]), chart);
-
-        if (args["--group-series-sets"]) {
+        if (opt.group_series_sets.get_bool()) {
             groups_t groups;
             const size_t max_in_group = tree.draw.matched_antigens / 3 * 2;
-            auto make_groups = [&groups, max_in_group, threshold = static_cast<size_t>(args["--group-threshold"])](const Node& node, std::string path) {
+            auto make_groups = [&groups, max_in_group, threshold = static_cast<size_t>(opt.group_threshold)](const Node& node, std::string path) {
                 if (node.draw.matched_antigens >= threshold && node.draw.matched_antigens < max_in_group) {
                     auto& group = groups.groups.emplace_back(path, groups.groups.size() + 1);
                     tree::iterate_leaf(node, [&group](const Node& node2) {
@@ -93,7 +94,7 @@ int main(int argc, const char* argv[])
                 }
             };
             tree::iterate_pre_path(tree, make_groups);
-            json_writer::export_to_json(groups, args["--group-series-sets"].str(), 2);
+            json_writer::export_to_json(groups, opt.group_series_sets, 2);
         }
         else {
             auto report_antigens = [](const Node& node, std::string path) {

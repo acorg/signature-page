@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cmath>
 
-#include "acmacs-base/argc-argv.hh"
+#include "acmacs-base/argv.hh"
 #include "acmacs-base/stream.hh"
 #include "acmacs-chart-2/factory-import.hh"
 #include "tree.hh"
@@ -12,43 +12,44 @@ static void print_tree(const Tree& tree, double step);
 
 // ----------------------------------------------------------------------
 
+using namespace acmacs::argv;
+struct Options : public argv
+{
+    Options(int a_argc, const char* const a_argv[], on_error on_err = on_error::exit) : argv() { parse(a_argc, a_argv, on_err); }
+
+    option<str> db_dir{*this, "db-dir"};
+    option<str> seqdb{*this, "seqdb"};
+
+    option<str>       chart{*this, "chart"};
+    option<size_t>    max_leaf_offset{*this, "max-leaf-offset", dflt{80UL}};
+    option<bool>      leaves_only{*this, "leaves-only"};
+
+    option<bool>      verbose{*this, 'v', "verbose"};
+
+    argument<str> tree_file{*this, arg_name{"tree.json[.xz]"}, mandatory};
+};
+
 int main(int argc, const char* argv[])
 {
     using namespace std::string_literals;
     try {
-        argc_argv args(argc, argv,
-                       {
-                           {"--db-dir", ""},
-                           {"--seqdb", ""},
-                           {"--chart", ""},
-                           {"--max-leaf-offset", 80},
-                           {"--leaves-only", false},
+        Options opt(argc, argv);
 
-                           {"-v", false},
-                           {"--verbose", false},
-                           {"-h", false},
-                           {"--help", false},
-                       });
-
-        if (args["-h"] || args["--help"] || args.number_of_arguments() != 1) {
-            throw std::runtime_error("Usage: "s + args.program() + " [options] <tree.json>\n" + args.usage_options());
-        }
-        const bool verbose = args["-v"] || args["--verbose"];
-        seqdb::setup_dbs(args["--db-dir"].str(), verbose ? seqdb::report::yes : seqdb::report::no);
-        if (args["--seqdb"])
-            seqdb::setup(args["--seqdb"].str(), verbose ? seqdb::report::yes : seqdb::report::no);
+        seqdb::setup_dbs(opt.db_dir, opt.verbose ? seqdb::report::yes : seqdb::report::no);
+        if (!opt.seqdb->empty())
+            seqdb::setup(opt.seqdb, opt.verbose ? seqdb::report::yes : seqdb::report::no);
 
         std::shared_ptr<acmacs::chart::Chart> chart;
-        if (args["--chart"])
-            chart = acmacs::chart::import_from_file(static_cast<std::string>(args["--chart"]), acmacs::chart::Verify::None, report_time::no);
+        if (!opt.chart->empty())
+            chart = acmacs::chart::import_from_file(opt.chart);
 
-        Tree tree = tree::tree_import(std::string(args[0]), chart);
+        Tree tree = tree::tree_import(opt.tree_file, chart);
 
         const auto [min_edge, max_edge] = tree.cumulative_edge_minmax();
         // std::cout << "mm: " << min_edge << ' ' << max_edge << '\n';
-        const auto step = max_edge / static_cast<size_t>(args["--max-leaf-offset"]);
+        const auto step = max_edge / static_cast<size_t>(opt.max_leaf_offset);
 
-        if (args["--leaves-only"])
+        if (opt.leaves_only)
             print_tree_leaves(tree, step);
         else
             print_tree(tree, step);
