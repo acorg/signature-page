@@ -95,15 +95,15 @@ class SignaturePageDraw
     SignaturePageDraw();
     ~SignaturePageDraw();
 
-    void load_settings(std::string aFilename);
-    void make_surface(std::string aFilename, bool init_settings, bool show_aa_at_pos, bool draw_map);
+    void load_settings(std::string_view aFilename);
+    void make_surface(std::string_view aFilename, bool init_settings, bool show_aa_at_pos, bool draw_map);
     void init_settings(bool show_aa_at_pos, bool whocc_support);
-    void write_initialized_settings(std::string aFilename); // removes redundant settings entries depending on layout!
+    void write_initialized_settings(std::string_view aFilename); // removes redundant settings entries depending on layout!
     Settings& settings() { return *mSettings; }
-    void tree(std::string aTreeFilename, seqdb::Seqdb::ignore_not_found ignore = seqdb::Seqdb::ignore_not_found::no);
+    void tree(std::string_view aTreeFilename, seqdb::Seqdb::ignore_not_found ignore = seqdb::Seqdb::ignore_not_found::no);
     Tree& tree() { return *mTree; }
     const TreeDraw& tree_draw() const { return *mTreeDraw; }
-    void chart(std::string aChartFilename) { mChartFilename = aChartFilename; }
+    void chart(std::string_view aChartFilename) { mChartFilename = aChartFilename; }
     bool has_antigenic_maps_draw() const noexcept { return bool{mMappedAntigensDraw}; }
     const AntigenicMapsDrawBase& antigenic_maps_draw() const { return *mAntigenicMapsDraw; }
 

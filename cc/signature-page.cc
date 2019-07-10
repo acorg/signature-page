@@ -39,7 +39,7 @@ SignaturePageDraw::~SignaturePageDraw()
 
 // ----------------------------------------------------------------------
 
-void SignaturePageDraw::load_settings(std::string aFilename)
+void SignaturePageDraw::load_settings(std::string_view aFilename)
 {
     if (!aFilename.empty())
         read_settings(*mSettings, aFilename);
@@ -68,7 +68,7 @@ SignaturePageLayout SignaturePageDraw::detect_layout(bool init_settings, bool sh
 
 // ----------------------------------------------------------------------
 
-void SignaturePageDraw::make_surface(std::string aFilename, bool init_settings, bool show_aa_at_pos, bool draw_map)
+void SignaturePageDraw::make_surface(std::string_view aFilename, bool init_settings, bool show_aa_at_pos, bool draw_map)
 {
     double width = 300, height = 300;
     switch (detect_layout(init_settings, show_aa_at_pos)) {
@@ -84,7 +84,7 @@ void SignaturePageDraw::make_surface(std::string aFilename, bool init_settings, 
           width = std::floor(height * (210.0 / 297.0));
           break;
     }
-    mSurface = std::make_unique<acmacs::surface::PdfCairo>(draw_map ? aFilename : std::string{}, width, height);
+    mSurface = std::make_unique<acmacs::surface::PdfCairo>(draw_map ? aFilename : std::string_view{}, width, height);
     std::cout << "INFO: Surface: " << width << " x " << height << '\n';
 
     mTreeDraw = std::make_unique<TreeDraw>(*this, mSurface->subsurface(false), *mTree, *mSettings->tree_draw, *mSettings->hz_sections);
@@ -150,7 +150,7 @@ void SignaturePageDraw::init_settings(bool show_aa_at_pos, bool whocc_support)
 
 // ----------------------------------------------------------------------
 
-void SignaturePageDraw::write_initialized_settings(std::string aFilename)
+void SignaturePageDraw::write_initialized_settings(std::string_view aFilename)
 {
     SignaturePageLayout layout = settings().signature_page->layout;
     if (layout == SignaturePageLayout::Auto)
@@ -180,7 +180,7 @@ void SignaturePageDraw::write_initialized_settings(std::string aFilename)
 
 // ----------------------------------------------------------------------
 
-void SignaturePageDraw::tree(std::string aTreeFilename, seqdb::Seqdb::ignore_not_found ignore)
+void SignaturePageDraw::tree(std::string_view aTreeFilename, seqdb::Seqdb::ignore_not_found ignore)
 {
     tree::tree_import(aTreeFilename, *mTree);
     if (mSeqdb)

@@ -24,7 +24,7 @@ Settings::Settings()
 
 // ----------------------------------------------------------------------
 
-void read_settings(Settings& aSettings, std::string aFilename)
+void read_settings(Settings& aSettings, std::string_view aFilename)
 {
     std::cout << "INFO: reading settings from " << aFilename << '\n';
     aSettings.update_from_file(aFilename);
@@ -112,7 +112,7 @@ std::vector<std::string> PrettyHandlerSigpSettings::simple_keys_ = {
 
 // ----------------------------------------------------------------------
 
-void write_settings(const Settings& aSettings, std::string aFilename)
+void write_settings(const Settings& aSettings, std::string_view aFilename)
 {
     std::cout << "INFO: writing settings to " << aFilename << '\n';
     aSettings.timestamp = date::current_date_time();

@@ -53,8 +53,8 @@ class Settings : public acmacs::settings::toplevel
 
 // ----------------------------------------------------------------------
 
-void read_settings(Settings& aSettings, std::string aFilename);
-void write_settings(const Settings& aSettings, std::string aFilename);
+void read_settings(Settings& aSettings, std::string_view aFilename);
+void write_settings(const Settings& aSettings, std::string_view aFilename);
 
 // ----------------------------------------------------------------------
 /// Local Variables:
