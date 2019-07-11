@@ -4,7 +4,6 @@ namespace jsw = json_writer;
 
 #include "acmacs-base/enumerate.hh"
 #include "acmacs-base/read-file.hh"
-#include "seqdb/seqdb.hh"
 #include "signature-page/tree-export.hh"
 #include "signature-page/tree.hh"
 
@@ -289,7 +288,7 @@ Tree tree::tree_import(std::string_view aFilename, std::shared_ptr<acmacs::chart
 {
     Tree tree;
     tree_import(aFilename, tree);
-    tree.match_seqdb(seqdb::get());
+    tree.match_seqdb();
     if (chart) {
         const auto matched_names = tree.match(*chart);
         if (matched_names)

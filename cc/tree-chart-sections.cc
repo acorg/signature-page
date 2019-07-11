@@ -53,7 +53,6 @@ struct Options : public argv
 {
     Options(int a_argc, const char* const a_argv[], on_error on_err = on_error::exit) : argv() { parse(a_argc, a_argv, on_err); }
 
-    option<str> db_dir{*this, "db-dir"};
     option<str> seqdb{*this, "seqdb"};
 
     option<size_t>    group_threshold{*this, "group-threshold", dflt{10UL}, desc{"minimum nuber of antigens in the group"}};
@@ -71,9 +70,7 @@ int main(int argc, const char* argv[])
     try {
         Options opt(argc, argv);
 
-        seqdb::setup_dbs(opt.db_dir, opt.verbose ? seqdb::report::yes : seqdb::report::no);
-        if (!opt.seqdb->empty())
-            seqdb::setup(opt.seqdb, opt.verbose ? seqdb::report::yes : seqdb::report::no);
+        acmacs::seqdb::setup(opt.seqdb);
 
         std::shared_ptr<acmacs::chart::Chart> chart = acmacs::chart::import_from_file(opt.chart);
         Tree tree = tree::tree_import(opt.tree_file, chart);

@@ -3,7 +3,7 @@
 #include "acmacs-base/data-formatter.hh"
 #include "acmacs-base/read-file.hh"
 #include "acmacs-base/enumerate.hh"
-#include "seqdb/seqdb.hh"
+#include "seqdb-3/seqdb.hh"
 #include "acmacs-chart-2/chart.hh"
 #include "acmacs-chart-2/factory-import.hh"
 #include "signature-page/tree.hh"
@@ -22,7 +22,7 @@ int main(int argc, const char* const* argv)
         std::string target_csv = argv[3];
         std::string target_tree_file = argv[4];
 
-        const auto seqdb = seqdb::get();
+        const auto seqdb = acmacs::seqdb::get();
         Tree tree = tree::tree_import(source_tree_file);
           // tree.match_seqdb(seqdb);
 
@@ -48,7 +48,7 @@ int main(int argc, const char* const* argv)
                 const auto seq = entry.seq().amino_acids(true);
                 for (auto bp : sBjornPos)
                     DF::second_field(data_csv, seq[bp - 1]);
-                if (auto node = tree.find_leaf_by_seqid(entry.seq_id(seqdb::SeqdbEntrySeq::encoded_t::yes)); node) {
+                if (auto node = tree.find_leaf_by_seqid(entry.seq_id()); node) {
                       // std::cout << ag_no << ' ' << node->seq_id << '\n';
                     node->seq_id = "s-" + std::to_string(ag_no); // rename node according to isig spec
                     ++antigens_in_tree;

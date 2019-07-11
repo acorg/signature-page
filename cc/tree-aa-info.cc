@@ -3,6 +3,7 @@
 #include <cmath>
 
 #include "acmacs-base/stream.hh"
+#include "acmacs-base/fmt.hh"
 #include "acmacs-base/enumerate.hh"
 #include "signature-page/tree.hh"
 #include "signature-page/tree-export.hh"
@@ -28,7 +29,7 @@ using AllDiffs = std::map<AADiff, std::vector<DiffEntry>>;
 // ----------------------------------------------------------------------
 
 // static size_t hamming_distance(std::string seq1, std::string seq2);
-static AADiff diff_sequence(std::string seq1, std::string seq2);
+static AADiff diff_sequence(std::string_view seq1, std::string_view seq2);
 static AllDiffs collect(const Tree& tree);
 static void compute_entries_diffs(AllDiffs& diffs);
 
@@ -150,12 +151,12 @@ AllDiffs collect(const Tree &tree)
 
 // ----------------------------------------------------------------------
 
-AADiff diff_sequence(std::string seq1, std::string seq2)
+AADiff diff_sequence(std::string_view seq1, std::string_view seq2)
 {
     AADiff result;
     for (size_t pos = 0; pos < std::min(seq1.size(), seq2.size()); ++pos) {
         if (seq1[pos] != seq2[pos])
-            result.push_back(seq1[pos] + std::to_string(pos + 1) + seq2[pos]);
+            result.push_back(fmt::format("{}{}{}", seq1[pos], pos + 1, seq2[pos]));
     }
     return result;
 

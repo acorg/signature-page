@@ -244,7 +244,7 @@ void TreeDraw::hide_before2015_58P_or_146I_or_559I()
 {
     auto hide_show_leaf = [](Node& aNode) {
         if (aNode.data.date() < "2015-01-01") {
-            const std::string aa = aNode.data.amino_acids();
+            const auto aa = aNode.data.amino_acids();
             if (aa[57] == 'P' || aa[145] == 'I' || aa[559] == 'I')
                 aNode.draw.shown = false;
         }

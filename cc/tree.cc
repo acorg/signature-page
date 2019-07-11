@@ -1,6 +1,7 @@
 #include <iomanip>
 
 #include "acmacs-base/float.hh"
+#include "acmacs-base/fmt.hh"
 #include "acmacs-virus/virus-name.hh"
 #include "acmacs-chart-2/chart.hh"
 #include "locationdb/locdb.hh"
@@ -8,12 +9,15 @@
 
 // ----------------------------------------------------------------------
 
-void Tree::match_seqdb(const seqdb::Seqdb& seqdb, seqdb::Seqdb::ignore_not_found ignore)
+void Tree::match_seqdb()
 {
-    auto match = [&seqdb,ignore](Node& node) {
-        node.data.assign(seqdb.find_by_seq_id(node.seq_id, ignore));
-    };
-    tree::iterate_leaf(*this, match);
+    if (const auto& seqdb = acmacs::seqdb::get(); !seqdb.empty()) {
+        const auto& seq_id_index = seqdb.seq_id_index();
+        tree::iterate_leaf(*this, [&seq_id_index](Node& node) {
+            if (const auto found = seq_id_index.find(node.seq_id); found != seq_id_index.end())
+                node.data.assign(found->second);
+        });
+    }
 
 } // Tree::match_seqdb
 
@@ -121,12 +125,11 @@ size_t Tree::height() const
 
 void NodeData::set_continent(std::string seq_id)
 {
-    if (mSeqdbEntrySeq) {
-        continent = mSeqdbEntrySeq.entry().continent();
-    }
+    if (mSeqdbRef)
+        continent = mSeqdbRef.entry->continent;
     if (continent.empty()) {
         try {
-            continent = get_locdb().continent(virus_name::location(name_decode(seq_id)), "UNKNOWN");
+            continent = get_locdb().continent(virus_name::location(seq_id), "UNKNOWN");
         }
         catch (virus_name::Unrecognized&) {
             continent = "UNKNOWN";
@@ -160,7 +163,7 @@ void Node::compute_cumulative_edge_length(double initial_edge_length, double& ma
 
 std::string Node::display_name() const
 {
-    return string::replace(name_decode(seq_id), "__", " ") + " " + data.date();
+    return fmt::format("{} {}", seq_id, data.date());
 
 } // Node::display_name
 
@@ -495,10 +498,9 @@ std::pair<std::string, std::string> Tree::virus_type_lineage() const
     std::string virus_type;
     auto find_virus_type = [&virus_type](const Node& aNode) -> bool {
         bool r = false;
-        const std::string seq_id = name_decode(aNode.seq_id);
-        const auto pos = seq_id.find('/');
-        if ((pos == 1 && seq_id[0] == 'B') || (pos == 7 && seq_id[0] == 'A' && seq_id[1] == '(')) {
-            virus_type.assign(seq_id, 0, pos);
+        const auto pos = aNode.seq_id.find('/');
+        if ((pos == 1 && aNode.seq_id[0] == 'B') || (pos == 7 && aNode.seq_id[0] == 'A' && aNode.seq_id[1] == '(')) {
+            virus_type.assign(aNode.seq_id, 0, pos);
             r = true;
         }
         return r;
@@ -544,7 +546,7 @@ std::vector<const Node*> Tree::find_nodes_matching(std::string name) const
 {
     std::vector<const Node*> result;
     const auto find_matching = [&result,&name](const Node& aNode) -> void {
-        if (const std::string seq_id = name_decode(aNode.seq_id); seq_id.find(name) != std::string::npos)
+        if (aNode.seq_id.find(name) != std::string::npos)
             result.push_back(&aNode);
     };
     tree::iterate_leaf(*this, find_matching);
@@ -556,7 +558,7 @@ std::vector<Node*> Tree::find_nodes_matching(std::string name)
 {
     std::vector<Node*> result;
     const auto find_matching = [&result,&name](Node& aNode) -> void {
-        if (const std::string seq_id = name_decode(aNode.seq_id); seq_id.find(name) != std::string::npos)
+        if (aNode.seq_id.find(name) != std::string::npos)
             result.push_back(&aNode);
     };
     tree::iterate_leaf(*this, find_matching);
@@ -637,7 +639,7 @@ size_t Tree::match(const acmacs::chart::Chart& chart)
 
     auto match_chart_antigens = [&](Node& node) {
         node.draw.chart_antigen_index.reset();
-        if (const std::vector<std::string>* hi_names = node.data.hi_names(); hi_names) {
+        if (const auto* hi_names = node.data.hi_names(); hi_names) {
             for (const auto& name : *hi_names) {
                 if (const auto antigen_index = antigens->find_by_full_name(name); antigen_index) {
                     node.draw.chart_antigen_index = antigen_index;
