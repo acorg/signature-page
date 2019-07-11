@@ -37,6 +37,7 @@ struct Options : public argv
     option<str>       chart{*this, "chart", desc{"path to a chart for the signature page"}};
     option<bool>      ignore_seqdb_match_errors{*this, "ignore-seqdb-match-errors", desc{"for debugging"}};
     option<bool>      open{*this, "open"};
+    option<bool>      ql{*this, "ql"};
     option<bool>      verbose{*this, 'v', "verbose"};
 
     argument<str> tree_file{*this, arg_name{"tree.json[.xz]"}, mandatory};
@@ -94,10 +95,10 @@ int main(int argc, const char* argv[])
             //     signature_page.tree_draw().hz_sections().report_html(opt.hz_sections_report_html);
         }
 
-        if (!opt.no_draw)
+        if (!opt.no_draw) {
             std::cout << "INFO: generated: " << opt.output_pdf << '\n';
-        if (opt.open)
-            acmacs::open(opt.output_pdf, 2);
+            acmacs::open_or_quicklook(opt.open, opt.ql, opt.output_pdf, 2);
+        }
 
         return 0;
     }

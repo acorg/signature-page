@@ -78,7 +78,7 @@ int main(int argc, const char* argv[])
         std::shared_ptr<acmacs::chart::Chart> chart = acmacs::chart::import_from_file(opt.chart);
         Tree tree = tree::tree_import(opt.tree_file, chart);
 
-        if (opt.group_series_sets.get_bool()) {
+        if (opt.group_series_sets) {
             groups_t groups;
             const size_t max_in_group = tree.draw.matched_antigens / 3 * 2;
             auto make_groups = [&groups, max_in_group, threshold = static_cast<size_t>(opt.group_threshold)](const Node& node, std::string path) {
