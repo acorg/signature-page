@@ -451,7 +451,7 @@ void Tree::sequences_per_month(std::map<date::year_month_day, size_t>& spm) cons
     auto worker = [&spm](const Node& aNode) -> void {
         const auto d = aNode.data.date();
         if (!d.empty() && aNode.draw.shown) {
-            ++spm[date::beginning_of_month(date::from_string(d))];
+            ++spm[date::beginning_of_month(date::from_string(d, date::allow_incomplete::yes))];
         }
     };
     tree::iterate_leaf(*this, worker);
