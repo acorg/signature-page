@@ -3,7 +3,6 @@
 #include <cmath>
 
 #include "acmacs-base/read-file.hh"
-#include "seqdb/seqdb.hh"
 #include "acmacs-draw/surface-cairo.hh"
 
 #include "signature-page.hh"

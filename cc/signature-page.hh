@@ -10,7 +10,6 @@
 
 class Settings;
 class Tree;
-namespace seqdb { class Seqdb; }
 class TreeDraw;
 class TimeSeriesDraw;
 class CladesDraw;
