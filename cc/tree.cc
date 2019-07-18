@@ -16,6 +16,8 @@ void Tree::match_seqdb()
         tree::iterate_leaf(*this, [&seq_id_index](Node& node) {
             if (const auto found = seq_id_index.find(node.seq_id); found != seq_id_index.end())
                 node.data.assign(found->second);
+            else
+                fmt::print(stderr, "WARNING: {} not found in seqdb\n", node.seq_id);
         });
     }
 
@@ -114,7 +116,7 @@ size_t Tree::height() const
 {
     size_t height = find_last_leaf(*this).draw.line_no;
     if (height == 0) {
-        std::cerr << "WARNING: (Tree::height) cannot find last leaf line_no\n";
+        fmt::print(stderr, "WARNING: (Tree::height) cannot find last leaf line_no\n");
         height = data.number_strains; // lines were not numbered, use number of leaves
     }
     return height;
@@ -498,8 +500,9 @@ std::pair<std::string, std::string> Tree::virus_type_lineage() const
     std::string virus_type;
     auto find_virus_type = [&virus_type](const Node& aNode) -> bool {
         bool r = false;
+        // fmt::print(stderr, "DEBUG: seq_id: [{}]\n", aNode.seq_id);
         const auto pos = aNode.seq_id.find('/');
-        if ((pos == 1 && aNode.seq_id[0] == 'B') || (pos == 7 && aNode.seq_id[0] == 'A' && aNode.seq_id[1] == '(')) {
+        if ((pos == 1 && aNode.seq_id[0] == 'B') || (pos == 5 && aNode.seq_id[0] == 'A' && aNode.seq_id[1] == 'H')) {
             virus_type.assign(aNode.seq_id, 0, pos);
             r = true;
         }
@@ -510,7 +513,7 @@ std::pair<std::string, std::string> Tree::virus_type_lineage() const
     std::string lineage;
     if (virus_type == "B") {    // infer lineage
         auto find_lineage = [&lineage](const Node& aNode) -> bool {
-            if (std::string_view(aNode.seq_id.data(), 27) == "B/SOUTH%20AUSTRALIA/81/2012" || std::string_view(aNode.seq_id.data(), 19) == "B/IRELAND/3154/2016" || std::string_view(aNode.seq_id.data(), 19) == "B/VICTORIA/830/2013") {
+            if (std::string_view(aNode.seq_id.data(), 27) == "B/SOUTH_AUSTRALIA/81/2012" || std::string_view(aNode.seq_id.data(), 19) == "B/IRELAND/3154/2016" || std::string_view(aNode.seq_id.data(), 19) == "B/VICTORIA/830/2013") {
                 lineage = "VICTORIA";
                 return true;
             }

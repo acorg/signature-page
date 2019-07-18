@@ -54,7 +54,11 @@ namespace
         std::string virus_type() const { return virus_type_; }
         std::string assay() const { return assay_; }
 
-        virtual void update_settings_clade(CladesDrawSettings& /*settings*/, std::pair<const std::string, CladeData>& /*clade*/, CladeDrawSettings& /*settings_clade*/) const {}
+        virtual void update_settings_clade(CladesDrawSettings& /*settings*/, std::pair<const std::string, CladeData>& clade, CladeDrawSettings& settings_clade) const
+        {
+            if (clade.first == "GLY" || clade.first == "NO-GLY" || clade.first == "159S" || clade.first == "159F" || clade.first == "159Y")
+                settings_clade.show = false;
+        }
 
       private:
         const std::string lab_, virus_type_, assay_;
@@ -86,15 +90,6 @@ namespace
         }
 
         bool show_aa_at_pos() const override { return true; }
-
-      protected:
-        void update_settings_clade(CladesDrawSettings& settings, std::pair<const std::string, CladeData>& clade, CladeDrawSettings& settings_clade) const override
-        {
-            Default::update_settings_clade(settings, clade, settings_clade);
-            if (clade.first == "GLY" || clade.first == "NO-GLY") {
-                settings_clade.show = false;
-            }
-        }
     };
 
     // ----------------------------------------------------------------------
@@ -378,10 +373,7 @@ namespace
         void update_settings_clade(CladesDrawSettings& settings, std::pair<const std::string, CladeData>& clade, CladeDrawSettings& settings_clade) const override
         {
             TreeOnly::update_settings_clade(settings, clade, settings_clade);
-            if (clade.first == "GLY" || clade.first == "NO-GLY") {
-                settings_clade.show = false;
-            }
-            else if (clade.first == "3C.3") {
+            if (clade.first == "3C.3") {
                 settings_clade.show = false;
             }
             else if (clade.first == "3A") {
@@ -789,30 +781,30 @@ template <typename T> static inline std::unique_ptr<settings_constructor_base> m
 #endif
 
 static const std::array settings_constructors {
-    std::pair{    " A(H1N1) ",                 maker<H1_TreeOnly>()},
-    std::pair{"CDC+MELB+NIID+NIMR A(H1N1) HI", maker<H1_HI_ALL>()},
-    std::pair{ "CDC A(H1N1) HI",               maker<H1_HI_CDC>()},
-    std::pair{"MELB A(H1N1) HI",               maker<H1_HI_MELB>()},
-    std::pair{"VIDRL A(H1N1) HI",              maker<H1_HI_MELB>()},
-    std::pair{"NIID A(H1N1) HI",               maker<H1_HI_NIID>()},
-    std::pair{"NIMR A(H1N1) HI",               maker<H1_HI_NIMR>()},
-    std::pair{"Crick A(H1N1) HI",              maker<H1_HI_NIMR>()},
+    std::pair{    " AH1N1 ",                 maker<H1_TreeOnly>()},
+    std::pair{"CDC+MELB+NIID+NIMR AH1N1 HI", maker<H1_HI_ALL>()},
+    std::pair{ "CDC AH1N1 HI",               maker<H1_HI_CDC>()},
+    std::pair{"MELB AH1N1 HI",               maker<H1_HI_MELB>()},
+    std::pair{"VIDRL AH1N1 HI",              maker<H1_HI_MELB>()},
+    std::pair{"NIID AH1N1 HI",               maker<H1_HI_NIID>()},
+    std::pair{"NIMR AH1N1 HI",               maker<H1_HI_NIMR>()},
+    std::pair{"Crick AH1N1 HI",              maker<H1_HI_NIMR>()},
 
-    std::pair{    " A(H3N2) ",    maker<H3_TreeOnly>()},
-    std::pair{ "CDC A(H3N2) HI",  maker<H3_HI_CDC>()},
-    std::pair{"MELB A(H3N2) HI",  maker<H3_HI_MELB>()},
-    std::pair{"VIDRL A(H3N2) HI", maker<H3_HI_MELB>()},
-      // std::pair{"NIID A(H3N2) HI", maker<H3_HI_NIID>()},
-    std::pair{"NIMR A(H3N2) HI",  maker<H3_HI_NIMR>()},
-    std::pair{"Crick A(H3N2) HI", maker<H3_HI_NIMR>()},
+    std::pair{    " AH3N2 ",    maker<H3_TreeOnly>()},
+    std::pair{ "CDC AH3N2 HI",  maker<H3_HI_CDC>()},
+    std::pair{"MELB AH3N2 HI",  maker<H3_HI_MELB>()},
+    std::pair{"VIDRL AH3N2 HI", maker<H3_HI_MELB>()},
+      // std::pair{"NIID AH3N2 HI", maker<H3_HI_NIID>()},
+    std::pair{"NIMR AH3N2 HI",  maker<H3_HI_NIMR>()},
+    std::pair{"Crick AH3N2 HI", maker<H3_HI_NIMR>()},
 
-    std::pair{ "CDC A(H3N2) FOCUS REDUCTION",                  maker<H3_NEUT_CDC>()},
-    std::pair{"MELB A(H3N2) FOCUS REDUCTION",                  maker<H3_NEUT_MELB>()},
-    std::pair{"VIDRL A(H3N2) FOCUS REDUCTION",                 maker<H3_NEUT_MELB>()},
-    std::pair{"NIID A(H3N2) MN",                               maker<H3_NEUT_NIID>()},
-    std::pair{"NIID A(H3N2) FOCUS REDUCTION",                  maker<H3_NEUT_NIID>()},
-    std::pair{"NIMR A(H3N2) PLAQUE REDUCTION NEUTRALISATION",  maker<H3_NEUT_NIMR>()},
-    std::pair{"Crick A(H3N2) PLAQUE REDUCTION NEUTRALISATION", maker<H3_NEUT_NIMR>()},
+    std::pair{ "CDC AH3N2 FOCUS REDUCTION",                  maker<H3_NEUT_CDC>()},
+    std::pair{"MELB AH3N2 FOCUS REDUCTION",                  maker<H3_NEUT_MELB>()},
+    std::pair{"VIDRL AH3N2 FOCUS REDUCTION",                 maker<H3_NEUT_MELB>()},
+    std::pair{"NIID AH3N2 MN",                               maker<H3_NEUT_NIID>()},
+    std::pair{"NIID AH3N2 FOCUS REDUCTION",                  maker<H3_NEUT_NIID>()},
+    std::pair{"NIMR AH3N2 PLAQUE REDUCTION NEUTRALISATION",  maker<H3_NEUT_NIMR>()},
+    std::pair{"Crick AH3N2 PLAQUE REDUCTION NEUTRALISATION", maker<H3_NEUT_NIMR>()},
 
     std::pair{    " B/Vic ",      maker<BVic_TreeOnly>()},
     std::pair{ "CDC B/Vic HI",    maker<BVic_HI_CDC>()},
@@ -838,10 +830,10 @@ std::unique_ptr<SettingsInitializer> settings_initilizer_factory(std::string lab
     if (lab.empty() && show_aa_at_pos)
         return std::make_unique<AAAtPos>(lab, virus_type, assay);
     const auto tag = string::concat(lab, ' ', virus_type, ' ', assay);
-    std::cerr << ">>> settings initilizer tag: " << tag << '\n';
+    std::cerr << ">>> settings initializer tag:\"" << tag << "\" lab:" << lab << " virus_type:" << virus_type << " assay:" << assay << "\n";
     if (auto found = std::find_if(settings_constructors.begin(), settings_constructors.end(), [&tag](const auto& entry) { return entry.first == tag; }); found != settings_constructors.end())
         return found->second->make(lab, virus_type, assay);
-    std::cerr << "WARNING: No settings initializer for tag " << tag << '\n';
+    std::cerr << "WARNING: No settings initializer for tag \"" << tag << "\"\n";
     return std::make_unique<Default>(lab, virus_type, assay);
 
 } // settings_initilizer_factory
