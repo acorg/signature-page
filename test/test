@@ -42,5 +42,5 @@ cd "$TESTDIR"
 #xzdiff "$TDIR"/tree.json.xz "$TDIR"/tree2.json.xz
 
 SETTINGS="$TDIR/tree.settings.json"
-test ../dist/sigp --ignore-seqdb-match-errors --init-settings "$SETTINGS" ./newick.json.xz "$TDIR"/tree.pdf
-test ../dist/sigp --ignore-seqdb-match-errors -s "$SETTINGS" ./newick.json.xz "$TDIR"/tree.pdf
+test ../dist/sigp --init-settings "$SETTINGS" ./newick.json.xz "$TDIR"/tree.pdf
+test ../dist/sigp -s "$SETTINGS" ./newick.json.xz "$TDIR"/tree.pdf
