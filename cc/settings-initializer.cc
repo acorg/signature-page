@@ -512,7 +512,7 @@ namespace
         {
             TreeOnly::update(settings, whocc_support);
             if (whocc_support) {
-                settings.clades_width = 50;
+                settings.clades_width = 70;
             }
         }
 
@@ -591,7 +591,7 @@ namespace
         void update_settings_clade(CladesDrawSettings& settings, std::pair<const std::string, CladeData>& clade, CladeDrawSettings& settings_clade) const override
         {
             TreeOnly::update_settings_clade(settings, clade, settings_clade);
-            if (clade.first == "DEL2017" || clade.first == "TRIPLEDEL2017" || clade.first == "1") {
+            if (clade.first == "DEL2017" || clade.first == "TRIPLEDEL2017" || clade.first == "V1") {
                 settings_clade.show = false;
             }
         }
