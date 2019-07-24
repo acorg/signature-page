@@ -1198,16 +1198,24 @@ AATransitionIndividualSettingsForLabel::AATransitionIndividualSettingsForLabel(c
 
 void AATransitionIndividualSettingsForLabel::update(const AATransitionIndividualSettings& src)
 {
-    show = src.show;
-    size = src.size;
-    color = src.color;
-    style = src.style;
-    interline = src.interline;
-    label_offset = src.label_offset;
+    if (src.show.is_set_or_has_default())
+        show = src.show;
+    if (src.size.is_set_or_has_default())
+        size = src.size;
+    if (src.color.is_set_or_has_default())
+        color = src.color;
+    if (src.style.is_set_or_has_default())
+        style = src.style;
+    if (src.interline.is_set_or_has_default())
+        interline = src.interline;
+    if (src.label_offset.is_set_or_has_default())
+        label_offset = src.label_offset;
     if (src.label_absolute_x.is_set_or_has_default())
         label_absolute_x = src.label_absolute_x;
-    label_connection_line_width = src.label_connection_line_width;
-    label_connection_line_color = src.label_connection_line_color;
+    if (src.label_connection_line_width.is_set_or_has_default())
+        label_connection_line_width = src.label_connection_line_width;
+    if (src.label_connection_line_color.is_set_or_has_default())
+        label_connection_line_color = src.label_connection_line_color;
 
 } // AATransitionIndividualSettingsForLabel::update
 
