@@ -1,4 +1,4 @@
-# Time-stamp: <2019-07-09 16:32:42 eu>
+# Time-stamp: <2019-08-03 09:35:44 eu>
 * Update seqdb: see [[file:~/AD/sources/acmacs-whocc/doc/gisaid.org::*already%20downloaded%20from%20gisaid:%20~/ac/sequences-2019][gisaid]]
 * albertine
 D=$(date +%Y-%m%d)
@@ -7,10 +7,10 @@ cd /syn/eu/ac/results/signature-pages/${D}
 cp ~/AD/data/seqdb.json.xz .
 
 * Export sequences (albertine)
-seqdb3 --db seqdb.json.xz --flu h1 --recent 4000 --nuc-hamming-distance-threshold 160 --base-seq "SWITZERLAND/9772556/2013" --nucs --wrap --most-common-length --name-format "{seq_id}" --fasta h1/source.fas
-seqdb3 --db seqdb.json.xz --flu h3 --recent 4000 --nuc-hamming-distance-threshold 160 --base-seq "HAWAII/22/2012 MDCK" --nucs --wrap --most-common-length --name-format "{seq_id}" --fasta h3/source.fas
-seqdb3 --db seqdb.json.xz --flu b --lineage vic --recent 4000 --nuc-hamming-distance-threshold 160 --base-seq "VICTORIA/830/2013" --nucs --wrap --most-common-length --name-format "{seq_id}" --fasta bv/source.fas
-seqdb3 --db seqdb.json.xz --flu b --lineage yam --recent 4000 --nuc-hamming-distance-threshold 160 --base-seq "CHRISTCHURCH/503/2013" --nucs --wrap --most-common-length --name-format "{seq_id}" --fasta by/source.fas
+seqdb3 --db seqdb.json.xz --whocc-lab --flu h1 --recent 4000 --nuc-hamming-distance-threshold 160 --base-seq "SWITZERLAND/9772556/2013" --nucs --wrap --most-common-length --name-format "{seq_id}" --fasta h1/source.fas
+seqdb3 --db seqdb.json.xz --whocc-lab --flu h3 --recent 4000 --nuc-hamming-distance-threshold 160 --base-seq "HAWAII/22/2012 MDCK" --nucs --wrap --most-common-length --name-format "{seq_id}" --fasta h3/source.fas
+seqdb3 --db seqdb.json.xz --whocc-lab --flu b --lineage vic --recent 4000 --nuc-hamming-distance-threshold 160 --base-seq "VICTORIA/830/2013" --nucs --wrap --most-common-length --name-format "{seq_id}" --fasta bv/source.fas
+seqdb3 --db seqdb.json.xz --whocc-lab --flu b --lineage yam --recent 4000 --nuc-hamming-distance-threshold 160 --base-seq "CHRISTCHURCH/503/2013" --nucs --wrap --most-common-length --name-format "{seq_id}" --fasta by/source.fas
 
 * Run tree maker in each directory {h1,h3,bv,by}
 tree-maker init
