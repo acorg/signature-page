@@ -1,4 +1,4 @@
-# Time-stamp: <2019-08-03 09:35:44 eu>
+# Time-stamp: <2019-08-03 09:51:35 eu>
 * Update seqdb: see [[file:~/AD/sources/acmacs-whocc/doc/gisaid.org::*already%20downloaded%20from%20gisaid:%20~/ac/sequences-2019][gisaid]]
 * albertine
 D=$(date +%Y-%m%d)
@@ -13,8 +13,7 @@ seqdb3 --db seqdb.json.xz --whocc-lab --flu b --lineage vic --recent 4000 --nuc-
 seqdb3 --db seqdb.json.xz --whocc-lab --flu b --lineage yam --recent 4000 --nuc-hamming-distance-threshold 160 --base-seq "CHRISTCHURCH/503/2013" --nucs --wrap --most-common-length --name-format "{seq_id}" --fasta by/source.fas
 
 * Run tree maker in each directory {h1,h3,bv,by}
-tree-maker init
-e tree-maker.config
+tree-maker init; e tree-maker.config
 tree-maker wait
 
 tree-maker state
