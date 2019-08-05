@@ -27,11 +27,13 @@ class NodeData
  public:
     NodeData() = default;
 
-    std::string_view date() const { return mSeqdbRef ? mSeqdbRef.entry->date() : std::string_view{}; }
-    std::string_view amino_acids() const { return mSeqdbRef ? mSeqdbRef.seq().aa_aligned() : std::string_view{}; }
-    const std::vector<std::string_view>* clades() const { return mSeqdbRef ? &mSeqdbRef.seq().clades : nullptr; }
-    bool has_clade(std::string_view clade) const { return mSeqdbRef.seq().has_clade(clade); }
-    const std::vector<std::string_view>* hi_names() const { return mSeqdbRef ? &mSeqdbRef.seq().hi_names : nullptr; }
+    bool has_sequence() const { return static_cast<bool>(mSeqdbRef); }
+
+    std::string_view date() const { return has_sequence() ? mSeqdbRef.entry->date() : std::string_view{}; }
+    std::string_view amino_acids() const { return has_sequence() ? mSeqdbRef.seq().aa_aligned() : std::string_view{}; }
+    const std::vector<std::string_view>* clades() const { return has_sequence() ? &mSeqdbRef.seq().clades : nullptr; }
+    bool has_clade(std::string_view clade) const { return has_sequence() && mSeqdbRef.seq().has_clade(clade); }
+    const std::vector<std::string_view>* hi_names() const { return has_sequence() ? &mSeqdbRef.seq().hi_names : nullptr; }
 
     void assign(const acmacs::seqdb::ref& ref) { mSeqdbRef = ref; }
     void set_continent(std::string seq_id);

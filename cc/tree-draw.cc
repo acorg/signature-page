@@ -243,7 +243,7 @@ void TreeDraw::hide_if_cumulative_edge_length_bigger_than(double aThreshold)
 void TreeDraw::hide_before2015_58P_or_146I_or_559I()
 {
     auto hide_show_leaf = [](Node& aNode) {
-        if (aNode.data.date() < "2015-01-01") {
+        if (aNode.data.has_sequence() && aNode.data.date() < "2015-01-01") {
             const auto aa = aNode.data.amino_acids();
             if (aa[57] == 'P' || aa[145] == 'I' || aa[559] == 'I')
                 aNode.draw.shown = false;
@@ -400,7 +400,7 @@ void TreeDraw::mark_clade_with_line(std::string aClade, Color aColor, Pixels aLi
 {
     size_t marked = 0;
     auto mark_leaf = [aClade,&aColor,&aLineWidth,&marked,aReport](Node& aNode) {
-        if (aNode.data.has_clade(aClade)) {
+        if (aNode.data.has_sequence() && aNode.data.has_clade(aClade)) {
             aNode.draw.mark_with_line = aColor;
             aNode.draw.mark_with_line_width = aLineWidth;
             ++marked;
