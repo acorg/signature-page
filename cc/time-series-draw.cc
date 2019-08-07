@@ -123,15 +123,17 @@ void TimeSeriesDraw::draw_dashes(double month_width)
     const auto begin{date::from_string(*mSettings.begin)}, end{date::from_string(*mSettings.end)};
     auto draw_dash = [&](const Node& aNode) {
         if (aNode.draw.shown && !aNode.data.date().empty()) {
-            try {
-                if (const auto node_date{date::from_string(aNode.data.date())}; node_date >= begin && node_date <= end) {
-                    const int month_no = date::months_between_dates(begin, node_date);
-                    const acmacs::PointCoordinates a(base_x + month_width * month_no, aNode.draw.vertical_pos);
-                    mSurface.line(a, {a.x() + month_width * mSettings.dash_width, a.y()}, coloring.color(aNode), Pixels{mSettings.dash_line_width}, acmacs::surface::LineCap::Round);
+            if (const auto node_date_s = aNode.data.date(); node_date_s.size() > 3 && node_date_s.substr(node_date_s.size() - 3) != "-00") { // ignore incomplete dates
+                try {
+                    if (const auto node_date{date::from_string(node_date_s)}; node_date >= begin && node_date <= end) {
+                        const int month_no = date::months_between_dates(begin, node_date);
+                        const acmacs::PointCoordinates a(base_x + month_width * month_no, aNode.draw.vertical_pos);
+                        mSurface.line(a, {a.x() + month_width * mSettings.dash_width, a.y()}, coloring.color(aNode), Pixels{mSettings.dash_line_width}, acmacs::surface::LineCap::Round);
+                    }
                 }
-            }
-            catch (std::exception& err) {
-                std::cerr << "WARNING: " << err.what() << " (TimeSeriesDraw::draw_dashes) Date: " << aNode.data.date() << "\n";
+                catch (std::exception& err) {
+                    std::cerr << "WARNING: " << err.what() << " (TimeSeriesDraw::draw_dashes) Date: " << aNode.data.date() << "\n";
+                }
             }
         }
     };
