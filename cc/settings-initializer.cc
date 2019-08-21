@@ -207,15 +207,15 @@ namespace
                     // most recent vaccine
                     auto mod2 = tree_draw.settings().mods.append();
                     mod2->mod = "mark-with-label";
-                    mod2->name = "/MICHIGAN/45/2015";
-                    mod2->label = "A/Michigan/45/2015";
-                    mod2->label_color = "grey";
-                    mod2->label_size = 10.0;
+                    mod2->name = "/BRISBANE/2/2018";
+                    mod2->label = "A/Brisbane/2/2018";
+                    mod2->label_color = "black";
+                    mod2->label_size = 7.0;
                     mod2->label_style = "";
                     mod2->line_color = "grey";
                     mod2->line_width = 0.0;
                     mod2->collapse = 200;
-                    mod2->label_absolute_x = 70.0;
+                    mod2->label_absolute_x = 310.0;
                 }
 
                 // Code below does not work correctly, we should add
@@ -513,6 +513,7 @@ namespace
             TreeOnly::update(settings, whocc_support);
             if (whocc_support) {
                 settings.clades_width = 70;
+                settings.time_series_width = 350;
             }
         }
 
@@ -550,15 +551,15 @@ namespace
                     // most recent vaccine
                     auto mod2 = tree_draw.settings().mods.append();
                     mod2->mod = "mark-with-label";
-                    mod2->name = "/COLORADO/6/2017";
+                    mod2->seq_id = "B/COLORADO/6/2017_MDCK1";
                     mod2->label = "A/Colorado/6/2017";
-                    mod2->label_color = "grey";
-                    mod2->label_size = 10.0;
+                    mod2->label_color = "black";
+                    mod2->label_size = 7.0;
                     mod2->label_style = "";
                     mod2->line_color = "grey";
                     mod2->line_width = 0.0;
                     mod2->collapse = 200;
-                    mod2->label_absolute_x = 70.0;
+                    mod2->label_absolute_x = 310.0;
                 }
             }
 
@@ -684,13 +685,13 @@ namespace
                     mod2->mod = "mark-with-label";
                     mod2->name = "/PHUKET/3073/2013";
                     mod2->label = "A/Phuket/3073/2013";
-                    mod2->label_color = "grey";
-                    mod2->label_size = 10.0;
+                    mod2->label_color = "black";
+                    mod2->label_size = 7.0;
                     mod2->label_style = "";
                     mod2->line_color = "grey";
                     mod2->line_width = 0.0;
                     mod2->collapse = 200;
-                    mod2->label_absolute_x = 70.0;
+                    mod2->label_absolute_x = 310.0;
                 }
             }
         }
