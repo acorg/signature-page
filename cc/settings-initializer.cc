@@ -387,10 +387,12 @@ namespace
             else if (clade.first == "2A") {
                 clade.second.slot = settings_clade.slot = 7;
                 settings_clade.display_name = "2a";
+                settings_clade.section_inclusion_tolerance = 20;
             }
             else if (clade.first == "2A1") {
                 clade.second.slot = settings_clade.slot = 4;
                 settings_clade.display_name = "2a1";
+                settings_clade.section_inclusion_tolerance = 20;
             }
             else if (clade.first == "2A1A") {
                 settings_clade.display_name = "2a1a";
@@ -399,6 +401,22 @@ namespace
             else if (clade.first == "2A1B") {
                 settings_clade.display_name = "2a1b";
                 clade.second.slot = settings_clade.slot = 0;
+                settings_clade.section_inclusion_tolerance = 20;
+            }
+            else if (clade.first == "2A1B-131K") {
+                settings_clade.display_name = "131K";
+                clade.second.slot = settings_clade.slot = 2;
+                settings_clade.section_inclusion_tolerance = 20;
+            }
+            else if (clade.first == "2A1B-135K") {
+                settings_clade.display_name = "135K";
+                clade.second.slot = settings_clade.slot = 2;
+                settings_clade.section_inclusion_tolerance = 20;
+            }
+            else if (clade.first == "2A1B-135K-137F-193S") {
+                settings_clade.display_name = "137F";
+                clade.second.slot = settings_clade.slot = 1;
+                settings_clade.section_inclusion_tolerance = 10;
             }
             else if (clade.first == "2A2") {
                 settings_clade.display_name = "2a2";
