@@ -330,13 +330,13 @@ namespace
                 mod2->mod = "mark-with-label";
                 mod2->name = "/KANSAS/14/2017";
                 mod2->label = "A/Kansas/14/2017";
-                mod2->label_color = "grey";
-                mod2->label_size = 10.0;
+                mod2->label_color = "black";
+                mod2->label_size = 8.0;
                 mod2->label_style = "";
                 mod2->line_color = "grey";
                 mod2->line_width = 0.0;
                 mod2->collapse = 200;
-                mod2->label_absolute_x = 70.0;
+                mod2->label_absolute_x = 310.0;
 
                 tree_draw.hz_sections().sections.for_each([](auto& section, size_t /*no*/) {
                     if (section.triggering_clades.contains("first-leaf:first") || section.triggering_clades.contains("2A1:first") || section.triggering_clades.contains("2A1A:last"))
