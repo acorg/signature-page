@@ -351,6 +351,26 @@ namespace
                         section.label = "2a1a";
                     else if (section.triggering_clades.contains("2A1B:first"))
                         section.label = "2a1b 135T";
+                    else if (section.triggering_clades.contains("2A1B-131K:first")) {
+                        section.label = "2a1b 131K";
+                        section.show_line = true;
+                        section.show_map = true;
+                    }
+                    else if (section.triggering_clades.contains("2A1B-135K:first")) {
+                        section.label = "2a1b 135K";
+                        section.show_line = true;
+                        section.show_map = true;
+                    }
+                    else if (section.triggering_clades.contains("2A1B-135K-137F-193S:first")) {
+                        section.label = "2a1b 135K 137F 193S";
+                        section.show_line = true;
+                        section.show_map = true;
+                    }
+                    else if (section.triggering_clades.contains("2A1B-135K-137F-193S:last")) {
+                        section.label = "2a1b 135K";
+                        section.show_line = true;
+                        section.show_map = true;
+                    }
                     else if (section.triggering_clades.contains("2A2:first"))
                         section.label = "2a2";
                 });
@@ -407,16 +427,19 @@ namespace
                 settings_clade.display_name = "131K";
                 clade.second.slot = settings_clade.slot = 2;
                 settings_clade.section_inclusion_tolerance = 20;
+                settings_clade.show = false;
             }
             else if (clade.first == "2A1B-135K") {
                 settings_clade.display_name = "135K";
                 clade.second.slot = settings_clade.slot = 2;
                 settings_clade.section_inclusion_tolerance = 20;
+                settings_clade.show = false;
             }
             else if (clade.first == "2A1B-135K-137F-193S") {
                 settings_clade.display_name = "137F";
                 clade.second.slot = settings_clade.slot = 1;
                 settings_clade.section_inclusion_tolerance = 10;
+                settings_clade.show = false;
             }
             else if (clade.first == "2A2") {
                 settings_clade.display_name = "2a2";
