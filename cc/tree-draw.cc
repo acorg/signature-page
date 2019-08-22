@@ -399,15 +399,26 @@ void TreeDraw::mark_with_label(const TreeDrawMod& aMod, size_t mod_no)
 void TreeDraw::mark_clade_with_line(std::string aClade, Color aColor, Pixels aLineWidth, bool aReport)
 {
     size_t marked = 0;
-    auto mark_leaf = [aClade,&aColor,&aLineWidth,&marked,aReport](Node& aNode) {
+    bool reported = false;
+    auto mark_leaf = [aClade,&aColor,&aLineWidth,&marked,&reported,aReport](Node& aNode) {
         if (aNode.data.has_sequence() && aNode.data.has_clade(aClade)) {
             aNode.draw.mark_with_line = aColor;
             aNode.draw.mark_with_line_width = aLineWidth;
             ++marked;
+            if (aReport) {
+                std::cout << "  " << aNode.seq_id << '\n';
+                reported = true;
+            }
+        }
+        else if (reported) {
             if (aReport)
-                std::cout << aClade << " clade node: " << aNode.seq_id << '\n';
+                std::cout << '\n';
+            reported = false;
         }
     };
+
+    if (aReport)
+        std::cout << aClade << '\n';
     tree::iterate_leaf(mTree, mark_leaf);
     if (marked == 0)
         std::cerr << "WARNING: no nodes found to mark with line for clade: " << aClade << '\n';
