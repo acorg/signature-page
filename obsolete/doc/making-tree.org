@@ -1,4 +1,7 @@
-# Time-stamp: <2019-07-09 16:32:42 eu>
+# Time-stamp: <2019-09-03 09:00:08 eu>
+
+OBSOLETE, see acmacs-whocc/doc/make-trees.org
+
 * Update seqdb: see [[file:~/AD/sources/acmacs-whocc/doc/gisaid.org::*already%20downloaded%20from%20gisaid:%20~/ac/sequences-2019][gisaid]]
 * albertine
 D=$(date +%Y-%m%d)
