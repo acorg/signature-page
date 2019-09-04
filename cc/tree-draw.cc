@@ -162,6 +162,10 @@ bool TreeDraw::apply_mods()
             std::cout << "TREE-mod: " << mod_mod << " \"" << mod.s1 << "\" \"" << mod.s2 << "\" " << mod.d1 << '\n';
             mark_with_line(mod.s1, Color(mod.s2), Pixels{mod.d1});
         }
+        else if (mod_mod == "mark-aa-with-line") {
+            std::cout << "TREE-mod: " << mod_mod << " \"" << mod.s1 << "\" \"" << mod.s2 << "\" " << mod.d1 << '\n';
+            mark_aa_with_line(mod.s1, Color(mod.s2), Pixels{mod.d1}, mod.report);
+        }
         else if (mod_mod == "mark-clade-with-line") {
             std::cout << "TREE-mod: " << mod_mod << " \"" << mod.clade << "\" \"" << mod.color << "\" " << mod.line_width << '\n';
             mark_clade_with_line(mod.clade, Color(mod.color), Pixels{mod.line_width}, mod.report);
@@ -368,6 +372,38 @@ void TreeDraw::mark_with_line(std::string aName, Color aColor, Pixels aLineWidth
 
 // ----------------------------------------------------------------------
 
+void TreeDraw::mark_aa_with_line(std::string aPos1AA, Color aColor, Pixels aLineWidth, bool aReport)
+{
+    size_t marked = 0;
+    auto mark_leaf = [list_pos1_aa=acmacs::seqdb::parse_list_aa_at_pos1(aPos1AA),&aColor,&aLineWidth,&marked,reported=false,aReport](Node& aNode) mutable {
+        if (aNode.data.match(list_pos1_aa)) {
+            aNode.draw.mark_with_line = aColor;
+            aNode.draw.mark_with_line_width = aLineWidth;
+            ++marked;
+            if (aReport) {
+                std::cout << "  " << aNode.seq_id << '\n';
+                reported = true;
+            }
+        }
+        else if (reported) {
+            if (aReport)
+                std::cout << '\n';
+            reported = false;
+        }
+    };
+
+    if (aReport)
+        std::cout << aPos1AA << '\n';
+    tree::iterate_leaf(mTree, mark_leaf);
+    if (marked == 0)
+        std::cerr << "WARNING: no nodes found to mark with line for AA: " << aPos1AA << '\n';
+    else
+        std::cout << '"' << aPos1AA << "\" leaf nodes marked: " << marked << '\n';
+
+} // TreeDraw::mark_aa_with_line
+
+// ----------------------------------------------------------------------
+
 void TreeDraw::mark_with_label(const TreeDrawMod& aMod, size_t mod_no)
 {
     const auto warn = [&aMod](std::string msg) { std::cerr << "WARNING: cannot mark-with-label seq_id:\"" << aMod.seq_id << "\" name:\"" << aMod.name << "\": " << msg << '\n'; };
@@ -401,7 +437,7 @@ void TreeDraw::mark_clade_with_line(std::string aClade, Color aColor, Pixels aLi
     size_t marked = 0;
     bool reported = false;
     auto mark_leaf = [aClade,&aColor,&aLineWidth,&marked,&reported,aReport](Node& aNode) {
-        if (aNode.data.has_sequence() && aNode.data.has_clade(aClade)) {
+        if (aNode.data.has_clade(aClade)) {
             aNode.draw.mark_with_line = aColor;
             aNode.draw.mark_with_line_width = aLineWidth;
             ++marked;

@@ -41,6 +41,8 @@ cd "$TESTDIR"
 #../bin/test-copy "$TDIR"/tree.json.xz "$TDIR"/tree2.json.xz
 #xzdiff "$TDIR"/tree.json.xz "$TDIR"/tree2.json.xz
 
-SETTINGS="$TDIR/tree.settings.json"
-test ../dist/sigp --init-settings "$SETTINGS" ./newick.json.xz "$TDIR"/tree.pdf
-test ../dist/sigp -s "$SETTINGS" ./newick.json.xz "$TDIR"/tree.pdf
+echo "WARNING: tests disabled!" >&2
+
+# SETTINGS="$TDIR/tree.settings.json"
+# test ../dist/sigp --init-settings "$SETTINGS" ./newick.json.xz "$TDIR"/tree.pdf
+# test ../dist/sigp -s "$SETTINGS" ./newick.json.xz "$TDIR"/tree.pdf

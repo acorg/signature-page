@@ -237,6 +237,7 @@ class TreeDrawSettings : public acmacs::settings::object
                                                                            "{mod: hide-one, s1: name-to-hide} - after ladderizing",
                                                                            "{mod: hide-not-found-in-chart}",
                                                                            "{mod: mark-with-line, s1: name-to-mark, s2: color-to-mark, d1: line-width-in-pixels}",
+                                                                           "{mod: mark-aa-with-line, s1: space-separated-pos-aa 183P 141E, s2: color-to-mark, d1: line-width-in-pixels, report: true}",
                                                                            "{mod: mark-clade-with-line, clade: , color: , line_width: line-width-in-pixels}",
                                                                            "{mod: mark-having-serum-with-line, color: , line_width: line-width-in-pixels}",
                                                                            "{mod: mark-with-label, seq_id:, name: <substring>, label:, line_color:, line_width:, label_offset:[0.0, 0.0], label_absolute_x:, label_size:, labeL_color:, label_style:, collapse: 10 }"}};
@@ -425,6 +426,7 @@ class TreeDraw
     void hide_one(std::string aName);
     void hide_not_found_in_chart();
     void mark_with_line(std::string aName, Color aColor, Pixels aLineWidth);
+    void mark_aa_with_line(std::string aPos1AA, Color aColor, Pixels aLineWidth, bool aReport);
     void mark_clade_with_line(std::string aClade, Color aColor, Pixels aLineWidth, bool aReport);
     void mark_having_serum_with_line(Color aColor, Pixels aLineWidth);
     void mark_with_label(const TreeDrawMod& aMod, size_t mod_no);
