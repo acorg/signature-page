@@ -1,6 +1,7 @@
 #include <iomanip>
 
 #include "acmacs-base/float.hh"
+#include "acmacs-base/fmt.hh"
 #include "acmacs-virus/virus-name.hh"
 #include "acmacs-chart-2/chart.hh"
 #include "locationdb/locdb.hh"
@@ -8,12 +9,17 @@
 
 // ----------------------------------------------------------------------
 
-void Tree::match_seqdb(const seqdb::Seqdb& seqdb, seqdb::Seqdb::ignore_not_found ignore)
+void Tree::match_seqdb()
 {
-    auto match = [&seqdb,ignore](Node& node) {
-        node.data.assign(seqdb.find_by_seq_id(node.seq_id, ignore));
-    };
-    tree::iterate_leaf(*this, match);
+    if (const auto& seqdb = acmacs::seqdb::get(); !seqdb.empty()) {
+        const auto& seq_id_index = seqdb.seq_id_index();
+        tree::iterate_leaf(*this, [&seq_id_index](Node& node) {
+            if (const auto found = seq_id_index.find(node.seq_id); found != seq_id_index.end())
+                node.data.assign(found->second);
+            else
+                fmt::print(stderr, "WARNING: {} not found in seqdb\n", node.seq_id);
+        });
+    }
 
 } // Tree::match_seqdb
 
@@ -110,7 +116,7 @@ size_t Tree::height() const
 {
     size_t height = find_last_leaf(*this).draw.line_no;
     if (height == 0) {
-        std::cerr << "WARNING: (Tree::height) cannot find last leaf line_no\n";
+        fmt::print(stderr, "WARNING: (Tree::height) cannot find last leaf line_no\n");
         height = data.number_strains; // lines were not numbered, use number of leaves
     }
     return height;
@@ -121,12 +127,11 @@ size_t Tree::height() const
 
 void NodeData::set_continent(std::string seq_id)
 {
-    if (mSeqdbEntrySeq) {
-        continent = mSeqdbEntrySeq.entry().continent();
-    }
+    if (mSeqdbRef)
+        continent = mSeqdbRef.entry->continent;
     if (continent.empty()) {
         try {
-            continent = get_locdb().continent(virus_name::location(name_decode(seq_id)), "UNKNOWN");
+            continent = get_locdb().continent(virus_name::location(seq_id), "UNKNOWN");
         }
         catch (virus_name::Unrecognized&) {
             continent = "UNKNOWN";
@@ -160,7 +165,7 @@ void Node::compute_cumulative_edge_length(double initial_edge_length, double& ma
 
 std::string Node::display_name() const
 {
-    return string::replace(name_decode(seq_id), "__", " ") + " " + data.date();
+    return fmt::format("{} {}", seq_id, data.date());
 
 } // Node::display_name
 
@@ -448,7 +453,7 @@ void Tree::sequences_per_month(std::map<date::year_month_day, size_t>& spm) cons
     auto worker = [&spm](const Node& aNode) -> void {
         const auto d = aNode.data.date();
         if (!d.empty() && aNode.draw.shown) {
-            ++spm[date::beginning_of_month(date::from_string(d))];
+            ++spm[date::beginning_of_month(date::from_string(d, date::allow_incomplete::yes))];
         }
     };
     tree::iterate_leaf(*this, worker);
@@ -495,10 +500,10 @@ std::pair<std::string, std::string> Tree::virus_type_lineage() const
     std::string virus_type;
     auto find_virus_type = [&virus_type](const Node& aNode) -> bool {
         bool r = false;
-        const std::string seq_id = name_decode(aNode.seq_id);
-        const auto pos = seq_id.find('/');
-        if ((pos == 1 && seq_id[0] == 'B') || (pos == 7 && seq_id[0] == 'A' && seq_id[1] == '(')) {
-            virus_type.assign(seq_id, 0, pos);
+        // fmt::print(stderr, "DEBUG: seq_id: [{}]\n", aNode.seq_id);
+        const auto pos = aNode.seq_id.find('/');
+        if ((pos == 1 && aNode.seq_id[0] == 'B') || (pos == 5 && aNode.seq_id[0] == 'A' && aNode.seq_id[1] == 'H')) {
+            virus_type.assign(aNode.seq_id, 0, pos);
             r = true;
         }
         return r;
@@ -508,7 +513,7 @@ std::pair<std::string, std::string> Tree::virus_type_lineage() const
     std::string lineage;
     if (virus_type == "B") {    // infer lineage
         auto find_lineage = [&lineage](const Node& aNode) -> bool {
-            if (std::string_view(aNode.seq_id.data(), 27) == "B/SOUTH%20AUSTRALIA/81/2012" || std::string_view(aNode.seq_id.data(), 19) == "B/IRELAND/3154/2016" || std::string_view(aNode.seq_id.data(), 19) == "B/VICTORIA/830/2013") {
+            if (std::string_view(aNode.seq_id.data(), 27) == "B/SOUTH_AUSTRALIA/81/2012" || std::string_view(aNode.seq_id.data(), 19) == "B/IRELAND/3154/2016" || std::string_view(aNode.seq_id.data(), 19) == "B/VICTORIA/830/2013") {
                 lineage = "VICTORIA";
                 return true;
             }
@@ -544,7 +549,7 @@ std::vector<const Node*> Tree::find_nodes_matching(std::string name) const
 {
     std::vector<const Node*> result;
     const auto find_matching = [&result,&name](const Node& aNode) -> void {
-        if (const std::string seq_id = name_decode(aNode.seq_id); seq_id.find(name) != std::string::npos)
+        if (aNode.seq_id.find(name) != std::string::npos)
             result.push_back(&aNode);
     };
     tree::iterate_leaf(*this, find_matching);
@@ -556,7 +561,7 @@ std::vector<Node*> Tree::find_nodes_matching(std::string name)
 {
     std::vector<Node*> result;
     const auto find_matching = [&result,&name](Node& aNode) -> void {
-        if (const std::string seq_id = name_decode(aNode.seq_id); seq_id.find(name) != std::string::npos)
+        if (aNode.seq_id.find(name) != std::string::npos)
             result.push_back(&aNode);
     };
     tree::iterate_leaf(*this, find_matching);
@@ -637,7 +642,7 @@ size_t Tree::match(const acmacs::chart::Chart& chart)
 
     auto match_chart_antigens = [&](Node& node) {
         node.draw.chart_antigen_index.reset();
-        if (const std::vector<std::string>* hi_names = node.data.hi_names(); hi_names) {
+        if (const auto* hi_names = node.data.hi_names(); hi_names) {
             for (const auto& name : *hi_names) {
                 if (const auto antigen_index = antigens->find_by_full_name(name); antigen_index) {
                     node.draw.chart_antigen_index = antigen_index;

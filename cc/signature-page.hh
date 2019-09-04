@@ -2,7 +2,6 @@
 
 #include <memory>
 
-#include "seqdb/seqdb.hh"
 #include "antigenic-maps-draw.hh"
 #include "chart-draw.hh"
 
@@ -92,14 +91,14 @@ class SignaturePageDraw
 {
  public:
     SignaturePageDraw();
-    ~SignaturePageDraw();
+    // ~SignaturePageDraw();
 
     void load_settings(std::string_view aFilename);
     void make_surface(std::string_view aFilename, bool init_settings, bool show_aa_at_pos, bool draw_map);
     void init_settings(bool show_aa_at_pos, bool whocc_support);
     void write_initialized_settings(std::string_view aFilename); // removes redundant settings entries depending on layout!
     Settings& settings() { return *mSettings; }
-    void tree(std::string_view aTreeFilename, seqdb::Seqdb::ignore_not_found ignore = seqdb::Seqdb::ignore_not_found::no);
+    void tree(std::string_view aTreeFilename);
     Tree& tree() { return *mTree; }
     const TreeDraw& tree_draw() const { return *mTreeDraw; }
     void chart(std::string_view aChartFilename) { mChartFilename = aChartFilename; }
@@ -113,7 +112,6 @@ class SignaturePageDraw
     std::string mChartFilename;
     std::unique_ptr<acmacs::surface::Surface> mSurface;
     std::unique_ptr<Settings> mSettings;
-    const seqdb::Seqdb* mSeqdb = nullptr;
     std::unique_ptr<Tree> mTree;
     std::unique_ptr<TreeDraw> mTreeDraw;
     std::unique_ptr<TimeSeriesDraw> mTimeSeriesDraw;

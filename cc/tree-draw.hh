@@ -61,15 +61,15 @@ class AATransitionIndividualSettings : public acmacs::settings::object
 
     acmacs::settings::field<std::string> label{this, "label", ""};
     acmacs::settings::field<std::string> first_leaf_seq_id{this, "first_leaf_seq_id", ""};
-    acmacs::settings::field<bool> show{this, "show", true};
-    acmacs::settings::field<double> size{this, "size", 8};
-    acmacs::settings::field<Color> color{this, "color", "black"};
-    acmacs::settings::field<acmacs::TextStyle> style{this, "style", {"Courier New"}};
-    acmacs::settings::field<double> interline{this, "interline", 1.2};
-    acmacs::settings::field<acmacs::Offset> label_offset{this, "label_offset", {-40, 20}};
+    acmacs::settings::field<bool> show{this, "show"};
+    acmacs::settings::field<double> size{this, "size"};
+    acmacs::settings::field<Color> color{this, "color"};
+    acmacs::settings::field<acmacs::TextStyle> style{this, "style"};
+    acmacs::settings::field<double> interline{this, "interline"};
+    acmacs::settings::field<acmacs::Offset> label_offset{this, "label_offset"};
     acmacs::settings::field<double> label_absolute_x{this, "label_absolute_x"}; // if specified, ignore label_offset[0] and use this absolute x position
-    acmacs::settings::field<double> label_connection_line_width{this, "label_connection_line_width", 0.1};
-    acmacs::settings::field<Color> label_connection_line_color{this, "label_connection_line_color", "black"};
+    acmacs::settings::field<double> label_connection_line_width{this, "label_connection_line_width"};
+    acmacs::settings::field<Color> label_connection_line_color{this, "label_connection_line_color"};
 
     acmacs::settings::field<acmacs::Offset> label_offset_commented{this, "?label_offset"};
 

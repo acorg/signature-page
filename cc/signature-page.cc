@@ -3,8 +3,8 @@
 #include <cmath>
 
 #include "acmacs-base/read-file.hh"
+#include "seqdb-3/seqdb.hh"
 #include "acmacs-draw/surface-cairo.hh"
-
 #include "signature-page.hh"
 #include "tree.hh"
 #include "tree-export.hh"
@@ -21,20 +21,14 @@
 SignaturePageDraw::SignaturePageDraw()
     : mSettings{new Settings{}}, mTree{new Tree{}}
 {
-    try {
-        mSeqdb = &seqdb::get();
-    }
-    catch (seqdb::import_error&) {
-    }
-
 } // SignaturePageDraw::SignaturePageDraw
 
 // ----------------------------------------------------------------------
 
-// must be declared here to allow proper destruction of unique_ptr
-SignaturePageDraw::~SignaturePageDraw()
-{
-}
+// // must be declared here to allow proper destruction of unique_ptr
+// SignaturePageDraw::~SignaturePageDraw()
+// {
+// }
 
 // ----------------------------------------------------------------------
 
@@ -179,11 +173,10 @@ void SignaturePageDraw::write_initialized_settings(std::string_view aFilename)
 
 // ----------------------------------------------------------------------
 
-void SignaturePageDraw::tree(std::string_view aTreeFilename, seqdb::Seqdb::ignore_not_found ignore)
+void SignaturePageDraw::tree(std::string_view aTreeFilename)
 {
     tree::tree_import(aTreeFilename, *mTree);
-    if (mSeqdb)
-        mTree->match_seqdb(*mSeqdb, ignore);
+    mTree->match_seqdb();
 
 } // SignaturePageDraw::tree
 

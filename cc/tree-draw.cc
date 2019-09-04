@@ -243,8 +243,8 @@ void TreeDraw::hide_if_cumulative_edge_length_bigger_than(double aThreshold)
 void TreeDraw::hide_before2015_58P_or_146I_or_559I()
 {
     auto hide_show_leaf = [](Node& aNode) {
-        if (aNode.data.date() < "2015-01-01") {
-            const std::string aa = aNode.data.amino_acids();
+        if (aNode.data.has_sequence() && aNode.data.date() < "2015-01-01") {
+            const auto aa = aNode.data.amino_acids();
             if (aa[57] == 'P' || aa[145] == 'I' || aa[559] == 'I')
                 aNode.draw.shown = false;
         }
@@ -399,15 +399,26 @@ void TreeDraw::mark_with_label(const TreeDrawMod& aMod, size_t mod_no)
 void TreeDraw::mark_clade_with_line(std::string aClade, Color aColor, Pixels aLineWidth, bool aReport)
 {
     size_t marked = 0;
-    auto mark_leaf = [aClade,&aColor,&aLineWidth,&marked,aReport](Node& aNode) {
-        if (aNode.data.has_clade(aClade)) {
+    bool reported = false;
+    auto mark_leaf = [aClade,&aColor,&aLineWidth,&marked,&reported,aReport](Node& aNode) {
+        if (aNode.data.has_sequence() && aNode.data.has_clade(aClade)) {
             aNode.draw.mark_with_line = aColor;
             aNode.draw.mark_with_line_width = aLineWidth;
             ++marked;
+            if (aReport) {
+                std::cout << "  " << aNode.seq_id << '\n';
+                reported = true;
+            }
+        }
+        else if (reported) {
             if (aReport)
-                std::cout << aClade << " clade node: " << aNode.seq_id << '\n';
+                std::cout << '\n';
+            reported = false;
         }
     };
+
+    if (aReport)
+        std::cout << aClade << '\n';
     tree::iterate_leaf(mTree, mark_leaf);
     if (marked == 0)
         std::cerr << "WARNING: no nodes found to mark with line for clade: " << aClade << '\n';
@@ -1198,16 +1209,24 @@ AATransitionIndividualSettingsForLabel::AATransitionIndividualSettingsForLabel(c
 
 void AATransitionIndividualSettingsForLabel::update(const AATransitionIndividualSettings& src)
 {
-    show = src.show;
-    size = src.size;
-    color = src.color;
-    style = src.style;
-    interline = src.interline;
-    label_offset = src.label_offset;
+    if (src.show.is_set_or_has_default())
+        show = src.show;
+    if (src.size.is_set_or_has_default())
+        size = src.size;
+    if (src.color.is_set_or_has_default())
+        color = src.color;
+    if (src.style.is_set_or_has_default())
+        style = src.style;
+    if (src.interline.is_set_or_has_default())
+        interline = src.interline;
+    if (src.label_offset.is_set_or_has_default())
+        label_offset = src.label_offset;
     if (src.label_absolute_x.is_set_or_has_default())
         label_absolute_x = src.label_absolute_x;
-    label_connection_line_width = src.label_connection_line_width;
-    label_connection_line_color = src.label_connection_line_color;
+    if (src.label_connection_line_width.is_set_or_has_default())
+        label_connection_line_width = src.label_connection_line_width;
+    if (src.label_connection_line_color.is_set_or_has_default())
+        label_connection_line_color = src.label_connection_line_color;
 
 } // AATransitionIndividualSettingsForLabel::update
 

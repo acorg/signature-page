@@ -54,7 +54,11 @@ namespace
         std::string virus_type() const { return virus_type_; }
         std::string assay() const { return assay_; }
 
-        virtual void update_settings_clade(CladesDrawSettings& /*settings*/, std::pair<const std::string, CladeData>& /*clade*/, CladeDrawSettings& /*settings_clade*/) const {}
+        virtual void update_settings_clade(CladesDrawSettings& /*settings*/, std::pair<const std::string, CladeData>& clade, CladeDrawSettings& settings_clade) const
+        {
+            if (clade.first == "GLY" || clade.first == "NO-GLY" || clade.first == "159S" || clade.first == "159F" || clade.first == "159Y")
+                settings_clade.show = false;
+        }
 
       private:
         const std::string lab_, virus_type_, assay_;
@@ -86,15 +90,6 @@ namespace
         }
 
         bool show_aa_at_pos() const override { return true; }
-
-      protected:
-        void update_settings_clade(CladesDrawSettings& settings, std::pair<const std::string, CladeData>& clade, CladeDrawSettings& settings_clade) const override
-        {
-            Default::update_settings_clade(settings, clade, settings_clade);
-            if (clade.first == "GLY" || clade.first == "NO-GLY") {
-                settings_clade.show = false;
-            }
-        }
     };
 
     // ----------------------------------------------------------------------
@@ -212,15 +207,15 @@ namespace
                     // most recent vaccine
                     auto mod2 = tree_draw.settings().mods.append();
                     mod2->mod = "mark-with-label";
-                    mod2->name = "/MICHIGAN/45/2015";
-                    mod2->label = "A/Michigan/45/2015";
-                    mod2->label_color = "grey";
-                    mod2->label_size = 10.0;
+                    mod2->name = "/BRISBANE/2/2018";
+                    mod2->label = "A/Brisbane/2/2018";
+                    mod2->label_color = "black";
+                    mod2->label_size = 7.0;
                     mod2->label_style = "";
                     mod2->line_color = "grey";
                     mod2->line_width = 0.0;
                     mod2->collapse = 200;
-                    mod2->label_absolute_x = 70.0;
+                    mod2->label_absolute_x = 310.0;
                 }
 
                 // Code below does not work correctly, we should add
@@ -335,13 +330,13 @@ namespace
                 mod2->mod = "mark-with-label";
                 mod2->name = "/KANSAS/14/2017";
                 mod2->label = "A/Kansas/14/2017";
-                mod2->label_color = "grey";
-                mod2->label_size = 10.0;
+                mod2->label_color = "black";
+                mod2->label_size = 8.0;
                 mod2->label_style = "";
                 mod2->line_color = "grey";
                 mod2->line_width = 0.0;
                 mod2->collapse = 200;
-                mod2->label_absolute_x = 70.0;
+                mod2->label_absolute_x = 310.0;
 
                 tree_draw.hz_sections().sections.for_each([](auto& section, size_t /*no*/) {
                     if (section.triggering_clades.contains("first-leaf:first") || section.triggering_clades.contains("2A1:first") || section.triggering_clades.contains("2A1A:last"))
@@ -356,6 +351,26 @@ namespace
                         section.label = "2a1a";
                     else if (section.triggering_clades.contains("2A1B:first"))
                         section.label = "2a1b 135T";
+                    else if (section.triggering_clades.contains("2A1B-131K:first")) {
+                        section.label = "2a1b 131K";
+                        section.show_line = true;
+                        section.show_map = true;
+                    }
+                    else if (section.triggering_clades.contains("2A1B-135K:first")) {
+                        section.label = "2a1b 135K";
+                        section.show_line = true;
+                        section.show_map = true;
+                    }
+                    else if (section.triggering_clades.contains("2A1B-135K-137F-193S:first")) {
+                        section.label = "2a1b 135K 137F 193S";
+                        section.show_line = true;
+                        section.show_map = true;
+                    }
+                    else if (section.triggering_clades.contains("2A1B-135K-137F-193S:last")) {
+                        section.label = "2a1b 135K";
+                        section.show_line = true;
+                        section.show_map = true;
+                    }
                     else if (section.triggering_clades.contains("2A2:first"))
                         section.label = "2a2";
                 });
@@ -378,10 +393,7 @@ namespace
         void update_settings_clade(CladesDrawSettings& settings, std::pair<const std::string, CladeData>& clade, CladeDrawSettings& settings_clade) const override
         {
             TreeOnly::update_settings_clade(settings, clade, settings_clade);
-            if (clade.first == "GLY" || clade.first == "NO-GLY") {
-                settings_clade.show = false;
-            }
-            else if (clade.first == "3C.3") {
+            if (clade.first == "3C.3") {
                 settings_clade.show = false;
             }
             else if (clade.first == "3A") {
@@ -395,10 +407,12 @@ namespace
             else if (clade.first == "2A") {
                 clade.second.slot = settings_clade.slot = 7;
                 settings_clade.display_name = "2a";
+                settings_clade.section_inclusion_tolerance = 20;
             }
             else if (clade.first == "2A1") {
                 clade.second.slot = settings_clade.slot = 4;
                 settings_clade.display_name = "2a1";
+                settings_clade.section_inclusion_tolerance = 20;
             }
             else if (clade.first == "2A1A") {
                 settings_clade.display_name = "2a1a";
@@ -407,6 +421,25 @@ namespace
             else if (clade.first == "2A1B") {
                 settings_clade.display_name = "2a1b";
                 clade.second.slot = settings_clade.slot = 0;
+                settings_clade.section_inclusion_tolerance = 20;
+            }
+            else if (clade.first == "2A1B-131K") {
+                settings_clade.display_name = "131K";
+                clade.second.slot = settings_clade.slot = 2;
+                settings_clade.section_inclusion_tolerance = 20;
+                settings_clade.show = false;
+            }
+            else if (clade.first == "2A1B-135K") {
+                settings_clade.display_name = "135K";
+                clade.second.slot = settings_clade.slot = 2;
+                settings_clade.section_inclusion_tolerance = 20;
+                settings_clade.show = false;
+            }
+            else if (clade.first == "2A1B-135K-137F-193S") {
+                settings_clade.display_name = "137F";
+                clade.second.slot = settings_clade.slot = 1;
+                settings_clade.section_inclusion_tolerance = 10;
+                settings_clade.show = false;
             }
             else if (clade.first == "2A2") {
                 settings_clade.display_name = "2a2";
@@ -520,7 +553,8 @@ namespace
         {
             TreeOnly::update(settings, whocc_support);
             if (whocc_support) {
-                settings.clades_width = 50;
+                settings.clades_width = 70;
+                settings.time_series_width = 350;
             }
         }
 
@@ -558,15 +592,15 @@ namespace
                     // most recent vaccine
                     auto mod2 = tree_draw.settings().mods.append();
                     mod2->mod = "mark-with-label";
-                    mod2->name = "/COLORADO/6/2017";
+                    mod2->seq_id = "B/COLORADO/6/2017_MDCK1";
                     mod2->label = "A/Colorado/6/2017";
-                    mod2->label_color = "grey";
-                    mod2->label_size = 10.0;
+                    mod2->label_color = "black";
+                    mod2->label_size = 7.0;
                     mod2->label_style = "";
                     mod2->line_color = "grey";
                     mod2->line_width = 0.0;
                     mod2->collapse = 200;
-                    mod2->label_absolute_x = 70.0;
+                    mod2->label_absolute_x = 310.0;
                 }
             }
 
@@ -599,7 +633,7 @@ namespace
         void update_settings_clade(CladesDrawSettings& settings, std::pair<const std::string, CladeData>& clade, CladeDrawSettings& settings_clade) const override
         {
             TreeOnly::update_settings_clade(settings, clade, settings_clade);
-            if (clade.first == "DEL2017" || clade.first == "TRIPLEDEL2017" || clade.first == "1") {
+            if (clade.first == "DEL2017" || clade.first == "TRIPLEDEL2017" || clade.first == "V1") {
                 settings_clade.show = false;
             }
         }
@@ -692,13 +726,13 @@ namespace
                     mod2->mod = "mark-with-label";
                     mod2->name = "/PHUKET/3073/2013";
                     mod2->label = "A/Phuket/3073/2013";
-                    mod2->label_color = "grey";
-                    mod2->label_size = 10.0;
+                    mod2->label_color = "black";
+                    mod2->label_size = 7.0;
                     mod2->label_style = "";
                     mod2->line_color = "grey";
                     mod2->line_width = 0.0;
                     mod2->collapse = 200;
-                    mod2->label_absolute_x = 70.0;
+                    mod2->label_absolute_x = 310.0;
                 }
             }
         }
@@ -789,30 +823,30 @@ template <typename T> static inline std::unique_ptr<settings_constructor_base> m
 #endif
 
 static const std::array settings_constructors {
-    std::pair{    " A(H1N1) ",                 maker<H1_TreeOnly>()},
-    std::pair{"CDC+MELB+NIID+NIMR A(H1N1) HI", maker<H1_HI_ALL>()},
-    std::pair{ "CDC A(H1N1) HI",               maker<H1_HI_CDC>()},
-    std::pair{"MELB A(H1N1) HI",               maker<H1_HI_MELB>()},
-    std::pair{"VIDRL A(H1N1) HI",              maker<H1_HI_MELB>()},
-    std::pair{"NIID A(H1N1) HI",               maker<H1_HI_NIID>()},
-    std::pair{"NIMR A(H1N1) HI",               maker<H1_HI_NIMR>()},
-    std::pair{"Crick A(H1N1) HI",              maker<H1_HI_NIMR>()},
+    std::pair{    " AH1N1 ",                 maker<H1_TreeOnly>()},
+    std::pair{"CDC+MELB+NIID+NIMR AH1N1 HI", maker<H1_HI_ALL>()},
+    std::pair{ "CDC AH1N1 HI",               maker<H1_HI_CDC>()},
+    std::pair{"MELB AH1N1 HI",               maker<H1_HI_MELB>()},
+    std::pair{"VIDRL AH1N1 HI",              maker<H1_HI_MELB>()},
+    std::pair{"NIID AH1N1 HI",               maker<H1_HI_NIID>()},
+    std::pair{"NIMR AH1N1 HI",               maker<H1_HI_NIMR>()},
+    std::pair{"Crick AH1N1 HI",              maker<H1_HI_NIMR>()},
 
-    std::pair{    " A(H3N2) ",    maker<H3_TreeOnly>()},
-    std::pair{ "CDC A(H3N2) HI",  maker<H3_HI_CDC>()},
-    std::pair{"MELB A(H3N2) HI",  maker<H3_HI_MELB>()},
-    std::pair{"VIDRL A(H3N2) HI", maker<H3_HI_MELB>()},
-      // std::pair{"NIID A(H3N2) HI", maker<H3_HI_NIID>()},
-    std::pair{"NIMR A(H3N2) HI",  maker<H3_HI_NIMR>()},
-    std::pair{"Crick A(H3N2) HI", maker<H3_HI_NIMR>()},
+    std::pair{    " AH3N2 ",    maker<H3_TreeOnly>()},
+    std::pair{ "CDC AH3N2 HI",  maker<H3_HI_CDC>()},
+    std::pair{"MELB AH3N2 HI",  maker<H3_HI_MELB>()},
+    std::pair{"VIDRL AH3N2 HI", maker<H3_HI_MELB>()},
+      // std::pair{"NIID AH3N2 HI", maker<H3_HI_NIID>()},
+    std::pair{"NIMR AH3N2 HI",  maker<H3_HI_NIMR>()},
+    std::pair{"Crick AH3N2 HI", maker<H3_HI_NIMR>()},
 
-    std::pair{ "CDC A(H3N2) FOCUS REDUCTION",                  maker<H3_NEUT_CDC>()},
-    std::pair{"MELB A(H3N2) FOCUS REDUCTION",                  maker<H3_NEUT_MELB>()},
-    std::pair{"VIDRL A(H3N2) FOCUS REDUCTION",                 maker<H3_NEUT_MELB>()},
-    std::pair{"NIID A(H3N2) MN",                               maker<H3_NEUT_NIID>()},
-    std::pair{"NIID A(H3N2) FOCUS REDUCTION",                  maker<H3_NEUT_NIID>()},
-    std::pair{"NIMR A(H3N2) PLAQUE REDUCTION NEUTRALISATION",  maker<H3_NEUT_NIMR>()},
-    std::pair{"Crick A(H3N2) PLAQUE REDUCTION NEUTRALISATION", maker<H3_NEUT_NIMR>()},
+    std::pair{ "CDC AH3N2 FOCUS REDUCTION",                  maker<H3_NEUT_CDC>()},
+    std::pair{"MELB AH3N2 FOCUS REDUCTION",                  maker<H3_NEUT_MELB>()},
+    std::pair{"VIDRL AH3N2 FOCUS REDUCTION",                 maker<H3_NEUT_MELB>()},
+    std::pair{"NIID AH3N2 MN",                               maker<H3_NEUT_NIID>()},
+    std::pair{"NIID AH3N2 FOCUS REDUCTION",                  maker<H3_NEUT_NIID>()},
+    std::pair{"NIMR AH3N2 PLAQUE REDUCTION NEUTRALISATION",  maker<H3_NEUT_NIMR>()},
+    std::pair{"Crick AH3N2 PLAQUE REDUCTION NEUTRALISATION", maker<H3_NEUT_NIMR>()},
 
     std::pair{    " B/Vic ",      maker<BVic_TreeOnly>()},
     std::pair{ "CDC B/Vic HI",    maker<BVic_HI_CDC>()},
@@ -838,10 +872,10 @@ std::unique_ptr<SettingsInitializer> settings_initilizer_factory(std::string lab
     if (lab.empty() && show_aa_at_pos)
         return std::make_unique<AAAtPos>(lab, virus_type, assay);
     const auto tag = string::concat(lab, ' ', virus_type, ' ', assay);
-    std::cerr << ">>> settings initilizer tag: " << tag << '\n';
+    std::cerr << ">>> settings initializer tag:\"" << tag << "\" lab:" << lab << " virus_type:" << virus_type << " assay:" << assay << "\n";
     if (auto found = std::find_if(settings_constructors.begin(), settings_constructors.end(), [&tag](const auto& entry) { return entry.first == tag; }); found != settings_constructors.end())
         return found->second->make(lab, virus_type, assay);
-    std::cerr << "WARNING: No settings initializer for tag " << tag << '\n';
+    std::cerr << "WARNING: No settings initializer for tag \"" << tag << "\"\n";
     return std::make_unique<Default>(lab, virus_type, assay);
 
 } // settings_initilizer_factory

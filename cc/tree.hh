@@ -11,7 +11,7 @@
 #include "acmacs-base/date.hh"
 #include "acmacs-base/color.hh"
 #include "acmacs-base/size-scale.hh"
-#include "seqdb/seqdb.hh"
+#include "seqdb-3/seqdb.hh"
 #include "aa_transitions.hh"
 #include "tree-iterate.hh"
 
@@ -27,13 +27,15 @@ class NodeData
  public:
     NodeData() = default;
 
-    std::string date() const { return mSeqdbEntrySeq ? mSeqdbEntrySeq.entry().date() : std::string{}; }
-    std::string amino_acids() const { return mSeqdbEntrySeq ? mSeqdbEntrySeq.seq().amino_acids(true) : std::string{}; }
-    const std::vector<std::string>* clades() const { return mSeqdbEntrySeq ? &mSeqdbEntrySeq.seq().clades() : nullptr; }
-    bool has_clade(std::string aClade) const { const auto* cld = clades(); return cld ? std::find(cld->begin(), cld->end(), aClade) != cld->end() : false; }
-    const std::vector<std::string>* hi_names() const { return mSeqdbEntrySeq ? &mSeqdbEntrySeq.seq().hi_names() : nullptr; }
+    bool has_sequence() const { return static_cast<bool>(mSeqdbRef); }
 
-    void assign(seqdb::SeqdbEntrySeq&& entry_seq) { mSeqdbEntrySeq.assign(std::forward<seqdb::SeqdbEntrySeq>(entry_seq)); }
+    std::string_view date() const { return has_sequence() ? mSeqdbRef.entry->date() : std::string_view{}; }
+    std::string_view amino_acids() const { return has_sequence() ? mSeqdbRef.seq().aa_aligned() : std::string_view{}; }
+    const std::vector<std::string_view>* clades() const { return has_sequence() ? &mSeqdbRef.seq().clades : nullptr; }
+    bool has_clade(std::string_view clade) const { return has_sequence() && mSeqdbRef.seq().has_clade(clade); }
+    const std::vector<std::string_view>* hi_names() const { return has_sequence() ? &mSeqdbRef.seq().hi_names : nullptr; }
+
+    void assign(const acmacs::seqdb::ref& ref) { mSeqdbRef = ref; }
     void set_continent(std::string seq_id);
 
     size_t number_strains = 1;
@@ -48,7 +50,7 @@ class NodeData
     AA_Transitions aa_transitions;
 
  private:
-    seqdb::SeqdbEntrySeq mSeqdbEntrySeq;
+    acmacs::seqdb::ref mSeqdbRef;
 
 }; // class NodeData
 
@@ -148,7 +150,7 @@ class Tree : public Node
 
     Tree() = default;
 
-    void match_seqdb(const seqdb::Seqdb& seqdb, seqdb::Seqdb::ignore_not_found ignore = seqdb::Seqdb::ignore_not_found::no);
+    void match_seqdb();
     void ladderize(LadderizeMethod aLadderizeMethod);
 
     void set_number_strains();

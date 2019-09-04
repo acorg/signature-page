@@ -5,7 +5,7 @@
 #include "acmacs-base/argv.hh"
 #include "acmacs-base/read-file.hh"
 #include "acmacs-base/quicklook.hh"
-#include "seqdb/seqdb.hh"
+#include "seqdb-3/seqdb.hh"
 
 #include "signature-page.hh"
 #include "settings.hh"
@@ -35,7 +35,6 @@ struct Options : public argv
     option<str>       list_ladderized{*this, "list-ladderized"};
     option<bool>      no_draw{*this, "no-draw", desc{"do not generate pdf"}};
     option<str>       chart{*this, "chart", desc{"path to a chart for the signature page"}};
-    option<bool>      ignore_seqdb_match_errors{*this, "ignore-seqdb-match-errors", desc{"for debugging"}};
     option<bool>      open{*this, "open"};
     option<bool>      ql{*this, "ql"};
     option<bool>      verbose{*this, 'v', "verbose"};
@@ -48,9 +47,7 @@ int main(int argc, const char* argv[])
 {
     try {
         Options opt(argc, argv);
-        seqdb::setup_dbs(opt.db_dir, opt.verbose ? seqdb::report::yes : seqdb::report::no);
-        if (!opt.seqdb->empty())
-            seqdb::setup(opt.seqdb, opt.verbose ? seqdb::report::yes : seqdb::report::no);
+        acmacs::seqdb::setup(opt.seqdb);
 
         {
             SignaturePageDraw signature_page;
@@ -63,7 +60,7 @@ int main(int argc, const char* argv[])
                 }
             }
 
-            signature_page.tree(opt.tree_file, opt.ignore_seqdb_match_errors ? seqdb::Seqdb::ignore_not_found::yes : seqdb::Seqdb::ignore_not_found::no);
+            signature_page.tree(opt.tree_file);
             if (!opt.chart->empty())
                 signature_page.chart(opt.chart);                                                                        // before make_surface!
             signature_page.make_surface(opt.output_pdf, !opt.init_settings->empty(), opt.show_aa_at_pos, !opt.no_draw); // before init_layout!
