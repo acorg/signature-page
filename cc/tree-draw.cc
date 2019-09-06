@@ -375,19 +375,20 @@ void TreeDraw::mark_with_line(std::string aName, Color aColor, Pixels aLineWidth
 void TreeDraw::mark_aa_with_line(std::string aPos1AA, Color aColor, Pixels aLineWidth, bool aReport)
 {
     size_t marked = 0;
-    auto mark_leaf = [list_pos1_aa=acmacs::seqdb::parse_list_aa_at_pos1(aPos1AA),&aColor,&aLineWidth,&marked,reported=false,aReport](Node& aNode) mutable {
+    auto mark_leaf = [list_pos1_aa=acmacs::seqdb::parse_list_aa_at_pos1(aPos1AA),leaf_no=0,&aColor,&aLineWidth,&marked,reported=false,aReport](Node& aNode) mutable {
+        ++leaf_no;
         if (aNode.data.match(list_pos1_aa)) {
             aNode.draw.mark_with_line = aColor;
             aNode.draw.mark_with_line_width = aLineWidth;
             ++marked;
             if (aReport) {
-                std::cout << "  " << aNode.seq_id << '\n';
+                std::cout << "  " << std::setw(4) << leaf_no << ' ' << aNode.seq_id << '\n';
                 reported = true;
             }
         }
         else if (reported) {
             if (aReport)
-                std::cout << '\n';
+                std::cout << "  --post-- " << leaf_no << ' ' << aNode.seq_id << "\n\n";
             reported = false;
         }
     };
