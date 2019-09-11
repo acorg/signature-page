@@ -437,21 +437,22 @@ void TreeDraw::mark_clade_with_line(std::string aClade, Color aColor, Pixels aLi
 {
     size_t marked = 0;
     bool reported = false;
-    auto mark_leaf = [aClade,&aColor,&aLineWidth,&marked,&reported,aReport](Node& aNode) {
+    auto mark_leaf = [aClade,&aColor,&aLineWidth,&marked,&reported,aReport,leaf_no=0](Node& aNode) mutable {
         if (aNode.data.has_clade(aClade)) {
             aNode.draw.mark_with_line = aColor;
             aNode.draw.mark_with_line_width = aLineWidth;
             ++marked;
             if (aReport) {
-                std::cout << "  " << aNode.seq_id << '\n';
+                std::cout << "  " << leaf_no << ' ' << aNode.seq_id << '\n';
                 reported = true;
             }
         }
         else if (reported) {
             if (aReport)
-                std::cout << '\n';
+                std::cout << "      past-end: " << leaf_no << ' ' << aNode.seq_id << "\n\n";
             reported = false;
         }
+        ++leaf_no;
     };
 
     if (aReport)
