@@ -80,6 +80,7 @@ class CladeDrawSettings : public acmacs::settings::object
     acmacs::settings::field<acmacs::TextStyle>              label_style{this, "label_style", {}};
     acmacs::settings::field<double>                         label_rotation{this, "label_rotation", 0};
     acmacs::settings::field<int>                            slot{this, "slot", NoSlot};
+    acmacs::settings::field<std::string>                    last_node{this, "last_node", ""}; // seq_id of the last node, to enforce the last node
 
 }; // class CladeDrawSettings
 
@@ -120,6 +121,7 @@ class CladeData
 
     void extend(const Node& node, size_t section_inclusion_tolerance);
     void remove_small_sections(size_t section_exclusion_tolerance);
+    void set_last_node(const Node& node);
 
     const Node* first() const { return sections.front().first; }
     size_t first_line() const { return first()->draw.line_no; }

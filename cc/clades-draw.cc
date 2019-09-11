@@ -58,6 +58,15 @@ void CladeData::remove_small_sections(size_t section_exclusion_tolerance)
 
 // ----------------------------------------------------------------------
 
+void CladeData::set_last_node(const Node& node)
+{
+    if (!sections.empty())
+        sections.back().last = &node;
+
+} // CladeData::set_last_node
+
+// ----------------------------------------------------------------------
+
 std::ostream& operator << (std::ostream& out, const CladeSection& section)
 {
     return out << section.first->seq_id << ':' << section.first->draw.line_no << ".." << section.last->seq_id << ':' << section.last->draw.line_no;
@@ -110,8 +119,17 @@ void CladesDraw::collect()
         tree::iterate_leaf(mTree, scan);
 
           // remove small sections
-        for (auto& clade: mClades)
+        for (auto& clade: mClades) {
             clade.second.remove_small_sections(mSettings.for_clade(clade.first)->section_exclusion_tolerance);
+            if (const std::string last_node = mSettings.for_clade(clade.first)->last_node; !last_node.empty()) {
+                if (auto* node = mTree.find_leaf_by_seqid(last_node); node) {
+                    std::cout << "INFO: Clade: " << clade.first << " set last node to " << last_node << '\n';
+                    clade.second.set_last_node(*node);
+                }
+                else
+                    std::cerr << "WARNING: Clade: " << clade.first << " can NOT set last node to " << last_node << ": seq_id not found\n";
+            }
+        }
 
         for (const auto& [name, data]: mClades) {
             const auto for_clade = mSettings.for_clade(name);
