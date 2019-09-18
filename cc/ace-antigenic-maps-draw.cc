@@ -377,10 +377,16 @@ bool AntigenicMapsLayoutDrawAce::make_serum_circle(const AntigenicMapMod& mod, s
     }
     else {
         std::cerr << "WARNING: no serum circle for " << serum_no << ' ' << serum->full_name();
-        if (homologous_antigens.empty())
+        if (homologous_antigens.empty()) {
             std::cerr << " no homologous antigens\n";
-        else
-            std::cerr << " antigens: " << homologous_antigens << ": no radius\n";
+        }
+        else {
+            std::cerr << " antigens and titers:";
+            auto titers = chart().titers();
+            for (auto ag_no : homologous_antigens)
+                std::cerr << ' ' << ag_no << ':' << titers->titer(ag_no, serum_no);
+            std::cerr << '\n';
+        }
     }
     return radius > 0;
 
