@@ -276,7 +276,7 @@ acmacs::chart::PointIndexList AntigenicMapsLayoutDrawAce::tracked_antigens(size_
 void AntigenicMapsLayoutDrawAce::find_homologous_antigens_for_sera() const
 {
     if (!mHomologousAntigenForSeraFound) {
-        chart().set_homologous(acmacs::chart::find_homologous::strict);
+        chart().set_homologous(acmacs::chart::find_homologous::relaxed_strict);
         mHomologousAntigenForSeraFound = true;
     }
 
@@ -342,6 +342,12 @@ Color AntigenicMapsLayoutDrawAce::serum_circle_outline(const AntigenicMapMod& mo
 // returns if circle shown
 bool AntigenicMapsLayoutDrawAce::make_serum_circle(const AntigenicMapMod& mod, size_t serum_no, const acmacs::chart::PointIndexList& homologous_antigens)
 {
+    const auto report_homologous_antigens = [serum_no,&homologous_antigens](std::ostream& out, const auto& chart) {
+        auto titers = chart.titers();
+        for (auto ag_no : homologous_antigens)
+            out << " [" << ag_no << ' ' << chart.antigen(ag_no)->full_name() << " : " << titers->titer(ag_no, serum_no) << ']';
+    };
+
     std::vector<double> radii(homologous_antigens.size());
     std::transform(homologous_antigens.begin(), homologous_antigens.end(), radii.begin(), [&](size_t ag_no) -> double {
         const auto circle_data = chart().serum_circle_radius_empirical(ag_no, serum_no, 0);
@@ -362,8 +368,9 @@ bool AntigenicMapsLayoutDrawAce::make_serum_circle(const AntigenicMapMod& mod, s
         outline_color = serum_circle_outline(mod, serum->passage().is_egg(), true);
     }
     if (radius > 0) {
-        std::cout << "INFO: serum circle for " << serum_no << ' ' << serum->full_name() << ' ' << serum->passage().passage_type() << " radius: " << radius << " antigens: " << homologous_antigens
-                  << '\n';
+        std::cout << "INFO: serum circle for " << serum_no << ' ' << serum->full_name() << ' ' << serum->passage().passage_type() << " radius: " << radius << " antigens:";
+        report_homologous_antigens(std::cout, chart());
+        std::cout << '\n';
         auto& serum_circle = chart_draw().serum_circle(serum_no, Scaled{radius});
         serum_circle.fill(mod.fill.get_or(TRANSPARENT)).outline(outline_color, mod.outline_width.get_or(1.0)).radius_line(mod.radius_line.get_or(TRANSPARENT), mod.radius_line_width.get_or(1.0));
         //.angles(mod.get["angle_degrees"][0] * math.pi / 180.0, mod.get["angle_degrees"][1] * math.pi / 180.0);
@@ -382,9 +389,7 @@ bool AntigenicMapsLayoutDrawAce::make_serum_circle(const AntigenicMapMod& mod, s
         }
         else {
             std::cerr << " antigens and titers:";
-            auto titers = chart().titers();
-            for (auto ag_no : homologous_antigens)
-                std::cerr << ' ' << ag_no << ':' << titers->titer(ag_no, serum_no);
+            report_homologous_antigens(std::cerr, chart());
             std::cerr << '\n';
         }
     }
