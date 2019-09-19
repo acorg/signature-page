@@ -440,8 +440,10 @@ void AntigenicMapsLayoutDrawAce::serum_circle(const AntigenicMapMod& mod, std::s
             throw std::runtime_error("serum not found: " + mod.to_json());
         const auto homologous_antigens_for_serum = chrt.serum(*serum_index)->homologous_antigens();
         if (make_serum_circle(mod, *serum_index, homologous_antigens_for_serum)) {
-            make_tracked_serum(*serum_index, Pixels{mod.serum_size.get_or(5.0)}, mod.serum_outline.get_or(serum_circle_outline(mod, chart().serum(*serum_index)->passage().is_egg(), false)),
-                               Pixels{mod.serum_outline_width.get_or(0.5)}, *mod.label);
+            // const auto serum_outline = mod.serum_outline.get_or(serum_circle_outline(mod, chart().serum(*serum_index)->passage().is_egg(), false));
+            const auto serum_outline = serum_circle_outline(mod, chart().serum(*serum_index)->passage().is_egg(), false);
+            // std::cerr << "DEBUG: serum_outline " << *serum_index << " " << chart().serum(*serum_index)->full_name() << " : " << serum_outline << '\n';
+            make_tracked_serum(*serum_index, Pixels{mod.serum_size.get_or(5.0)}, serum_outline, Pixels{mod.serum_outline_width.get_or(0.5)}, *mod.label);
         }
     }
 
