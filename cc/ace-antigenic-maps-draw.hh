@@ -39,8 +39,8 @@ class ChartDrawInterface : public ChartDrawBase
 class AntigenicMapsDraw : public AntigenicMapsDrawBase
 {
  public:
-    AntigenicMapsDraw(acmacs::surface::Surface& aSurface, Tree& aTree, acmacs::chart::ChartModifyP aChart, HzSections& aHzSections, SignaturePageDrawSettings& aSignaturePageDrawSettings, AntigenicMapsDrawSettings& aSettings)
-        : AntigenicMapsDrawBase(aSurface, aTree, aHzSections, aSignaturePageDrawSettings, aSettings), mChartDraw(aChart) {}
+    AntigenicMapsDraw(acmacs::surface::Surface& aSurface, Tree& aTree, acmacs::chart::ChartModifyP aChart, HzSections& aHzSections, SignaturePageDrawSettings& aSignaturePageDrawSettings, TimeSeriesDrawSettings& aTimeSeriesDrawSettings, AntigenicMapsDrawSettings& aSettings)
+        : AntigenicMapsDrawBase(aSurface, aTree, aHzSections, aSignaturePageDrawSettings, aTimeSeriesDrawSettings, aSettings), mChartDraw(aChart) {}
 
     void make_layout() override;
     const ChartDrawBase& chart() const override { return mChartDraw; }
@@ -76,6 +76,7 @@ class AntigenicMapsLayoutDrawAce : public AntigenicMapsLayoutDraw
     ChartDraw& chart_draw() { return chart_draw_interface().chart_draw(); }
 
     acmacs::chart::PointIndexList tracked_antigens(size_t aSectionIndex, bool report_antigens_in_hz_sections) const;
+    std::map<std::string, acmacs::chart::PointIndexList> tracked_antigens_per_month(size_t aSectionIndex) const;
     std::map<size_t, acmacs::chart::PointIndexList> tracked_sera(size_t aSectionIndex) const;
     void tracked_serum_circles(const AntigenicMapMod& mod, size_t aSectionIndex);
     void serum_circle(const AntigenicMapMod& mod, std::string map_letter, size_t aSectionIndex);

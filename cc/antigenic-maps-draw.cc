@@ -8,9 +8,9 @@
 
 // ----------------------------------------------------------------------
 
-AntigenicMapsDrawBase::AntigenicMapsDrawBase(acmacs::surface::Surface& aSurface, Tree& aTree, HzSections& aHzSections, SignaturePageDrawSettings& aSignaturePageDrawSettings, AntigenicMapsDrawSettings& aSettings)
+AntigenicMapsDrawBase::AntigenicMapsDrawBase(acmacs::surface::Surface& aSurface, Tree& aTree, HzSections& aHzSections, SignaturePageDrawSettings& aSignaturePageDrawSettings, TimeSeriesDrawSettings& aTimeSeriesDrawSettings, AntigenicMapsDrawSettings& aSettings)
     : mSurface(aSurface), mTree(aTree), mHzSections(aHzSections),
-      mSignaturePageDrawSettings(aSignaturePageDrawSettings), mSettings(aSettings)
+      mSignaturePageDrawSettings(aSignaturePageDrawSettings), mTimeSeriesDrawSettings(aTimeSeriesDrawSettings), mSettings(aSettings)
 {
 
 } // AntigenicMapsDrawBase::AntigenicMapsDrawBase
@@ -102,11 +102,11 @@ void AntigenicMapsDrawBase::prepare()
 
 // ----------------------------------------------------------------------
 
-AntigenicMapsDrawBase* make_antigenic_maps_draw(std::string aChartFilename, acmacs::surface::Surface& aSurface, Tree& aTree, HzSections& aHzSections, SignaturePageDrawSettings& aSignaturePageDrawSettings, AntigenicMapsDrawSettings& aSettings)
+AntigenicMapsDrawBase* make_antigenic_maps_draw(std::string aChartFilename, acmacs::surface::Surface& aSurface, Tree& aTree, HzSections& aHzSections, SignaturePageDrawSettings& aSignaturePageDrawSettings, TimeSeriesDrawSettings& aTimeSeriesDrawSettings, AntigenicMapsDrawSettings& aSettings)
 {
     std::string error;
     try {
-        return new AntigenicMapsDraw(aSurface, aTree, std::make_shared<acmacs::chart::ChartModify>(acmacs::chart::import_from_file(aChartFilename, acmacs::chart::Verify::None, report_time::no)), aHzSections, aSignaturePageDrawSettings, aSettings);
+        return new AntigenicMapsDraw(aSurface, aTree, std::make_shared<acmacs::chart::ChartModify>(acmacs::chart::import_from_file(aChartFilename, acmacs::chart::Verify::None, report_time::no)), aHzSections, aSignaturePageDrawSettings, aTimeSeriesDrawSettings, aSettings);
     }
     catch (acmacs::chart::import_error& err) {
         error = err.what();

@@ -86,7 +86,7 @@ void SignaturePageDraw::make_surface(std::string_view aFilename, bool init_setti
     mAAAtPosDraw = std::make_unique<AAAtPosDraw>(mSurface->subsurface(false), *mTree, *mSettings->hz_sections, *mSettings->aa_at_pos);
 
     if (!mChartFilename.empty()) {
-        mAntigenicMapsDraw = std::unique_ptr<AntigenicMapsDrawBase>(make_antigenic_maps_draw(mChartFilename, mSurface->subsurface(false), *mTree, *mSettings->hz_sections, *mSettings->signature_page, *mSettings->antigenic_maps));
+        mAntigenicMapsDraw = std::unique_ptr<AntigenicMapsDrawBase>(make_antigenic_maps_draw(mChartFilename, mSurface->subsurface(false), *mTree, *mSettings->hz_sections, *mSettings->signature_page, *mSettings->time_series, *mSettings->antigenic_maps));
         mMappedAntigensDraw = std::make_unique<MappedAntigensDraw>(mSurface->subsurface(false), *mTree, mAntigenicMapsDraw->chart(), *mSettings->mapped_antigens);
         mTitleDraw = std::make_unique<TitleDraw>(mSurface->subsurface(false), *mSettings->title);
     }
