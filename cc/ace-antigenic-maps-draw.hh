@@ -68,7 +68,8 @@ class AntigenicMapsLayoutDrawAce : public AntigenicMapsLayoutDraw
 
  private:
     mutable bool mHomologousAntigenForSeraFound;
-    mutable std::map<std::string, Color> mTrackedAntigenColorByMonth;
+    mutable std::map<std::string, Color, std::less<>> mTrackedAntigenColorByMonth;
+    mutable Color mTooOldTrackedAntigenColor, mTooRecentTrackedAntigenColor;
 
     const ChartDrawInterface& chart_draw_interface() const { return dynamic_cast<const ChartDrawInterface&>(antigenic_maps_draw().chart()); }
     ChartDrawInterface& chart_draw_interface() { return dynamic_cast<ChartDrawInterface&>(antigenic_maps_draw().chart()); }
