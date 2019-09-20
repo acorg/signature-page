@@ -39,8 +39,8 @@ class ChartDrawInterface : public ChartDrawBase
 class AntigenicMapsDraw : public AntigenicMapsDrawBase
 {
  public:
-    AntigenicMapsDraw(acmacs::surface::Surface& aSurface, Tree& aTree, acmacs::chart::ChartModifyP aChart, HzSections& aHzSections, SignaturePageDrawSettings& aSignaturePageDrawSettings, TimeSeriesDrawSettings& aTimeSeriesDrawSettings, AntigenicMapsDrawSettings& aSettings)
-        : AntigenicMapsDrawBase(aSurface, aTree, aHzSections, aSignaturePageDrawSettings, aTimeSeriesDrawSettings, aSettings), mChartDraw(aChart) {}
+    AntigenicMapsDraw(acmacs::surface::Surface& aSurface, Tree& aTree, acmacs::chart::ChartModifyP aChart, HzSections& aHzSections, SignaturePageDrawSettings& aSignaturePageDrawSettings, TimeSeriesDraw& aTimeSeriesDraw, AntigenicMapsDrawSettings& aSettings)
+        : AntigenicMapsDrawBase(aSurface, aTree, aHzSections, aSignaturePageDrawSettings, aTimeSeriesDraw, aSettings), mChartDraw(aChart) {}
 
     void make_layout() override;
     const ChartDrawBase& chart() const override { return mChartDraw; }
@@ -68,6 +68,7 @@ class AntigenicMapsLayoutDrawAce : public AntigenicMapsLayoutDraw
 
  private:
     mutable bool mHomologousAntigenForSeraFound;
+    mutable std::map<std::string, Color> mTrackedAntigenColorByMonth;
 
     const ChartDrawInterface& chart_draw_interface() const { return dynamic_cast<const ChartDrawInterface&>(antigenic_maps_draw().chart()); }
     ChartDrawInterface& chart_draw_interface() { return dynamic_cast<ChartDrawInterface&>(antigenic_maps_draw().chart()); }
@@ -77,6 +78,8 @@ class AntigenicMapsLayoutDrawAce : public AntigenicMapsLayoutDraw
 
     acmacs::chart::PointIndexList tracked_antigens(size_t aSectionIndex, bool report_antigens_in_hz_sections) const;
     std::map<std::string, acmacs::chart::PointIndexList> tracked_antigens_per_month(size_t aSectionIndex) const;
+    Color tracked_antigen_color_by_month(std::string_view month) const;
+
     std::map<size_t, acmacs::chart::PointIndexList> tracked_sera(size_t aSectionIndex) const;
     void tracked_serum_circles(const AntigenicMapMod& mod, size_t aSectionIndex);
     void serum_circle(const AntigenicMapMod& mod, std::string map_letter, size_t aSectionIndex);

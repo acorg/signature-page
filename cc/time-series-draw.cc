@@ -47,6 +47,18 @@ void TimeSeriesDraw::prepare()
 
 // ----------------------------------------------------------------------
 
+std::vector<std::string> TimeSeriesDraw::all_months() const
+{
+    std::vector<std::string> result;
+    auto current_month{date::from_string(*mSettings.begin)};
+    for (size_t month_no = 0; month_no < mNumberOfMonths; ++month_no, date::increment_month(current_month))
+        result.push_back(date::year4_month2(current_month));
+    return result;
+
+} // TimeSeriesDraw::all_months
+
+// ----------------------------------------------------------------------
+
 void TimeSeriesDraw::init_settings(const SettingsInitializer& /*settings_initilizer*/)
 {
 

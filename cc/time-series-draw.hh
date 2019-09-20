@@ -53,6 +53,8 @@ class TimeSeriesDraw
     void tree_mode(bool aTreeMode) { mTreeMode = aTreeMode; }
     // void hide_hz_section_labels_in_time_series();
 
+    std::vector<std::string> all_months() const;
+
  private:
     acmacs::surface::Surface& mSurface;
     Tree& mTree;

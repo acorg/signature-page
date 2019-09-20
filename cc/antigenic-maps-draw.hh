@@ -18,7 +18,7 @@ class Tree;
 class TreeDraw;
 class HzSections;
 class SignaturePageDrawSettings;
-class TimeSeriesDrawSettings;
+class TimeSeriesDraw;
 class AntigenicMapsDrawSettings;
 class MappedAntigensDraw;
 class ChartDrawBase;
@@ -30,7 +30,7 @@ class SettingsInitializer;
 class AntigenicMapsDrawBase
 {
  public:
-    AntigenicMapsDrawBase(acmacs::surface::Surface& aSurface, Tree& aTree, HzSections& aHzSections, SignaturePageDrawSettings& aSignaturePageDrawSettings, TimeSeriesDrawSettings& aTimeSeriesDrawSettings, AntigenicMapsDrawSettings& aSettings);
+    AntigenicMapsDrawBase(acmacs::surface::Surface& aSurface, Tree& aTree, HzSections& aHzSections, SignaturePageDrawSettings& aSignaturePageDrawSettings, TimeSeriesDraw& aTimeSeriesDraw, AntigenicMapsDrawSettings& aSettings);
     virtual ~AntigenicMapsDrawBase();
 
     virtual void init_settings(const SettingsInitializer& settings_initilizer);
@@ -45,7 +45,7 @@ class AntigenicMapsDrawBase
     const HzSections& hz_sections() const { return mHzSections; }
     SignaturePageDrawSettings& signature_page_settings() { return mSignaturePageDrawSettings; }
     const SignaturePageDrawSettings& signature_page_settings() const { return mSignaturePageDrawSettings; }
-    const TimeSeriesDrawSettings& time_series_settings() const { return mTimeSeriesDrawSettings; }
+    const TimeSeriesDraw& time_series() const { return mTimeSeriesDraw; }
     AntigenicMapsDrawSettings& settings() { return mSettings; }
     const AntigenicMapsDrawSettings& settings() const { return mSettings; }
 
@@ -61,7 +61,7 @@ class AntigenicMapsDrawBase
     HzSections& mHzSections;
     // MappedAntigensDraw& mMappedAntigensDraw;
     SignaturePageDrawSettings& mSignaturePageDrawSettings;
-    TimeSeriesDrawSettings& mTimeSeriesDrawSettings;
+    TimeSeriesDraw& mTimeSeriesDraw;
     AntigenicMapsDrawSettings& mSettings;
     std::unique_ptr<AntigenicMapsLayout> mLayout;
 
@@ -69,7 +69,7 @@ class AntigenicMapsDrawBase
 
 // ----------------------------------------------------------------------
 
-AntigenicMapsDrawBase* make_antigenic_maps_draw(std::string aChartFilename, acmacs::surface::Surface& aSurface, Tree& aTree, HzSections& aHzSections, SignaturePageDrawSettings& aSignaturePageDrawSettings, TimeSeriesDrawSettings& aTimeSeriesDrawSettings, AntigenicMapsDrawSettings& aSettings);
+AntigenicMapsDrawBase* make_antigenic_maps_draw(std::string aChartFilename, acmacs::surface::Surface& aSurface, Tree& aTree, HzSections& aHzSections, SignaturePageDrawSettings& aSignaturePageDrawSettings, TimeSeriesDraw& aTimeSeriesDraw, AntigenicMapsDrawSettings& aSettings);
 
 // ----------------------------------------------------------------------
 
@@ -267,7 +267,7 @@ class AntigenicMapMod : public acmacs::settings::object
     acmacs::settings::field_array<size_t> ignore_sera{this, "ignore_sera"}; // "tracked_serum_circles"
     acmacs::settings::field_object<LabelSettings> label{this, "label"}; // antigens
     acmacs::settings::field_object<SelectSettings> select{this, "select"}; // antigens
-    acmacs::settings::field<bool> fill_by_date{this, "fill_by_date"};
+    // acmacs::settings::field<bool> fill_by_date{this, "fill_by_date"};
     acmacs::settings::field<bool> report{this, "report"}, raise_if_not_found{this, "raise_if_not_found"}, raise_{this, "raise_"}, shown_on_all{this, "shown_on_all"}; // antigens
     acmacs::settings::field<std::string> order{this, "order"}; // antigens
     acmacs::settings::field<std::string> map{this, "map"}, serum{this, "serum"}, radius_line_dash{this, "radius_line_dash"}; // serum_circle

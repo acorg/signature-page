@@ -160,21 +160,22 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, std
     settings().mods.for_each([this, aSectionIndex, report_antigens_in_hz_sections, map_letter](const AntigenicMapMod& mod, size_t /*mod_no*/) {
         if (mod.name.is_set_or_has_default()) {
             if (mod.name == "tracked_antigens") {
-                if (mod.fill_by_date.get_or(false)) {
-                    const auto tracked_indices = tracked_antigens_per_month(aSectionIndex);
-                    const auto& ts_settings = antigenic_maps_draw().time_series_settings();
-                    const auto begin{date::from_string(*ts_settings.begin)};
-                    const auto number_of_months = static_cast<size_t>(calendar_months_between_dates_inclusive(begin, date::from_string(*ts_settings.end)));
-                    std::cerr << "DEBUG: tracked_antigens number_of_months: " << number_of_months << '\n';
+                acmacs::PointStyle tracked_antigen_style;
+                tracked_antigen_style.size = Pixels{mod.size.get_or(5.0)};
+                tracked_antigen_style.outline = mod.outline.get_or(WHITE);
+                tracked_antigen_style.outline_width = Pixels{mod.outline_width.get_or(0.5)};
+                if (const auto& fill_raw = mod.fill.get(); fill_raw == "by_date") {
+                    for (const auto& [month, tracked] : tracked_antigens_per_month(aSectionIndex)) {
+                        // std::cerr << "DEBUG: tracked_antigens by month " << month <<  ' ' << tracked << '\n';
+                        if (!tracked.empty()) {
+                            tracked_antigen_style.fill = tracked_antigen_color_by_month(month);
+                            chart_draw().modify(tracked, tracked_antigen_style, PointDrawingOrder::Raise);
+                        }
+                    }
                 }
                 else {
-                    const auto tracked_indices = tracked_antigens(aSectionIndex, report_antigens_in_hz_sections);
-                    acmacs::PointStyle tracked_antigen_style;
-                    tracked_antigen_style.size = Pixels{mod.size.get_or(5.0)};
                     tracked_antigen_style.fill = mod.fill.get_or("grey63");
-                    tracked_antigen_style.outline = mod.outline.get_or(WHITE);
-                    tracked_antigen_style.outline_width = Pixels{mod.outline_width.get_or(0.5)};
-                    chart_draw().modify(tracked_indices, tracked_antigen_style, PointDrawingOrder::Raise);
+                    chart_draw().modify(tracked_antigens(aSectionIndex, report_antigens_in_hz_sections), tracked_antigen_style, PointDrawingOrder::Raise);
                 }
             }
             else if (mod.name == "tracked_sera") {
@@ -214,6 +215,19 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, std
     chart_draw().title().remove_all_lines().show(true).add_line(title);
 
 } // AntigenicMapsLayoutDrawAce::prepare_drawing_chart
+
+// ----------------------------------------------------------------------
+
+Color AntigenicMapsLayoutDrawAce::tracked_antigen_color_by_month(std::string_view month) const
+{
+    if (mTrackedAntigenColorByMonth.empty()) {
+        const auto& ts = antigenic_maps_draw().time_series();
+                    // const auto begin{date::from_string(*ts_settings.begin)};
+                    // const auto number_of_months = static_cast<size_t>(calendar_months_between_dates_inclusive(begin, date::from_string(*ts_settings.end)));
+    }
+    return PINK;
+
+} // AntigenicMapsLayoutDrawAce::tracked_antigen_color_by_month
 
 // ----------------------------------------------------------------------
 
