@@ -264,6 +264,7 @@ class AntigenicMapMod : public acmacs::settings::object
     acmacs::settings::field<double> degrees{this, "degrees"}, radians{this, "radians"}, angle{this, "angle"}; // rotate
     acmacs::settings::field<std::string> direction{this, "direction"}; // flip
     acmacs::settings::field_array<double> value{this, "value"}; // flip
+    acmacs::settings::field_array<size_t> ignore_sera{this, "ignore_sera"}; // "tracked_serum_circles"
     acmacs::settings::field_object<LabelSettings> label{this, "label"}; // antigens
     acmacs::settings::field_object<SelectSettings> select{this, "select"}; // antigens
     acmacs::settings::field<bool> fill_by_date{this, "fill_by_date"};

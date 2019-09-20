@@ -344,8 +344,10 @@ std::map<size_t, acmacs::chart::PointIndexList> AntigenicMapsLayoutDrawAce::trac
 void AntigenicMapsLayoutDrawAce::tracked_serum_circles(const AntigenicMapMod& mod, size_t aSectionIndex)
 {
     find_homologous_antigens_for_sera();
-    for (auto serum_antigens: tracked_sera(aSectionIndex))
-        make_serum_circle(mod, serum_antigens.first, serum_antigens.second);
+    for (auto serum_antigens: tracked_sera(aSectionIndex)) {
+        if (!mod.ignore_sera.is_set() || !mod.ignore_sera.contains(serum_antigens.first))
+            make_serum_circle(mod, serum_antigens.first, serum_antigens.second);
+    }
 
 } // AntigenicMapsLayoutDrawAce::tracked_serum_circles
 
