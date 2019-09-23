@@ -171,6 +171,13 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, std
                         if (!tracked.empty()) {
                             tracked_antigen_style.fill = tracked_antigen_color_by_month(month);
                             chart_draw().modify(tracked, tracked_antigen_style, PointDrawingOrder::Raise);
+                            if (mod.report.get_or(false)) {
+                                std::cout << "tracked_antigens by month " << month << ' ' << tracked_antigen_style.fill << '\n';
+                                for (auto ag_no : tracked) {
+                                    auto antiogen = chart().antigen(ag_no);
+                                    std::cout << "    " << ag_no << ' ' << antiogen->full_name() << ' ' << antiogen->date() << '\n';
+                                }
+                            }
                         }
                     }
                 }
@@ -224,7 +231,7 @@ Color AntigenicMapsLayoutDrawAce::tracked_antigen_color_by_month(std::string_vie
     if (mTrackedAntigenColorByMonth.empty()) {
         const auto& ts = antigenic_maps_draw().time_series();
         const auto months = ts.all_months();
-        const auto total_colors = months.size(); // + 2;
+        const auto total_colors = months.size() - 3; // [-3 for four last months in yellow]
         mTooOldTrackedAntigenColor = Color::perceptually_uniform_heatmap(total_colors, 0);
         mTooRecentTrackedAntigenColor = Color::perceptually_uniform_heatmap(total_colors, total_colors - 1);
         for (const auto [no, month] : acmacs::enumerate(months))
