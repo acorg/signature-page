@@ -115,6 +115,22 @@ void TimeSeriesDraw::draw_labels_at_side(const acmacs::PointCoordinates& aOrigin
 
 // ----------------------------------------------------------------------
 
+// for tracked antigens in antigenic maps colored by date
+void TimeSeriesDraw::draw_color_scale(const std::map<std::string, Color, std::less<>>& aTrackedAntigenColorByMonth)
+{
+    const acmacs::Size& surface_size = mSurface.viewport().size;
+    const double month_width = mSurface.viewport().size.width / mNumberOfMonths;
+    const auto top = surface_size.height;
+    auto current_month{date::from_string(*mSettings.begin)};
+    for (size_t month_no = 0; month_no < mNumberOfMonths; ++month_no, date::increment_month(current_month)) {
+        const auto left = month_no * month_width;
+        mSurface.rectangle_filled({left, top}, acmacs::Size{10, 10}, PINK, Pixels{0}, aTrackedAntigenColorByMonth.find(date::year4_month2(current_month))->second);
+    }
+
+} // TimeSeriesDraw::draw_color_scale
+
+// ----------------------------------------------------------------------
+
 void TimeSeriesDraw::draw_month_separators(double month_width)
 {
     const double bottom = mSurface.viewport().size.height;

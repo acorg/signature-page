@@ -1,3 +1,5 @@
+#include <set>
+
 #include "acmacs-base/enumerate.hh"
 #include "acmacs-map-draw/vaccine-matcher.hh"
 #include "acmacs-map-draw/mod-applicator.hh"
@@ -347,28 +349,67 @@ void AntigenicMapsLayoutDrawAce::find_homologous_antigens_for_sera() const
 std::map<size_t, acmacs::chart::PointIndexList> AntigenicMapsLayoutDrawAce::tracked_sera(size_t aSectionIndex) const
 {
     find_homologous_antigens_for_sera();
-    const auto& chrt = chart();
+
     const auto tracked_antigen_indices = tracked_antigens(aSectionIndex, false);
+    std::set<std::string> tracked_antigen_names;
+    for (auto ag_no : tracked_antigen_indices)
+        tracked_antigen_names.insert(chart().antigen(ag_no)->name());
+
+    // std::cerr << "DEBUG: section " << aSectionIndex << " tracked antigen names " << tracked_antigen_names.size() << '\n';
+    // for (const auto& name : tracked_antigen_names)
+    //     std::cerr << "    " << name << '\n';
+
+    // std::cerr << "DEBUG: section " << aSectionIndex << " tracked antigens " << tracked_antigen_indices << '\n';
+    // std::cerr << "DEBUG: section " << aSectionIndex << " tracked antigens " << tracked_antigen_indices.size() << '\n';
+    // for (auto ag_no : tracked_antigen_indices)
+    //     std::cerr << "    " << ag_no << ' ' << chart().antigen(ag_no)->full_name() << '\n';
+
     std::map<size_t, acmacs::chart::PointIndexList> tracked_indices;
-    for (size_t serum_no = 0; serum_no < chrt.number_of_sera(); ++serum_no) {
-        const auto homologous_antigens_for_serum = chrt.serum(serum_no)->homologous_antigens();
-        // if (homologous_antigens_for_serum.empty())
-        //     std::cerr << "DEBUG: no homologous antigens for serum " << serum_no <<  ' ' << chrt.serum(serum_no)->full_name() << " for section " << aSectionIndex << '\n';
-        // else
-        //     std::cerr << "DEBUG: section " << aSectionIndex << " serum: " << serum_no <<  ' ' << chrt.serum(serum_no)->full_name()
-        //               << "\n    homologous antigens: " << homologous_antigens_for_serum
-        //               << "\n    tracked_antigen_indices: " << tracked_antigen_indices
-        //               << '\n';
-        for (size_t antigen_no: homologous_antigens_for_serum) {
-            if (tracked_antigen_indices.contains(antigen_no)) {
+    for (size_t serum_no = 0; serum_no < chart().number_of_sera(); ++serum_no) {
+        if (tracked_antigen_names.find(chart().serum(serum_no)->name()) != tracked_antigen_names.end()) {
+            if (const auto homologous_antigens_for_serum = chart().serum(serum_no)->homologous_antigens(); !homologous_antigens_for_serum.empty())
                 tracked_indices[serum_no] = homologous_antigens_for_serum;
-                break;
-            }
         }
     }
     return tracked_indices;
 
 } // AntigenicMapsLayoutDrawAce::tracked_sera
+
+// ----------------------------------------------------------------------
+
+// BEFORE 2019-09-23
+// std::map<size_t, acmacs::chart::PointIndexList> AntigenicMapsLayoutDrawAce::tracked_sera(size_t aSectionIndex) const
+// {
+//     find_homologous_antigens_for_sera();
+
+//     const auto tracked_antigen_indices = tracked_antigens(aSectionIndex, false);
+//     std::cerr << "DEBUG: section " << aSectionIndex << " tracked antigens " << tracked_antigen_indices << '\n';
+//     // std::cerr << "DEBUG: section " << aSectionIndex << " tracked antigens " << tracked_antigen_indices.size() << '\n';
+//     // for (auto ag_no : tracked_antigen_indices)
+//     //     std::cerr << "    " << ag_no << ' ' << chart().antigen(ag_no)->full_name() << '\n';
+
+//     std::map<size_t, acmacs::chart::PointIndexList> tracked_indices;
+//     for (size_t serum_no = 0; serum_no < chart().number_of_sera(); ++serum_no) {
+//         const auto homologous_antigens_for_serum = chart().serum(serum_no)->homologous_antigens();
+
+//         if (homologous_antigens_for_serum.empty())
+//             std::cerr << "DEBUG: no homologous antigens for serum " << serum_no <<  ' ' << chart().serum(serum_no)->full_name_with_passage() << " for section " << aSectionIndex << '\n';
+//         else
+//             std::cerr << "DEBUG: section " << aSectionIndex << " serum: " << serum_no <<  ' ' << chart().serum(serum_no)->full_name_with_passage()
+//                       << "\n    homologous antigens: " << homologous_antigens_for_serum
+//                       // << "\n    tracked_antigen_indices: " << tracked_antigen_indices
+//                       << '\n';
+
+//         for (size_t antigen_no: homologous_antigens_for_serum) {
+//             if (tracked_antigen_indices.contains(antigen_no)) {
+//                 tracked_indices[serum_no] = homologous_antigens_for_serum;
+//                 break;
+//             }
+//         }
+//     }
+//     return tracked_indices;
+
+// } // AntigenicMapsLayoutDrawAce::tracked_sera
 
 // ----------------------------------------------------------------------
 
@@ -467,11 +508,10 @@ void AntigenicMapsLayoutDrawAce::serum_circle(const AntigenicMapMod& mod, std::s
         find_homologous_antigens_for_sera();
         if (mod.serum.empty())
             throw std::runtime_error("invalid mod (\"serum\" not found): " + mod.to_json());
-        const auto& chrt = chart();
-        auto serum_index = chrt.sera()->find_by_full_name(*mod.serum);
+        auto serum_index = chart().sera()->find_by_full_name(*mod.serum);
         if (!serum_index)
             throw std::runtime_error("serum not found: " + mod.to_json());
-        const auto homologous_antigens_for_serum = chrt.serum(*serum_index)->homologous_antigens();
+        const auto homologous_antigens_for_serum = chart().serum(*serum_index)->homologous_antigens();
         if (make_serum_circle(mod, *serum_index, homologous_antigens_for_serum)) {
             // const auto serum_outline = mod.serum_outline.get_or(serum_circle_outline(mod, chart().serum(*serum_index)->passage().is_egg(), false));
             const auto serum_outline = serum_circle_outline(mod, chart().serum(*serum_index)->passage().is_egg(), false);
@@ -599,6 +639,9 @@ void AntigenicMapsLayoutDrawAce::add_label(std::shared_ptr<VaccineMatcherLabel> 
 
 void AntigenicMapsLayoutDrawAce::draw_chart(acmacs::surface::Surface& aSurface, size_t /*aSectionIndex*/)
 {
+    if (!mTrackedAntigenColorByMonth.empty() && !mColorScalePanelDrawn)
+        antigenic_maps_draw().time_series().draw_color_scale(mTrackedAntigenColorByMonth);
+
     apply_mods_before(aSurface);
 
       // aSurface.viewport(viewport());

@@ -46,6 +46,7 @@ class AntigenicMapsDrawBase
     SignaturePageDrawSettings& signature_page_settings() { return mSignaturePageDrawSettings; }
     const SignaturePageDrawSettings& signature_page_settings() const { return mSignaturePageDrawSettings; }
     const TimeSeriesDraw& time_series() const { return mTimeSeriesDraw; }
+    TimeSeriesDraw& time_series()  { return mTimeSeriesDraw; }
     AntigenicMapsDrawSettings& settings() { return mSettings; }
     const AntigenicMapsDrawSettings& settings() const { return mSettings; }
 

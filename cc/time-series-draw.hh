@@ -44,6 +44,7 @@ class TimeSeriesDraw
 
     void prepare();
     void draw();
+    void draw_color_scale(const std::map<std::string, Color, std::less<>>& aTrackedAntigenColorByMonth);
 
     const acmacs::Size& size() const { return mSurface.viewport().size; }
     acmacs::PointCoordinates origin_in_parent() const { return mSurface.origin_in_parent(); }
