@@ -463,15 +463,15 @@ bool AntigenicMapsLayoutDrawAce::make_serum_circle(const AntigenicMapMod& mod, s
     Color outline_color{PINK};
     if (const auto radius_p = std::find_if(radii.begin(), radii.end(), [](double r) -> bool { return r >= 0.0; }); radius_p != radii.end()) {
         radius = *radius_p;
-        outline_color = serum_circle_outline(mod, serum->passage().is_egg(), false);
+        outline_color = serum_circle_outline(mod, serum->is_egg(), false);
     }
     else if (mod.serum_circle_radius_if_not_calculated.is_set()) {
         radius = mod.serum_circle_radius_if_not_calculated.get_or(-1);
         std::cerr << "INFO: forced radius: " << radius << " (cannot be calculated)\n";
-        outline_color = serum_circle_outline(mod, serum->passage().is_egg(), true);
+        outline_color = serum_circle_outline(mod, serum->is_egg(), true);
     }
     if (radius > 0) {
-        std::cout << "INFO: serum circle for " << serum_no << ' ' << serum->full_name() << ' ' << serum->passage().passage_type() << " radius: " << radius << " antigens:";
+        std::cout << "INFO: serum circle for " << serum_no << ' ' << serum->full_name() << " passage:" << serum->passage() << " passage-type:" << serum->passage_type() << " radius: " << radius << " antigens:";
         report_homologous_antigens(std::cout, chart());
         std::cout << '\n';
         auto& serum_circle = chart_draw().serum_circle(serum_no, Scaled{radius});
@@ -514,7 +514,7 @@ void AntigenicMapsLayoutDrawAce::serum_circle(const AntigenicMapMod& mod, std::s
         const auto homologous_antigens_for_serum = chart().serum(*serum_index)->homologous_antigens();
         if (make_serum_circle(mod, *serum_index, homologous_antigens_for_serum)) {
             // const auto serum_outline = mod.serum_outline.get_or(serum_circle_outline(mod, chart().serum(*serum_index)->passage().is_egg(), false));
-            const auto serum_outline = serum_circle_outline(mod, chart().serum(*serum_index)->passage().is_egg(), false);
+            const auto serum_outline = serum_circle_outline(mod, chart().serum(*serum_index)->is_egg(), false);
             // std::cerr << "DEBUG: serum_outline " << *serum_index << " " << chart().serum(*serum_index)->full_name() << " : " << serum_outline << '\n';
             make_tracked_serum(*serum_index, Pixels{mod.serum_size.get_or(5.0)}, serum_outline, Pixels{mod.serum_outline_width.get_or(0.5)}, *mod.label);
         }
