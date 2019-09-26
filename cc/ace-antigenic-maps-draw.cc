@@ -353,7 +353,7 @@ std::map<size_t, acmacs::chart::PointIndexList> AntigenicMapsLayoutDrawAce::trac
     const auto tracked_antigen_indices = tracked_antigens(aSectionIndex, false);
     std::set<std::string> tracked_antigen_names;
     for (auto ag_no : tracked_antigen_indices)
-        tracked_antigen_names.insert(chart().antigen(ag_no)->name());
+        tracked_antigen_names.insert(*chart().antigen(ag_no)->name());
 
     // std::cerr << "DEBUG: section " << aSectionIndex << " tracked antigen names " << tracked_antigen_names.size() << '\n';
     // for (const auto& name : tracked_antigen_names)
@@ -366,7 +366,7 @@ std::map<size_t, acmacs::chart::PointIndexList> AntigenicMapsLayoutDrawAce::trac
 
     std::map<size_t, acmacs::chart::PointIndexList> tracked_indices;
     for (size_t serum_no = 0; serum_no < chart().number_of_sera(); ++serum_no) {
-        if (tracked_antigen_names.find(chart().serum(serum_no)->name()) != tracked_antigen_names.end()) {
+        if (tracked_antigen_names.find(*chart().serum(serum_no)->name()) != tracked_antigen_names.end()) {
             if (const auto homologous_antigens_for_serum = chart().serum(serum_no)->homologous_antigens(); !homologous_antigens_for_serum.empty())
                 tracked_indices[serum_no] = homologous_antigens_for_serum;
         }
@@ -471,7 +471,7 @@ bool AntigenicMapsLayoutDrawAce::make_serum_circle(const AntigenicMapMod& mod, s
         outline_color = serum_circle_outline(mod, serum->is_egg(), true);
     }
     if (radius > 0) {
-        std::cout << "INFO: serum circle for " << serum_no << ' ' << serum->full_name() << " passage:" << serum->passage() << " passage-type:" << serum->passage_type() << " radius: " << radius << " antigens:";
+        std::cout << "INFO: serum circle for " << serum_no << ' ' << serum->full_name() << " passage:" << *serum->passage() << " passage-type:" << serum->passage_type() << " radius: " << radius << " antigens:";
         report_homologous_antigens(std::cout, chart());
         std::cout << '\n';
         auto& serum_circle = chart_draw().serum_circle(serum_no, Scaled{radius});
