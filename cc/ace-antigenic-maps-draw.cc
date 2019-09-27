@@ -176,8 +176,8 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, std
                             if (mod.report.get_or(false)) {
                                 std::cout << "tracked_antigens by month " << month << ' ' << tracked_antigen_style.fill << '\n';
                                 for (auto ag_no : tracked) {
-                                    auto antiogen = chart().antigen(ag_no);
-                                    std::cout << "    " << ag_no << ' ' << antiogen->full_name() << ' ' << antiogen->date() << '\n';
+                                    auto antigen = chart().antigen(ag_no);
+                                    std::cout << "    " << ag_no << ' ' << antigen->full_name() << ' ' << *antigen->date() << '\n';
                                 }
                             }
                         }
@@ -323,7 +323,7 @@ std::map<std::string, acmacs::chart::PointIndexList> AntigenicMapsLayoutDrawAce:
         if (sequenced_section.second == aSectionIndex) {
             auto antigen = chart().antigen(sequenced_section.first);
             if (const auto date = antigen->date(); !date.empty() && date.size() >= 7) {
-                const auto month = date.substr(0, 7);
+                const auto month = date->substr(0, 7);
                 tracked_indices[month].insert(sequenced_section.first);
                 // std::cerr << "DEBUG: " << aSectionIndex << ' ' << month << '\n';
             }
