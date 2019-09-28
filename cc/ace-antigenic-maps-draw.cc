@@ -448,7 +448,7 @@ bool AntigenicMapsLayoutDrawAce::make_serum_circle(const AntigenicMapMod& mod, s
     const auto report_homologous_antigens = [serum_no,&homologous_antigens](std::ostream& out, const auto& chart) {
         auto titers = chart.titers();
         for (auto ag_no : homologous_antigens)
-            out << " [" << ag_no << ' ' << chart.antigen(ag_no)->full_name() << " : " << titers->titer(ag_no, serum_no) << ']';
+            out << " [" << ag_no << ' ' << chart.antigen(ag_no)->full_name() << " : " << *titers->titer(ag_no, serum_no) << ']';
     };
 
     std::vector<double> radii(homologous_antigens.size());
