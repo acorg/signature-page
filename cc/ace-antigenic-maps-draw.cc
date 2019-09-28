@@ -155,7 +155,7 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, std
                 sequenced_antigen_style.fill = mod.fill.get_or("grey88");
                 sequenced_antigen_style.outline = mod.outline.get_or(WHITE);
                 sequenced_antigen_style.outline_width = Pixels{mod.outline_width.get_or(0.5)};
-                chart_draw().modify(sequenced_indices, sequenced_antigen_style);
+                chart_draw().modify(acmacs::chart::Indexes{sequenced_indices}, sequenced_antigen_style);
             }
         }
     });
@@ -170,7 +170,7 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, std
                 if (const auto& fill_raw = mod.fill.get(); fill_raw == "by_date") {
                     for (const auto& [month, tracked] : tracked_antigens_per_month(aSectionIndex)) {
                         // std::cerr << "DEBUG: tracked_antigens by month " << month <<  ' ' << tracked << '\n';
-                        if (!tracked.empty()) {
+                        if (!tracked->empty()) {
                             tracked_antigen_style.fill = tracked_antigen_color_by_month(month);
                             chart_draw().modify(tracked, tracked_antigen_style, PointDrawingOrder::Raise);
                             if (mod.report.get_or(false)) {
@@ -367,7 +367,7 @@ std::map<size_t, acmacs::chart::PointIndexList> AntigenicMapsLayoutDrawAce::trac
     std::map<size_t, acmacs::chart::PointIndexList> tracked_indices;
     for (size_t serum_no = 0; serum_no < chart().number_of_sera(); ++serum_no) {
         if (tracked_antigen_names.find(*chart().serum(serum_no)->name()) != tracked_antigen_names.end()) {
-            if (const auto homologous_antigens_for_serum = chart().serum(serum_no)->homologous_antigens(); !homologous_antigens_for_serum.empty())
+            if (const auto homologous_antigens_for_serum = chart().serum(serum_no)->homologous_antigens(); !homologous_antigens_for_serum->empty())
                 tracked_indices[serum_no] = homologous_antigens_for_serum;
         }
     }
@@ -451,7 +451,7 @@ bool AntigenicMapsLayoutDrawAce::make_serum_circle(const AntigenicMapMod& mod, s
             out << " [" << ag_no << ' ' << chart.antigen(ag_no)->full_name() << " : " << *titers->titer(ag_no, serum_no) << ']';
     };
 
-    std::vector<double> radii(homologous_antigens.size());
+    std::vector<double> radii(homologous_antigens->size());
     std::transform(homologous_antigens.begin(), homologous_antigens.end(), radii.begin(), [&](size_t ag_no) -> double {
         const auto circle_data = chart().serum_circle_radius_empirical(ag_no, serum_no, 0);
         return circle_data.valid() ? circle_data.radius() : -1.0;
@@ -487,7 +487,7 @@ bool AntigenicMapsLayoutDrawAce::make_serum_circle(const AntigenicMapMod& mod, s
     }
     else {
         std::cerr << "WARNING: no serum circle for " << serum_no << ' ' << serum->full_name();
-        if (homologous_antigens.empty()) {
+        if (homologous_antigens->empty()) {
             std::cerr << " no homologous antigens\n";
         }
         else {
