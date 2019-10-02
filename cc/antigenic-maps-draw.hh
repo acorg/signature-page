@@ -9,7 +9,7 @@
 #pragma GCC diagnostic pop
 
 #include "acmacs-base/transformation.hh"
-#include "acmacs-base/settings.hh"
+#include "acmacs-base/settings-v1.hh"
 #include "acmacs-draw/surface.hh"
 
 // ----------------------------------------------------------------------
@@ -218,63 +218,63 @@ AntigenicMapsDrawBase* make_antigenic_maps_draw(std::string aChartFilename, acma
 
 // ----------------------------------------------------------------------
 
-class LabelSettings : public acmacs::settings::object
+class LabelSettings : public acmacs::settings::v1::object
 {
  public:
-    using acmacs::settings::object::object;
+    using acmacs::settings::v1::object::object;
 
-    acmacs::settings::field<bool> show{this, "show"};
-    acmacs::settings::field<std::string> name_type{this, "name_type"};
-    acmacs::settings::field<acmacs::Offset> offset{this, "offset"};
-    acmacs::settings::field<double> size{this, "size"};
+    acmacs::settings::v1::field<bool> show{this, "show"};
+    acmacs::settings::v1::field<std::string> name_type{this, "name_type"};
+    acmacs::settings::v1::field<acmacs::Offset> offset{this, "offset"};
+    acmacs::settings::v1::field<double> size{this, "size"};
 };
 
-class SelectVaccineSettings : public acmacs::settings::object
+class SelectVaccineSettings : public acmacs::settings::v1::object
 {
  public:
-    using acmacs::settings::object::object;
+    using acmacs::settings::v1::object::object;
 
-    acmacs::settings::field<std::string> passage{this, "passage"}, type{this, "type"}, name{this, "name"};
+    acmacs::settings::v1::field<std::string> passage{this, "passage"}, type{this, "type"}, name{this, "name"};
 };
 
-class SelectSettings : public acmacs::settings::object
+class SelectSettings : public acmacs::settings::v1::object
 {
  public:
-    using acmacs::settings::object::object;
+    using acmacs::settings::v1::object::object;
 
-    acmacs::settings::field<std::string> full_name{this, "full_name"};
-    acmacs::settings::field_object<SelectVaccineSettings> vaccine{this, "vaccine"};
+    acmacs::settings::v1::field<std::string> full_name{this, "full_name"};
+    acmacs::settings::v1::field_object<SelectVaccineSettings> vaccine{this, "vaccine"};
 };
 
 // ----------------------------------------------------------------------
 
-class AntigenicMapMod : public acmacs::settings::object
+class AntigenicMapMod : public acmacs::settings::v1::object
 {
  public:
-    using acmacs::settings::object::object;
+    using acmacs::settings::v1::object::object;
 
-    acmacs::settings::field<std::string> name{this, "N"};
-    acmacs::settings::field<std::string> name_commented{this, "?N"};
-    acmacs::settings::field_array<double> rel{this, "rel"}, viewport{this, "viewport"}, viewport_commented{this, "?viewport"}; // viewport
-    acmacs::settings::field<double> outline_scale{this, "outline_scale"}, scale{this, "scale"}; // point_scale
-    acmacs::settings::field<Color> outline{this, "outline"}, fill{this, "fill"}, text_color{this, "text_color"}, color{this, "color"};
-    acmacs::settings::field<double> outline_width{this, "outline_width"}, size{this, "size"}, text_size{this, "text_size"}, line_width{this, "line_width"};
-    acmacs::settings::field<std::string> font_family{this, "font_family"}, slant{this, "slant"}, weight{this, "weight"};  // title
-    acmacs::settings::field<acmacs::Offset> offset{this, "offset"};  // title
-    acmacs::settings::field<double> padding{this, "padding"}; // title
-    acmacs::settings::field<double> degrees{this, "degrees"}, radians{this, "radians"}, angle{this, "angle"}; // rotate
-    acmacs::settings::field<std::string> direction{this, "direction"}; // flip
-    acmacs::settings::field_array<double> value{this, "value"}; // flip
-    acmacs::settings::field_array<size_t> ignore_sera{this, "ignore_sera"}; // "tracked_serum_circles"
-    acmacs::settings::field_object<LabelSettings> label{this, "label"}; // antigens
-    acmacs::settings::field_object<SelectSettings> select{this, "select"}; // antigens
-    // acmacs::settings::field<bool> fill_by_date{this, "fill_by_date"};
-    acmacs::settings::field<bool> report{this, "report"}, raise_if_not_found{this, "raise_if_not_found"}, raise_{this, "raise_"}, shown_on_all{this, "shown_on_all"}; // antigens
-    acmacs::settings::field<std::string> order{this, "order"}; // antigens
-    acmacs::settings::field<std::string> map{this, "map"}, serum{this, "serum"}, radius_line_dash{this, "radius_line_dash"}; // serum_circle
-    acmacs::settings::field<double> radius_line_width{this, "radius_line_width"}, serum_size{this, "serum_size"}, serum_outline_width{this, "serum_outline_width"}; // serum_circle
-    acmacs::settings::field<Color> radius_line{this, "radius_line"}, serum_outline{this, "serum_outline"}; // serum_circle
-    acmacs::settings::field<double> serum_circle_radius_if_not_calculated{this, "serum_circle_radius_if_not_calculated"};
+    acmacs::settings::v1::field<std::string> name{this, "N"};
+    acmacs::settings::v1::field<std::string> name_commented{this, "?N"};
+    acmacs::settings::v1::field_array<double> rel{this, "rel"}, viewport{this, "viewport"}, viewport_commented{this, "?viewport"}; // viewport
+    acmacs::settings::v1::field<double> outline_scale{this, "outline_scale"}, scale{this, "scale"}; // point_scale
+    acmacs::settings::v1::field<Color> outline{this, "outline"}, fill{this, "fill"}, text_color{this, "text_color"}, color{this, "color"};
+    acmacs::settings::v1::field<double> outline_width{this, "outline_width"}, size{this, "size"}, text_size{this, "text_size"}, line_width{this, "line_width"};
+    acmacs::settings::v1::field<std::string> font_family{this, "font_family"}, slant{this, "slant"}, weight{this, "weight"};  // title
+    acmacs::settings::v1::field<acmacs::Offset> offset{this, "offset"};  // title
+    acmacs::settings::v1::field<double> padding{this, "padding"}; // title
+    acmacs::settings::v1::field<double> degrees{this, "degrees"}, radians{this, "radians"}, angle{this, "angle"}; // rotate
+    acmacs::settings::v1::field<std::string> direction{this, "direction"}; // flip
+    acmacs::settings::v1::field_array<double> value{this, "value"}; // flip
+    acmacs::settings::v1::field_array<size_t> ignore_sera{this, "ignore_sera"}; // "tracked_serum_circles"
+    acmacs::settings::v1::field_object<LabelSettings> label{this, "label"}; // antigens
+    acmacs::settings::v1::field_object<SelectSettings> select{this, "select"}; // antigens
+    // acmacs::settings::v1::field<bool> fill_by_date{this, "fill_by_date"};
+    acmacs::settings::v1::field<bool> report{this, "report"}, raise_if_not_found{this, "raise_if_not_found"}, raise_{this, "raise_"}, shown_on_all{this, "shown_on_all"}; // antigens
+    acmacs::settings::v1::field<std::string> order{this, "order"}; // antigens
+    acmacs::settings::v1::field<std::string> map{this, "map"}, serum{this, "serum"}, radius_line_dash{this, "radius_line_dash"}; // serum_circle
+    acmacs::settings::v1::field<double> radius_line_width{this, "radius_line_width"}, serum_size{this, "serum_size"}, serum_outline_width{this, "serum_outline_width"}; // serum_circle
+    acmacs::settings::v1::field<Color> radius_line{this, "radius_line"}, serum_outline{this, "serum_outline"}; // serum_circle
+    acmacs::settings::v1::field<double> serum_circle_radius_if_not_calculated{this, "serum_circle_radius_if_not_calculated"};
 
     acmacs::Viewport get_viewport(const acmacs::Viewport& aOrigViewport) const;
 
@@ -282,17 +282,17 @@ class AntigenicMapMod : public acmacs::settings::object
 
 // ----------------------------------------------------------------------
 
-class AntigenicMapsDrawSettings : public acmacs::settings::object
+class AntigenicMapsDrawSettings : public acmacs::settings::v1::object
 {
  public:
-    AntigenicMapsDrawSettings(acmacs::settings::base& parent);
+    AntigenicMapsDrawSettings(acmacs::settings::v1::base& parent);
 
-    acmacs::settings::field<std::string>              layout{this, "layout", "labelled_grid"};
-    acmacs::settings::field<size_t>                   columns{this, "columns", 3};
-    acmacs::settings::field<double>                   gap{this, "gap", 20};
-    acmacs::settings::field<Color>                    mapped_antigens_section_line_color{this, "mapped_antigens_section_line_color", BLACK};
-    acmacs::settings::field<double>                   mapped_antigens_section_line_width{this, "mapped_antigens_section_line_width", 1};
-    acmacs::settings::field_array_of<AntigenicMapMod> mods{this, "mods"};
+    acmacs::settings::v1::field<std::string>              layout{this, "layout", "labelled_grid"};
+    acmacs::settings::v1::field<size_t>                   columns{this, "columns", 3};
+    acmacs::settings::v1::field<double>                   gap{this, "gap", 20};
+    acmacs::settings::v1::field<Color>                    mapped_antigens_section_line_color{this, "mapped_antigens_section_line_color", BLACK};
+    acmacs::settings::v1::field<double>                   mapped_antigens_section_line_width{this, "mapped_antigens_section_line_width", 1};
+    acmacs::settings::v1::field_array_of<AntigenicMapMod> mods{this, "mods"};
 
     void viewport(const acmacs::Viewport& aViewport);
     void viewport_rel(const std::vector<double>& rel);

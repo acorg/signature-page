@@ -3,7 +3,7 @@
 #include <map>
 
 #include "acmacs-base/color.hh"
-#include "acmacs-base/settings.hh"
+#include "acmacs-base/settings-v1.hh"
 #include "acmacs-draw/surface.hh"
 
 // ----------------------------------------------------------------------
@@ -15,34 +15,34 @@ class HzSections;
 
 // ----------------------------------------------------------------------
 
-class AAAtPosSection : public acmacs::settings::object
+class AAAtPosSection : public acmacs::settings::v1::object
 {
  public:
-    using acmacs::settings::object::object;
+    using acmacs::settings::v1::object::object;
 
-    acmacs::settings::field<size_t>      pos{this, "_pos"};
-    acmacs::settings::field<std::string> aa{this, "aa"};
-    acmacs::settings::field<size_t>      num{this, "num"};
-    acmacs::settings::field<std::string> first{this, "first"};
-    acmacs::settings::field<std::string> last{this, "last"};
+    acmacs::settings::v1::field<size_t>      pos{this, "_pos"};
+    acmacs::settings::v1::field<std::string> aa{this, "aa"};
+    acmacs::settings::v1::field<size_t>      num{this, "num"};
+    acmacs::settings::v1::field<std::string> first{this, "first"};
+    acmacs::settings::v1::field<std::string> last{this, "last"};
 };
 
 // ----------------------------------------------------------------------
 
-class AAAtPosDrawSettings : public acmacs::settings::object
+class AAAtPosDrawSettings : public acmacs::settings::v1::object
 {
  public:
-    using acmacs::settings::object::object;
+    using acmacs::settings::v1::object::object;
 
-    acmacs::settings::field<double>                  width{this, "width", 0};
-    acmacs::settings::field<double>                  right_margin{this, "right_margin", 0};
-    acmacs::settings::field<double>                  line_width{this, "line_width", 0.15};
-    acmacs::settings::field<double>                  line_length{this, "line_length", 0.5};         // fraction of the surface width
-    acmacs::settings::field<size_t>                  diverse_index_threshold{this, "diverse_index_threshold", 3};
-    acmacs::settings::field_array<size_t>            positions{this, "positions"};
-    acmacs::settings::field<bool>                    report_most_diverse_positions{this, "report_most_diverse_positions", false};
-    acmacs::settings::field<size_t>                  small_section_threshold{this, "small_section_threshold", 3}; // remove sections having this or fewer number of sequences
-    acmacs::settings::field_array_of<AAAtPosSection> sections{this, "?sections"};
+    acmacs::settings::v1::field<double>                  width{this, "width", 0};
+    acmacs::settings::v1::field<double>                  right_margin{this, "right_margin", 0};
+    acmacs::settings::v1::field<double>                  line_width{this, "line_width", 0.15};
+    acmacs::settings::v1::field<double>                  line_length{this, "line_length", 0.5};         // fraction of the surface width
+    acmacs::settings::v1::field<size_t>                  diverse_index_threshold{this, "diverse_index_threshold", 3};
+    acmacs::settings::v1::field_array<size_t>            positions{this, "positions"};
+    acmacs::settings::v1::field<bool>                    report_most_diverse_positions{this, "report_most_diverse_positions", false};
+    acmacs::settings::v1::field<size_t>                  small_section_threshold{this, "small_section_threshold", 3}; // remove sections having this or fewer number of sequences
+    acmacs::settings::v1::field_array_of<AAAtPosSection> sections{this, "?sections"};
 
 }; // class AAAtPosDrawSettings
 

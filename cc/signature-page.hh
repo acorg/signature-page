@@ -21,58 +21,55 @@ class SettingsInitializer;
 
 enum class SignaturePageLayout { Auto, TreeTSClades, TreeTSCladesWide, TreeCladesTSMaps, TreeAATSClades };
 
-namespace acmacs::settings
+namespace acmacs::settings::v1
 {
-    inline namespace v1
+    template <> inline void field<SignaturePageLayout>::assign(rjson::value& to, const SignaturePageLayout& from)
     {
-        template <> inline void field<SignaturePageLayout>::assign(rjson::value& to, const SignaturePageLayout& from)
-        {
-            switch (from) {
-              case SignaturePageLayout::Auto:
-                  to = "auto";
-                  break;
-              case SignaturePageLayout::TreeTSClades:
-                  to = "tree-ts-clades";
-                  break;
-              case SignaturePageLayout::TreeTSCladesWide:
-                  to = "tree-ts-clades-wide";
-                  break;
-              case SignaturePageLayout::TreeCladesTSMaps:
-                  to = "tree-clades-ts-maps";
-                  break;
-              case SignaturePageLayout::TreeAATSClades:
-                  to = "tree-aa-ts-clades";
-                  break;
-            }
-        }
-
-        template <> inline SignaturePageLayout field<SignaturePageLayout>::extract(const rjson::value& from) const
-        {
-            if (from == "auto")
-                return SignaturePageLayout::Auto;
-            else if (from == "tree-ts-clades")
-                return SignaturePageLayout::TreeTSClades;
-            else if (from == "tree-ts-clades-wide")
-                return SignaturePageLayout::TreeTSCladesWide;
-            else if (from == "tree-aa-ts-clades")
-                return SignaturePageLayout::TreeAATSClades;
-            else if (from == "tree-clades-ts-maps")
-                return SignaturePageLayout::TreeCladesTSMaps;
-            else
-                throw std::runtime_error("Unrecognized layout: " + rjson::to_string(from));
+        switch (from) {
+            case SignaturePageLayout::Auto:
+                to = "auto";
+                break;
+            case SignaturePageLayout::TreeTSClades:
+                to = "tree-ts-clades";
+                break;
+            case SignaturePageLayout::TreeTSCladesWide:
+                to = "tree-ts-clades-wide";
+                break;
+            case SignaturePageLayout::TreeCladesTSMaps:
+                to = "tree-clades-ts-maps";
+                break;
+            case SignaturePageLayout::TreeAATSClades:
+                to = "tree-aa-ts-clades";
+                break;
         }
     }
-}
+
+    template <> inline SignaturePageLayout field<SignaturePageLayout>::extract(const rjson::value& from) const
+    {
+        if (from == "auto")
+            return SignaturePageLayout::Auto;
+        else if (from == "tree-ts-clades")
+            return SignaturePageLayout::TreeTSClades;
+        else if (from == "tree-ts-clades-wide")
+            return SignaturePageLayout::TreeTSCladesWide;
+        else if (from == "tree-aa-ts-clades")
+            return SignaturePageLayout::TreeAATSClades;
+        else if (from == "tree-clades-ts-maps")
+            return SignaturePageLayout::TreeCladesTSMaps;
+        else
+            throw std::runtime_error("Unrecognized layout: " + rjson::to_string(from));
+    }
+} // namespace acmacs::settings::v1
 
 // ----------------------------------------------------------------------
 
-class SignaturePageDrawSettings : public acmacs::settings::object
+class SignaturePageDrawSettings : public acmacs::settings::v1::object
 {
  public:
-    using acmacs::settings::object::object;
+    using acmacs::settings::v1::object::object;
 
-    acmacs::settings::field<SignaturePageLayout> layout{this, "layout", SignaturePageLayout::Auto};
-    acmacs::settings::field<double>
+    acmacs::settings::v1::field<SignaturePageLayout> layout{this, "layout", SignaturePageLayout::Auto};
+    acmacs::settings::v1::field<double>
         top{this, "top", 60},
         bottom{this, "bottom", 60},
         left{this, "left", 50},

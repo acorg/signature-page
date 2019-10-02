@@ -168,7 +168,7 @@ acmacs::Viewport AntigenicMapMod::get_viewport(const acmacs::Viewport& aOrigView
 
 // ----------------------------------------------------------------------
 
-AntigenicMapsDrawSettings::AntigenicMapsDrawSettings(acmacs::settings::base& parent) : acmacs::settings::object(parent)
+AntigenicMapsDrawSettings::AntigenicMapsDrawSettings(acmacs::settings::v1::base& parent) : acmacs::settings::v1::object(parent)
 {
     add_viewport_mod();
 
@@ -305,7 +305,7 @@ void AntigenicMapsDrawSettings::add_viewport_mod()
 
 void AntigenicMapsDrawSettings::viewport(const acmacs::Viewport& aViewport)
 {
-    auto make_setting_list = [&aViewport](acmacs::settings::field_array<double>& target) -> void {
+    auto make_setting_list = [&aViewport](acmacs::settings::v1::field_array<double>& target) -> void {
         if (float_equal(aViewport.size.width, aViewport.size.height))
             target.set({aViewport.origin.x(), aViewport.origin.y(), aViewport.size.width});
         else

@@ -40,7 +40,7 @@ void Settings::upgrade()             // upgrade to the new version in case old v
         throw std::runtime_error("Unsupported settings version: " + static_cast<std::string>(version));
     }
 
-} // Settings::upgrade
+} // settings::v1::upgrade
 
 // ----------------------------------------------------------------------
 

@@ -5,7 +5,7 @@
 #include <vector>
 #include <map>
 
-#include "acmacs-base/settings.hh"
+#include "acmacs-base/settings-v1.hh"
 #include "acmacs-draw/surface.hh"
 #include "signature-page/tree.hh"
 
@@ -19,83 +19,79 @@ class SettingsInitializer;
 
 enum class CladeDrawSettingsLabelPosition { bottom, middle, top };
 
-namespace acmacs::settings
+namespace acmacs::settings::v1
 {
-    inline namespace v1
+    template <> inline void field<CladeDrawSettingsLabelPosition>::assign(rjson::value& to, const CladeDrawSettingsLabelPosition& from)
     {
-        template <> inline void field<CladeDrawSettingsLabelPosition>::assign(rjson::value& to, const CladeDrawSettingsLabelPosition& from)
-        {
-            switch (from) {
-              case CladeDrawSettingsLabelPosition::bottom:
-                  to = "bottom";
-                  break;
-              case CladeDrawSettingsLabelPosition::middle:
-                  to = "middle";
-                  break;
-              case CladeDrawSettingsLabelPosition::top:
-                  to = "top";
-                  break;
-            }
-        }
-
-        template <> inline CladeDrawSettingsLabelPosition field<CladeDrawSettingsLabelPosition>::extract(const rjson::value& from) const
-        {
-            if (from == "bottom")
-                return CladeDrawSettingsLabelPosition::bottom;
-            else if (from == "middle")
-                return CladeDrawSettingsLabelPosition::middle;
-            else if (from == "top")
-                return CladeDrawSettingsLabelPosition::top;
-            else
-                throw std::runtime_error("Unrecognized CladeDrawSettingsLabelPosition: " + rjson::to_string(from));
+        switch (from) {
+            case CladeDrawSettingsLabelPosition::bottom:
+                to = "bottom";
+                break;
+            case CladeDrawSettingsLabelPosition::middle:
+                to = "middle";
+                break;
+            case CladeDrawSettingsLabelPosition::top:
+                to = "top";
+                break;
         }
     }
-}
 
+    template <> inline CladeDrawSettingsLabelPosition field<CladeDrawSettingsLabelPosition>::extract(const rjson::value& from) const
+    {
+        if (from == "bottom")
+            return CladeDrawSettingsLabelPosition::bottom;
+        else if (from == "middle")
+            return CladeDrawSettingsLabelPosition::middle;
+        else if (from == "top")
+            return CladeDrawSettingsLabelPosition::top;
+        else
+            throw std::runtime_error("Unrecognized CladeDrawSettingsLabelPosition: " + rjson::to_string(from));
+    }
+} // namespace acmacs::settings::v1
 
 // ----------------------------------------------------------------------
 
-class CladeDrawSettings : public acmacs::settings::object
+class CladeDrawSettings : public acmacs::settings::v1::object
 {
  public:
-    using acmacs::settings::object::object;
+    using acmacs::settings::v1::object::object;
 
     constexpr static const int NoSlot = -1;
 
-    acmacs::settings::field<std::string>                    name{this, "name", ""};
-    acmacs::settings::field<std::string>                    display_name{this, "display_name", ""};
-    acmacs::settings::field<bool>                           show{this, "show", true};
-    acmacs::settings::field<size_t>                         section_inclusion_tolerance{this, "section_inclusion_tolerance", 10}; // max number of lines (strains) within section from another clade that do not interrupt the secion
-    acmacs::settings::field<size_t>                         section_exclusion_tolerance{this, "section_exclusion_tolerance", 5}; // max number of lines (strains) to exclude small sections
-    acmacs::settings::field<bool>                           show_section_size_in_label{this, "show_section_size_in_label", true};
-    acmacs::settings::field<Color>                          arrow_color{this, "arrow_color", BLACK};
-    acmacs::settings::field<double>                         line_width{this, "line_width", 0.8};
-    acmacs::settings::field<double>                         arrow_width{this, "arrow_width", 3};
-    acmacs::settings::field<Color>                          separator_color{this, "separator_color", "grey63"};
-    acmacs::settings::field<double>                         separator_width{this, "separator_width", 0.5};
-    acmacs::settings::field<CladeDrawSettingsLabelPosition> label_position{this, "label_position", CladeDrawSettingsLabelPosition::middle};
-    acmacs::settings::field<acmacs::Offset>                 label_offset{this, "label_offset", {5, 0}};
-    acmacs::settings::field<Color>                          label_color{this, "label_color", BLACK};
-    acmacs::settings::field<double>                         label_size{this, "label_size", 11};
-    acmacs::settings::field<acmacs::TextStyle>              label_style{this, "label_style", {}};
-    acmacs::settings::field<double>                         label_rotation{this, "label_rotation", 0};
-    acmacs::settings::field<int>                            slot{this, "slot", NoSlot};
-    acmacs::settings::field<std::string>                    last_node{this, "last_node", ""}; // seq_id of the last node, to enforce the last node
+    acmacs::settings::v1::field<std::string>                    name{this, "name", ""};
+    acmacs::settings::v1::field<std::string>                    display_name{this, "display_name", ""};
+    acmacs::settings::v1::field<bool>                           show{this, "show", true};
+    acmacs::settings::v1::field<size_t>                         section_inclusion_tolerance{this, "section_inclusion_tolerance", 10}; // max number of lines (strains) within section from another clade that do not interrupt the secion
+    acmacs::settings::v1::field<size_t>                         section_exclusion_tolerance{this, "section_exclusion_tolerance", 5}; // max number of lines (strains) to exclude small sections
+    acmacs::settings::v1::field<bool>                           show_section_size_in_label{this, "show_section_size_in_label", true};
+    acmacs::settings::v1::field<Color>                          arrow_color{this, "arrow_color", BLACK};
+    acmacs::settings::v1::field<double>                         line_width{this, "line_width", 0.8};
+    acmacs::settings::v1::field<double>                         arrow_width{this, "arrow_width", 3};
+    acmacs::settings::v1::field<Color>                          separator_color{this, "separator_color", "grey63"};
+    acmacs::settings::v1::field<double>                         separator_width{this, "separator_width", 0.5};
+    acmacs::settings::v1::field<CladeDrawSettingsLabelPosition> label_position{this, "label_position", CladeDrawSettingsLabelPosition::middle};
+    acmacs::settings::v1::field<acmacs::Offset>                 label_offset{this, "label_offset", {5, 0}};
+    acmacs::settings::v1::field<Color>                          label_color{this, "label_color", BLACK};
+    acmacs::settings::v1::field<double>                         label_size{this, "label_size", 11};
+    acmacs::settings::v1::field<acmacs::TextStyle>              label_style{this, "label_style", {}};
+    acmacs::settings::v1::field<double>                         label_rotation{this, "label_rotation", 0};
+    acmacs::settings::v1::field<int>                            slot{this, "slot", NoSlot};
+    acmacs::settings::v1::field<std::string>                    last_node{this, "last_node", ""}; // seq_id of the last node, to enforce the last node
 
 }; // class CladeDrawSettings
 
 // ----------------------------------------------------------------------
 
-class CladesDrawSettings : public acmacs::settings::object
+class CladesDrawSettings : public acmacs::settings::v1::object
 {
  public:
-    CladesDrawSettings(acmacs::settings::base& parent) : acmacs::settings::object::object(parent) { clades.append(); }
+    CladesDrawSettings(acmacs::settings::v1::base& parent) : acmacs::settings::v1::object::object(parent) { clades.append(); }
 
-    acmacs::settings::const_array_element<CladeDrawSettings> for_clade(std::string_view name) const;
+    acmacs::settings::v1::const_array_element<CladeDrawSettings> for_clade(std::string_view name) const;
     void hide_default_clade();
 
-    acmacs::settings::field_array_of<CladeDrawSettings> clades{this, "clades"};
-    acmacs::settings::field<double>                     slot_width{this, "slot_width", 10};
+    acmacs::settings::v1::field_array_of<CladeDrawSettings> clades{this, "clades"};
+    acmacs::settings::v1::field<double>                     slot_width{this, "slot_width", 10};
 
 }; // class CladesDrawSettings
 

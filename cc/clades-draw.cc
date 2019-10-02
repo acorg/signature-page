@@ -9,7 +9,7 @@
 
 // ----------------------------------------------------------------------
 
-acmacs::settings::const_array_element<CladeDrawSettings> CladesDrawSettings::for_clade(std::string_view name) const
+acmacs::settings::v1::const_array_element<CladeDrawSettings> CladesDrawSettings::for_clade(std::string_view name) const
 {
     if (auto found = clades.find_if([&name](const CladeDrawSettings& c) -> bool { return static_cast<std::string>(c.name) == name; }); found) {
         return *found;

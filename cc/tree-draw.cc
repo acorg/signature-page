@@ -1181,7 +1181,7 @@ void HzSections::detect_hz_lines_for_clades(Tree& aTree, const Clades* aClades, 
 
 // ----------------------------------------------------------------------
 
-acmacs::settings::array_element<HzSection> HzSections::add(std::string seq_id, bool show_line, std::string clade, size_t aa_pos, bool first_in_clade)
+acmacs::settings::v1::array_element<HzSection> HzSections::add(std::string seq_id, bool show_line, std::string clade, size_t aa_pos, bool first_in_clade)
 {
     // std::cerr << "DEBUG: hz sections " << sections.size() << DEBUG_LINE_FUNC << '\n';
     const std::string clade_tag = string::concat(clade, ':', first_in_clade ? "first" : "last");
@@ -1223,7 +1223,7 @@ void HzSections::add(const Tree& tree, const Node& first, const Node& last, bool
 
 // ----------------------------------------------------------------------
 
-acmacs::settings::array_element<HzSection> HzSections::add(std::string aa_transition, bool show_line)
+acmacs::settings::v1::array_element<HzSection> HzSections::add(std::string aa_transition, bool show_line)
 {
     auto sec = sections.append();
     sec->aa_transition = aa_transition;

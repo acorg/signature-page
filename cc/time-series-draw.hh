@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "acmacs-base/settings.hh"
+#include "acmacs-base/settings-v1.hh"
 #include "acmacs-draw/surface.hh"
 
 // ----------------------------------------------------------------------
@@ -15,20 +15,20 @@ class SettingsInitializer;
 
 // ----------------------------------------------------------------------
 
-class TimeSeriesDrawSettings : public acmacs::settings::object
+class TimeSeriesDrawSettings : public acmacs::settings::v1::object
 {
  public:
-    using acmacs::settings::object::object;
+    using acmacs::settings::v1::object::object;
 
-    acmacs::settings::field<std::string>       begin{this, "begin", ""};
-    acmacs::settings::field<std::string>       end{this, "end", ""};
-    acmacs::settings::field<double>            label_size{this, "label_size", 8};
-    acmacs::settings::field<acmacs::TextStyle> label_style{this, "label_style", {}};
-    acmacs::settings::field<double>            month_year_to_timeseries_gap{this, "month_year_to_timeseries_gap", 2};
-    acmacs::settings::field<Color>             month_separator_color{this, "month_separator_color", BLACK};
-    acmacs::settings::field<double>            month_separator_width{this, "month_separator_width", 0.5};
-    acmacs::settings::field<double>            dash_width{this, "dash_width", 0.5};
-    acmacs::settings::field<double>            dash_line_width{this, "dash_line_width", 1};
+    acmacs::settings::v1::field<std::string>       begin{this, "begin", ""};
+    acmacs::settings::v1::field<std::string>       end{this, "end", ""};
+    acmacs::settings::v1::field<double>            label_size{this, "label_size", 8};
+    acmacs::settings::v1::field<acmacs::TextStyle> label_style{this, "label_style", {}};
+    acmacs::settings::v1::field<double>            month_year_to_timeseries_gap{this, "month_year_to_timeseries_gap", 2};
+    acmacs::settings::v1::field<Color>             month_separator_color{this, "month_separator_color", BLACK};
+    acmacs::settings::v1::field<double>            month_separator_width{this, "month_separator_width", 0.5};
+    acmacs::settings::v1::field<double>            dash_width{this, "dash_width", 0.5};
+    acmacs::settings::v1::field<double>            dash_line_width{this, "dash_line_width", 1};
 
     void remove_for_tree_settings();
 

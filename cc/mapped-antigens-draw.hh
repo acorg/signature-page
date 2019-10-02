@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include "acmacs-base/settings.hh"
+#include "acmacs-base/settings-v1.hh"
 #include "acmacs-draw/surface.hh"
 
 // ----------------------------------------------------------------------
@@ -13,15 +13,15 @@ class ChartDrawBase;
 
 // ----------------------------------------------------------------------
 
-class MappedAntigensDrawSettings : public acmacs::settings::object
+class MappedAntigensDrawSettings : public acmacs::settings::v1::object
 {
  public:
-    using acmacs::settings::object::object;
+    using acmacs::settings::v1::object::object;
 
-    acmacs::settings::field<double> width{this, "width", 10};
-    acmacs::settings::field<double> line_width{this, "line_width", 0.5};
-    acmacs::settings::field<Color>  line_color{this, "line_color", "grey56"};
-    acmacs::settings::field<double> line_length{this, "line_length", 0.5};         // fraction of the surface width
+    acmacs::settings::v1::field<double> width{this, "width", 10};
+    acmacs::settings::v1::field<double> line_width{this, "line_width", 0.5};
+    acmacs::settings::v1::field<Color>  line_color{this, "line_color", "grey56"};
+    acmacs::settings::v1::field<double> line_length{this, "line_length", 0.5};         // fraction of the surface width
 
 }; // class MappedAntigensDrawSettings
 
