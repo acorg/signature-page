@@ -265,12 +265,12 @@ void AntigenicMapsLayoutDrawAce::make_tracked_serum(size_t serum_index, Pixels s
             if (field_name == "size")
                 label.size(static_cast<double>(item_value));
             else if (field_name == "color")
-                label.color(Color(static_cast<std::string_view>(item_value)));
+                label.color(Color(item_value.to_string_view()));
             else if (field_name == "font_family")
-                label.font_family(static_cast<std::string_view>(item_value));
+                label.font_family(item_value.to_string_view());
             else if (field_name == "name_type") {
                 auto serum = chart().serum(serum_index);
-                const std::string_view name_type{item_value};
+                const std::string_view name_type{item_value.to_string_view()};
                 if (name_type == "abbreviated")
                     label.display_name(serum->abbreviated_name());
                 else if (name_type == "abbreviated_name_with_serum_id")
@@ -282,11 +282,11 @@ void AntigenicMapsLayoutDrawAce::make_tracked_serum(size_t serum_index, Pixels s
                 }
             }
             else if (field_name == "display_name")
-                label.display_name(static_cast<std::string_view>(item_value));
+                label.display_name(item_value.to_string_view());
             else if (field_name == "slant")
-                label.slant(static_cast<std::string_view>(item_value));
+                label.slant(item_value.to_string_view());
             else if (field_name == "weight")
-                label.weight(static_cast<std::string_view>(item_value));
+                label.weight(item_value.to_string_view());
             else if (field_name == "offset") {
                 label.offset({static_cast<double>(item_value[0]), static_cast<double>(item_value[1])});
             }
@@ -618,15 +618,15 @@ void AntigenicMapsLayoutDrawAce::add_label(std::shared_ptr<VaccineMatcherLabel> 
         if (field_name == "size")
             label->size(static_cast<double>(item_value));
         else if (field_name == "color")
-            label->color(static_cast<std::string_view>(item_value));
+            label->color(item_value.to_string_view());
         else if (field_name == "font_family")
-            label->font_family(static_cast<std::string_view>(item_value));
+            label->font_family(item_value.to_string_view());
         else if (field_name == "name_type")
             label->name_type(static_cast<std::string>(item_value));
         else if (field_name == "slant")
-            label->slant(static_cast<std::string_view>(item_value));
+            label->slant(item_value.to_string_view());
         else if (field_name == "weight")
-            label->weight(static_cast<std::string_view>(item_value));
+            label->weight(item_value.to_string_view());
         else if (field_name == "offset")
             label->offset({static_cast<double>(item_value[0]), static_cast<double>(item_value[1])});
         else if (field_name.empty() || (field_name.front() != '?' && field_name.back() != '?'))
