@@ -263,7 +263,7 @@ void AntigenicMapsLayoutDrawAce::make_tracked_serum(size_t serum_index, Pixels s
 
         rjson::for_each(label_data.get(), [&label, &label_data, this, serum_index](const std::string& field_name, const rjson::value& item_value) {
             if (field_name == "size")
-                label.size(item_value);
+                label.size(static_cast<double>(item_value));
             else if (field_name == "color")
                 label.color(Color(static_cast<std::string_view>(item_value)));
             else if (field_name == "font_family")
@@ -288,7 +288,7 @@ void AntigenicMapsLayoutDrawAce::make_tracked_serum(size_t serum_index, Pixels s
             else if (field_name == "weight")
                 label.weight(static_cast<std::string_view>(item_value));
             else if (field_name == "offset") {
-                label.offset({item_value[0], item_value[1]});
+                label.offset({static_cast<double>(item_value[0]), static_cast<double>(item_value[1])});
             }
             else if (field_name.empty() || (field_name.front() != '?' && field_name.back() != '?'))
                 std::cerr << "WARNING: make_tracked_serum label: unrecognized key \"" << field_name << '"' << '\n';
@@ -616,7 +616,7 @@ void AntigenicMapsLayoutDrawAce::add_label(std::shared_ptr<VaccineMatcherLabel> 
 {
     rjson::for_each(data, [&label](const std::string& field_name, const rjson::value& item_value) {
         if (field_name == "size")
-            label->size(item_value);
+            label->size(static_cast<double>(item_value));
         else if (field_name == "color")
             label->color(static_cast<std::string_view>(item_value));
         else if (field_name == "font_family")
@@ -628,7 +628,7 @@ void AntigenicMapsLayoutDrawAce::add_label(std::shared_ptr<VaccineMatcherLabel> 
         else if (field_name == "weight")
             label->weight(static_cast<std::string_view>(item_value));
         else if (field_name == "offset")
-            label->offset({item_value[0], item_value[1]});
+            label->offset({static_cast<double>(item_value[0]), static_cast<double>(item_value[1])});
         else if (field_name.empty() || (field_name.front() != '?' && field_name.back() != '?'))
             std::cerr << "WARNING: mark_vaccines label: unrecognized key \"" << field_name << '"' << '\n';
     });
