@@ -267,10 +267,10 @@ void AntigenicMapsLayoutDrawAce::make_tracked_serum(size_t serum_index, Pixels s
             else if (field_name == "color")
                 label.color(Color(static_cast<std::string_view>(item_value)));
             else if (field_name == "font_family")
-                label.font_family(item_value);
+                label.font_family(static_cast<std::string_view>(item_value));
             else if (field_name == "name_type") {
                 auto serum = chart().serum(serum_index);
-                const std::string_view name_type = item_value;
+                const std::string_view name_type{item_value};
                 if (name_type == "abbreviated")
                     label.display_name(serum->abbreviated_name());
                 else if (name_type == "abbreviated_name_with_serum_id")
@@ -282,11 +282,11 @@ void AntigenicMapsLayoutDrawAce::make_tracked_serum(size_t serum_index, Pixels s
                 }
             }
             else if (field_name == "display_name")
-                label.display_name(item_value);
+                label.display_name(static_cast<std::string_view>(item_value));
             else if (field_name == "slant")
-                label.slant(item_value);
+                label.slant(static_cast<std::string_view>(item_value));
             else if (field_name == "weight")
-                label.weight(item_value);
+                label.weight(static_cast<std::string_view>(item_value));
             else if (field_name == "offset") {
                 label.offset({item_value[0], item_value[1]});
             }
