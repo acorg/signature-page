@@ -147,7 +147,7 @@ inline Node& find_last_leaf(Node& aNode)
 class Tree : public Node
 {
  public:
-    enum class LadderizeMethod { MaxEdgeLength, NumberOfLeaves };
+    enum class LadderizeMethod { None, MaxEdgeLength, NumberOfLeaves };
 
     Tree() = default;
 

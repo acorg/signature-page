@@ -73,6 +73,8 @@ void Tree::ladderize(Tree::LadderizeMethod aLadderizeMethod)
     };
 
     switch (aLadderizeMethod) {
+      case LadderizeMethod::None:
+          break;
       case LadderizeMethod::MaxEdgeLength:
           tree::iterate_post(*this, [&reorder_by_max_edge_length](Node& aNode) { std::sort(aNode.subtree.begin(), aNode.subtree.end(), reorder_by_max_edge_length); });
           break;

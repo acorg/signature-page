@@ -196,6 +196,9 @@ namespace acmacs::settings::v1
             case Tree::LadderizeMethod::MaxEdgeLength:
                 to = "max-edge-length";
                 break;
+            case Tree::LadderizeMethod::None:
+                to = "none";
+                break;
         }
     }
 
@@ -205,6 +208,8 @@ namespace acmacs::settings::v1
             return Tree::LadderizeMethod::NumberOfLeaves;
         else if (from == "max-edge-length")
             return Tree::LadderizeMethod::MaxEdgeLength;
+        else if (from == "none")
+            return Tree::LadderizeMethod::None;
         else
             throw std::runtime_error("Unrecognized Tree::LadderizeMethod: " + rjson::to_string(from));
     }
