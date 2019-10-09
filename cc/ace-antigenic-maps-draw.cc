@@ -263,14 +263,14 @@ void AntigenicMapsLayoutDrawAce::make_tracked_serum(size_t serum_index, Pixels s
 
         rjson::for_each(label_data.get(), [&label, &label_data, this, serum_index](const std::string& field_name, const rjson::value& item_value) {
             if (field_name == "size")
-                label.size(static_cast<double>(item_value));
+                label.size(item_value.to<double>());
             else if (field_name == "color")
-                label.color(Color(item_value.to_string_view()));
+                label.color(Color(item_value.to<std::string_view>()));
             else if (field_name == "font_family")
-                label.font_family(item_value.to_string_view());
+                label.font_family(item_value.to<std::string_view>());
             else if (field_name == "name_type") {
                 auto serum = chart().serum(serum_index);
-                const std::string_view name_type{item_value.to_string_view()};
+                const std::string_view name_type{item_value.to<std::string_view>()};
                 if (name_type == "abbreviated")
                     label.display_name(serum->abbreviated_name());
                 else if (name_type == "abbreviated_name_with_serum_id")
@@ -282,13 +282,13 @@ void AntigenicMapsLayoutDrawAce::make_tracked_serum(size_t serum_index, Pixels s
                 }
             }
             else if (field_name == "display_name")
-                label.display_name(item_value.to_string_view());
+                label.display_name(item_value.to<std::string_view>());
             else if (field_name == "slant")
-                label.slant(item_value.to_string_view());
+                label.slant(item_value.to<std::string_view>());
             else if (field_name == "weight")
-                label.weight(item_value.to_string_view());
+                label.weight(item_value.to<std::string_view>());
             else if (field_name == "offset") {
-                label.offset({static_cast<double>(item_value[0]), static_cast<double>(item_value[1])});
+                label.offset({item_value[0].to<double>(), item_value[1].to<double>()});
             }
             else if (field_name.empty() || (field_name.front() != '?' && field_name.back() != '?'))
                 std::cerr << "WARNING: make_tracked_serum label: unrecognized key \"" << field_name << '"' << '\n';
@@ -550,7 +550,7 @@ void AntigenicMapsLayoutDrawAce::serum_circle(const AntigenicMapMod& mod, std::s
 //                 else if (field_name == "no")
 //                     matcher.no(item_value); // size_t
 //                 else if (field_name == "show") {
-//                     const bool show = static_cast<bool>(item_value);
+//                     const bool show = item_value.to<bool>();
 //                     matcher.show(show);
 //                     if (!show)
 //                         matcher.hide_label(chart_draw());
@@ -616,19 +616,19 @@ void AntigenicMapsLayoutDrawAce::add_label(std::shared_ptr<VaccineMatcherLabel> 
 {
     rjson::for_each(data, [&label](const std::string& field_name, const rjson::value& item_value) {
         if (field_name == "size")
-            label->size(static_cast<double>(item_value));
+            label->size(item_value.to<double>());
         else if (field_name == "color")
-            label->color(item_value.to_string_view());
+            label->color(item_value.to<std::string_view>());
         else if (field_name == "font_family")
-            label->font_family(item_value.to_string_view());
+            label->font_family(item_value.to<std::string_view>());
         else if (field_name == "name_type")
-            label->name_type(static_cast<std::string>(item_value));
+            label->name_type(item_value.to<std::string>());
         else if (field_name == "slant")
-            label->slant(item_value.to_string_view());
+            label->slant(item_value.to<std::string_view>());
         else if (field_name == "weight")
-            label->weight(item_value.to_string_view());
+            label->weight(item_value.to<std::string_view>());
         else if (field_name == "offset")
-            label->offset({static_cast<double>(item_value[0]), static_cast<double>(item_value[1])});
+            label->offset({item_value[0].to<double>(), item_value[1].to<double>()});
         else if (field_name.empty() || (field_name.front() != '?' && field_name.back() != '?'))
             std::cerr << "WARNING: mark_vaccines label: unrecognized key \"" << field_name << '"' << '\n';
     });
