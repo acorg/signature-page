@@ -31,7 +31,6 @@ void TimeSeriesDraw::prepare()
 
         if (mSettings.begin.empty()) {
             for (const auto& entry : sequences_per_month) {
-                fmt::print(stderr, "DEBUG: entry.first {}\n", entry.first);
                 if (entry.second && months_between_dates(entry.first, end_of_ts) < 25) {
                     mSettings.begin = date::display(entry.first);
                     break;
@@ -39,7 +38,6 @@ void TimeSeriesDraw::prepare()
             }
         }
 
-        fmt::print(stderr, "DEBUG: dates {} .. {}\n", *mSettings.begin, *mSettings.end);
         mNumberOfMonths = static_cast<size_t>(calendar_months_between_dates_inclusive(date::from_string(*mSettings.begin), date::from_string(*mSettings.end)));
         std::cout << "INFO: dates to show: " << mSettings.begin << " .. " << mSettings.end << "  months: " << mNumberOfMonths << DEBUG_LINE_FUNC << '\n';
     }
