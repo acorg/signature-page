@@ -341,37 +341,37 @@ namespace
                 tree_draw.hz_sections().sections.for_each([](auto& section, size_t /*no*/) {
                     if (section.triggering_clades.contains("first-leaf:first") || section.triggering_clades.contains("2A1:first") || section.triggering_clades.contains("2A1A:last"))
                         section.show_map = false;
-                    else if (section.triggering_clades.contains("3A:first"))
+                    else if (section.triggering_clades.contains("3C.3A:first"))
                         section.label = "3a";
-                    else if (section.triggering_clades.contains("2A4:first"))
+                    else if (section.triggering_clades.contains("3C.2A4:first"))
                         section.label = "2a4";
-                    else if (section.triggering_clades.contains("2A3:first"))
+                    else if (section.triggering_clades.contains("3C.2A3:first"))
                         section.label = "2a3";
-                    else if (section.triggering_clades.contains("2A1A:first"))
+                    else if (section.triggering_clades.contains("3C.2A1A:first"))
                         section.label = "2a1a";
-                    else if (section.triggering_clades.contains("2A1B:first"))
+                    else if (section.triggering_clades.contains("3C.2A1B:first"))
                         section.label = "2a1b 135T";
-                    else if (section.triggering_clades.contains("2A1B-131K:first")) {
+                    else if (section.triggering_clades.contains("3C.2A1B-131K:first")) {
                         section.label = "2a1b 131K";
                         section.show_line = true;
                         section.show_map = true;
                     }
-                    else if (section.triggering_clades.contains("2A1B-135K:first")) {
+                    else if (section.triggering_clades.contains("3C.2A1B-135K:first")) {
                         section.label = "2a1b 135K";
                         section.show_line = true;
                         section.show_map = true;
                     }
-                    else if (section.triggering_clades.contains("2A1B-135K-137F-193S:first")) {
+                    else if (section.triggering_clades.contains("3C.2A1B-135K-137F-193S:first")) {
                         section.label = "2a1b 135K 137F 193S";
                         section.show_line = true;
                         section.show_map = true;
                     }
-                    else if (section.triggering_clades.contains("2A1B-135K-137F-193S:last")) {
+                    else if (section.triggering_clades.contains("3C.2A1B-135K-137F-193S:last")) {
                         section.label = "2a1b 135K";
                         section.show_line = true;
                         section.show_map = true;
                     }
-                    else if (section.triggering_clades.contains("2A2:first"))
+                    else if (section.triggering_clades.contains("3C.2A2:first"))
                         section.label = "2a2";
                 });
 
@@ -396,59 +396,59 @@ namespace
             if (clade.first == "3C.3") {
                 settings_clade.show = false;
             }
-            else if (clade.first == "3A") {
+            else if (clade.first == "3C.3A") {
                 settings_clade.display_name = "3a";
                 clade.second.slot = settings_clade.slot = 0;
             }
-            else if (clade.first == "3B") {
+            else if (clade.first == "3C.3B") {
                 settings_clade.display_name = "3b";
                 clade.second.slot = settings_clade.slot = 0;
             }
-            else if (clade.first == "2A") {
+            else if (clade.first == "3C.2A") {
                 clade.second.slot = settings_clade.slot = 7;
                 settings_clade.display_name = "2a";
                 settings_clade.section_inclusion_tolerance = 20;
             }
-            else if (clade.first == "2A1") {
+            else if (clade.first == "3C.2A1") {
                 clade.second.slot = settings_clade.slot = 4;
                 settings_clade.display_name = "2a1";
                 settings_clade.section_inclusion_tolerance = 20;
             }
-            else if (clade.first == "2A1A") {
+            else if (clade.first == "3C.2A1A") {
                 settings_clade.display_name = "2a1a";
                 clade.second.slot = settings_clade.slot = 0;
             }
-            else if (clade.first == "2A1B") {
+            else if (clade.first == "3C.2A1B") {
                 settings_clade.display_name = "2a1b";
                 clade.second.slot = settings_clade.slot = 0;
                 settings_clade.section_inclusion_tolerance = 20;
             }
-            else if (clade.first == "2A1B-131K") {
+            else if (clade.first == "3C.2A1B-131K") {
                 settings_clade.display_name = "131K";
                 clade.second.slot = settings_clade.slot = 2;
                 settings_clade.section_inclusion_tolerance = 20;
                 settings_clade.show = false;
             }
-            else if (clade.first == "2A1B-135K") {
+            else if (clade.first == "3C.2A1B-135K") {
                 settings_clade.display_name = "135K";
                 clade.second.slot = settings_clade.slot = 2;
                 settings_clade.section_inclusion_tolerance = 20;
                 settings_clade.show = false;
             }
-            else if (clade.first == "2A1B-135K-137F-193S") {
+            else if (clade.first == "3C.2A1B-135K-137F-193S") {
                 settings_clade.display_name = "137F";
                 clade.second.slot = settings_clade.slot = 1;
                 settings_clade.section_inclusion_tolerance = 10;
                 settings_clade.show = false;
             }
-            else if (clade.first == "2A2") {
+            else if (clade.first == "3C.2A2") {
                 settings_clade.display_name = "2a2";
                 clade.second.slot = settings_clade.slot = 0;
             }
-            else if (clade.first == "2A3") {
+            else if (clade.first == "3C.2A3") {
                 settings_clade.display_name = "2a3";
             }
-            else if (clade.first == "2A4") {
+            else if (clade.first == "3C.2A4") {
                 settings_clade.display_name = "2a4";
             }
         }
@@ -571,14 +571,14 @@ namespace
                 {
                     auto mod = tree_draw.settings().mods.append();
                     mod->mod = "mark-clade-with-line";
-                    mod->clade = "DEL2017";
+                    mod->clade = "2DEL2017";
                     mod->color = "#A0A0A0";
                     mod->line_width = 0.2;
                 }
                 {
                     auto mod = tree_draw.settings().mods.append();
                     mod->mod = "mark-clade-with-line";
-                    mod->clade = "TRIPLEDEL2017";
+                    mod->clade = "3DEL2017";
                     mod->color = "#606060";
                     mod->line_width = 0.2;
                 }
@@ -606,7 +606,7 @@ namespace
 
             bool del2017_shown = false;
             tree_draw.hz_sections().sections.for_each([&del2017_shown, &tree_draw](auto& section, size_t /*no*/) {
-                if (section.triggering_clades.contains("DEL2017:first")) {
+                if (section.triggering_clades.contains("2DEL2017:first")) {
                     const auto* first_node = tree_draw.tree().find_leaf_by_seqid(section.name);
                     const bool branch_too_long = first_node && first_node->data.cumulative_edge_length > cumulative_threshold;
                     if (!del2017_shown && !branch_too_long) {
@@ -618,13 +618,13 @@ namespace
                         section.comment_out();
                     }
                 }
-                else if (section.triggering_clades.contains("TRIPLEDEL2017:first")) {
+                else if (section.triggering_clades.contains("3DEL2017:first")) {
                     section.show_line = true;
                     section.label = "3-Del";
                 }
-                else if (section.triggering_clades.contains("TRIPLEDEL2017:last"))
+                else if (section.triggering_clades.contains("3DEL2017:last"))
                     section.show_line = true;
-                else if (section.triggering_clades.contains("DEL2017:last") || section.triggering_clades.contains("1:first") || section.triggering_clades.contains("1:last"))
+                else if (section.triggering_clades.contains("2DEL2017:last") || section.triggering_clades.contains("1:first") || section.triggering_clades.contains("1:last"))
                     section.comment_out();
             });
         }
@@ -633,7 +633,7 @@ namespace
         void update_settings_clade(CladesDrawSettings& settings, std::pair<const std::string, CladeData>& clade, CladeDrawSettings& settings_clade) const override
         {
             TreeOnly::update_settings_clade(settings, clade, settings_clade);
-            if (clade.first == "DEL2017" || clade.first == "TRIPLEDEL2017" || clade.first == "V1") {
+            if (clade.first == "2DEL2017" || clade.first == "3DEL2017" || clade.first == "V1") {
                 settings_clade.show = false;
             }
         }
