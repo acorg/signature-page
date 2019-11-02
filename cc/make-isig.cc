@@ -48,7 +48,7 @@ int main(int argc, const char* const* argv)
                 const auto seq = entry.seq().aa_aligned();
                 for (auto bp : sBjornPos)
                     DF::second_field(data_csv, seq[bp - 1]);
-                if (auto node = tree.find_leaf_by_seqid(entry.seq_id()); node) {
+                if (auto node = tree.find_leaf_by_seqid(*entry.seq_id()); node) {
                       // std::cout << ag_no << ' ' << node->seq_id << '\n';
                     node->seq_id = "s-" + std::to_string(ag_no); // rename node according to isig spec
                     ++antigens_in_tree;

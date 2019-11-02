@@ -14,7 +14,7 @@ void Tree::match_seqdb()
     if (const auto& seqdb = acmacs::seqdb::get(); !seqdb.empty()) {
         const auto& seq_id_index = seqdb.seq_id_index();
         tree::iterate_leaf(*this, [&seq_id_index](Node& node) {
-            if (const auto found = seq_id_index.find(node.seq_id); found != seq_id_index.end())
+            if (const auto found = seq_id_index.find(acmacs::seqdb::seq_id_t{node.seq_id}); found != seq_id_index.end())
                 node.data.assign(found->second);
             else
                 fmt::print(stderr, "WARNING: {} not found in seqdb\n", node.seq_id);
