@@ -4,10 +4,10 @@
 #include <string>
 // #include <cstdlib>
 
-#pragma GCC diagnostic push
-#include "acmacs-base/boost-diagnostics.hh"
-#include "boost/program_options.hpp"
-#pragma GCC diagnostic pop
+// #pragma GCC diagnostic push
+// #include "acmacs-base/boost-diagnostics.hh"
+// #include "boost/program_options.hpp"
+// #pragma GCC diagnostic pop
 
 #include "acmacs-draw/surface-cairo.hh"
 #include "chart-draw.hh"

@@ -3,10 +3,10 @@
 #include <iostream>
 #include <map>
 
-#pragma GCC diagnostic push
-#include "acmacs-base/boost-diagnostics.hh"
-#include "boost/variant.hpp"
-#pragma GCC diagnostic pop
+// #pragma GCC diagnostic push
+// #include "acmacs-base/boost-diagnostics.hh"
+// #include "boost/variant.hpp"
+// #pragma GCC diagnostic pop
 
 #include "acmacs-base/transformation.hh"
 #include "acmacs-base/settings-v1.hh"
