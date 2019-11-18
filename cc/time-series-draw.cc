@@ -163,7 +163,8 @@ void TimeSeriesDraw::draw_dashes(double month_width)
                     }
                 }
                 catch (std::exception& err) {
-                    std::cerr << "WARNING: " << err.what() << " (TimeSeriesDraw::draw_dashes) Date: " << aNode.data.date() << "\n";
+                    if (aNode.data.date().size() > 4)
+                        std::cerr << "WARNING: " << err.what() << " (TimeSeriesDraw::draw_dashes) Date: " << aNode.data.date() << "\n";
                 }
             }
         }
