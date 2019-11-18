@@ -174,6 +174,10 @@ bool TreeDraw::apply_mods()
             std::cout << "TREE-mod: " << mod_mod << " \"" << mod.country << "\" \"" << mod.color << "\" " << mod.line_width << '\n';
             mark_country_with_line(mod.country, Color(mod.color), Pixels{mod.line_width}, mod.report);
         }
+        else if (mod_mod == "mark-location-with-line") {
+            std::cout << "TREE-mod: " << mod_mod << " \"" << mod.location << "\" \"" << mod.color << "\" " << mod.line_width << '\n';
+            mark_location_with_line(mod.location, Color(mod.color), Pixels{mod.line_width}, mod.report);
+        }
         else if (mod_mod == "mark-having-serum-with-line") {
             std::cout << "TREE-mod: " << mod_mod << " \"" << mod.color << "\" " << mod.line_width << '\n';
             mark_having_serum_with_line(Color(mod.color), Pixels{mod.line_width});
@@ -503,6 +507,41 @@ void TreeDraw::mark_country_with_line(std::string aCountry, Color aColor, Pixels
 
 
 } // TreeDraw::mark_country_with_line
+
+// ----------------------------------------------------------------------
+
+void TreeDraw::mark_location_with_line(std::string aLocation, Color aColor, Pixels aLineWidth, bool aReport)
+{
+    size_t marked = 0;
+    bool reported = false;
+    auto mark_leaf = [aLocation,&aColor,&aLineWidth,&marked,&reported,aReport,leaf_no=0](Node& aNode) mutable {
+        if (aNode.data.location() == aLocation) {
+            aNode.draw.mark_with_line = aColor;
+            aNode.draw.mark_with_line_width = aLineWidth;
+            ++marked;
+            if (aReport) {
+                std::cout << "  " << leaf_no << ' ' << aNode.seq_id << '\n';
+                reported = true;
+            }
+        }
+        else if (reported) {
+            if (aReport)
+                std::cout << "      past-end: " << leaf_no << ' ' << aNode.seq_id << "\n\n";
+            reported = false;
+        }
+        ++leaf_no;
+    };
+
+    if (aReport)
+        std::cout << aLocation << '\n';
+    tree::iterate_leaf(mTree, mark_leaf);
+    if (marked == 0)
+        std::cerr << "WARNING: no nodes found to mark with line for location: " << aLocation << '\n';
+    else
+        std::cout << "Location " << aLocation << " leaf nodes marked: " << marked << '\n';
+
+
+} // TreeDraw::mark_location_with_line
 
 // ----------------------------------------------------------------------
 
