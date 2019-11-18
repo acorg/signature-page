@@ -169,6 +169,9 @@ class TreeDrawMod : public acmacs::settings::v1::object
     acmacs::settings::v1::field<double>            line_width{this, "line_width"}; // -1, in pixels, mark-clade-with-line, mark-with-label
     acmacs::settings::v1::field<bool>              report{this, "report", false};
 
+    // mark-country-with-line mod
+    acmacs::settings::v1::field<std::string>       country{this, "country"};
+
     // mark-with-label
     acmacs::settings::v1::field<std::string>       seq_id{this, "seq_id", ""};
     acmacs::settings::v1::field<std::string>       name{this, "name", ""};
@@ -241,6 +244,7 @@ class TreeDrawSettings : public acmacs::settings::v1::object
                                                                            "{mod: mark-with-line, s1: name-to-mark, s2: color-to-mark, d1: line-width-in-pixels}",
                                                                            "{mod: mark-aa-with-line, s1: space-separated-pos-aa 183P 141E, s2: color-to-mark, d1: line-width-in-pixels, report: true}",
                                                                            "{mod: mark-clade-with-line, clade: , color: , line_width: line-width-in-pixels}",
+                                                                           "{mod: mark-country-with-line, country: , color: , line_width: line-width-in-pixels}",
                                                                            "{mod: mark-having-serum-with-line, color: , line_width: line-width-in-pixels}",
                                                                            "{mod: mark-with-label, seq_id:, name: <substring>, label:, line_color:, line_width:, label_offset:[0.0, 0.0], label_absolute_x:, label_size:, labeL_color:, label_style:, collapse: 10 }"}};
     acmacs::settings::v1::field<bool>                               force_line_width{this, "force_line_width", false};
@@ -430,6 +434,7 @@ class TreeDraw
     void mark_with_line(std::string aName, Color aColor, Pixels aLineWidth);
     void mark_aa_with_line(std::string aPos1AA, Color aColor, Pixels aLineWidth, bool aReport);
     void mark_clade_with_line(std::string aClade, Color aColor, Pixels aLineWidth, bool aReport);
+    void mark_country_with_line(std::string aCountry, Color aColor, Pixels aLineWidth, bool aReport);
     void mark_having_serum_with_line(Color aColor, Pixels aLineWidth);
     void mark_with_label(const TreeDrawMod& aMod, size_t mod_no);
     static void hide_branch(Node& aNode);

@@ -33,6 +33,7 @@ class NodeData
     std::string_view amino_acids() const { return has_sequence() ? mSeqdbRef.seq().aa_aligned() : std::string_view{}; }
     const std::vector<std::string_view>* clades() const { return has_sequence() ? &mSeqdbRef.seq().clades : nullptr; }
     bool has_clade(std::string_view clade) const { return has_sequence() && mSeqdbRef.seq().has_clade(clade); }
+    std::string_view country() const { return has_sequence() ? mSeqdbRef.entry->country : std::string_view{}; }
     bool matches(const acmacs::seqdb::amino_acid_at_pos1_eq_list_t& list_pos1_aa) const { return has_sequence() && mSeqdbRef.matches(list_pos1_aa); }
     const std::vector<std::string_view>* hi_names() const { return has_sequence() ? &mSeqdbRef.seq().hi_names : nullptr; }
 
