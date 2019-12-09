@@ -884,8 +884,8 @@ void TreeDraw::draw_mark_with_label(const Node& aNode, const acmacs::PointCoordi
             acmacs::PointCoordinates label_origin = aTextOrigin + label_offset;
             if (settings->label_absolute_x.is_set_or_has_default())
                 label_origin.x(settings->label_absolute_x);
-            mSurface.text(label_origin, settings->label, Color{settings->label_color}, Pixels{settings->label_size}, settings->label_style);
-            const auto vlsize = mSurface.text_size(settings->label, Pixels{settings->label_size}, acmacs::TextStyle{});
+            mSurface.text(label_origin, *settings->label, Color{settings->label_color}, Pixels{settings->label_size}, settings->label_style);
+            const auto vlsize = mSurface.text_size(*settings->label, Pixels{settings->label_size}, acmacs::TextStyle{});
             const auto line_origin = label_origin + acmacs::Offset{vlsize.width / 2, label_offset.y() > 0 ? -vlsize.height : 0};
             mSurface.line(line_origin, aTextOrigin, Color{settings->line_color}, Pixels{settings->line_width});
             last_marked_with_label_ = std::tuple(aNode.draw.line_no, *settings->label);
