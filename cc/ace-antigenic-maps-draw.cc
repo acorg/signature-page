@@ -261,7 +261,7 @@ void AntigenicMapsLayoutDrawAce::make_tracked_serum(size_t serum_index, Pixels s
         auto& label = chart_draw().add_label(chart().number_of_antigens() + serum_index);
         label.offset(label_data.offset);
 
-        rjson::for_each(label_data.get(), [&label, &label_data, this, serum_index](const std::string& field_name, const rjson::value& item_value) {
+        rjson::for_each(label_data.get(), [&label, &label_data, this, serum_index](std::string_view field_name, const rjson::value& item_value) {
             if (field_name == "size")
                 label.size(item_value.to<double>());
             else if (field_name == "color")
@@ -534,7 +534,7 @@ void AntigenicMapsLayoutDrawAce::serum_circle(const AntigenicMapMod& mod, std::s
 //             const std::string type(rjson::get_or(mod, "type", "")), passage(rjson::get_or(mod, "passage", "")), name(rjson::get_or(mod, "name", ""));
 //             VaccineMatcher matcher(vaccs, VaccineMatchData{}.name(name).type(type).passage(passage));
 //             // std::cerr << matcher.report(2) << '\n';
-//             rjson::for_each(mod, [&matcher, this](const std::string& field_name, const rjson::value& item_value) {
+//             rjson::for_each(mod, [&matcher, this](std::string_view field_name, const rjson::value& item_value) {
 //                 if (field_name == "size")
 //                     matcher.size(item_value);
 //                 else if (field_name == "fill")
@@ -614,7 +614,7 @@ void AntigenicMapsLayoutDrawAce::mark_antigens(const AntigenicMapMod& mod)
 
 void AntigenicMapsLayoutDrawAce::add_label(std::shared_ptr<VaccineMatcherLabel> label, const rjson::value& data)
 {
-    rjson::for_each(data, [&label](const std::string& field_name, const rjson::value& item_value) {
+    rjson::for_each(data, [&label](std::string_view field_name, const rjson::value& item_value) {
         if (field_name == "size")
             label->size(item_value.to<double>());
         else if (field_name == "color")
