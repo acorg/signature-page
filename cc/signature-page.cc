@@ -249,10 +249,7 @@ void SignaturePageDraw::make_layout_tree_ts_clades()
     mCladesDraw->surface().move_resize_viewport(acmacs::PointCoordinates(clades_left, mSettings->signature_page->top), clades_width, acmacs::Size{1000 * clades_width / section_height, 1000});
     mTitleDraw->surface().move_resize_viewport(acmacs::PointCoordinates::zero2D, page_size.width, page_size);
 
-    std::cout << "INFO: Tree    " << mTreeDraw->surface() << '\n'
-              << "INFO: AAatPos " << mAAAtPosDraw->surface() << '\n'
-              << "INFO: TS      " << mTimeSeriesDraw->surface() << '\n'
-              << "INFO: Clades  " << mCladesDraw->surface() << '\n';
+    fmt::print("INFO: Tree    {}\nINFO: AAatPos {}\nINFO: TS      {}\nINFO: Clades  {}\n", mTreeDraw->surface(), mAAAtPosDraw->surface(), mTimeSeriesDraw->surface(), mCladesDraw->surface());
 
 } // SignaturePageDraw::make_layout_tree_ts_clades
 
@@ -275,19 +272,18 @@ void SignaturePageDraw::make_layout_tree_clades_ts_maps()
     const double mapped_antigens_left = ts_left + ts_width;
     const double antigic_maps_left = mapped_antigens_left + mapped_antigens_width + mSettings->signature_page->mapped_antigens_margin_right;
 
-    mTreeDraw->surface().move_resize_viewport(acmacs::PointCoordinates(mSettings->signature_page->left, mSettings->signature_page->top), tree_width, acmacs::Size{1000 * tree_width / section_height, 1000});
+    mTreeDraw->surface().move_resize_viewport(acmacs::PointCoordinates(mSettings->signature_page->left, mSettings->signature_page->top), tree_width,
+                                              acmacs::Size{1000 * tree_width / section_height, 1000});
     mTimeSeriesDraw->surface().move_resize_viewport(acmacs::PointCoordinates(ts_left, mSettings->signature_page->top), ts_width, acmacs::Size{1000 * ts_width / section_height, 1000});
     mCladesDraw->surface().move_resize_viewport(acmacs::PointCoordinates(clades_left, mSettings->signature_page->top), clades_width, acmacs::Size{1000 * clades_width / section_height, 1000});
     mMappedAntigensDraw->surface().move_resize_viewport(acmacs::PointCoordinates(mapped_antigens_left, mSettings->signature_page->top), mapped_antigens_width,
                                                         acmacs::Size{1000 * mapped_antigens_width / section_height, 1000});
-    mAntigenicMapsDraw->surface().move_resize_viewport(acmacs::PointCoordinates(antigic_maps_left, mSettings->signature_page->top), antigic_maps_width, acmacs::Size{1000 * antigic_maps_width / section_height, 1000});
+    mAntigenicMapsDraw->surface().move_resize_viewport(acmacs::PointCoordinates(antigic_maps_left, mSettings->signature_page->top), antigic_maps_width,
+                                                       acmacs::Size{1000 * antigic_maps_width / section_height, 1000});
     mTitleDraw->surface().move_resize_viewport(acmacs::PointCoordinates::zero2D, page_size.width, page_size);
 
-    std::cout << "INFO: Tree   " << mTreeDraw->surface() << '\n'
-              << "INFO: TS     " << mTimeSeriesDraw->surface() << '\n'
-              << "INFO: Clades " << mCladesDraw->surface() << '\n'
-              << "INFO: Mapped " << mMappedAntigensDraw->surface() << '\n'
-              << "INFO: Maps   " << mAntigenicMapsDraw->surface() << '\n';
+    fmt::print("INFO: Tree   {}\nINFO: TS     {}\nINFO: Clades {}\nINFO: Mapped {}\nINFO: Maps   {}\n", mTreeDraw->surface(), mTimeSeriesDraw->surface(), mCladesDraw->surface(),
+               mMappedAntigensDraw->surface(), mAntigenicMapsDraw->surface());
 
 } // SignaturePageDraw::make_layout_tree_clades_ts_maps
 

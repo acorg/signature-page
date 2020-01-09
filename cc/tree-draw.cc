@@ -199,7 +199,7 @@ bool TreeDraw::apply_mods()
 
 void TreeDraw::draw()
 {
-    std::cout << "Tree surface: " << mSurface.viewport() << '\n';
+    fmt::print("Tree surface: {}\n", mSurface.viewport());
     const double line_width = mSettings.line_width;
     mLineWidth = mSettings.force_line_width ? line_width : std::min(line_width, mVerticalStep * 0.5);
     fit_labels_into_viewport();
@@ -724,12 +724,12 @@ void TreeDraw::fit_labels_into_viewport()
     mFontSize = mVerticalStep;
 
     const double canvas_width = mSurface.viewport().size.width;
-    std::cout << "INFO: viewport: " << mSurface.viewport() << '\n';
+    fmt::print("INFO: viewport: {}\n", mSurface.viewport());
 
     // Timeit ti("DEBUG: TreeDraw::fit_labels_into_viewport: ");
     for (double label_offset = max_label_offset(); label_offset > canvas_width; label_offset = max_label_offset()) {
         const double scale = std::min(canvas_width / label_offset, 0.99); // to avoid too much looping
-        std::cout << "INFO: canvas:" << canvas_width << " label_right:" << label_offset << " scale: " << scale << '\n';
+        fmt::print("INFO: canvas:{} label_right:{} scale:{}\n", canvas_width, label_offset, scale);
         mHorizontalStep *= scale;
         mFontSize *= scale;
     }
@@ -770,9 +770,8 @@ void TreeDraw::draw_node(const Node& aNode, double aOriginX, double& aVerticalGa
             const auto tsize = mSurface.text_size(text, mFontSize, mSettings.label_style);
             const acmacs::PointCoordinates text_origin(right + mNameOffset, aNode.draw.vertical_pos + tsize.height / 2);
             mSurface.text(text_origin, text, mColoring->color(aNode), mFontSize, mSettings.label_style);
-            if (text_origin.x() < 0 || text_origin.y() < 0) {
-                std::cerr << "WARNING: bad origin for a node label: " << text_origin << ' ' << text << " mNameOffset:" << mNameOffset << " aOriginX:" << aOriginX << '\n';
-            }
+            if (text_origin.x() < 0 || text_origin.y() < 0)
+                fmt::print(stderr, "WARNING: bad origin for a node label: {} \"{}\" mNameOffset:{} aOriginX:{}\n", text_origin, text, mNameOffset, aOriginX);
 
             if (!aNode.draw.mark_with_line.empty()) {
                 // mSurface.line({text_origin.x() + tsize.width, text_origin.y}, {mSurface.viewport().size.width, text_origin.y}, aNode.draw.mark_with_line, aNode.draw.mark_with_line_width);
@@ -879,7 +878,7 @@ void TreeDraw::draw_mark_with_label(const Node& aNode, const acmacs::PointCoordi
         // std::cerr << "DEBUG: draw mark_with_label " << aNode.seq_id << ' ' << *aNode.draw.mark_with_label << '\n';
         const auto settings = mSettings.find_mod(*aNode.draw.mark_with_label);
         if (!last_marked_with_label_.has_value() || std::get<std::string>(*last_marked_with_label_) != *settings->label || (aNode.draw.line_no - std::get<size_t>(*last_marked_with_label_)) > settings->collapse) {
-            std::cerr << "INFO: draw_mark_with_label " << aNode.seq_id << " line:" << aNode.draw.line_no << " label: " << settings->label << " collapse:" << settings->collapse << '\n';
+            fmt::print("INFO: draw_mark_with_label {} line:{} label:{} collapse:{}\n", aNode.seq_id, aNode.draw.line_no, *settings->label, *settings->collapse);
             const acmacs::Offset label_offset = settings->label_offset.get_or(acmacs::Offset{0.0, 0.0});
             acmacs::PointCoordinates label_origin = aTextOrigin + label_offset;
             if (settings->label_absolute_x.is_set_or_has_default())

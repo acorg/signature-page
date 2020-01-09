@@ -34,7 +34,7 @@ void AntigenicMapsLayoutDraw::prepare()
       // std::cerr << "DEBUG: AntigenicMapsLayoutDraw::prepare\n";
     // const acmacs::Viewport& viewport = mAntigenicMapsDraw.chart().viewport();
     // settings().viewport(viewport);
-    std::cout << "INFO: Using viewport: " << mAntigenicMapsDraw.chart().viewport() << '\n';
+    fmt::print("INFO: Using viewport: {}\n", mAntigenicMapsDraw.chart().viewport());
 
 } // AntigenicMapsLayoutDraw::prepare
 
