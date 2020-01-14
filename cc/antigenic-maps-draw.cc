@@ -223,7 +223,7 @@ AntigenicMapsDrawSettings::AntigenicMapsDrawSettings(acmacs::settings::v1::base&
     m9->size = 5.0; // tracked sera above tracked antigens!
     auto m10 = mods.append();
     m10->name = "?tracked_serum_circles";
-    m10->outline = BLACK;
+    m10->outline = BLACK; // "passage";
     m10->outline_width = 0.5; // tracked serum circles above tracked antigens!
     auto m11 = mods.append();
     m11->name = "?serum_circle";

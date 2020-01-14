@@ -945,8 +945,8 @@ void TreeDrawSettings::remove_for_signature_page_settings()
 {
     ladderize.remove();
     ladderize_help.remove();
-    mods.remove();
-    mods_help.remove();
+    // mods.remove();
+    // mods_help.remove();
     force_line_width.remove();
     line_width.remove();
     root_edge.remove();
