@@ -123,6 +123,9 @@ void AntigenicMapsLayoutDrawAce::prepare_chart_for_all_sections()
                 test_antigen_style.outline_width = Pixels{mod.outline_width.get_or(0.5)};
                 chart_draw().modify(chart().antigens()->test_indexes(), test_antigen_style);
             }
+            else if (mod.name == "tracked_serum_circles" || mod.name == "serum_circle" || mod.name == "tracked_sera") {
+                report_all_sera();
+            }
         }
     });
 
@@ -189,9 +192,17 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, std
                 }
             }
             else if (mod.name == "tracked_sera") {
-                const auto tracked_indices = tracked_sera(aSectionIndex);
-                std::cout << "INFO: tracked_sera: " << tracked_indices << '\n';
-                for (auto [serum_index, ignored] : tracked_indices)
+                const auto tracked_serum_indices = tracked_sera(aSectionIndex);
+                fmt::print("INFO: tracked_sera: {}\n", tracked_serum_indices.size());
+                for (const auto& [sr_no, ag_list] : tracked_serum_indices)
+                    fmt::print("    {:3d} {}\n", sr_no, chart().serum(sr_no)->full_name());
+                const auto tracked_antigen_indices = tracked_antigens(aSectionIndex, false);
+                fmt::print("INFO: tracked_antigens: {}\n", tracked_antigen_indices.size());
+                for (auto ag_no : tracked_antigen_indices)
+                    fmt::print("    {:3d} {}\n", ag_no, chart().antigen(ag_no)->full_name());
+
+                // fmt::print("INFO: tracked_sera:     {}\n      tracked_antigens: {}\n", tracked_serum_indices, tracked_antigens(aSectionIndex, false));
+                for (auto [serum_index, ignored] : tracked_serum_indices)
                     make_tracked_serum(serum_index, Pixels{mod.size.get_or(5.0)}, mod.outline.get_or("black"), Pixels{mod.outline_width.get_or(0.5)}, *mod.label);
             }
             else if (mod.name == "tracked_serum_circles") {
@@ -343,6 +354,24 @@ void AntigenicMapsLayoutDrawAce::find_homologous_antigens_for_sera() const
     }
 
 } // AntigenicMapsLayoutDrawAce::find_homologous_antigens_for_sera
+
+// ----------------------------------------------------------------------
+
+void AntigenicMapsLayoutDrawAce::report_all_sera() const
+{
+    if (!mAllSeraReported) {
+        find_homologous_antigens_for_sera();
+        fmt::print("INFO: All sera: {}\n", chart().number_of_sera());
+        for (size_t serum_no = 0; serum_no < chart().number_of_sera(); ++serum_no) {
+            fmt::print("    {:3d} {}\n", serum_no, chart().serum(serum_no)->full_name());
+            const auto homologous_antigens_for_serum = chart().serum(serum_no)->homologous_antigens();
+            for (auto ag_no : homologous_antigens_for_serum)
+                fmt::print("        AG {:4d} {}\n", ag_no, chart().antigen(ag_no)->full_name());
+        }
+        mAllSeraReported = true;
+    }
+
+} // AntigenicMapsLayoutDrawAce::report_all_sera
 
 // ----------------------------------------------------------------------
 

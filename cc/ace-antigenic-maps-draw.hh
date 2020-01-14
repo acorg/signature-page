@@ -70,7 +70,8 @@ class AntigenicMapsLayoutDrawAce : public AntigenicMapsLayoutDraw
     mutable bool mHomologousAntigenForSeraFound;
     mutable std::map<std::string, Color, std::less<>> mTrackedAntigenColorByMonth;
     mutable Color mTooOldTrackedAntigenColor, mTooRecentTrackedAntigenColor;
-    bool mColorScalePanelDrawn = false;
+    bool mColorScalePanelDrawn{false};
+    mutable bool mAllSeraReported{false};
 
     const ChartDrawInterface& chart_draw_interface() const { return dynamic_cast<const ChartDrawInterface&>(antigenic_maps_draw().chart()); }
     ChartDrawInterface& chart_draw_interface() { return dynamic_cast<ChartDrawInterface&>(antigenic_maps_draw().chart()); }
@@ -95,6 +96,7 @@ class AntigenicMapsLayoutDrawAce : public AntigenicMapsLayoutDraw
     void make_tracked_serum(size_t serum_index, Pixels size, Color outline, Pixels outline_width, const LabelSettings& label_data);
     void find_homologous_antigens_for_sera() const;
     Color serum_circle_outline(const AntigenicMapMod& mod, bool egg, bool forced_radius) const;
+    void report_all_sera() const;
 
 }; // class AntigenicMapsLayoutDrawAce
 
