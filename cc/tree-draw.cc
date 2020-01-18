@@ -136,7 +136,7 @@ bool TreeDraw::apply_mods()
         }
         else if (mod_mod == "hide-isolated-before") {
             std::cout << "TREE-mod: " << mod_mod << " " << mod.s1 << '\n';
-            hide_isolated_before(mod.s1);
+            hide_isolated_before(*mod.s1);
         }
         else if (mod_mod == "hide-if-cumulative-edge-length-bigger-than") {
             std::cout << "TREE-mod: " << mod_mod << " " << mod.d1 << '\n';
@@ -148,11 +148,11 @@ bool TreeDraw::apply_mods()
         }
         else if (mod_mod == "hide-between") {
             std::cout << "TREE-mod: " << mod_mod << " \"" << mod.s1 << "\" \"" << mod.s2 << "\"" << '\n';
-            hide_between(mod.s1, mod.s2);
+            hide_between(*mod.s1, *mod.s2);
         }
         else if (mod_mod == "hide-one") {
             std::cout << "TREE-mod: " << mod_mod << " \"" << mod.s1 << "\"" << '\n';
-            hide_one(mod.s1);
+            hide_one(*mod.s1);
         }
         else if (mod_mod == "hide-not-found-in-chart") {
             std::cout << "TREE-mod: " << mod_mod << '\n';
@@ -160,23 +160,23 @@ bool TreeDraw::apply_mods()
         }
         else if (mod_mod == "mark-with-line") {
             std::cout << "TREE-mod: " << mod_mod << " \"" << mod.s1 << "\" \"" << mod.s2 << "\" " << mod.d1 << '\n';
-            mark_with_line(mod.s1, Color(mod.s2), Pixels{mod.d1});
+            mark_with_line(*mod.s1, Color(mod.s2), Pixels{mod.d1});
         }
         else if (mod_mod == "mark-aa-with-line") {
             std::cout << "TREE-mod: " << mod_mod << " \"" << mod.s1 << "\" \"" << mod.s2 << "\" " << mod.d1 << '\n';
-            mark_aa_with_line(mod.s1, Color(mod.s2), Pixels{mod.d1}, mod.report);
+            mark_aa_with_line(*mod.s1, Color(mod.s2), Pixels{mod.d1}, mod.report);
         }
         else if (mod_mod == "mark-clade-with-line") {
             std::cout << "TREE-mod: " << mod_mod << " \"" << mod.clade << "\" \"" << mod.color << "\" " << mod.line_width << '\n';
-            mark_clade_with_line(mod.clade, Color(mod.color), Pixels{mod.line_width}, mod.report);
+            mark_clade_with_line(*mod.clade, Color(mod.color), Pixels{mod.line_width}, mod.report);
         }
         else if (mod_mod == "mark-country-with-line") {
             std::cout << "TREE-mod: " << mod_mod << " \"" << mod.country << "\" \"" << mod.color << "\" " << mod.line_width << '\n';
-            mark_country_with_line(mod.country, Color(mod.color), Pixels{mod.line_width}, mod.report);
+            mark_country_with_line(*mod.country, Color(mod.color), Pixels{mod.line_width}, mod.report);
         }
         else if (mod_mod == "mark-location-with-line") {
             std::cout << "TREE-mod: " << mod_mod << " \"" << mod.location << "\" \"" << mod.color << "\" " << mod.line_width << '\n';
-            mark_location_with_line(mod.location, Color(mod.color), Pixels{mod.line_width}, mod.report);
+            mark_location_with_line(*mod.location, Color(mod.color), Pixels{mod.line_width}, mod.report);
         }
         else if (mod_mod == "mark-having-serum-with-line") {
             std::cout << "TREE-mod: " << mod_mod << " \"" << mod.color << "\" " << mod.line_width << '\n';
@@ -228,7 +228,7 @@ void TreeDraw::draw()
 
 // ----------------------------------------------------------------------
 
-void TreeDraw::hide_isolated_before(std::string aDate)
+void TreeDraw::hide_isolated_before(std::string_view aDate)
 {
     auto hide_show_leaf = [aDate](Node& aNode) {
         aNode.draw.shown &= aNode.data.date() >= aDate;
@@ -269,7 +269,7 @@ void TreeDraw::hide_before2015_58P_or_146I_or_559I()
 
 // ----------------------------------------------------------------------
 
-void TreeDraw::hide_between(std::string aFirst, std::string aLast)
+void TreeDraw::hide_between(std::string_view aFirst, std::string_view aLast)
 {
     bool hiding = false;
     bool cancelled = false;
@@ -309,7 +309,7 @@ void TreeDraw::hide_between(std::string aFirst, std::string aLast)
     tree::iterate_leaf_post(mTree, hide_show_leaf, hide_branch);
     if (!cancelled) {
         if (hiding)
-            throw std::runtime_error("tree hide_between: last node not found: " + aLast);
+            throw std::runtime_error(fmt::format("tree hide_between: last node not found: {}", aLast));
         if (hidden == 0)
             throw std::runtime_error("tree hide_between: no nodes hidden");
         std::cout << "INFO: hide_between [" << aFirst << "] [" << aLast << "]: leaf nodes hidden: " << hidden << '\n';
@@ -322,7 +322,7 @@ void TreeDraw::hide_between(std::string aFirst, std::string aLast)
 
 // ----------------------------------------------------------------------
 
-void TreeDraw::hide_one(std::string aName)
+void TreeDraw::hide_one(std::string_view aName)
 {
     size_t hidden = 0;
     auto hide_show_leaf = [aName, &hidden](Node &aNode) {
@@ -360,7 +360,7 @@ void TreeDraw::hide_not_found_in_chart()
 
 // ----------------------------------------------------------------------
 
-void TreeDraw::mark_with_line(std::string aName, Color aColor, Pixels aLineWidth)
+void TreeDraw::mark_with_line(std::string_view aName, Color aColor, Pixels aLineWidth)
 {
     size_t marked = 0;
     auto mark_leaf = [aName,&aColor,&aLineWidth,&marked](Node& aNode) {
@@ -380,7 +380,7 @@ void TreeDraw::mark_with_line(std::string aName, Color aColor, Pixels aLineWidth
 
 // ----------------------------------------------------------------------
 
-void TreeDraw::mark_aa_with_line(std::string aPos1AA, Color aColor, Pixels aLineWidth, bool aReport)
+void TreeDraw::mark_aa_with_line(std::string_view aPos1AA, Color aColor, Pixels aLineWidth, bool aReport)
 {
     size_t marked = 0;
     auto mark_leaf = [list_pos1_aa=acmacs::seqdb::extract_aa_at_pos1_eq_list(aPos1AA),leaf_no=0,&aColor,&aLineWidth,&marked,reported=false,aReport](Node& aNode) mutable {
@@ -415,7 +415,7 @@ void TreeDraw::mark_aa_with_line(std::string aPos1AA, Color aColor, Pixels aLine
 
 void TreeDraw::mark_with_label(const TreeDrawMod& aMod, size_t mod_no)
 {
-    const auto warn = [&aMod](std::string msg) { std::cerr << "WARNING: cannot mark-with-label seq_id:\"" << aMod.seq_id << "\" name:\"" << aMod.name << "\": " << msg << '\n'; };
+    const auto warn = [&aMod](std::string_view msg) { std::cerr << "WARNING: cannot mark-with-label seq_id:\"" << aMod.seq_id << "\" name:\"" << aMod.name << "\": " << msg << '\n'; };
 
     std::vector<Node*> nodes;
     if (!aMod.seq_id.empty()) {
@@ -441,7 +441,7 @@ void TreeDraw::mark_with_label(const TreeDrawMod& aMod, size_t mod_no)
 
 // ----------------------------------------------------------------------
 
-void TreeDraw::mark_clade_with_line(std::string aClade, Color aColor, Pixels aLineWidth, bool aReport)
+void TreeDraw::mark_clade_with_line(std::string_view aClade, Color aColor, Pixels aLineWidth, bool aReport)
 {
     size_t marked = 0;
     bool reported = false;
@@ -475,7 +475,7 @@ void TreeDraw::mark_clade_with_line(std::string aClade, Color aColor, Pixels aLi
 
 // ----------------------------------------------------------------------
 
-void TreeDraw::mark_country_with_line(std::string aCountry, Color aColor, Pixels aLineWidth, bool aReport)
+void TreeDraw::mark_country_with_line(std::string_view aCountry, Color aColor, Pixels aLineWidth, bool aReport)
 {
     size_t marked = 0;
     bool reported = false;
@@ -510,7 +510,7 @@ void TreeDraw::mark_country_with_line(std::string aCountry, Color aColor, Pixels
 
 // ----------------------------------------------------------------------
 
-void TreeDraw::mark_location_with_line(std::string aLocation, Color aColor, Pixels aLineWidth, bool aReport)
+void TreeDraw::mark_location_with_line(std::string_view aLocation, Color aColor, Pixels aLineWidth, bool aReport)
 {
     size_t marked = 0;
     bool reported = false;
@@ -1157,9 +1157,9 @@ void HzSections::report(std::ostream& out) const
 
 // ----------------------------------------------------------------------
 
-void HzSections::report_html(std::string filename) const
+void HzSections::report_html(std::string_view filename) const
 {
-    std::ofstream out(filename.c_str());
+    std::ofstream out(filename.data());
     out << "<!DOCTYPE html>\n<html>\n<head>\n<meta charset=\"utf-8\" />\n<title>HZ sections report</title>\n</head>\n<body>\n"
         << "\n"
         << "</body>\n</html>\n";
@@ -1258,7 +1258,7 @@ void HzSections::detect_hz_lines_for_clades(Tree& aTree, const Clades* aClades, 
 
 // ----------------------------------------------------------------------
 
-acmacs::settings::v1::array_element<HzSection> HzSections::add(std::string seq_id, bool show_line, std::string clade, size_t aa_pos, bool first_in_clade)
+acmacs::settings::v1::array_element<HzSection> HzSections::add(std::string_view seq_id, bool show_line, std::string_view clade, size_t aa_pos, bool first_in_clade)
 {
     // std::cerr << "DEBUG: hz sections " << sections.size() << DEBUG_LINE_FUNC << '\n';
     const std::string clade_tag = string::concat(clade, ':', first_in_clade ? "first" : "last");
@@ -1266,12 +1266,12 @@ acmacs::settings::v1::array_element<HzSection> HzSections::add(std::string seq_i
     if (auto found = find_section(seq_id); !found) {
         // std::cerr << "DEBUG: add hz section: " << seq_id << '\n';
         auto sec = sections.append();
-        sec->name = seq_id;
+        sec->name = std::string{seq_id};
         sec->show_line = show_line;
         if (!clade.empty()) {
             sec->triggering_clades.append(clade_tag);
             if (first_in_clade)
-                sec->label = clade;
+                sec->label = std::string{clade};
         }
         if (aa_pos > 0)
             sec->triggering_aa_pos.append(aa_pos);
@@ -1290,7 +1290,7 @@ acmacs::settings::v1::array_element<HzSection> HzSections::add(std::string seq_i
 
 // ----------------------------------------------------------------------
 
-void HzSections::add(const Tree& tree, const Node& first, const Node& last, bool show_line, std::string clade, size_t aa_pos)
+void HzSections::add(const Tree& tree, const Node& first, const Node& last, bool show_line, std::string_view clade, size_t aa_pos)
 {
     add(first.seq_id, show_line, clade, aa_pos, true);
     if (const Node* next_node = tree.find_leaf_by_line_no(last.draw.line_no + 1); next_node)
@@ -1300,12 +1300,12 @@ void HzSections::add(const Tree& tree, const Node& first, const Node& last, bool
 
 // ----------------------------------------------------------------------
 
-acmacs::settings::v1::array_element<HzSection> HzSections::add(std::string aa_transition, bool show_line)
+acmacs::settings::v1::array_element<HzSection> HzSections::add(std::string_view aa_transition, bool show_line)
 {
     auto sec = sections.append();
-    sec->aa_transition = aa_transition;
+    sec->aa_transition = std::string{aa_transition};
     sec->show_line = show_line;
-    sec->triggering_clades.append(aa_transition);
+    sec->triggering_clades.append(std::string{aa_transition});
     return sec;
 
 } // HzSections::add
@@ -1347,12 +1347,12 @@ void AATransitionIndividualSettingsForLabel::update(const AATransitionIndividual
 
 // ----------------------------------------------------------------------
 
-AATransitionIndividualSettingsForLabel AATransitionPerBranchDrawSettings::settings_for_label(const AA_TransitionLabels& aLabels, std::string aFirstLeafSeqid) const
+AATransitionIndividualSettingsForLabel AATransitionPerBranchDrawSettings::settings_for_label(const AA_TransitionLabels& aLabels, std::string_view aFirstLeafSeqid) const
 {
     AATransitionIndividualSettingsForLabel result(*this);
     auto match_entry = [label = aLabels.label(), aFirstLeafSeqid](const AATransitionIndividualSettings& entry) {
-                           return entry.label == label && (entry.first_leaf_seq_id == "" || entry.first_leaf_seq_id == aFirstLeafSeqid);
-                       };
+        return entry.label == label && (entry.first_leaf_seq_id == "" || entry.first_leaf_seq_id == std::string{aFirstLeafSeqid});
+    };
     if (auto found = by_aa_label.find_if(match_entry); found) {
         result.update(*found);
     }

@@ -52,10 +52,10 @@ class AATransitionIndividualSettings : public acmacs::settings::v1::object
   public:
     using acmacs::settings::v1::object::object;
 
-    void set_label_disabled_offset(std::string aLabel, std::string aFirstLeafSeqid, acmacs::Offset&& /*aLabelOffset*/)
+    void set_label_disabled_offset(std::string_view aLabel, std::string_view aFirstLeafSeqid, acmacs::Offset&& /*aLabelOffset*/)
     {
-        label = aLabel;
-        first_leaf_seq_id = aFirstLeafSeqid;
+        label = std::string{aLabel};
+        first_leaf_seq_id = std::string{aFirstLeafSeqid};
           // label_offset_commented = std::move(aLabelOffset);
     }
 
@@ -97,7 +97,7 @@ class AATransitionPerBranchDrawSettings : public acmacs::settings::v1::object
     acmacs::settings::v1::field<Color>                                   label_connection_line_color{this, "label_connection_line_color", "black"};
     acmacs::settings::v1::field_array_of<AATransitionIndividualSettings> by_aa_label{this, "by_aa_label"};
 
-    AATransitionIndividualSettingsForLabel settings_for_label(const AA_TransitionLabels& aLabels, std::string aFirstLeafSeqid) const;
+    AATransitionIndividualSettingsForLabel settings_for_label(const AA_TransitionLabels& aLabels, std::string_view aFirstLeafSeqid) const;
 
     void remove_for_tree_settings();
     void remove_for_signature_page_settings();
@@ -263,7 +263,7 @@ class TreeDrawSettings : public acmacs::settings::v1::object
     acmacs::settings::v1::field_object<AATransitionDrawSettings>    aa_transition{this, "aa_transition"};
     acmacs::settings::v1::field_object<LegendSettings>              legend{this, "legend"};
 
-    // const acmacs::settings::v1::const_array_element<TreeDrawMod> find_mark_with_label_mod(std::string aSeqId) const
+    // const acmacs::settings::v1::const_array_element<TreeDrawMod> find_mark_with_label_mod(std::string_view aSeqId) const
     // {
     //     if (auto found = mods.find_if([&](const auto& val) { return val.mod == "mark-with-label" && val.seq_id == aSeqId; }); found)
     //         return *found;
@@ -287,7 +287,7 @@ class HzSection : public acmacs::settings::v1::object
 {
  public:
     using acmacs::settings::v1::object::object;
-    // HzSection(std::string aName = std::string{}, bool aShowLine = true);
+    // HzSection(std::string_view aName = std::string{}, bool aShowLine = true);
     // HzSection(const Node& aFirst, bool aShow, bool aShowLine, bool aShowMap);
 
     acmacs::settings::v1::field<bool>              show{this, "show", true};
@@ -336,15 +336,15 @@ class HzSections : public acmacs::settings::v1::object
 
     void sort(const Tree& aTree);
     void report(std::ostream& out) const;
-    void report_html(std::string filename) const;
+    void report_html(std::string_view filename) const;
     // void auto_detect(Tree& aTree, const Clades* aClades);
     void detect_hz_lines_for_clades(Tree& aTree, const Clades* aClades, bool aForce);
     void convert_aa_transitions(Tree& tree); // to name based hz sections
-    acmacs::settings::v1::array_element<HzSection> add(std::string seq_id, bool show_line, std::string clade, size_t aa_pos, bool first_in_clade);
-    void add(const Tree& tree, const Node& first, const Node& last, bool show_line, std::string clade, size_t aa_pos);
-    acmacs::settings::v1::array_element<HzSection> add(std::string aa_transition, bool show_line);
-    auto find_section(std::string seq_id) const { return sections.find_if([&seq_id](const auto& sect) { return sect.name == seq_id; }); }
-    auto find_section(std::string seq_id)  { return sections.find_if([&seq_id](const auto& sect) { return sect.name == seq_id; }); }
+    acmacs::settings::v1::array_element<HzSection> add(std::string_view seq_id, bool show_line, std::string_view clade, size_t aa_pos, bool first_in_clade);
+    void add(const Tree& tree, const Node& first, const Node& last, bool show_line, std::string_view clade, size_t aa_pos);
+    acmacs::settings::v1::array_element<HzSection> add(std::string_view aa_transition, bool show_line);
+    auto find_section(std::string_view seq_id) const { return sections.find_if([&seq_id](const auto& sect) { return sect.name == std::string{seq_id}; }); }
+    auto find_section(std::string_view seq_id)  { return sections.find_if([&seq_id](const auto& sect) { return sect.name == std::string{seq_id}; }); }
 
     size_t shown_maps() const
         {
@@ -423,23 +423,23 @@ class TreeDraw
     void fit_labels_into_viewport();
     void calculate_name_offset();
 
-    double text_width(std::string text) { return mSurface.text_size(text, mFontSize, mSettings.label_style).width; }
+    double text_width(std::string_view text) { return mSurface.text_size(text, mFontSize, mSettings.label_style).width; }
     double max_label_offset();
 
     void make_coloring();
 
     // void unhide();
-    void hide_isolated_before(std::string aDate);
+    void hide_isolated_before(std::string_view aDate);
     void hide_if_cumulative_edge_length_bigger_than(double aThreshold);
     void hide_before2015_58P_or_146I_or_559I();
-    void hide_between(std::string aFirst, std::string aLast);
-    void hide_one(std::string aName);
+    void hide_between(std::string_view aFirst, std::string_view aLast);
+    void hide_one(std::string_view aName);
     void hide_not_found_in_chart();
-    void mark_with_line(std::string aName, Color aColor, Pixels aLineWidth);
-    void mark_aa_with_line(std::string aPos1AA, Color aColor, Pixels aLineWidth, bool aReport);
-    void mark_clade_with_line(std::string aClade, Color aColor, Pixels aLineWidth, bool aReport);
-    void mark_country_with_line(std::string aCountry, Color aColor, Pixels aLineWidth, bool aReport);
-    void mark_location_with_line(std::string aLocation, Color aColor, Pixels aLineWidth, bool aReport);
+    void mark_with_line(std::string_view aName, Color aColor, Pixels aLineWidth);
+    void mark_aa_with_line(std::string_view aPos1AA, Color aColor, Pixels aLineWidth, bool aReport);
+    void mark_clade_with_line(std::string_view aClade, Color aColor, Pixels aLineWidth, bool aReport);
+    void mark_country_with_line(std::string_view aCountry, Color aColor, Pixels aLineWidth, bool aReport);
+    void mark_location_with_line(std::string_view aLocation, Color aColor, Pixels aLineWidth, bool aReport);
     void mark_having_serum_with_line(Color aColor, Pixels aLineWidth);
     void mark_with_label(const TreeDrawMod& aMod, size_t mod_no);
     static void hide_branch(Node& aNode);
