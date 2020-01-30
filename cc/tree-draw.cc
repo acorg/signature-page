@@ -933,7 +933,7 @@ void TreeDraw::report_aa_transitions()
                       << "\"label_offset\": [-40, 20], "
                       << "\"first_leaf_seq_id\": " << std::setw(node_width + 4) << std::left << string::concat('"', tr.first_leaf, "\",")
                       << "\"?strains\":" << std::setw(4) << std::right << tr.number_strains
-                      << ", \"?origin\": [" << std::setprecision(0) << tr.origin.x() << ',' << tr.origin.y() << "]},\n";
+                      << ", \"?origin\": [" << std::setprecision(0) << std::fixed << tr.origin.x() << ',' << tr.origin.y() << "]},\n";
         }
     }
 
