@@ -30,9 +30,9 @@ class NodeData
     bool has_sequence() const { return static_cast<bool>(mSeqdbRef); }
 
     std::string_view date() const { return has_sequence() ? mSeqdbRef.entry->date() : std::string_view{}; }
-    std::string_view amino_acids() const { return has_sequence() ? mSeqdbRef.seq().aa_aligned() : std::string_view{}; }
+    std::string_view amino_acids() const { return has_sequence() ? mSeqdbRef.aa_aligned(acmacs::seqdb::get()) : std::string_view{}; }
     const std::vector<std::string_view>* clades() const { return has_sequence() ? &mSeqdbRef.seq().clades : nullptr; }
-    bool has_clade(std::string_view clade) const { return has_sequence() && mSeqdbRef.seq().has_clade(clade); }
+    bool has_clade(std::string_view clade) const { return has_sequence() && mSeqdbRef.has_clade(acmacs::seqdb::get(), clade); }
     std::string_view country() const { return has_sequence() ? mSeqdbRef.entry->country : std::string_view{}; }
     std::string location() const { return has_sequence() ? mSeqdbRef.entry->location() : std::string{}; }
     bool matches(const acmacs::seqdb::amino_acid_at_pos1_eq_list_t& list_pos1_aa) const { return has_sequence() && mSeqdbRef.matches(list_pos1_aa); }

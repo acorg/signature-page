@@ -45,7 +45,7 @@ int main(int argc, const char* const* argv)
             const auto& entry = per_antigen[ag_no];
             if (entry) {
                 // std::cout << "entry " << entry.entry().name() << " -- " << antigen->full_name() << '\n';
-                const auto seq = entry.seq().aa_aligned();
+                const auto seq = entry.aa_aligned(seqdb);
                 for (auto bp : sBjornPos)
                     DF::second_field(data_csv, seq[bp - 1]);
                 if (auto node = tree.find_leaf_by_seqid(*entry.seq_id()); node) {
