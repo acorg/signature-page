@@ -197,11 +197,11 @@ namespace
                 //     mod->mod = "hide-one";
                 //     mod->s1 = "A%28H1N1%29/PARANA/763/2018__OR";
                 // }
-                // {
-                // auto mod = tree_draw.settings().mods.append();
-                // mod->mod_help = "hide-if-cumulative-edge-length-bigger-than";
-                // mod->d1 = 0.021;
-                // }
+                {
+                    auto mod = tree_draw.settings().mods.append();
+                    mod->mod_help = "?hide-if-cumulative-edge-length-bigger-than";
+                    mod->d1 = 0.04;
+                }
 
                 {
                     // most recent vaccine
@@ -322,7 +322,7 @@ namespace
 
             if (whocc_support) {
                 auto mod1 = tree_draw.settings().mods.append();
-                mod1->mod = "hide-if-cumulative-edge-length-bigger-than";
+                mod1->mod = "?hide-if-cumulative-edge-length-bigger-than";
                 mod1->d1 = 0.04;
 
                 // most recent vaccine
@@ -565,7 +565,7 @@ namespace
             if (whocc_support) {
                 {
                     auto mod = tree_draw.settings().mods.append();
-                    mod->mod = "hide-if-cumulative-edge-length-bigger-than";
+                    mod->mod = "?hide-if-cumulative-edge-length-bigger-than";
                     mod->d1 = cumulative_threshold;
                 }
                 {
@@ -716,7 +716,7 @@ namespace
             if (whocc_support) {
                 {
                     auto mod = tree_draw.settings().mods.append();
-                    mod->mod = "hide-if-cumulative-edge-length-bigger-than";
+                    mod->mod = "?hide-if-cumulative-edge-length-bigger-than";
                     mod->d1 = 0.043;
                 }
 
