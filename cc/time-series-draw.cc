@@ -137,7 +137,7 @@ void TimeSeriesDraw::draw_color_scale(const std::map<std::string, Color, std::le
 void TimeSeriesDraw::draw_month_separators(double month_width)
 {
     const auto first_month_no = static_cast<unsigned>(date::from_string(*mSettings.begin).month());
-    const auto thick_separator_base  = first_month_no - 1;
+    const auto thick_separator_base  = (13 - first_month_no) % 12;
 
     const double bottom = mSurface.viewport().size.height;
     for (size_t month_no = 0; month_no <= mNumberOfMonths; ++month_no) {
