@@ -142,7 +142,7 @@ void TimeSeriesDraw::draw_month_separators(double month_width)
     const double bottom = mSurface.viewport().size.height;
     for (size_t month_no = 0; month_no <= mNumberOfMonths; ++month_no) {
         const double left = month_no * month_width;
-        const double thickness = (month_no % 12) == thick_separator_base ? 2.0 : 1.0;
+        const double thickness = 1.0; // (month_no % 12) == thick_separator_base ? 2.0 : 1.0;
         mSurface.line({left, 0}, {left, bottom}, mSettings.month_separator_color, Pixels{mSettings.month_separator_width * thickness});
     }
 
