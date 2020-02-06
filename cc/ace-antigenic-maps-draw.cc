@@ -245,10 +245,11 @@ Color AntigenicMapsLayoutDrawAce::tracked_antigen_color_by_month(std::string_vie
         const auto& ts = antigenic_maps_draw().time_series();
         const auto months = ts.all_months();
         const auto total_colors = months.size() - 3; // [-3 for four last months in yellow]
-        mTooOldTrackedAntigenColor = Color::perceptually_uniform_heatmap(total_colors, 0);
-        mTooRecentTrackedAntigenColor = Color::perceptually_uniform_heatmap(total_colors, total_colors - 1);
+        const auto start_color = static_cast<size_t>(total_colors / 4); // avoid too dark colors at the beginning of scale on Derek's request of 2020-02-05 16:10
+        mTooOldTrackedAntigenColor = Color::perceptually_uniform_heatmap(total_colors + start_color, start_color);
+        mTooRecentTrackedAntigenColor = Color::perceptually_uniform_heatmap(total_colors + start_color, total_colors + start_color - 1);
         for (const auto [no, month] : acmacs::enumerate(months))
-            mTrackedAntigenColorByMonth[month] = Color::perceptually_uniform_heatmap(total_colors, no /* + 1 */);
+            mTrackedAntigenColorByMonth[month] = Color::perceptually_uniform_heatmap(total_colors + start_color, no + start_color /* + 1 */);
     }
     if (const auto found = mTrackedAntigenColorByMonth.find(month); found != mTrackedAntigenColorByMonth.end())
         return found->second;
