@@ -22,7 +22,7 @@ int main(int argc, const char* const* argv)
         std::string target_csv = argv[3];
         std::string target_tree_file = argv[4];
 
-        const auto seqdb = acmacs::seqdb::get();
+        const auto& seqdb = acmacs::seqdb::get();
         Tree tree = tree::tree_import(source_tree_file);
           // tree.match_seqdb(seqdb);
 
