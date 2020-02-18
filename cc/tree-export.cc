@@ -17,6 +17,7 @@ static constexpr const char* TREE_PHYLOGENETIC_VERSION = "phylogenetic-tree-v2";
 enum class TreeJsonKey : char
 {
     Subtree='t', SeqId='n', EdgeLength='l',
+    CumulativeEdgeLength='c', AASequence='a', NucSequence='N', Country='C', Continent='D', Date='d', HiNames='h', // phylogenetic-tree-v3
 
     Unknown='?'
 };
@@ -63,6 +64,20 @@ using HandlerBase = json_reader::HandlerBase<Node>;
 
 // ----------------------------------------------------------------------
 
+template <typename Target> class StringListIgnoreHandler : public json_reader::GenericListHandler<Target>
+{
+  public:
+    StringListIgnoreHandler(Target& aTarget) : json_reader::GenericListHandler<Target>(aTarget, 0) {}
+
+    virtual json_reader::HandlerBase<Target>* String(const char* /*str*/, rapidjson::SizeType /*length*/) { return nullptr; }
+
+  protected:
+    virtual inline size_t size() const { return 0; }
+
+}; // class StringListHandler
+
+// ----------------------------------------------------------------------
+
 class NewickNodeHandler : public HandlerBase
 {
   public:
@@ -80,6 +95,15 @@ class NewickNodeHandler : public HandlerBase
             switch (mKey) {
                 case TreeJsonKey::EdgeLength:
                 case TreeJsonKey::SeqId:
+                case TreeJsonKey::CumulativeEdgeLength:
+                case TreeJsonKey::AASequence:
+                case TreeJsonKey::NucSequence:
+                case TreeJsonKey::Country:
+                case TreeJsonKey::Continent:
+                case TreeJsonKey::Date:
+                    break;
+                case TreeJsonKey::HiNames:
+                    result = new StringListIgnoreHandler<Node>(mTarget);
                     break;
                 case TreeJsonKey::Subtree:
                     result = new json_reader::ListHandler<Node, Node, NewickNodeHandler>(mTarget, mTarget.subtree);
@@ -98,17 +122,45 @@ class NewickNodeHandler : public HandlerBase
 
     virtual HandlerBase* Double(double d)
     {
-        if (mKey != TreeJsonKey::EdgeLength)
-            throw json_reader::Failure();
-        mTarget.edge_length = d;
+        switch (mKey) {
+            case TreeJsonKey::EdgeLength:
+                mTarget.edge_length = d;
+                break;
+            case TreeJsonKey::CumulativeEdgeLength:
+                break;
+            case TreeJsonKey::AASequence:
+            case TreeJsonKey::NucSequence:
+            case TreeJsonKey::Country:
+            case TreeJsonKey::Continent:
+            case TreeJsonKey::Date:
+            case TreeJsonKey::SeqId:
+                case TreeJsonKey::HiNames:
+            case TreeJsonKey::Subtree:
+            case TreeJsonKey::Unknown:
+                throw json_reader::Failure();
+        }
         return nullptr;
     }
 
     virtual HandlerBase* String(const char* str, rapidjson::SizeType length)
     {
-        if (mKey != TreeJsonKey::SeqId)
-            throw json_reader::Failure();
-        mTarget.seq_id.assign(str, length);
+        switch (mKey) {
+            case TreeJsonKey::SeqId:
+                mTarget.seq_id.assign(str, length);
+                break;
+            case TreeJsonKey::AASequence:
+            case TreeJsonKey::NucSequence:
+            case TreeJsonKey::Country:
+            case TreeJsonKey::Continent:
+            case TreeJsonKey::Date:
+                break;
+            case TreeJsonKey::EdgeLength:
+            case TreeJsonKey::CumulativeEdgeLength:
+            case TreeJsonKey::Subtree:
+                case TreeJsonKey::HiNames:
+            case TreeJsonKey::Unknown:
+                throw json_reader::Failure();
+        }
         return nullptr;
     }
 
