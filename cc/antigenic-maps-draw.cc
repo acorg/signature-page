@@ -222,11 +222,12 @@ AntigenicMapsDrawSettings::AntigenicMapsDrawSettings(acmacs::settings::v1::base&
     m9->outline_width = 0.5;
     m9->size = 5.0; // tracked sera above tracked antigens!
     auto m10 = mods.append();
-    m10->name = "?tracked_serum_circles";
+    m10->name_commented = "tracked_serum_circles";
     m10->outline = BLACK; // "passage";
     m10->outline_width = 0.5; // tracked serum circles above tracked antigens!
+    m10->serum_circle_radius_if_not_calculated = 2.0;
     auto m11 = mods.append();
-    m11->name = "?serum_circle";
+    m11->name_commented = "serum_circle";
     m11->map = "A";
     m11->serum = "A(H3N2)/SOUTH CAROLINA/4/2017 CDC 2017-106";
     m11->outline = BLACK;

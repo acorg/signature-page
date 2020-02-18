@@ -491,14 +491,16 @@ bool AntigenicMapsLayoutDrawAce::make_serum_circle(const AntigenicMapMod& mod, s
     auto serum = chart().serum(serum_no);
     double radius{-1.0};
     Color outline_color{PINK};
+    bool radius_forced{false};
     if (const auto radius_p = std::find_if(radii.begin(), radii.end(), [](double r) -> bool { return r >= 0.0; }); radius_p != radii.end()) {
         radius = *radius_p;
         outline_color = serum_circle_outline(mod, serum->is_egg(), false);
     }
     else if (mod.serum_circle_radius_if_not_calculated.is_set()) {
         radius = mod.serum_circle_radius_if_not_calculated.get_or(-1);
-        std::cerr << "INFO: forced radius: " << radius << " (cannot be calculated)\n";
+        // std::cerr << "INFO: forced radius: " << radius << " (cannot be calculated)\n";
         outline_color = serum_circle_outline(mod, serum->is_egg(), true);
+        radius_forced = true;
     }
     if (radius > 0) {
         std::cout << "INFO: serum circle for " << serum_no << ' ' << serum->full_name() << " passage:" << *serum->passage() << " passage-type:" << serum->passage_type() << " radius: " << radius << " antigens:";
@@ -515,8 +517,8 @@ bool AntigenicMapsLayoutDrawAce::make_serum_circle(const AntigenicMapMod& mod, s
         else if (radius_line_dash == "dash2")
             serum_circle.radius_line_dash2();
     }
-    else {
-        std::cerr << "WARNING: no serum circle for " << serum_no << ' ' << serum->full_name();
+    if (radius < 0 || radius_forced) {
+        std::cerr << "WARNING: no serum circle radius calculated for " << serum_no << ' ' << serum->full_name();
         if (homologous_antigens->empty()) {
             std::cerr << " no homologous antigens\n";
         }
