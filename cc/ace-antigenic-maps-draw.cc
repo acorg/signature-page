@@ -191,6 +191,14 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, std
                     chart_draw().modify(tracked_antigens(aSectionIndex, report_antigens_in_hz_sections), tracked_antigen_style, PointDrawingOrder::Raise);
                 }
             }
+            else if (mod.name == "tracked_antigens_egg") {
+                acmacs::PointStyle tracked_antigen_style;
+                tracked_antigen_style.size = Pixels{mod.size.get_or(5.0)};
+                tracked_antigen_style.outline = mod.outline.get_or(WHITE);
+                tracked_antigen_style.outline_width = Pixels{mod.outline_width.get_or(0.5)};
+                tracked_antigen_style.fill = mod.fill.get_or("grey63");
+                chart_draw().modify(tracked_antigens(aSectionIndex, report_antigens_in_hz_sections, passage_t::egg), tracked_antigen_style, PointDrawingOrder::Raise);
+            }
             else if (mod.name == "tracked_sera") {
                 const auto tracked_serum_indices = tracked_sera(aSectionIndex);
                 fmt::print("INFO: tracked_sera: {}\n", tracked_serum_indices.size());
@@ -311,14 +319,16 @@ void AntigenicMapsLayoutDrawAce::make_tracked_serum(size_t serum_index, Pixels s
 
 // ----------------------------------------------------------------------
 
-acmacs::chart::PointIndexList AntigenicMapsLayoutDrawAce::tracked_antigens(size_t aSectionIndex, bool report_antigens_in_hz_sections) const
+acmacs::chart::PointIndexList AntigenicMapsLayoutDrawAce::tracked_antigens(size_t aSectionIndex, bool report_antigens_in_hz_sections, passage_t passage) const
 {
     acmacs::chart::PointIndexList tracked_indices;
-    for (const auto& sequenced_section: sequenced_antigens()) {
+    for (const auto& sequenced_section : sequenced_antigens()) {
         if (sequenced_section.second == aSectionIndex) {
-            tracked_indices.insert(sequenced_section.first);
-            if (report_antigens_in_hz_sections) {
-                std::cout << aSectionIndex << ' ' << sequenced_section.first << ' ' << chart().antigen(sequenced_section.first)->full_name() << '\n';
+            auto antigen = chart().antigen(sequenced_section.first);
+            if (passage == passage_t::all || (passage == passage_t::egg && antigen->passage().is_egg()) || (passage == passage_t::cell && antigen->passage().is_cell())) {
+                tracked_indices.insert(sequenced_section.first);
+                if (report_antigens_in_hz_sections)
+                    std::cout << aSectionIndex << ' ' << sequenced_section.first << ' ' << antigen->full_name() << '\n';
             }
         }
     }
@@ -328,13 +338,13 @@ acmacs::chart::PointIndexList AntigenicMapsLayoutDrawAce::tracked_antigens(size_
 
 // ----------------------------------------------------------------------
 
-std::map<std::string, acmacs::chart::PointIndexList> AntigenicMapsLayoutDrawAce::tracked_antigens_per_month(size_t aSectionIndex) const
+std::map<std::string, acmacs::chart::PointIndexList> AntigenicMapsLayoutDrawAce::tracked_antigens_per_month(size_t aSectionIndex, passage_t passage) const
 {
     std::map<std::string, acmacs::chart::PointIndexList> tracked_indices;
     for (const auto& sequenced_section: sequenced_antigens()) {
         if (sequenced_section.second == aSectionIndex) {
             auto antigen = chart().antigen(sequenced_section.first);
-            if (const auto date = antigen->date(); !date.empty() && date.size() >= 7) {
+            if (const auto date = antigen->date(); !date.empty() && date.size() >= 7 && (passage == passage_t::all || (passage == passage_t::egg && antigen->passage().is_egg()) || (passage == passage_t::cell && antigen->passage().is_cell()))) {
                 const auto month = date->substr(0, 7);
                 tracked_indices[month].insert(sequenced_section.first);
                 // std::cerr << "DEBUG: " << aSectionIndex << ' ' << month << '\n';
