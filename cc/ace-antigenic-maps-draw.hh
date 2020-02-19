@@ -83,6 +83,7 @@ class AntigenicMapsLayoutDrawAce : public AntigenicMapsLayoutDraw
     acmacs::chart::PointIndexList tracked_antigens(size_t aSectionIndex, bool report_antigens_in_hz_sections, passage_t passage = passage_t::all) const;
     std::map<std::string, acmacs::chart::PointIndexList> tracked_antigens_per_month(size_t aSectionIndex, passage_t passage = passage_t::all) const;
     Color tracked_antigen_color_by_month(std::string_view month) const;
+    void tracked_antigens_20200219_gly_outline(size_t aSectionIndex);
 
     std::map<size_t, acmacs::chart::PointIndexList> tracked_sera(size_t aSectionIndex) const;
     void tracked_serum_circles(const AntigenicMapMod& mod, size_t aSectionIndex);

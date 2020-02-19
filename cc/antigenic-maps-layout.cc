@@ -88,14 +88,14 @@ void AntigenicMapsLayoutDraw::find_sequenced_antigens()
         if (aNode.draw.hz_section_index != NodeDrawData::HzSectionNoIndex)
             hz_section_index = aNode.draw.hz_section_index;
         if (aNode.draw.chart_antigen_index)
-            mSequencedAntigens[*aNode.draw.chart_antigen_index] = hz_section_index;
+            mSequencedAntigens[*aNode.draw.chart_antigen_index] = sequenced_antigen_t{hz_section_index, &aNode};
     };
 
     tree::iterate_leaf(mAntigenicMapsDraw.tree(), find_antigens);
 
     std::vector<size_t> antigens_per_section(20);
     for (auto ag_sec : mSequencedAntigens)
-        ++antigens_per_section[ag_sec.second];
+        ++antigens_per_section[ag_sec.second.section_index];
     std::cerr << "DEBUG: antigens_per_section: " << antigens_per_section << '\n';
 
 } // AntigenicMapsLayoutDraw::find_sequenced_antigens

@@ -6,6 +6,7 @@
 #include "antigenic-maps-draw.hh"
 
 class SettingsInitializer;
+class Node;
 
 // ----------------------------------------------------------------------
 
@@ -33,6 +34,13 @@ class AntigenicMapsLayoutDraw
     const auto& signature_page_settings() const { return mAntigenicMapsDraw.signature_page_settings(); }
     auto& signature_page_settings() { return mAntigenicMapsDraw.signature_page_settings(); }
     const acmacs::Viewport& viewport() const;
+
+    struct sequenced_antigen_t
+    {
+        size_t section_index;
+        const Node* node;
+    };
+
     const auto& sequenced_antigens() const { return mSequencedAntigens; }
 
  protected:
@@ -43,7 +51,7 @@ class AntigenicMapsLayoutDraw
 
  private:
     AntigenicMapsDrawBase& mAntigenicMapsDraw;
-    std::map<size_t, size_t> mSequencedAntigens; // antigen_no to section_no
+    std::map<size_t, sequenced_antigen_t> mSequencedAntigens; // antigen_no to section_no
 
 }; // class AntigenicMapsLayoutDraw
 
