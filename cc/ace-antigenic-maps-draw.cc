@@ -280,6 +280,7 @@ void AntigenicMapsLayoutDrawAce::tracked_antigens_20200219_gly_outline(size_t aS
     // 3-8. 3del 199X (rest) purple
     // 3-9. 3del 197notN (rest)  red
 
+    const Color gly{BLACK}, loss{RED}, unclear{MAGENTA};
     for (const auto ag_no : tracked_antigens(aSectionIndex, false, passage_t::all)) {
         if (const auto found = sequenced_antigens().find(ag_no); found != sequenced_antigens().end()) {
             const Node* node = found->second.node;
@@ -295,24 +296,24 @@ void AntigenicMapsLayoutDrawAce::tracked_antigens_20200219_gly_outline(size_t aS
                         switch (aa199) {
                             case 'T':
                             case 'S':
-                                tracked_antigen_style.outline = BLACK;
+                                tracked_antigen_style.outline = gly;
                                 break;
                             case 'X':
-                                tracked_antigen_style.outline = Color{0x800080};
+                                tracked_antigen_style.outline = unclear;
                                 break;
                             default:
-                                tracked_antigen_style.outline = RED;
+                                tracked_antigen_style.outline = loss;
                                 break;
                         }
                         break;
                     case 'X':
                         if (aa199 == 'T' || aa199 == 'S' || aa199 == 'X')
-                            tracked_antigen_style.outline = Color{0x800080};
+                            tracked_antigen_style.outline = unclear;
                         else
-                            tracked_antigen_style.outline = RED;
+                            tracked_antigen_style.outline = loss;
                         break;
                     default:
-                        tracked_antigen_style.outline = RED;
+                        tracked_antigen_style.outline = loss;
                         break;
                 }
             }
