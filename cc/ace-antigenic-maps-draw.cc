@@ -284,13 +284,14 @@ void AntigenicMapsLayoutDrawAce::tracked_antigens_20200219_gly_outline(size_t aS
     for (const auto ag_no : tracked_antigens(aSectionIndex, false, passage_t::all)) {
         if (const auto found = sequenced_antigens().find(ag_no); found != sequenced_antigens().end()) {
             const Node* node = found->second.node;
-            const auto aa162 = node->data.amino_acids().at(162 - 1);
-            const auto aa163 = node->data.amino_acids().at(163 - 1);
+            auto antigen = chart_draw().chart().antigen(ag_no);
+            // const auto aa162 = node->data.amino_acids().at(162 - 1);
+            // const auto aa163 = node->data.amino_acids().at(163 - 1);
             // const auto aa164 = node->data.amino_acids().at(164 - 1);
             const auto aa197 = node->data.amino_acids().at(197 - 1);
             const auto aa199 = node->data.amino_acids().at(199 - 1);
             acmacs::PointStyle tracked_antigen_style;
-            if (aa162 == '-' && aa163 == '-') { // 2del and 3del
+            // if (aa162 == '-' && aa163 == '-') { // 2del and 3del
                 switch (aa197) {
                     case 'N':
                         switch (aa199) {
@@ -316,10 +317,11 @@ void AntigenicMapsLayoutDrawAce::tracked_antigens_20200219_gly_outline(size_t aS
                         tracked_antigen_style.outline = loss;
                         break;
                 }
-            }
-            else {
-                tracked_antigen_style.outline = BLACK;
-            }
+                fmt::print(stderr, "DEBUG: 2/3del {} {}\n", tracked_antigen_style.outline->to_string(), antigen->full_name());
+            // }
+            // else {
+            //     tracked_antigen_style.outline = BLACK;
+            // }
             if (tracked_antigen_style.outline == BLACK)
                 chart_draw().modify(ag_no, tracked_antigen_style);
             else
