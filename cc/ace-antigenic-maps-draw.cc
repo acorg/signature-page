@@ -599,9 +599,11 @@ bool AntigenicMapsLayoutDrawAce::make_serum_circle(const AntigenicMapMod& mod, s
         radius_forced = true;
     }
     if (radius > 0) {
-        std::cout << "INFO: serum circle for " << serum_no << ' ' << serum->full_name() << " passage:" << *serum->passage() << " passage-type:" << serum->passage_type() << " radius: " << radius << " antigens:";
-        report_homologous_antigens(std::cout, chart());
-        std::cout << '\n';
+        if (!radius_forced) {
+            std::cout << fmt::format("INFO: serum circle {:7.4f}  SR {:3d} {} ({})  AG: ", radius, serum_no, serum->full_name_with_passage(), serum->passage_type());
+            report_homologous_antigens(std::cout, chart());
+            std::cout << '\n';
+        }
         auto& serum_circle = chart_draw().serum_circle(serum_no, Scaled{radius});
         serum_circle.fill(mod.fill.get_or(TRANSPARENT)).outline(outline_color, mod.outline_width.get_or(1.0)).radius_line(mod.radius_line.get_or(TRANSPARENT), mod.radius_line_width.get_or(1.0));
         //.angles(mod.get["angle_degrees"][0] * math.pi / 180.0, mod.get["angle_degrees"][1] * math.pi / 180.0);
@@ -614,12 +616,11 @@ bool AntigenicMapsLayoutDrawAce::make_serum_circle(const AntigenicMapMod& mod, s
             serum_circle.radius_line_dash2();
     }
     if (radius < 0 || radius_forced) {
-        std::cerr << "WARNING: no serum circle radius calculated for " << serum_no << ' ' << serum->full_name();
+        std::cerr << fmt::format("WARNING: No serum circle SR {:3d} {} ({}) AG:", serum_no, serum->full_name_with_passage(), serum->passage_type());
         if (homologous_antigens->empty()) {
-            std::cerr << " no homologous antigens\n";
+            std::cerr << " no homologous\n";
         }
         else {
-            std::cerr << " antigens and titers:";
             report_homologous_antigens(std::cerr, chart());
             std::cerr << '\n';
         }
