@@ -174,7 +174,7 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, std
                     tracked_antigen_style.outline = mod.outline.get_or(WHITE);
                 tracked_antigen_style.outline_width = Pixels{mod.outline_width.get_or(0.5)};
                 if (const auto& fill_raw = mod.fill.get(); fill_raw == "by_date") {
-                    for (const auto& [month, tracked] : tracked_antigens_per_month(aSectionIndex)) {
+                    for (const auto& [month, tracked] : tracked_antigens_per_month(aSectionIndex, report_antigens_in_hz_sections)) {
                         // std::cerr << "DEBUG: tracked_antigens by month " << month <<  ' ' << tracked << '\n';
                         if (!tracked->empty()) {
                             tracked_antigen_style.fill = tracked_antigen_color_by_month(month);
@@ -424,7 +424,7 @@ acmacs::chart::PointIndexList AntigenicMapsLayoutDrawAce::tracked_antigens(size_
 
 // ----------------------------------------------------------------------
 
-std::map<std::string, acmacs::chart::PointIndexList> AntigenicMapsLayoutDrawAce::tracked_antigens_per_month(size_t aSectionIndex, passage_t passage) const
+std::map<std::string, acmacs::chart::PointIndexList> AntigenicMapsLayoutDrawAce::tracked_antigens_per_month(size_t aSectionIndex, bool report_antigens_in_hz_sections, passage_t passage) const
 {
     std::map<std::string, acmacs::chart::PointIndexList> tracked_indices;
     for (const auto& sequenced_section: sequenced_antigens()) {
@@ -433,7 +433,12 @@ std::map<std::string, acmacs::chart::PointIndexList> AntigenicMapsLayoutDrawAce:
             if (const auto date = antigen->date(); !date.empty() && date.size() >= 7 && (passage == passage_t::all || (passage == passage_t::egg && antigen->passage().is_egg()) || (passage == passage_t::cell && antigen->passage().is_cell()))) {
                 const auto month = date->substr(0, 7);
                 tracked_indices[month].insert(sequenced_section.first);
-                // std::cerr << "DEBUG: " << aSectionIndex << ' ' << month << '\n';
+                if (report_antigens_in_hz_sections) {
+                    fmt::print(stderr, "AG {:4d} {}", sequenced_section.first, antigen->full_name());
+                    if (const auto* clades = sequenced_section.second.node->data.clades(); clades)
+                        fmt::print(stderr, "{}", *clades);
+                    fmt::print(stderr, "\n");
+                }
             }
         }
     }

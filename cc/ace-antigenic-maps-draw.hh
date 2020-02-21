@@ -81,7 +81,7 @@ class AntigenicMapsLayoutDrawAce : public AntigenicMapsLayoutDraw
 
     enum class passage_t { all, egg, cell };
     acmacs::chart::PointIndexList tracked_antigens(size_t aSectionIndex, bool report_antigens_in_hz_sections, passage_t passage = passage_t::all) const;
-    std::map<std::string, acmacs::chart::PointIndexList> tracked_antigens_per_month(size_t aSectionIndex, passage_t passage = passage_t::all) const;
+    std::map<std::string, acmacs::chart::PointIndexList> tracked_antigens_per_month(size_t aSectionIndex, bool report_antigens_in_hz_sections, passage_t passage = passage_t::all) const;
     Color tracked_antigen_color_by_month(std::string_view month) const;
     void tracked_antigens_20200219_gly_outline(size_t aSectionIndex);
 
