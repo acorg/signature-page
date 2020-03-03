@@ -1245,7 +1245,7 @@ void HzSections::detect_hz_lines_for_clades(Tree& aTree, const Clades* aClades, 
                 if (clade.second.shown()) {
                     for (const auto& sect : clade.second.sections) {
                         if (clade.first != "GLY" && clade.first != "NO-GLY") {
-                            // std::cerr << "DEBUG: clade: " << clade.first << ' ' << s << DEBUG_LINE_FUNC << '\n';
+                            // std::cerr << "DEBUG: clade: " << clade.first << ' ' << s << DEBUG_FILE_LINE_FUNC << '\n';
                             add(aTree, *sect.first, *sect.last, false, clade.first, 0);
                         }
                     }
@@ -1260,7 +1260,7 @@ void HzSections::detect_hz_lines_for_clades(Tree& aTree, const Clades* aClades, 
 
 acmacs::settings::v1::array_element<HzSection> HzSections::add(std::string_view seq_id, bool show_line, std::string_view clade, size_t aa_pos, bool first_in_clade)
 {
-    // std::cerr << "DEBUG: hz sections " << sections.size() << DEBUG_LINE_FUNC << '\n';
+    // std::cerr << "DEBUG: hz sections " << sections.size() << DEBUG_FILE_LINE_FUNC << '\n';
     const std::string clade_tag = string::concat(clade, ':', first_in_clade ? "first" : "last");
     // if (auto found = sections.find_if([&seq_id](const auto& sect) { return sect.name == seq_id; }); !found) {
     if (auto found = find_section(seq_id); !found) {

@@ -14,7 +14,7 @@ void MappedAntigensDraw::prepare()
     if (matched_names)
         std::cout << "INFO: tree sequences found in the chart: " << matched_names << '\n';
     // else
-    //     std::cerr << "WARNING: No tree sequences found in the chart" << DEBUG_LINE_FUNC << '\n';
+    //     std::cerr << "WARNING: No tree sequences found in the chart" << DEBUG_FILE_LINE_FUNC << '\n';
 
     // std::set<std::string> matched_names;
     // auto match_chart_antigens = [this,&matched_names](Node& aNode) {
@@ -43,7 +43,7 @@ void MappedAntigensDraw::prepare()
     // if (matched_names.size())
     //     std::cout << "Tree sequences found in the chart: " << matched_names.size() << '\n';
     // else
-    //     std::cerr << "WARNING: No tree sequences found in the chart" << DEBUG_LINE_FUNC << '\n';
+    //     std::cerr << "WARNING: No tree sequences found in the chart" << DEBUG_FILE_LINE_FUNC << '\n';
 
     // // std::cerr << "DEBUG: Matched names:" << '\n' << "  ";
     // // std::copy(matched_names.begin(), matched_names.end(), polyfill::make_ostream_joiner(std::cerr, "\n  "));

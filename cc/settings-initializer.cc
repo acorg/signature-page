@@ -379,7 +379,7 @@ namespace
                     if (node.data.aa_transitions.size() == 1 && node.data.aa_transitions.contains("T135K") && node.data.number_strains > 200) {
                         auto section = tree_draw.hz_sections().add(find_first_leaf(node).seq_id, true, std::string{}, 0, true);
                         section->label = "2a1b 135K";
-                        // std::cerr << "DEBUG: " << node.data.aa_transitions << ' ' << node.data.number_strains << DEBUG_LINE_FUNC << '\n';
+                        // std::cerr << "DEBUG: " << node.data.aa_transitions << ' ' << node.data.number_strains << DEBUG_FILE_LINE_FUNC << '\n';
                     }
                     else if (node.data.aa_transitions.contains("K135N") && node.data.number_strains > 100) {
                         auto section = tree_draw.hz_sections().add(find_first_leaf(node).seq_id, true, std::string{}, 0, true);

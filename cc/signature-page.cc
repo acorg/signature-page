@@ -137,7 +137,7 @@ void SignaturePageDraw::init_settings(bool show_aa_at_pos, bool whocc_support)
     if (mTimeSeriesDraw)
         mTimeSeriesDraw->init_settings(*settings_initilizer);
 
-    // std::cerr << "DEBUG: " << mSettings->hz_sections->pretty() << DEBUG_LINE_FUNC << '\n';
+    // std::cerr << "DEBUG: " << mSettings->hz_sections->pretty() << DEBUG_FILE_LINE_FUNC << '\n';
 
 } // SignaturePageDraw::init_settings
 
