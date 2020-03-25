@@ -1,5 +1,6 @@
 #include "acmacs-base/stream.hh"
 #include "acmacs-base/enumerate.hh"
+#include "acmacs-base/color-distinct.hh"
 #include "aa-at-pos-draw.hh"
 #include "tree.hh"
 #include "tree-draw.hh"
@@ -95,7 +96,7 @@ void AAAtPosDraw::set_colors()
             std::sort(aas.begin(), aas.end(), [&](char aa1, char aa2) { return aa_freq.find(aa1)->second > aa_freq.find(aa2)->second; }); // most frequent aa first
             // std::cout << pos << ' ' << aas << ' ' << aa_freq << '\n';
             for (size_t no = 1; no < aas.size(); ++no) // no color for the most frequent aa
-                colors_[pos].emplace(aas[no], Color::distinct(no));
+                colors_[pos].emplace(aas[no], acmacs::color::distinct(no));
         }
     }
 

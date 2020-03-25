@@ -74,7 +74,7 @@ class CladeDrawSettings : public acmacs::settings::v1::object
     acmacs::settings::v1::field<Color>                          label_color{this, "label_color", BLACK};
     acmacs::settings::v1::field<double>                         label_size{this, "label_size", 11};
     acmacs::settings::v1::field<acmacs::TextStyle>              label_style{this, "label_style", {}};
-    acmacs::settings::v1::field<double>                         label_rotation{this, "label_rotation", 0};
+    acmacs::settings::v1::field<double>                         label_rotation{this, "label_rotation", 0.0};
     acmacs::settings::v1::field<int>                            slot{this, "slot", NoSlot};
     acmacs::settings::v1::field<std::string>                    last_node{this, "last_node", ""}; // seq_id of the last node, to enforce the last node
 

@@ -34,8 +34,8 @@ class AAAtPosDrawSettings : public acmacs::settings::v1::object
  public:
     using acmacs::settings::v1::object::object;
 
-    acmacs::settings::v1::field<double>                  width{this, "width", 0};
-    acmacs::settings::v1::field<double>                  right_margin{this, "right_margin", 0};
+    acmacs::settings::v1::field<double>                  width{this, "width", 0.0};
+    acmacs::settings::v1::field<double>                  right_margin{this, "right_margin", 0.0};
     acmacs::settings::v1::field<double>                  line_width{this, "line_width", 0.15};
     acmacs::settings::v1::field<double>                  line_length{this, "line_length", 0.5};         // fraction of the surface width
     acmacs::settings::v1::field<size_t>                  diverse_index_threshold{this, "diverse_index_threshold", 3};

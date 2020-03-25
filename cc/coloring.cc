@@ -1,3 +1,5 @@
+#include "acmacs-base/color-continent.hh"
+#include "acmacs-base/color-distinct.hh"
 #include "acmacs-draw/continent-map.hh"
 
 #include "coloring.hh"
@@ -8,7 +10,7 @@
 
 Color ColoringByContinent::color(const Node& aNode) const
 {
-    return continent_color(aNode.data.continent);
+    return acmacs::continent_color(aNode.data.continent);
 
 } // ColoringByContinent::color
 
@@ -69,7 +71,7 @@ Color ColoringByPos::color(const Node& aNode) const
             }
         }
         else {
-            auto distinct_colors = Color::distinct();
+            auto distinct_colors = acmacs::color::distinct();
             try {
                 auto& cc = mUsed.at(aa);
                 ++cc.second;
@@ -92,7 +94,7 @@ void ColoringByPos::report() const
 {
     std::cout << "ColoringByPos: " << mUsed.size();
     for (const auto& u: mUsed)
-        std::cout << " [" << u.first << ' ' << u.second.first << ' ' << u.second.second << ']';
+        std::cout << fmt::format(" [{} {} {}]", u.first, u.second.first, u.second.second);
     std::cout << '\n';
 
 } // ColoringByPos::report
@@ -119,7 +121,7 @@ class ColoringByPosLegend : public Legend
                 aSurface.text(origin, text, label_color.second.first, Pixels{aSettings.text_size}, aSettings.text_style);
                 max_width = std::max(max_width, aSurface.text_size(text, Pixels{aSettings.text_size}, aSettings.text_style).width);
             }
-            aSurface.text({(max_width - title_size.width) / 2, title_size.height}, mTitle, "black", Pixels{aSettings.title_size}, aSettings.title_style);
+            aSurface.text({(max_width - title_size.width) / 2, title_size.height}, mTitle, BLACK, Pixels{aSettings.title_size}, aSettings.title_style);
         }
 
     virtual acmacs::Size size() const

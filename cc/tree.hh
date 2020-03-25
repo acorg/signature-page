@@ -9,7 +9,7 @@
 #include <optional>
 
 #include "acmacs-base/date.hh"
-#include "acmacs-base/color.hh"
+#include "acmacs-base/color-modifier.hh"
 #include "acmacs-base/size-scale.hh"
 #include "seqdb-3/seqdb.hh"
 #include "aa_transitions.hh"
@@ -71,7 +71,7 @@ class NodeDrawData
     size_t line_no = 0;
     size_t hz_section_index = HzSectionNoIndex;
     double vertical_pos = -1;
-    Color mark_with_line = ColorNoChange;
+    acmacs::color::Modifier mark_with_line{acmacs::color::no_change};
     Pixels mark_with_line_width{0};
     std::optional<size_t> chart_antigen_index;
     size_t matched_antigens = 0; // for parent nodes only

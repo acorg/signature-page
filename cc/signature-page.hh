@@ -74,7 +74,7 @@ class SignaturePageDrawSettings : public acmacs::settings::v1::object
         bottom{this, "bottom", 60},
         left{this, "left", 50},
         right{this, "right", 20},
-        tree_margin_right{this, "tree_margin_right", 0},
+        tree_margin_right{this, "tree_margin_right", 0.0},
         mapped_antigens_margin_right{this, "mapped_antigens_margin_right", 10},
         time_series_width{this, "time_series_width", 400},
         clades_width{this, "clades_width", 100},

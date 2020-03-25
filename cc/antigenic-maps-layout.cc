@@ -57,7 +57,7 @@ void AntigenicMapsLayoutDraw::apply_mods_before(acmacs::surface::Surface& aSurfa
                 aSurface.rectangle_filled(v.origin, v.size, color, Pixels{0}, color);
             }
             else if (mod.name == "grid") {
-                aSurface.grid(Scaled{1}, mod.color.get_or("grey80"), Pixels{mod.line_width.get_or(1.0)});
+                aSurface.grid(Scaled{1}, mod.color.get_or(Color{"grey80"}), Pixels{mod.line_width.get_or(1.0)});
             }
         }
     });

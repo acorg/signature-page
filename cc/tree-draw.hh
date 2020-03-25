@@ -88,10 +88,10 @@ class AATransitionPerBranchDrawSettings : public acmacs::settings::v1::object
     acmacs::settings::v1::field<bool>                                    show{this, "show", true};
     acmacs::settings::v1::field<double>                                  size{this, "size", 8};
     acmacs::settings::v1::field<Color>                                   color{this, "color", "black"};
-    acmacs::settings::v1::field<acmacs::TextStyle>                       style{this, "style", {"Courier New"}};
+    acmacs::settings::v1::field<acmacs::TextStyle>                       style{this, "style", acmacs::TextStyle{"Courier New"}};
     acmacs::settings::v1::field<double>                                  interline{this, "interline", 1.2};
     acmacs::settings::v1::field<acmacs::Offset>                          label_offset{this, "label_offset", {-40, 20}};
-    acmacs::settings::v1::field<double>                                  scatter_label_offset{this, "scatter_label_offset", 0};
+    acmacs::settings::v1::field<double>                                  scatter_label_offset{this, "scatter_label_offset", 0.0};
     acmacs::settings::v1::field<std::string>                             scatter_label_offset_help{this, "scatter_label_offset?", "randomization range for label offset in trying to avoid clattering (mostly for figuring out good offsets"};
     acmacs::settings::v1::field<double>                                  label_connection_line_width{this, "label_connection_line_width", 0.1};
     acmacs::settings::v1::field<Color>                                   label_connection_line_color{this, "label_connection_line_color", "black"};
@@ -252,14 +252,14 @@ class TreeDrawSettings : public acmacs::settings::v1::object
                                                                            "{mod: mark-having-serum-with-line, color: , line_width: line-width-in-pixels}",
                                                                            "{mod: mark-with-label, seq_id:, name: <substring>, label:, line_color:, line_width:, label_offset:[0.0, 0.0], label_absolute_x:, label_size:, labeL_color:, label_style:, collapse: 10 }"}};
     acmacs::settings::v1::field<bool>                               force_line_width{this, "force_line_width", false};
-    acmacs::settings::v1::field<double>                             line_width{this, "line_width", 1};
-    acmacs::settings::v1::field<double>                             root_edge{this, "root_edge", 0};
+    acmacs::settings::v1::field<double>                             line_width{this, "line_width", 1.0};
+    acmacs::settings::v1::field<double>                             root_edge{this, "root_edge", 0.0};
     acmacs::settings::v1::field<Color>                              line_color{this, "line_color", "black"};
     acmacs::settings::v1::field<acmacs::TextStyle>                  label_style{this, "label_style", {}};
     acmacs::settings::v1::field<double>                             name_offset{this, "name_offset", 0.3};         // offset of the label from the line right end, in W widths
     acmacs::settings::v1::field<std::string>                        color_nodes{this, "color_nodes", "continent"};    // black, continent, position number (e.g. 162)
     acmacs::settings::v1::field<std::map<std::string, std::string>> color_for_aa{this, "color_for_aa"};            // for "color_nodes": "<position-number>"
-    acmacs::settings::v1::field<double>                             right_padding{this, "right_padding", 0};       // padding at the right to add space for the mark_with_line (for BVic del and triple-del mutants)
+    acmacs::settings::v1::field<double>                             right_padding{this, "right_padding", 0.0};       // padding at the right to add space for the mark_with_line (for BVic del and triple-del mutants)
     acmacs::settings::v1::field_object<AATransitionDrawSettings>    aa_transition{this, "aa_transition"};
     acmacs::settings::v1::field_object<LegendSettings>              legend{this, "legend"};
 

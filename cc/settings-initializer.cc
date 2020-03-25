@@ -211,7 +211,7 @@ namespace
                     mod2->label = "A/Brisbane/2/2018";
                     mod2->label_color = "black";
                     mod2->label_size = 7.0;
-                    mod2->label_style = "";
+                    mod2->label_style = acmacs::TextStyle{""};
                     mod2->line_color = "grey";
                     mod2->line_width = 0.0;
                     mod2->collapse = 200;
@@ -332,7 +332,7 @@ namespace
                 mod2->label = "A/Kansas/14/2017";
                 mod2->label_color = "black";
                 mod2->label_size = 8.0;
-                mod2->label_style = "";
+                mod2->label_style = acmacs::TextStyle{};
                 mod2->line_color = "grey";
                 mod2->line_width = 0.0;
                 mod2->collapse = 200;
@@ -596,7 +596,7 @@ namespace
                     mod2->label = "A/Colorado/6/2017";
                     mod2->label_color = "black";
                     mod2->label_size = 7.0;
-                    mod2->label_style = "";
+                    mod2->label_style = acmacs::TextStyle{};
                     mod2->line_color = "grey";
                     mod2->line_width = 0.0;
                     mod2->collapse = 200;
@@ -728,7 +728,7 @@ namespace
                     mod2->label = "A/Phuket/3073/2013";
                     mod2->label_color = "black";
                     mod2->label_size = 7.0;
-                    mod2->label_style = "";
+                    mod2->label_style = acmacs::TextStyle{};
                     mod2->line_color = "grey";
                     mod2->line_width = 0.0;
                     mod2->collapse = 200;
