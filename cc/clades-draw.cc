@@ -17,7 +17,7 @@ acmacs::settings::v1::const_array_element<CladeDrawSettings> CladesDrawSettings:
     if (auto found = clades.find_if([](const auto& c) -> bool { return c.name.empty(); }); found) {
         return *found;
     }
-    std::cerr << "DEBUG: " << clades << DEBUG_FILE_LINE_FUNC << '\n';
+    std::cerr << "DEBUG: " << clades << AD_DEBUG_FILE_LINE_FUNC << '\n';
     throw std::runtime_error("ERROR: no clade entry with empty name (for default settings)");
 
 } // CladesDrawSettings::for_clade
@@ -107,9 +107,9 @@ void CladesDraw::collect()
                         auto p = mClades.emplace(c, aNode);
                         if (!p.second) { // the clade is already present, extend its range
                             const auto for_clade = mSettings.for_clade(c);
-                            // std::cerr << "DEBUG: CladesDraw::collect name \"" << for_clade->name << "\" for clade \"" << c << '"' << DEBUG_FILE_LINE_FUNC << '\n';
-                            // std::cerr << "DEBUG: for_clade " << *for_clade << DEBUG_FILE_LINE_FUNC << '\n';
-                            // std::cerr << "DEBUG: CladesDraw::collect section_exclusion_tolerance " << for_clade->section_exclusion_tolerance << DEBUG_FILE_LINE_FUNC << '\n';
+                            // std::cerr << "DEBUG: CladesDraw::collect name \"" << for_clade->name << "\" for clade \"" << c << '"' << AD_DEBUG_FILE_LINE_FUNC << '\n';
+                            // std::cerr << "DEBUG: for_clade " << *for_clade << AD_DEBUG_FILE_LINE_FUNC << '\n';
+                            // std::cerr << "DEBUG: CladesDraw::collect section_exclusion_tolerance " << for_clade->section_exclusion_tolerance << AD_DEBUG_FILE_LINE_FUNC << '\n';
                             p.first->second.extend(aNode, for_clade->section_inclusion_tolerance);
                         }
                     }
@@ -216,7 +216,7 @@ void CladesDraw::draw()
             for (const auto& section: clade.sections) {
                 const Node& section_first_node = first_shown_node(name_clade.first, *section.first);
                 const Node& section_last_node = last_shown_node(name_clade.first, *section.last);
-                // std::cerr << "DEBUG: Clade section " << name_clade.first << '\n' << section_first_node.draw.shown << ' ' << section_first_node.draw.line_no << ' ' << section_first_node.seq_id << '\n' << section_last_node.draw.shown << ' ' << section_last_node.draw.line_no << ' ' << section_last_node.seq_id << DEBUG_FILE_LINE_FUNC << '\n';
+                // std::cerr << "DEBUG: Clade section " << name_clade.first << '\n' << section_first_node.draw.shown << ' ' << section_first_node.draw.line_no << ' ' << section_first_node.seq_id << '\n' << section_last_node.draw.shown << ' ' << section_last_node.draw.line_no << ' ' << section_last_node.seq_id << AD_DEBUG_FILE_LINE_FUNC << '\n';
                 const double top = section_first_node.draw.vertical_pos - mTreeDraw.vertical_step() / 2;
                 const double bottom = section_last_node.draw.vertical_pos + mTreeDraw.vertical_step() / 2;
                 const double label_height = mSurface.text_size("W", Pixels{for_clade->label_size}, for_clade->label_style).height;

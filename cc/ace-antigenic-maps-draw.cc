@@ -58,13 +58,13 @@ void AntigenicMapsLayoutDrawAce::prepare_apply_mods()
                     else if (mod.direction == "ew")
                         chart_draw().flip(0, 1);
                     else
-                        std::cerr << "ERROR: unrecognized flip value: " << mod << DEBUG_FILE_LINE_FUNC << '\n';
+                        std::cerr << "ERROR: unrecognized flip value: " << mod << AD_DEBUG_FILE_LINE_FUNC << '\n';
                 }
                 else if (mod.value.is_set()) {
                     chart_draw().flip(mod.value[0], mod.value[1]);
                 }
                 else {
-                    std::cerr << "ERROR: unrecognized flip mod: " << mod << DEBUG_FILE_LINE_FUNC << '\n';
+                    std::cerr << "ERROR: unrecognized flip mod: " << mod << AD_DEBUG_FILE_LINE_FUNC << '\n';
                 }
             }
             else if (mod.name == "viewport") {
@@ -89,7 +89,7 @@ void AntigenicMapsLayoutDrawAce::prepare_apply_mods()
             // }
         }
         catch (std::exception&) {
-            std::cerr << "WARNING: MOD: " << mod << DEBUG_FILE_LINE_FUNC << '\n';
+            std::cerr << "WARNING: MOD: " << mod << AD_DEBUG_FILE_LINE_FUNC << '\n';
             throw;
         }
     });
@@ -709,7 +709,7 @@ void AntigenicMapsLayoutDrawAce::serum_circle(const AntigenicMapMod& mod, std::s
 
 void AntigenicMapsLayoutDrawAce::mark_antigens(const AntigenicMapMod& mod)
 {
-      // std::cerr << "DEBUG: mark_antigens " << mod.get() << DEBUG_FILE_LINE_FUNC << '\n';
+      // std::cerr << "DEBUG: mark_antigens " << mod.get() << AD_DEBUG_FILE_LINE_FUNC << '\n';
     ModAntigens applicator(mod.get());
     applicator.apply(chart_draw(), rjson::value{});
 

@@ -665,7 +665,7 @@ size_t Tree::match(const acmacs::chart::Chart& chart)
 
     tree::iterate_leaf_post(*this, match_chart_antigens, sum_matched_antigens);
     if (draw.matched_antigens == 0)
-        std::cerr << "WARNING: No tree sequences found in the chart" << DEBUG_FILE_LINE_FUNC << '\n';
+        std::cerr << "WARNING: No tree sequences found in the chart" << AD_DEBUG_FILE_LINE_FUNC << '\n';
 
     return draw.matched_antigens;
 
