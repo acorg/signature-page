@@ -437,7 +437,7 @@ namespace rjson
 
         template <> inline value to_value(const TextStyle& aTextStyle)
         {
-            return object{{"family", *aTextStyle.font_family}, {"slant", static_cast<std::string>(*aTextStyle.slant)}, {"weight", static_cast<std::string>(*aTextStyle.weight)}};
+            return object{{"family", aTextStyle.font_family}, {"slant", static_cast<std::string>(aTextStyle.slant)}, {"weight", static_cast<std::string>(aTextStyle.weight)}};
         }
 
         template <> inline value to_value(TextStyle&& aTextStyle) { return to_value(const_cast<const TextStyle&>(aTextStyle)); }

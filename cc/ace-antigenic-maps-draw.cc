@@ -181,7 +181,7 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, std
                             tracked_antigen_style.fill = tracked_antigen_color_by_month(month);
                             chart_draw().modify(tracked, tracked_antigen_style, PointDrawingOrder::Raise);
                             if (mod.report.get_or(false)) {
-                                std::cout << "tracked_antigens by month " << month << ' ' << tracked_antigen_style.fill << '\n';
+                                std::cout << fmt::format("tracked_antigens by month {} {}\n", month, tracked_antigen_style.fill);
                                 for (auto ag_no : tracked) {
                                     auto antigen = chart().antigen(ag_no);
                                     std::cout << "    " << ag_no << ' ' << antigen->full_name() << ' ' << *antigen->date() << '\n';
@@ -318,12 +318,12 @@ void AntigenicMapsLayoutDrawAce::tracked_antigens_20200219_gly_outline(size_t aS
                         tracked_antigen_style.outline = loss;
                         break;
                 }
-                fmt::print(stderr, "DEBUG: 2/3del {} {}\n", *tracked_antigen_style.outline, antigen->full_name());
+                fmt::print(stderr, "DEBUG: 2/3del {} {}\n", tracked_antigen_style.outline, antigen->full_name());
             // }
             // else {
             //     tracked_antigen_style.outline = BLACK;
             // }
-            if (*tracked_antigen_style.outline == BLACK)
+            if (tracked_antigen_style.outline == BLACK)
                 chart_draw().modify(ag_no, tracked_antigen_style);
             else
                 chart_draw().modify(ag_no, tracked_antigen_style, PointDrawingOrder::Raise);
