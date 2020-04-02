@@ -58,7 +58,7 @@ void AntigenicMapsDrawBase::init_settings(const SettingsInitializer& settings_in
     }
     const size_t maps_per_column = number_sections / settings().columns + ((number_sections % settings().columns) == 0 ? 0 : 1);
     const double map_width = 150; // height is not available at this moment mSurface.viewport().size.height / (maps_per_column + settings().gap * (maps_per_column - 1));
-    signature_page_settings().antigenic_maps_width = map_width * settings().columns + (settings().columns - 1) * settings().gap;
+    signature_page_settings().antigenic_maps_width = map_width * static_cast<double>(settings().columns) + static_cast<double>(settings().columns - 1) * settings().gap;
     switch (settings().columns) {
       case 2:
           switch (maps_per_column) {

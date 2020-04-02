@@ -62,7 +62,7 @@ void AAAtPosDraw::find_most_diverse_positions()
     std::transform(aa_per_pos_.begin(), aa_per_pos_.end(), all_pos.begin(), [](const auto& src) -> all_pos_t {
         const auto sum = std::accumulate(src.second.begin(), src.second.end(), 0UL, [](auto accum, const auto& entry) { return accum + entry.second; });
         const auto shannon_index = -std::accumulate(src.second.begin(), src.second.end(), 0.0, [sum = double(sum)](auto accum, const auto& entry) {
-            const double p = entry.second / sum;
+            const double p = static_cast<double>(entry.second) / sum;
             return accum + p * std::log(p);
         });
         return {src.first, static_cast<size_t>(std::lround(shannon_index * 100))};
@@ -202,7 +202,7 @@ void AAAtPosDraw::draw(bool init_settings, size_t hz_section_threshold)
     if (!positions_.empty()) {
         make_aa_pos_sections(init_settings, hz_section_threshold); // must be here, after ladderrizing
         const auto surface_width = mSurface.viewport().size.width;
-        const auto section_width = surface_width / positions_.size();
+        const auto section_width = surface_width / static_cast<double>(positions_.size());
         const auto line_length = section_width * mSettings.line_length;
 
         auto draw_dash = [&, this](const Node& aNode) {
@@ -210,7 +210,7 @@ void AAAtPosDraw::draw(bool init_settings, size_t hz_section_threshold)
             for (auto [section_no, pos] : acmacs::enumerate(this->positions_)) {
                 if (pos < sequence.size()) {
                     const auto aa = sequence[pos];
-                    const auto base_x = section_width * section_no + (section_width - line_length) / 2;
+                    const auto base_x = section_width * static_cast<double>(section_no) + (section_width - line_length) / 2;
                     const std::string aa_s(1, aa);
                     mSurface.text({base_x, aNode.draw.vertical_pos + this->mSettings.line_width / 2}, aa_s, BLACK /* found->second */, Pixels{this->mSettings.line_width});
                     if (const auto color_p = this->colors_[pos].find(aa); color_p != colors_[pos].end()) {
@@ -226,7 +226,7 @@ void AAAtPosDraw::draw(bool init_settings, size_t hz_section_threshold)
         // const auto pos_text_height = mSurface.text_size("8", Pixels{}).height;
         for (size_t section_no = 0; section_no < positions_.size(); ++section_no) {
             const auto pos = positions_[section_no];
-            mSurface.text({section_width * section_no + section_width / 4, mSurface.viewport().size.height + 10}, std::to_string(pos + 1), BLACK, Pixels{line_length}, acmacs::TextStyle{},
+            mSurface.text({section_width * static_cast<double>(section_no) + section_width / 4, mSurface.viewport().size.height + 10}, std::to_string(pos + 1), BLACK, Pixels{line_length}, acmacs::TextStyle{},
                           Rotation{M_PI_2});
         }
 
@@ -240,7 +240,7 @@ void AAAtPosDraw::draw(bool init_settings, size_t hz_section_threshold)
 void AAAtPosDraw::draw_hz_section_lines() const
 {
     const auto surface_width = mSurface.viewport().size.width;
-    const auto section_width = surface_width / positions_.size();
+    const auto section_width = surface_width / static_cast<double>(positions_.size());
     double previous_vertical_pos = -1e-8;
     auto draw = [&](const Node& node) {
         if (node.draw.shown) {
@@ -251,7 +251,7 @@ void AAAtPosDraw::draw_hz_section_lines() const
                     mSurface.text({-20, y}, std::to_string(node.draw.line_no), BLACK, Pixels{6});
                     section->triggering_aa_pos.for_each([this,section_width,y](const rjson::value& aa_pos) {
                         const auto section_no = std::find(positions_.begin(), positions_.end(), (aa_pos.to<size_t>() - 1)) - positions_.begin();
-                        mSurface.line({section_width * section_no + section_width * 0.25, y}, {section_width * (section_no + 1) - section_width * 0.25, y}, BLACK, Pixels{mHzSections.line_width * 2});
+                        mSurface.line({section_width * static_cast<double>(section_no) + section_width * 0.25, y}, {section_width * static_cast<double>(section_no + 1) - section_width * 0.25, y}, BLACK, Pixels{mHzSections.line_width * 2});
                         // std::cerr << "DEBUG: " << node.draw.line_no << " triggering_aa_pos: " << aa_pos << ' ' << section_no << '\n';
                     });
                 }

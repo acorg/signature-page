@@ -86,7 +86,7 @@ void TreeDraw::prepare()
         number_of_hz_sections = 1;
     const auto& canvas_size = mSurface.viewport().size;
     mHorizontalStep = (canvas_size.width - mSettings.right_padding) / mTree.width();
-    mVerticalStep = (canvas_size.height - (number_of_hz_sections - 1) * mHzSections.vertical_gap) / static_cast<double>(mTree.height() + 2); // +2 to add space at the top and bottom
+    mVerticalStep = (canvas_size.height - static_cast<double>(number_of_hz_sections - 1) * mHzSections.vertical_gap) / static_cast<double>(mTree.height() + 2); // +2 to add space at the top and bottom
     set_vertical_pos();
 
     // const auto [virus_type, lineage] = mTree.virus_type_lineage();
@@ -835,7 +835,7 @@ void TreeDraw::draw_aa_transition(const Node& aNode, const acmacs::PointCoordina
                     mSurface.text(label_xy, label.first, label_color, Pixels{branch_settings.size}, label_style);
                     if (settings->show_node_for_left_line && label.second) {
                         mSurface.line(acmacs::PointCoordinates::zero2D,
-                                      acmacs::PointCoordinates(mHorizontalStep * label.second->data.cumulative_edge_length, mVerticalStep * label.second->draw.line_no),
+                                      acmacs::PointCoordinates(mHorizontalStep * label.second->data.cumulative_edge_length, mVerticalStep * static_cast<double>(label.second->draw.line_no)),
                                       settings->node_for_left_line_color, Pixels{settings->node_for_left_line_width});
                     }
                     label_box.bottom_right.y(origin.y());
@@ -1059,10 +1059,6 @@ void HzSections::convert_aa_transitions(Tree& tree) // to name based hz sections
     for (const auto& node_to_add : to_add)
         add(tree, find_first_leaf(*node_to_add.first), find_last_leaf(*node_to_add.first), true, node_to_add.second, 0);
 
-    // sections.for_each([](auto& section, size_t) {
-    //     std::cerr << rjson::to_string(section.get(), rjson::show_empty_values::no) << '\n';
-    // });
-
 } // HzSections::convert_aa_transitions
 
 // ----------------------------------------------------------------------
@@ -1151,7 +1147,7 @@ void HzSections::report(std::ostream& out) const
     }
 
     for (auto section_index: section_order)
-        out << rjson::to_string(sections[section_index]->get(), rjson::show_empty_values::no) << ",\n";
+        out << rjson::format(sections[section_index]->get(), rjson::show_empty_values::no) << ",\n";
 
 } // HzSections::report
 

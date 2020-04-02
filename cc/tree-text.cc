@@ -43,7 +43,7 @@ int main(int argc, const char* argv[])
 
         const auto [min_edge, max_edge] = tree.cumulative_edge_minmax();
         // std::cout << "mm: " << min_edge << ' ' << max_edge << '\n';
-        const auto step = max_edge / static_cast<size_t>(opt.max_leaf_offset);
+        const auto step = max_edge / static_cast<double>(opt.max_leaf_offset); // static_cast<size_t>(opt.max_leaf_offset);
 
         if (opt.leaves_only)
             print_tree_leaves(tree, step);

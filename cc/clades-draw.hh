@@ -45,7 +45,7 @@ namespace acmacs::settings::v1
         else if (from == "top")
             return CladeDrawSettingsLabelPosition::top;
         else
-            throw std::runtime_error("Unrecognized CladeDrawSettingsLabelPosition: " + rjson::to_string(from));
+            throw std::runtime_error(fmt::format("Unrecognized CladeDrawSettingsLabelPosition: {}", from));
     }
 } // namespace acmacs::settings::v1
 

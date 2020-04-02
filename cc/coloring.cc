@@ -126,7 +126,7 @@ class ColoringByPosLegend : public Legend
 
     virtual acmacs::Size size() const
         {
-            return {mTitle.size() * 10.0, (mColoring.used_colors().size() + 1) * 10.0};
+            return {static_cast<double>(mTitle.size()) * 10.0, static_cast<double>(mColoring.used_colors().size() + 1) * 10.0};
         }
 
  private:

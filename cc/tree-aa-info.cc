@@ -77,7 +77,7 @@ int main(int argc, const char* const* argv)
         std::transform(aa_per_pos.begin(), aa_per_pos.end(), all_pos.begin(), [](const auto& src) -> all_pos_t {
             const auto sum = std::accumulate(src.second.begin(), src.second.end(), 0UL, [](auto accum, const auto& entry) { return accum + entry.second; });
             const auto shannon_index = -std::accumulate(src.second.begin(), src.second.end(), 0.0, [sum = double(sum)](auto accum, const auto& entry) {
-                const double p = entry.second / sum;
+                const double p = static_cast<double>(entry.second) / sum;
                 return accum + p * std::log(p);
             });
             return {src.first, std::lround(shannon_index * 100)};

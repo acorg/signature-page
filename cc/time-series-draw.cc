@@ -73,7 +73,7 @@ void TimeSeriesDraw::draw()
 {
     if (mNumberOfMonths) {
           // mSurface.border("green3", 1);
-        const double month_width = mSurface.viewport().size.width / mNumberOfMonths;
+        const double month_width = mSurface.viewport().size.width / static_cast<double>(mNumberOfMonths);
         draw_labels(month_width);
         draw_month_separators(month_width);
         draw_dashes(month_width);
@@ -105,7 +105,7 @@ void TimeSeriesDraw::draw_labels_at_side(const acmacs::PointCoordinates& aOrigin
     try {
         auto current_month{date::from_string(*mSettings.begin)};
         for (size_t month_no = 0; month_no < mNumberOfMonths; ++month_no, date::increment_month(current_month)) {
-            const double left = aOrigin.x() + month_no * month_width;
+            const double left = aOrigin.x() + static_cast<double>(month_no) * month_width;
             mSurface.text({left, aOrigin.y()}, date::month_3(current_month), 0, Pixels{mSettings.label_size}, mSettings.label_style, Rotation{M_PI_2});
             mSurface.text({left, aOrigin.y() + month_max_height}, date::year_2(current_month), 0, Pixels{mSettings.label_size}, mSettings.label_style, Rotation{M_PI_2});
         }
@@ -122,11 +122,11 @@ void TimeSeriesDraw::draw_labels_at_side(const acmacs::PointCoordinates& aOrigin
 void TimeSeriesDraw::draw_color_scale(const std::map<std::string, Color, std::less<>>& aTrackedAntigenColorByMonth)
 {
     const acmacs::Size& surface_size = mSurface.viewport().size;
-    const double month_width = mSurface.viewport().size.width / mNumberOfMonths;
+    const double month_width = mSurface.viewport().size.width / static_cast<double>(mNumberOfMonths);
     const auto top = surface_size.height;
     auto current_month{date::from_string(*mSettings.begin)};
     for (size_t month_no = 0; month_no < mNumberOfMonths; ++month_no, date::increment_month(current_month)) {
-        const auto left = month_no * month_width;
+        const auto left = static_cast<double>(month_no) * month_width;
         mSurface.rectangle_filled({left, top}, acmacs::Size{10, 10}, PINK, Pixels{0}, aTrackedAntigenColorByMonth.find(date::year4_month2(current_month))->second);
     }
 
@@ -141,7 +141,7 @@ void TimeSeriesDraw::draw_month_separators(double month_width)
 
     const double bottom = mSurface.viewport().size.height;
     for (size_t month_no = 0; month_no <= mNumberOfMonths; ++month_no) {
-        const double left = month_no * month_width;
+        const double left = static_cast<double>(month_no) * month_width;
         const double thickness = 1.0; // (month_no % 12) == thick_separator_base ? 2.0 : 1.0;
         mSurface.line({left, 0}, {left, bottom}, mSettings.month_separator_color, Pixels{mSettings.month_separator_width * thickness});
     }

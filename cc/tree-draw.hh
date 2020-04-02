@@ -217,7 +217,7 @@ namespace acmacs::settings::v1
         else if (from == "none")
             return Tree::LadderizeMethod::None;
         else
-            throw std::runtime_error("Unrecognized Tree::LadderizeMethod: " + rjson::to_string(from));
+            throw std::runtime_error(fmt::format("Unrecognized Tree::LadderizeMethod: {}", from));
     }
 } // namespace acmacs::settings::v1
 

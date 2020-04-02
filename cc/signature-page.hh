@@ -57,7 +57,7 @@ namespace acmacs::settings::v1
         else if (from == "tree-clades-ts-maps")
             return SignaturePageLayout::TreeCladesTSMaps;
         else
-            throw std::runtime_error("Unrecognized layout: " + rjson::to_string(from));
+            throw std::runtime_error(fmt::format("Unrecognized layout: {}", from));
     }
 } // namespace acmacs::settings::v1
 

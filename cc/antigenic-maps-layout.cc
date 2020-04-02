@@ -117,13 +117,13 @@ void LabelledGridBase::draw(acmacs::surface::Surface& aMappedAntigensDrawSurface
     acmacs::surface::Surface& surface = layout_draw().surface();
     // std::cerr << "DEBUG: Maps " << surface << '\n';
 
-    const double map_width = (surface.viewport().size.width - (settings.columns - 1) * settings.gap) / settings.columns;
+    const double map_width = (surface.viewport().size.width - static_cast<double>(settings.columns - 1) * settings.gap) / static_cast<double>(settings.columns);
 
     size_t shown_maps = 0, row = 0, column = 0;
     for (const auto section_index: layout_draw().hz_sections().section_order) {
         const auto& section = layout_draw().hz_sections().sections[section_index];
         if (section->show && section->show_map) {
-            acmacs::surface::Surface& map_surface = surface.subsurface({column * (map_width + settings.gap), row * (map_width + settings.gap)},
+            acmacs::surface::Surface& map_surface = surface.subsurface({static_cast<double>(column) * (map_width + settings.gap), static_cast<double>(row) * (map_width + settings.gap)},
                                                                        Scaled{map_width}, layout_draw().viewport(), true);
             const std::string map_letter = layout_draw().hz_sections().node_refs[section_index].index;
             std::cout << "===============================\nINFO: MAP " << section_index << ' ' << map_letter << ' ' << section->name << '\n';
@@ -146,7 +146,7 @@ void LabelledGridBase::draw(acmacs::surface::Surface& aMappedAntigensDrawSurface
     if (shown_maps) {
         const double antigenic_maps_width = layout_draw().signature_page_settings().antigenic_maps_width;
         const size_t rows = shown_maps / settings.columns + ((shown_maps % settings.columns) ? 1 : 0);
-        const double maps_height = map_width * rows + (rows - 1) * settings.gap;
+        const double maps_height = map_width * static_cast<double>(rows) + static_cast<double>(rows - 1) * settings.gap;
         const double suggested_surface_width = antigenic_maps_width * surface.viewport().size.height / maps_height;
         std::cout << "Map area height: " << maps_height << '\n';
         if (std::abs((antigenic_maps_width - suggested_surface_width) / antigenic_maps_width) > 1) {
