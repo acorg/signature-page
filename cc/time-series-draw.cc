@@ -39,10 +39,10 @@ void TimeSeriesDraw::prepare()
         }
 
         mNumberOfMonths = static_cast<size_t>(calendar_months_between_dates_inclusive(date::from_string(*mSettings.begin), date::from_string(*mSettings.end)));
-        std::cout << "INFO: dates to show: " << mSettings.begin << " .. " << mSettings.end << "  months: " << mNumberOfMonths << AD_DEBUG_FILE_LINE_FUNC << '\n';
+        std::cout << "INFO: dates to show: " << mSettings.begin << " .. " << mSettings.end << "  months: " << mNumberOfMonths << '\n';
     }
     else {
-        std::cout << "WARNING: no dates found for sequences" << AD_DEBUG_FILE_LINE_FUNC << '\n';
+        std::cout << "WARNING: no dates found for sequences" << '\n';
         mNumberOfMonths = 0;
     }
 
