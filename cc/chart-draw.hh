@@ -22,7 +22,7 @@ class ChartDrawBase
     virtual void draw(acmacs::surface::Surface& aSurface) const = 0;
 
     std::string lab() const { return *chart().info()->lab(acmacs::chart::Info::Compute::Yes); }
-    std::string virus_type() const { return *chart().info()->virus_type(acmacs::chart::Info::Compute::Yes); }
+    acmacs::virus::type_subtype_t virus_type() const { return chart().info()->virus_type(acmacs::chart::Info::Compute::Yes); }
     std::string assay() const { return *chart().info()->assay(acmacs::chart::Info::Compute::Yes); }
 
     virtual std::optional<size_t> find_antigen(std::string aName) const = 0;
