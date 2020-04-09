@@ -1,4 +1,4 @@
-#include "acmacs-base/string.hh"
+#include "acmacs-base/string-join.hh"
 #include "settings-initializer.hh"
 #include "signature-page.hh"
 #include "title-draw.hh"
@@ -115,9 +115,9 @@ namespace
         {
             Default::update(settings);
             if (virus_type() == "A(H3N2)")
-                settings.title = string::join(" ", {virus_type(), assay(), fixed_lab()});
+                settings.title = acmacs::string::join(" ", virus_type(), assay(), fixed_lab());
             else
-                settings.title = string::join(" ", {virus_type(), fixed_lab()});
+                settings.title = acmacs::string::join(" ", virus_type(), fixed_lab());
             settings.offset = acmacs::Offset{10, 10};
         }
 
