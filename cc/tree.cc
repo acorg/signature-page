@@ -133,7 +133,7 @@ void NodeData::set_continent(std::string seq_id)
         continent = mSeqdbRef.entry->continent;
     if (continent.empty()) {
         try {
-            continent = get_locdb().continent(virus_name::location(seq_id), "UNKNOWN");
+            continent = acmacs::locationdb::get().continent(virus_name::location(seq_id), "UNKNOWN");
         }
         catch (virus_name::Unrecognized&) {
             continent = "UNKNOWN";
