@@ -929,9 +929,9 @@ void TreeDraw::report_aa_transitions()
             std::max_element(aa_transitions_.begin(), aa_transitions_.end(), [](const auto& e1, const auto& e2) -> bool { return e1.first_leaf.size() < e2.first_leaf.size(); })->first_leaf.size());
         std::cout << "AA transitions:\n";
         for (const auto& tr : aa_transitions_) {
-            std::cout << "  {\"label\": " << std::setw(transition_width + 4) << std::left << string::concat('"', tr.transition, "\",")
+            std::cout << "  {\"label\": " << std::setw(transition_width + 4) << std::left << acmacs::string::concat('"', tr.transition, "\",")
                       << "\"label_offset\": [-40, 20], "
-                      << "\"first_leaf_seq_id\": " << std::setw(node_width + 4) << std::left << string::concat('"', tr.first_leaf, "\",")
+                      << "\"first_leaf_seq_id\": " << std::setw(node_width + 4) << std::left << acmacs::string::concat('"', tr.first_leaf, "\",")
                       << "\"?strains\":" << std::setw(4) << std::right << tr.number_strains
                       << ", \"?origin\": [" << std::setprecision(0) << std::fixed << tr.origin.x() << ',' << tr.origin.y() << "]},\n";
         }
@@ -1257,7 +1257,7 @@ void HzSections::detect_hz_lines_for_clades(Tree& aTree, const Clades* aClades, 
 acmacs::settings::v1::array_element<HzSection> HzSections::add(std::string_view seq_id, bool show_line, std::string_view clade, size_t aa_pos, bool first_in_clade)
 {
     // std::cerr << "DEBUG: hz sections " << sections.size() << '\n';
-    const std::string clade_tag = string::concat(clade, ':', first_in_clade ? "first" : "last");
+    const std::string clade_tag = acmacs::string::concat(clade, ':', first_in_clade ? "first" : "last");
     // if (auto found = sections.find_if([&seq_id](const auto& sect) { return sect.name == seq_id; }); !found) {
     if (auto found = find_section(seq_id); !found) {
         // std::cerr << "DEBUG: add hz section: " << seq_id << '\n';

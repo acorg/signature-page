@@ -871,7 +871,7 @@ std::unique_ptr<SettingsInitializer> settings_initilizer_factory(std::string lab
 {
     if (lab.empty() && show_aa_at_pos)
         return std::make_unique<AAAtPos>(lab, virus_type, assay);
-    const auto tag = string::concat(lab, ' ', virus_type, ' ', assay);
+    const auto tag = acmacs::string::concat(lab, ' ', virus_type, ' ', assay);
     std::cerr << ">>> settings initializer tag:\"" << tag << "\" lab:" << lab << " virus_type:" << virus_type << " assay:" << assay << "\n";
     if (auto found = std::find_if(settings_constructors.begin(), settings_constructors.end(), [&tag](const auto& entry) { return entry.first == tag; }); found != settings_constructors.end())
         return found->second->make(lab, virus_type, assay);
