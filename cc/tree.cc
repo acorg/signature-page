@@ -2,7 +2,7 @@
 
 #include "acmacs-base/float.hh"
 #include "acmacs-base/fmt.hh"
-#include "acmacs-virus/virus-name.hh"
+#include "acmacs-virus/virus-name-v1.hh"
 #include "acmacs-chart-2/chart.hh"
 #include "locationdb/locdb.hh"
 #include "signature-page/tree.hh"
