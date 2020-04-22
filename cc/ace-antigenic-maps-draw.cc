@@ -109,19 +109,27 @@ void AntigenicMapsLayoutDrawAce::prepare_chart_for_all_sections()
                 chart_draw().scale_points(mod.scale.get_or(1.0), mod.outline_scale.get_or(1.0));
             }
             if (mod.name == "reference_antigens") {
-                acmacs::PointStyle ref_antigen_style;
+                acmacs::PointStyleModified ref_antigen_style;
                 ref_antigen_style.size = Pixels{mod.size.get_or(5.0)};
+                ref_antigen_style.modified_size = true;
                 ref_antigen_style.fill = mod.fill.get_or(TRANSPARENT);
+                ref_antigen_style.modified_fill = true;
                 ref_antigen_style.outline = mod.outline.get_or(Color{"grey88"});
+                ref_antigen_style.modified_outline = true;
                 ref_antigen_style.outline_width = Pixels{mod.outline_width.get_or(0.5)};
+                ref_antigen_style.modified_outline_width = true;
                 chart_draw().modify(chart().antigens()->reference_indexes(), ref_antigen_style);
             }
             else if (mod.name == "test_antigens") {
-                acmacs::PointStyle test_antigen_style;
+                acmacs::PointStyleModified test_antigen_style;
                 test_antigen_style.size = Pixels{mod.size.get_or(3.0)};
+                test_antigen_style.modified_size = true;
                 test_antigen_style.fill = mod.fill.get_or(Color{"grey88"});
+                test_antigen_style.modified_fill = true;
                 test_antigen_style.outline = mod.outline.get_or(Color{"grey88"});
+                test_antigen_style.modified_outline = true;
                 test_antigen_style.outline_width = Pixels{mod.outline_width.get_or(0.5)};
+                test_antigen_style.modified_outline_width = true;
                 chart_draw().modify(chart().antigens()->test_indexes(), test_antigen_style);
             }
             else if (mod.name == "tracked_serum_circles" || mod.name == "serum_circle" || mod.name == "tracked_sera") {
@@ -144,21 +152,29 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, std
     settings().mods.for_each([this](const auto& mod, size_t /*mod_no*/) {
         if (mod.name.is_set_or_has_default()) {
             if (mod.name == "sera") {
-                acmacs::PointStyle serum_style;
+                acmacs::PointStyleModified serum_style;
                 serum_style.size = Pixels{mod.size.get_or(5.0)};
+                serum_style.modified_size = true;
                 serum_style.fill = mod.fill.get_or(TRANSPARENT);
+                serum_style.modified_fill = true;
                 serum_style.outline = mod.outline.get_or(Color{"grey88"});
+                serum_style.modified_outline = true;
                 serum_style.outline_width = Pixels{mod.outline_width.get_or(0.5)};
+                serum_style.modified_outline_width = true;
                 chart_draw().modify_all_sera(serum_style, PointDrawingOrder::Lower);
             }
             else if (mod.name == "sequenced_antigens") { // mark sequenced antigens (removes old tracked antigens marking)
                 std::vector<size_t> sequenced_indices(sequenced_antigens().size());
                 std::transform(sequenced_antigens().begin(), sequenced_antigens().end(), sequenced_indices.begin(), [](const auto& src) -> size_t { return src.first; });
-                acmacs::PointStyle sequenced_antigen_style;
+                acmacs::PointStyleModified sequenced_antigen_style;
                 sequenced_antigen_style.size = Pixels{mod.size.get_or(3.0)};
+                sequenced_antigen_style.modified_size = true;
                 sequenced_antigen_style.fill = mod.fill.get_or(Color{"grey88"});
+                sequenced_antigen_style.modified_fill = true;
                 sequenced_antigen_style.outline = mod.outline.get_or(WHITE);
+                sequenced_antigen_style.modified_outline = true;
                 sequenced_antigen_style.outline_width = Pixels{mod.outline_width.get_or(0.5)};
+                sequenced_antigen_style.modified_outline_width = true;
                 chart_draw().modify(acmacs::chart::Indexes{sequenced_indices}, sequenced_antigen_style);
             }
         }
@@ -167,18 +183,22 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, std
     settings().mods.for_each([this, aSectionIndex, report_antigens_in_hz_sections, map_letter](const AntigenicMapMod& mod, size_t /*mod_no*/) {
         if (mod.name.is_set_or_has_default()) {
             if (mod.name == "tracked_antigens") {
-                acmacs::PointStyle tracked_antigen_style;
+                acmacs::PointStyleModified tracked_antigen_style;
                 tracked_antigen_style.size = Pixels{mod.size.get_or(5.0)};
+                tracked_antigen_style.modified_size = true;
                 if (const auto& outline_raw = mod.outline.get(); outline_raw == "20200219-gly")
                     tracked_antigen_style.outline = WHITE;
                 else
                     tracked_antigen_style.outline = mod.outline.get_or(WHITE);
+                tracked_antigen_style.modified_outline = true;
                 tracked_antigen_style.outline_width = Pixels{mod.outline_width.get_or(0.5)};
+                tracked_antigen_style.modified_outline_width = true;
                 if (const auto& fill_raw = mod.fill.get(); fill_raw == "by_date") {
                     for (const auto& [month, tracked] : tracked_antigens_per_month(aSectionIndex, report_antigens_in_hz_sections)) {
                         // std::cerr << "DEBUG: tracked_antigens by month " << month <<  ' ' << tracked << '\n';
                         if (!tracked->empty()) {
                             tracked_antigen_style.fill = tracked_antigen_color_by_month(month);
+                            tracked_antigen_style.modified_fill = true;
                             chart_draw().modify(tracked, tracked_antigen_style, PointDrawingOrder::Raise);
                             if (mod.report.get_or(false)) {
                                 std::cout << fmt::format("tracked_antigens by month {} {}\n", month, tracked_antigen_style.fill);
@@ -198,11 +218,15 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, std
                     tracked_antigens_20200219_gly_outline(aSectionIndex);
             }
             else if (mod.name == "tracked_antigens_egg") {
-                acmacs::PointStyle tracked_antigen_style;
+                acmacs::PointStyleModified tracked_antigen_style;
                 tracked_antigen_style.size = Pixels{mod.size.get_or(5.0)};
+                tracked_antigen_style.modified_size = true;
                 tracked_antigen_style.outline = mod.outline.get_or(WHITE);
+                tracked_antigen_style.modified_outline = true;
                 tracked_antigen_style.outline_width = Pixels{mod.outline_width.get_or(0.5)};
+                tracked_antigen_style.modified_outline_width = true;
                 tracked_antigen_style.fill = mod.fill.get_or(Color{"grey63"});
+                tracked_antigen_style.modified_fill = true;
                 chart_draw().modify(tracked_antigens(aSectionIndex, report_antigens_in_hz_sections, passage_t::egg), tracked_antigen_style, PointDrawingOrder::Raise);
             }
             else if (mod.name == "tracked_sera") {
@@ -291,7 +315,7 @@ void AntigenicMapsLayoutDrawAce::tracked_antigens_20200219_gly_outline(size_t aS
             // const auto aa164 = node->data.amino_acids().at(164 - 1);
             const auto aa197 = node->data.amino_acids().at(197 - 1);
             const auto aa199 = node->data.amino_acids().at(199 - 1);
-            acmacs::PointStyle tracked_antigen_style;
+            acmacs::PointStyleModified tracked_antigen_style;
             // if (aa162 == '-' && aa163 == '-') { // 2del and 3del
                 switch (aa197) {
                     case 'N':
@@ -318,6 +342,7 @@ void AntigenicMapsLayoutDrawAce::tracked_antigens_20200219_gly_outline(size_t aS
                         tracked_antigen_style.outline = loss;
                         break;
                 }
+                tracked_antigen_style.modified_outline = true;
                 fmt::print(stderr, "DEBUG: 2/3del {} {}\n", tracked_antigen_style.outline, antigen->full_name());
             // }
             // else {
@@ -359,10 +384,13 @@ Color AntigenicMapsLayoutDrawAce::tracked_antigen_color_by_month(std::string_vie
 
 void AntigenicMapsLayoutDrawAce::make_tracked_serum(size_t serum_index, Pixels size, Color outline, Pixels outline_width, const LabelSettings& label_data)
 {
-    acmacs::PointStyle tracked_serum_style;
+    acmacs::PointStyleModified tracked_serum_style;
     tracked_serum_style.size = size;
+    tracked_serum_style.modified_size = true;
     tracked_serum_style.outline = outline;
+    tracked_serum_style.modified_outline = true;
     tracked_serum_style.outline_width = outline_width;
+    tracked_serum_style.modified_outline_width = true;
     chart_draw().modify_serum(serum_index, tracked_serum_style, PointDrawingOrder::Raise);
     if (label_data.offset.is_set() && label_data.show.get_or(true)) {
         auto& label = chart_draw().add_label(chart().number_of_antigens() + serum_index);
