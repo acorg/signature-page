@@ -115,9 +115,9 @@ namespace
         {
             Default::update(settings);
             if (virus_type() == "A(H3N2)")
-                settings.title = acmacs::string::join(" ", virus_type(), assay(), fixed_lab());
+                settings.title = acmacs::string::join(acmacs::string::join_space, virus_type(), assay(), fixed_lab());
             else
-                settings.title = acmacs::string::join(" ", virus_type(), fixed_lab());
+                settings.title = acmacs::string::join(acmacs::string::join_space, virus_type(), fixed_lab());
             settings.offset = acmacs::Offset{10, 10};
         }
 
