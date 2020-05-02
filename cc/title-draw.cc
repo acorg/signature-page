@@ -32,7 +32,7 @@ void TitleDraw::prepare()
 
 void TitleDraw::draw()
 {
-    mSurface.text(mSettings.offset, *mSettings.title, mSettings.color, Pixels{mSettings.size}, mSettings.style);
+    mSurface.text(mSettings.offset, *mSettings.title, mSettings.color, Pixels{*mSettings.size}, mSettings.style);
 
 } // TitleDraw::draw
 

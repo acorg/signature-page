@@ -1,4 +1,3 @@
-#include <iostream>
 #include <fstream>
 #include <string>
 
@@ -55,7 +54,7 @@ int main(int argc, const char* argv[])
             if (!opt.settings_files->empty()) {
                 for (auto fn : *opt.settings_files) {
                     if (opt.verbose)
-                        std::cerr << "DEBUG: reading settings from " << fn << '\n';
+                        AD_DEBUG("reading settings from {}", fn);
                     signature_page.load_settings(fn);
                 }
             }
@@ -73,12 +72,12 @@ int main(int argc, const char* argv[])
                 signature_page.tree().report_cumulative_edge_length(out);
             }
             if (!opt.list_ladderized->empty()) {
-                std::cout << "INFO: listing ladderized " << opt.list_ladderized << '\n';
+                AD_INFO("listing ladderized {}", opt.list_ladderized);
                 acmacs::file::ofstream out(opt.list_ladderized);
                 signature_page.tree().list_strains(out);
             }
             if (!opt.report_first_node_of_subtree->empty()) {
-                std::cout << "INFO: reporting first-node-of-subtree to " << opt.report_first_node_of_subtree << '\n';
+                AD_INFO("reporting first-node-of-subtree to {}", opt.report_first_node_of_subtree);
                 acmacs::file::ofstream out(opt.report_first_node_of_subtree);
                 signature_page.tree().report_first_node_of_subtree(out, opt.subtree_threshold);
             }
@@ -93,14 +92,14 @@ int main(int argc, const char* argv[])
         }
 
         if (!opt.no_draw) {
-            std::cout << "INFO: generated: " << opt.output_pdf << '\n';
+            AD_INFO("generated: {}", opt.output_pdf);
             acmacs::open_or_quicklook(opt.open, opt.ql, opt.output_pdf, 2);
         }
 
         return 0;
     }
     catch (std::exception& err) {
-        std::cerr << "ERROR: " << err.what() << '\n';
+        fmt::print(stderr, "> ERROR {}\n", err);
         return 1;
     }
 }

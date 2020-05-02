@@ -160,27 +160,27 @@ bool TreeDraw::apply_mods()
         }
         else if (mod_mod == "mark-with-line") {
             std::cout << "TREE-mod: " << mod_mod << " \"" << mod.s1 << "\" \"" << mod.s2 << "\" " << mod.d1 << '\n';
-            mark_with_line(*mod.s1, Color{*mod.s2}, Pixels{mod.d1});
+            mark_with_line(*mod.s1, Color{*mod.s2}, Pixels{*mod.d1});
         }
         else if (mod_mod == "mark-aa-with-line") {
             std::cout << "TREE-mod: " << mod_mod << " \"" << mod.s1 << "\" \"" << mod.s2 << "\" " << mod.d1 << '\n';
-            mark_aa_with_line(*mod.s1, Color{*mod.s2}, Pixels{mod.d1}, mod.report);
+            mark_aa_with_line(*mod.s1, Color{*mod.s2}, Pixels{*mod.d1}, mod.report);
         }
         else if (mod_mod == "mark-clade-with-line") {
             std::cout << "TREE-mod: " << mod_mod << " \"" << mod.clade << "\" \"" << mod.color << "\" " << mod.line_width << '\n';
-            mark_clade_with_line(*mod.clade, Color{*mod.color}, Pixels{mod.line_width}, mod.report);
+            mark_clade_with_line(*mod.clade, Color{*mod.color}, Pixels{*mod.line_width}, mod.report);
         }
         else if (mod_mod == "mark-country-with-line") {
             std::cout << "TREE-mod: " << mod_mod << " \"" << mod.country << "\" \"" << mod.color << "\" " << mod.line_width << '\n';
-            mark_country_with_line(*mod.country, Color{*mod.color}, Pixels{mod.line_width}, mod.report);
+            mark_country_with_line(*mod.country, Color{*mod.color}, Pixels{*mod.line_width}, mod.report);
         }
         else if (mod_mod == "mark-location-with-line") {
             std::cout << "TREE-mod: " << mod_mod << " \"" << mod.location << "\" \"" << mod.color << "\" " << mod.line_width << '\n';
-            mark_location_with_line(*mod.location, Color{*mod.color}, Pixels{mod.line_width}, mod.report);
+            mark_location_with_line(*mod.location, Color{*mod.color}, Pixels{*mod.line_width}, mod.report);
         }
         else if (mod_mod == "mark-having-serum-with-line") {
             std::cout << "TREE-mod: " << mod_mod << " \"" << mod.color << "\" " << mod.line_width << '\n';
-            mark_having_serum_with_line(Color{*mod.color}, Pixels{mod.line_width});
+            mark_having_serum_with_line(Color{*mod.color}, Pixels{*mod.line_width});
         }
         else if (mod_mod == "mark-with-label") {
             mark_with_label(mod, mod_no);
@@ -201,7 +201,7 @@ void TreeDraw::draw()
 {
     fmt::print("Tree surface: {}\n", mSurface.viewport());
     const double line_width = mSettings.line_width;
-    mLineWidth = mSettings.force_line_width ? line_width : std::min(line_width, mVerticalStep * 0.5);
+    mLineWidth = Scaled{mSettings.force_line_width ? line_width : std::min(line_width, mVerticalStep * 0.5)};
     fit_labels_into_viewport();
 
     double vertical_gap = 0;
@@ -721,7 +721,7 @@ void TreeDraw::calculate_name_offset()
 
 void TreeDraw::fit_labels_into_viewport()
 {
-    mFontSize = mVerticalStep;
+    mFontSize = Scaled{mVerticalStep};
 
     const double canvas_width = mSurface.viewport().size.width;
     fmt::print("INFO: viewport: {}\n", mSurface.viewport());
@@ -836,7 +836,7 @@ void TreeDraw::draw_aa_transition(const Node& aNode, const acmacs::PointCoordina
                     if (settings->show_node_for_left_line && label.second) {
                         mSurface.line(acmacs::PointCoordinates::zero2D,
                                       acmacs::PointCoordinates(mHorizontalStep * label.second->data.cumulative_edge_length, mVerticalStep * static_cast<double>(label.second->draw.line_no)),
-                                      settings->node_for_left_line_color, Pixels{settings->node_for_left_line_width});
+                                      settings->node_for_left_line_color, Pixels{*settings->node_for_left_line_width});
                     }
                     label_box.bottom_right.y(origin.y());
                     origin.y(origin.y() + longest_label_size.height * branch_settings.interline);
@@ -883,10 +883,10 @@ void TreeDraw::draw_mark_with_label(const Node& aNode, const acmacs::PointCoordi
             acmacs::PointCoordinates label_origin = aTextOrigin + label_offset;
             if (settings->label_absolute_x.is_set_or_has_default())
                 label_origin.x(settings->label_absolute_x);
-            mSurface.text(label_origin, *settings->label, Color{*settings->label_color}, Pixels{settings->label_size}, settings->label_style);
-            const auto vlsize = mSurface.text_size(*settings->label, Pixels{settings->label_size}, acmacs::TextStyle{});
+            mSurface.text(label_origin, *settings->label, Color{*settings->label_color}, Pixels{*settings->label_size}, settings->label_style);
+            const auto vlsize = mSurface.text_size(*settings->label, Pixels{*settings->label_size}, acmacs::TextStyle{});
             const auto line_origin = label_origin + acmacs::Offset{vlsize.width / 2, label_offset.y() > 0 ? -vlsize.height : 0};
-            mSurface.line(line_origin, aTextOrigin, Color{*settings->line_color}, Pixels{settings->line_width});
+            mSurface.line(line_origin, aTextOrigin, Color{*settings->line_color}, Pixels{*settings->line_width});
             last_marked_with_label_ = std::tuple(aNode.draw.line_no, *settings->label);
         }
     }
@@ -909,7 +909,7 @@ void TreeDraw::draw_legend()
 {
     const Legend* legend = coloring_legend();
     if (legend) {
-        acmacs::surface::Surface& legend_surface = mSurface.subsurface(static_cast<acmacs::Offset>(mSettings.legend->offset), Scaled{mSettings.legend->width}, legend->size(), false);
+        acmacs::surface::Surface& legend_surface = mSurface.subsurface(static_cast<acmacs::Offset>(mSettings.legend->offset), Scaled{*mSettings.legend->width}, legend->size(), false);
         legend->draw(legend_surface, mSettings.legend);
           // legend_surface->border("red", 1);
     }

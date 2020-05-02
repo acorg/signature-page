@@ -87,11 +87,11 @@ void TimeSeriesDraw::draw()
 void TimeSeriesDraw::draw_labels(double month_width)
 {
     const acmacs::Size& surface_size = mSurface.viewport().size;
-    const double month_max_height = mSurface.text_size("May ", Pixels{mSettings.label_size}, mSettings.label_style).width;
+    const double month_max_height = mSurface.text_size("May ", Pixels{*mSettings.label_size}, mSettings.label_style).width;
     double x_bearing;
-    const auto big_label_size = mSurface.text_size("May 99", Pixels{mSettings.label_size}, mSettings.label_style, &x_bearing);
+    const auto big_label_size = mSurface.text_size("May 99", Pixels{*mSettings.label_size}, mSettings.label_style, &x_bearing);
     const auto text_up = (month_width - big_label_size.height) * 0.5;
-    const double month_year_to_timeseries_gap = mSurface.convert(Pixels{mSettings.month_year_to_timeseries_gap}).value();
+    const double month_year_to_timeseries_gap = mSurface.convert(Pixels{*mSettings.month_year_to_timeseries_gap}).value();
 
     draw_labels_at_side({text_up, - big_label_size.width - x_bearing - 2 /*month_year_to_timeseries_gap*/}, month_width, month_max_height);
     draw_labels_at_side({text_up, surface_size.height + x_bearing + month_year_to_timeseries_gap}, month_width, month_max_height);
@@ -106,8 +106,8 @@ void TimeSeriesDraw::draw_labels_at_side(const acmacs::PointCoordinates& aOrigin
         auto current_month{date::from_string(*mSettings.begin)};
         for (size_t month_no = 0; month_no < mNumberOfMonths; ++month_no, date::increment_month(current_month)) {
             const double left = aOrigin.x() + static_cast<double>(month_no) * month_width;
-            mSurface.text({left, aOrigin.y()}, date::month_3(current_month), 0, Pixels{mSettings.label_size}, mSettings.label_style, Rotation{M_PI_2});
-            mSurface.text({left, aOrigin.y() + month_max_height}, date::year_2(current_month), 0, Pixels{mSettings.label_size}, mSettings.label_style, Rotation{M_PI_2});
+            mSurface.text({left, aOrigin.y()}, date::month_3(current_month), 0, Pixels{*mSettings.label_size}, mSettings.label_style, Rotation{M_PI_2});
+            mSurface.text({left, aOrigin.y() + month_max_height}, date::year_2(current_month), 0, Pixels{*mSettings.label_size}, mSettings.label_style, Rotation{M_PI_2});
         }
     }
     catch (std::exception& err) {
@@ -163,7 +163,7 @@ void TimeSeriesDraw::draw_dashes(double month_width)
                     if (const auto node_date{date::from_string(node_date_s)}; node_date >= begin && node_date <= end) {
                         const int month_no = date::months_between_dates(begin, node_date);
                         const acmacs::PointCoordinates a(base_x + month_width * month_no, aNode.draw.vertical_pos);
-                        mSurface.line(a, {a.x() + month_width * mSettings.dash_width, a.y()}, coloring.color(aNode), Pixels{mSettings.dash_line_width}, acmacs::surface::LineCap::Round);
+                        mSurface.line(a, {a.x() + month_width * mSettings.dash_width, a.y()}, coloring.color(aNode), Pixels{*mSettings.dash_line_width}, acmacs::surface::LineCap::Round);
                     }
                 }
                 catch (std::exception& err) {
@@ -195,7 +195,7 @@ void TimeSeriesDraw::draw_hz_section_lines()
                 double y = aNode.draw.vertical_pos;
                 if (section_settings->show_line) {
                     y = (previous_vertical_pos + aNode.draw.vertical_pos) / 2;
-                    mSurface.line({0, y}, {mSurface.viewport().size.width, y}, mHzSections.line_color, Pixels{mHzSections.line_width});
+                    mSurface.line({0, y}, {mSurface.viewport().size.width, y}, mHzSections.line_color, Pixels{*mHzSections.line_width});
                 }
                 if ((!mTreeMode || mHzSections.show_labels_in_time_series_in_tree_mode) && section_settings->show_label_in_time_series) {
                     draw_hz_section_label(aNode.draw.hz_section_index, y);
@@ -215,8 +215,8 @@ void TimeSeriesDraw::draw_hz_section_label(size_t aSectionIndex, double aY)
     const auto section_settings = mHzSections.sections[aSectionIndex];
     if (section_settings->show && section_settings->show_map) {
         std::string label = mHzSections.node_refs[aSectionIndex].index; // (1, 'A' + static_cast<char>(aSectionNo));
-        const acmacs::Size tsize = mSurface.text_size(label, Pixels{mHzSections.ts_label_size}, mHzSections.ts_label_style);
-        mSurface.text({mSurface.viewport().size.width - tsize.width * 1.2, aY + tsize.height * 1.2}, label, mHzSections.ts_label_color, Pixels{mHzSections.ts_label_size}, mHzSections.ts_label_style);
+        const acmacs::Size tsize = mSurface.text_size(label, Pixels{*mHzSections.ts_label_size}, mHzSections.ts_label_style);
+        mSurface.text({mSurface.viewport().size.width - tsize.width * 1.2, aY + tsize.height * 1.2}, label, mHzSections.ts_label_color, Pixels{*mHzSections.ts_label_size}, mHzSections.ts_label_style);
     }
 
 } // TimeSeriesDraw::draw_hz_section_label

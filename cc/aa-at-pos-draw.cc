@@ -212,10 +212,10 @@ void AAAtPosDraw::draw(bool init_settings, size_t hz_section_threshold)
                     const auto aa = sequence[pos];
                     const auto base_x = section_width * static_cast<double>(section_no) + (section_width - line_length) / 2;
                     const std::string aa_s(1, aa);
-                    mSurface.text({base_x, aNode.draw.vertical_pos + this->mSettings.line_width / 2}, aa_s, BLACK /* found->second */, Pixels{this->mSettings.line_width});
+                    mSurface.text({base_x, aNode.draw.vertical_pos + this->mSettings.line_width / 2}, aa_s, BLACK /* found->second */, Pixels{*this->mSettings.line_width});
                     if (const auto color_p = this->colors_[pos].find(aa); color_p != colors_[pos].end()) {
-                        const auto aa_width = mSurface.text_size(aa_s, Pixels{this->mSettings.line_width}).width * 2;
-                        mSurface.line({base_x + aa_width, aNode.draw.vertical_pos}, {base_x + line_length - aa_width, aNode.draw.vertical_pos}, color_p->second, Pixels{this->mSettings.line_width},
+                        const auto aa_width = mSurface.text_size(aa_s, Pixels{*this->mSettings.line_width}).width * 2;
+                        mSurface.line({base_x + aa_width, aNode.draw.vertical_pos}, {base_x + line_length - aa_width, aNode.draw.vertical_pos}, color_p->second, Pixels{*this->mSettings.line_width},
                                       acmacs::surface::LineCap::Round);
                     }
                 }
@@ -247,7 +247,7 @@ void AAAtPosDraw::draw_hz_section_lines() const
             if (node.draw.hz_section_index != NodeDrawData::HzSectionNoIndex) {
                 if (const auto& section = mHzSections.sections[node.draw.hz_section_index]; section->show_line) {
                     const auto y = (previous_vertical_pos + node.draw.vertical_pos) / 2;
-                    mSurface.line({0, y}, {mSurface.viewport().size.width, y}, mHzSections.line_color, Pixels{mHzSections.line_width}, acmacs::surface::Dash::Dash3);
+                    mSurface.line({0, y}, {mSurface.viewport().size.width, y}, mHzSections.line_color, Pixels{*mHzSections.line_width}, acmacs::surface::Dash::Dash3);
                     mSurface.text({-20, y}, std::to_string(node.draw.line_no), BLACK, Pixels{6});
                     section->triggering_aa_pos.for_each([this,section_width,y](const rjson::value& aa_pos) {
                         const auto section_no = std::find(positions_.begin(), positions_.end(), (aa_pos.to<size_t>() - 1)) - positions_.begin();

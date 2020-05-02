@@ -172,9 +172,9 @@ void LabelledGridBase::draw_mapped_antigens_section(size_t aSectionIndex, acmacs
 
     const double left = 0, right = aMappedAntigensDrawSurface.viewport().size.width;
     const double top = section.first->draw.vertical_pos, bottom = section.last->draw.vertical_pos;
-    aMappedAntigensDrawSurface.line({left, top}, {right, top}, settings.mapped_antigens_section_line_color, Pixels{settings.mapped_antigens_section_line_width}, acmacs::surface::LineCap::Square);
-    aMappedAntigensDrawSurface.line({left, bottom}, {right, bottom}, settings.mapped_antigens_section_line_color, Pixels{settings.mapped_antigens_section_line_width}, acmacs::surface::LineCap::Square);
-    aMappedAntigensDrawSurface.line({right, top}, {right, bottom}, settings.mapped_antigens_section_line_color, Pixels{settings.mapped_antigens_section_line_width}, acmacs::surface::LineCap::Square);
+    aMappedAntigensDrawSurface.line({left, top}, {right, top}, settings.mapped_antigens_section_line_color, Pixels{*settings.mapped_antigens_section_line_width}, acmacs::surface::LineCap::Square);
+    aMappedAntigensDrawSurface.line({left, bottom}, {right, bottom}, settings.mapped_antigens_section_line_color, Pixels{*settings.mapped_antigens_section_line_width}, acmacs::surface::LineCap::Square);
+    aMappedAntigensDrawSurface.line({right, top}, {right, bottom}, settings.mapped_antigens_section_line_color, Pixels{*settings.mapped_antigens_section_line_width}, acmacs::surface::LineCap::Square);
 
 } // LabelledGridBase::draw_mapped_antigens_section
 

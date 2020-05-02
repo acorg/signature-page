@@ -69,7 +69,7 @@ void MappedAntigensDraw::draw()
 
     auto draw_dash = [&](const Node& aNode) {
         if (aNode.draw.shown && aNode.draw.chart_antigen_index) {
-            mSurface.line({base_x, aNode.draw.vertical_pos}, {base_x + line_length, aNode.draw.vertical_pos}, mSettings.line_color, Pixels{mSettings.line_width}, acmacs::surface::LineCap::Round);
+            mSurface.line({base_x, aNode.draw.vertical_pos}, {base_x + line_length, aNode.draw.vertical_pos}, mSettings.line_color, Pixels{*mSettings.line_width}, acmacs::surface::LineCap::Round);
         }
     };
     tree::iterate_leaf(mTree, draw_dash);
