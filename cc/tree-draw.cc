@@ -773,7 +773,7 @@ void TreeDraw::draw_node(const Node& aNode, double aOriginX, double& aVerticalGa
             if (text_origin.x() < 0 || text_origin.y() < 0)
                 fmt::print(stderr, "WARNING: bad origin for a node label: {} \"{}\" mNameOffset:{} aOriginX:{}\n", text_origin, text, mNameOffset, aOriginX);
 
-            if (!acmacs::color::is_no_change(aNode.draw.mark_with_line)) {
+            if (!aNode.draw.mark_with_line.is_no_change()) {
                 // mSurface.line({text_origin.x() + tsize.width, text_origin.y}, {mSurface.viewport().size.width, text_origin.y}, aNode.draw.mark_with_line, aNode.draw.mark_with_line_width);
                 mSurface.line({mSurface.viewport().size.width - 10, text_origin.y()}, {mSurface.viewport().size.width, text_origin.y()}, acmacs::color::get(aNode.draw.mark_with_line), aNode.draw.mark_with_line_width);
             }
