@@ -23,7 +23,7 @@ class TimeSeriesDrawSettings : public acmacs::settings::v1::object
     acmacs::settings::v1::field<std::string>       begin{this, "begin", ""};
     acmacs::settings::v1::field<std::string>       end{this, "end", ""};
     acmacs::settings::v1::field<double>            label_size{this, "label_size", 8};
-    acmacs::settings::v1::field<acmacs::TextStyle> label_style{this, "label_style", {}};
+    acmacs::settings::v1::field<acmacs::TextStyle> label_style{this, "label_style", acmacs::TextStyle{}};
     acmacs::settings::v1::field<double>            month_year_to_timeseries_gap{this, "month_year_to_timeseries_gap", 2};
     acmacs::settings::v1::field<Color>             month_separator_color{this, "month_separator_color", BLACK};
     acmacs::settings::v1::field<double>            month_separator_width{this, "month_separator_width", 0.5};

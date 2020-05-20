@@ -18,10 +18,10 @@ class TitleDrawSettings : public acmacs::settings::v1::object
  public:
     using acmacs::settings::v1::object::object;
 
-    acmacs::settings::v1::field<std::string>       title{this, "title", ""};
+    acmacs::settings::v1::field<std::string>       title{this, "title", std::string{}};
     acmacs::settings::v1::field<Color>             color{this, "color", BLACK};
     acmacs::settings::v1::field<double>            size{this, "size", 12};
-    acmacs::settings::v1::field<acmacs::TextStyle> style{this, "style", {}};
+    acmacs::settings::v1::field<acmacs::TextStyle> style{this, "style", acmacs::TextStyle{}};
     acmacs::settings::v1::field<acmacs::Offset>    offset{this, "offset", {10, 30}};
 
     void remove_for_tree_settings();

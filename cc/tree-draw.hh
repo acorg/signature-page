@@ -133,11 +133,11 @@ class TreeDrawVaccineSettings : public acmacs::settings::v1::object
  public:
     using acmacs::settings::v1::object::object;
 
-    acmacs::settings::v1::field<std::string>       name{this, "name", ""};           // empty for default settings
-    acmacs::settings::v1::field<std::string>       name_help{this, "name?", "empty for default settings"};
+    acmacs::settings::v1::field<std::string>       name{this, "name", std::string{}};           // empty for default settings
+    acmacs::settings::v1::field<std::string>       name_help{this, "name?", std::string{"empty for default settings"}};
     acmacs::settings::v1::field<Color>             label_color{this, "label_color", "black"};
     acmacs::settings::v1::field<double>            label_size{this, "label_size", 10};
-    acmacs::settings::v1::field<acmacs::TextStyle> label_style{this, "label_style", {}};
+    acmacs::settings::v1::field<acmacs::TextStyle> label_style{this, "label_style", acmacs::TextStyle{}};
     acmacs::settings::v1::field<Color>             line_color{this, "line_color", "black"};
     acmacs::settings::v1::field<double>            line_width{this, "line_width", 1};
 
@@ -255,7 +255,7 @@ class TreeDrawSettings : public acmacs::settings::v1::object
     acmacs::settings::v1::field<double>                             line_width{this, "line_width", 1.0};
     acmacs::settings::v1::field<double>                             root_edge{this, "root_edge", 0.0};
     acmacs::settings::v1::field<Color>                              line_color{this, "line_color", "black"};
-    acmacs::settings::v1::field<acmacs::TextStyle>                  label_style{this, "label_style", {}};
+    acmacs::settings::v1::field<acmacs::TextStyle>                  label_style{this, "label_style", acmacs::TextStyle{}};
     acmacs::settings::v1::field<double>                             name_offset{this, "name_offset", 0.3};         // offset of the label from the line right end, in W widths
     acmacs::settings::v1::field<std::string>                        color_nodes{this, "color_nodes", "continent"};    // black, continent, position number (e.g. 162)
     acmacs::settings::v1::field<std::map<std::string, std::string>> color_for_aa{this, "color_for_aa"};            // for "color_nodes": "<position-number>"
@@ -315,7 +315,7 @@ class HzSections : public acmacs::settings::v1::object
     acmacs::settings::v1::field<Color>              line_color{this, "line_color", "grey63"};
     acmacs::settings::v1::field<double>             line_width{this, "line_width", 1};
     acmacs::settings::v1::field<double>             ts_label_size{this, "ts_label_size", 10};
-    acmacs::settings::v1::field<acmacs::TextStyle>  ts_label_style{this, "ts_label_style", {}};
+    acmacs::settings::v1::field<acmacs::TextStyle>  ts_label_style{this, "ts_label_style", acmacs::TextStyle{}};
     acmacs::settings::v1::field<Color>              ts_label_color{this, "ts_label_color", "black"};
     acmacs::settings::v1::field_array_of<HzSection> sections{this, "sections"};
     acmacs::settings::v1::field<bool>               show_labels_in_time_series_in_tree_mode{this, "show_labels_in_time_series_in_tree_mode", false};
