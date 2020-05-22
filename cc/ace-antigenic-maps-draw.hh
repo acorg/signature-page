@@ -16,9 +16,9 @@ class ChartDrawInterface : public ChartDrawBase
     ChartDrawInterface(acmacs::chart::ChartModifyP aChart) : mChartDraw(aChart, 0) {}
 
     void init_settings() override;
-    const acmacs::Viewport& viewport() const override { return mChartDraw.viewport(); }
-    const acmacs::Viewport& calculate_viewport() override { return mChartDraw.calculate_viewport(); }
-    virtual void viewport(const acmacs::Viewport& aViewport) { mChartDraw.viewport(aViewport); }
+    const acmacs::Viewport& viewport() const override { return mChartDraw.viewport("signature-page ChartDrawInterface::viewport"); }
+    const acmacs::Viewport& calculate_viewport() override { mChartDraw.calculate_viewport(); return viewport(); }
+    virtual void viewport(const acmacs::Viewport& aViewport) { mChartDraw.set_viewport(aViewport); }
     void draw(acmacs::surface::Surface& aSurface) const override { mChartDraw.draw(aSurface); }
 
     std::optional<size_t> find_antigen(std::string aName) const override { return chart().antigens()->find_by_full_name(aName); }

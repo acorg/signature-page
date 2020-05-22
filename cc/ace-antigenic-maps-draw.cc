@@ -68,7 +68,8 @@ void AntigenicMapsLayoutDrawAce::prepare_apply_mods()
                 }
             }
             else if (mod.name == "viewport") {
-                chart_draw().viewport(mod.get_viewport(chart_draw().calculate_viewport(false)));
+                chart_draw().calculate_viewport();
+                chart_draw().set_viewport(mod.get_viewport(chart_draw().viewport("signature-page AntigenicMapsLayoutDrawAce::prepare_apply_mods")));
             }
             else if (mod.name == "title") {
                 chart_draw()
