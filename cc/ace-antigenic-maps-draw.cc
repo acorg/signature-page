@@ -68,7 +68,7 @@ void AntigenicMapsLayoutDrawAce::prepare_apply_mods()
                 }
             }
             else if (mod.name == "viewport") {
-                chart_draw().calculate_viewport();
+                chart_draw().calculate_viewport("signature-page AntigenicMapsLayoutDrawAce::prepare_apply_mods");
                 chart_draw().set_viewport(mod.get_viewport(chart_draw().viewport("signature-page AntigenicMapsLayoutDrawAce::prepare_apply_mods")));
             }
             else if (mod.name == "title") {
@@ -94,7 +94,7 @@ void AntigenicMapsLayoutDrawAce::prepare_apply_mods()
             throw;
         }
     });
-    chart_draw().calculate_viewport();
+    chart_draw().calculate_viewport("signature-page AntigenicMapsLayoutDrawAce::prepare_apply_mods");
 
 } // AntigenicMapsLayoutDrawAce::prepare_apply_mods
 
