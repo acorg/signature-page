@@ -371,9 +371,9 @@ void AntigenicMapsLayoutDrawAce::make_tracked_serum(size_t serum_index, Pixels s
 
         rjson::for_each(label_data.get(), [&label, &label_data, this, serum_index](std::string_view field_name, const rjson::value& item_value) {
             if (field_name == "size")
-                label.size(item_value.to<double>());
+                label.size(item_value.to<Pixels>());
             else if (field_name == "color")
-                label.color(Color(item_value.to<std::string_view>()));
+                label.color(item_value.to<std::string_view>());
             else if (field_name == "font_family")
                 label.font_family(item_value.to<std::string_view>());
             else if (field_name == "name_type") {
@@ -752,7 +752,7 @@ void AntigenicMapsLayoutDrawAce::add_label(std::shared_ptr<VaccineMatcherLabel> 
 {
     rjson::for_each(data, [&label](std::string_view field_name, const rjson::value& item_value) {
         if (field_name == "size")
-            label->size(item_value.to<double>());
+            label->size(item_value.to<Pixels>());
         else if (field_name == "color")
             label->color(item_value.to<std::string_view>());
         else if (field_name == "font_family")
