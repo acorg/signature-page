@@ -32,7 +32,7 @@ void AntigenicMapsDraw::make_layout()
 
 void AntigenicMapsLayoutDrawAce::prepare_apply_mods()
 {
-      // std::cerr << "DEBUG: AntigenicMapsLayoutDrawAce::prepare_apply_mods\n";
+    // std::cerr << "DEBUG: AntigenicMapsLayoutDrawAce::prepare_apply_mods\n";
     settings().mods.for_each([this](const auto& mod, size_t /*mod_no*/) {
         try {
             if (!mod.name.is_set_or_has_default()) {
@@ -74,14 +74,14 @@ void AntigenicMapsLayoutDrawAce::prepare_apply_mods()
             else if (mod.name == "title") {
                 chart_draw()
                     .title()
-                    .text_size(mod.text_size.get_or(12.0))
-                    .text_color(mod.text_color.get_or(BLACK))
+                    .text_size(Pixels{mod.text_size.get_or(12.0)})
+                    .text_color(acmacs::color::Modifier{mod.text_color.get_or(BLACK)})
                     .weight(std::string(mod.weight.get_or("normal")))
                     .slant(std::string(mod.slant.get_or("normal")))
                     .font_family(std::string(mod.font_family.get_or("san serif")))
-                    .background(TRANSPARENT)
-                    .border_width(0)
-                    .padding(mod.padding.get_or(3.0))
+                    .background(acmacs::color::Modifier{TRANSPARENT})
+                    .border_width(Pixels{0})
+                    .padding(Pixels{mod.padding.get_or(3.0)})
                     .offset(mod.offset)
                     .remove_all_lines();
             }
