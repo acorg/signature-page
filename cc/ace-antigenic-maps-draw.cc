@@ -612,7 +612,7 @@ bool AntigenicMapsLayoutDrawAce::make_serum_circle(const AntigenicMapMod& mod, s
             std::cout << '\n';
         }
         auto& serum_circle = chart_draw().serum_circle(serum_no, Scaled{radius});
-        serum_circle.fill(mod.fill.get_or(TRANSPARENT)).outline(outline_color, mod.outline_width.get_or(1.0)).radius_line(mod.radius_line.get_or(TRANSPARENT), mod.radius_line_width.get_or(1.0));
+        serum_circle.fill(mod.fill.get_or(TRANSPARENT)).outline(outline_color, Pixels{mod.outline_width.get_or(1.0)}).radius_line(mod.radius_line.get_or(TRANSPARENT), Pixels{mod.radius_line_width.get_or(1.0)});
         //.angles(mod.get["angle_degrees"][0] * math.pi / 180.0, mod.get["angle_degrees"][1] * math.pi / 180.0);
         const auto radius_line_dash = mod.radius_line_dash.get_or("");
         if (radius_line_dash.empty() || radius_line_dash == "nodash")
