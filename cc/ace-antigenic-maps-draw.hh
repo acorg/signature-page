@@ -13,7 +13,7 @@
 class ChartDrawInterface : public ChartDrawBase
 {
  public:
-    ChartDrawInterface(acmacs::chart::ChartModifyP aChart) : mChartDraw(aChart, 0) {}
+    ChartDrawInterface(std::string_view chart_filename) : mChartDraw(chart_filename, 0) {}
 
     void init_settings() override;
     const acmacs::Viewport& viewport() const override { return mChartDraw.viewport("signature-page ChartDrawInterface::viewport"); }
@@ -39,8 +39,8 @@ class ChartDrawInterface : public ChartDrawBase
 class AntigenicMapsDraw : public AntigenicMapsDrawBase
 {
  public:
-    AntigenicMapsDraw(acmacs::surface::Surface& aSurface, Tree& aTree, acmacs::chart::ChartModifyP aChart, HzSections& aHzSections, SignaturePageDrawSettings& aSignaturePageDrawSettings, TimeSeriesDraw& aTimeSeriesDraw, AntigenicMapsDrawSettings& aSettings)
-        : AntigenicMapsDrawBase(aSurface, aTree, aHzSections, aSignaturePageDrawSettings, aTimeSeriesDraw, aSettings), mChartDraw(aChart) {}
+    AntigenicMapsDraw(acmacs::surface::Surface& aSurface, Tree& aTree, std::string_view chart_filename, HzSections& aHzSections, SignaturePageDrawSettings& aSignaturePageDrawSettings, TimeSeriesDraw& aTimeSeriesDraw, AntigenicMapsDrawSettings& aSettings)
+        : AntigenicMapsDrawBase(aSurface, aTree, aHzSections, aSignaturePageDrawSettings, aTimeSeriesDraw, aSettings), mChartDraw(chart_filename) {}
 
     void make_layout() override;
     const ChartDrawBase& chart() const override { return mChartDraw; }
