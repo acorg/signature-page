@@ -2,6 +2,7 @@
 
 #include "acmacs-base/enumerate.hh"
 #include "acmacs-base/color-gradient.hh"
+#include "acmacs-chart-2/serum-circle.hh"
 #include "acmacs-map-draw/vaccine-matcher.hh"
 #include "acmacs-map-draw/mod-applicator.hh"
 #include "ace-antigenic-maps-draw.hh"
@@ -586,7 +587,7 @@ bool AntigenicMapsLayoutDrawAce::make_serum_circle(const AntigenicMapMod& mod, s
 
     std::vector<double> radii(homologous_antigens->size());
     std::transform(homologous_antigens.begin(), homologous_antigens.end(), radii.begin(), [&](size_t ag_no) -> double {
-        const auto circle_data = chart().serum_circle_radius_empirical(ag_no, serum_no, 0);
+        const auto circle_data = acmacs::chart::serum_circle_empirical(ag_no, serum_no, chart(), 0);
         return circle_data.valid() ? circle_data.radius() : -1.0;
     });
     std::sort(radii.begin(), radii.end());
