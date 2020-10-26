@@ -69,10 +69,10 @@ template <typename Target> class StringListIgnoreHandler : public json_reader::G
   public:
     StringListIgnoreHandler(Target& aTarget) : json_reader::GenericListHandler<Target>(aTarget, 0) {}
 
-    virtual json_reader::HandlerBase<Target>* String(const char* /*str*/, rapidjson::SizeType /*length*/) { return nullptr; }
+    json_reader::HandlerBase<Target>* String(const char* /*str*/, rapidjson::SizeType /*length*/) override { return nullptr; }
 
   protected:
-    virtual inline size_t size() const { return 0; }
+    size_t size() const override { return 0; }
 
 }; // class StringListHandler
 
@@ -83,7 +83,7 @@ class NewickNodeHandler : public HandlerBase
   public:
     NewickNodeHandler(Node& aTarget) : HandlerBase(aTarget), mKey(TreeJsonKey::Unknown) {}
 
-    virtual HandlerBase* Key(const char* str, rapidjson::SizeType length)
+    HandlerBase* Key(const char* str, rapidjson::SizeType length) override
     {
         HandlerBase* result = nullptr;
         if (length == 1) {
@@ -120,7 +120,7 @@ class NewickNodeHandler : public HandlerBase
         return result;
     }
 
-    virtual HandlerBase* Double(double d)
+    HandlerBase* Double(double d) override
     {
         switch (mKey) {
             case TreeJsonKey::EdgeLength:
@@ -142,7 +142,7 @@ class NewickNodeHandler : public HandlerBase
         return nullptr;
     }
 
-    virtual HandlerBase* String(const char* str, rapidjson::SizeType length)
+    HandlerBase* String(const char* str, rapidjson::SizeType length) override
     {
         switch (mKey) {
             case TreeJsonKey::SeqId:
@@ -182,7 +182,7 @@ class PhylogeneticV2Handler : public HandlerBase
   public:
     PhylogeneticV2Handler(Node& aTarget) : HandlerBase(aTarget) {}
 
-    virtual HandlerBase* Key(const char* str, rapidjson::SizeType length)
+    HandlerBase* Key(const char* str, rapidjson::SizeType length) override
     {
         HandlerBase* result = nullptr;
         if (length == 1) {
@@ -210,7 +210,7 @@ class PhylogeneticV2Handler : public HandlerBase
         return result;
     }
 
-    virtual HandlerBase* Double(double d)
+    HandlerBase* Double(double d) override
     {
         if (mKey != TreeJsonKey::EdgeLength)
             throw json_reader::Failure();
@@ -218,7 +218,7 @@ class PhylogeneticV2Handler : public HandlerBase
         return nullptr;
     }
 
-    virtual HandlerBase* String(const char* str, rapidjson::SizeType length)
+    HandlerBase* String(const char* str, rapidjson::SizeType length) override
     {
         if (mKey != TreeJsonKey::SeqId)
             throw json_reader::Failure();
@@ -248,7 +248,7 @@ class TreeRootHandler : public HandlerBase
   public:
     TreeRootHandler(Node& aTree) : HandlerBase{aTree}, mKey(Keys::Unknown), mTreeType(TreeType::Unknown) {}
 
-    virtual HandlerBase* Key(const char* str, rapidjson::SizeType length)
+    HandlerBase* Key(const char* str, rapidjson::SizeType length) override
     {
         HandlerBase* result = nullptr;
         const std::string found_key(str, length);
@@ -264,7 +264,7 @@ class TreeRootHandler : public HandlerBase
         return result;
     }
 
-    virtual HandlerBase* String(const char* str, rapidjson::SizeType length)
+    HandlerBase* String(const char* str, rapidjson::SizeType length) override
     {
         HandlerBase* result = nullptr;
         switch (mKey) {
@@ -287,7 +287,7 @@ class TreeRootHandler : public HandlerBase
         return result;
     }
 
-    virtual HandlerBase* StartObject()
+    HandlerBase* StartObject() override
     {
         HandlerBase* result = nullptr;
         switch (mKey) {

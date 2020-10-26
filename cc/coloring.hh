@@ -26,8 +26,8 @@ class Coloring
 class ColoringBlack : public Coloring
 {
  public:
-    virtual Color color(const Node&) const { return 0; }
-    virtual Legend* legend() const { return nullptr; }
+    Color color(const Node&) const override { return 0; }
+    Legend* legend() const override { return nullptr; }
 };
 
 // ----------------------------------------------------------------------
@@ -35,8 +35,8 @@ class ColoringBlack : public Coloring
 class ColoringByContinent : public Coloring
 {
  public:
-    virtual Color color(const Node& aNode) const;
-    virtual Legend* legend() const;
+    Color color(const Node& aNode) const override;
+    Legend* legend() const override;
 
 }; // class ColoringByContinent
 
@@ -50,13 +50,13 @@ class ColoringByPos : public Coloring
 
     ColoringByPos(size_t aPos) : mPos(aPos - 1) {}
 
-    virtual Color color(const Node& aNode) const;
-    virtual Legend* legend() const;
+    Color color(const Node& aNode) const override;
+    Legend* legend() const override;
     size_t pos() const { return mPos; }
     const UsedColors& used_colors() const { return mUsed; }
     void color_for_aa(const std::map<std::string, std::string>& colors);
 
-    virtual void report() const;
+    void report() const override;
 
  private:
     size_t mPos;

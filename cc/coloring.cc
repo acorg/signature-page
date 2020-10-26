@@ -22,12 +22,12 @@ class ColoringByContinentMapLegend : public Legend
  public:
     ColoringByContinentMapLegend() = default;
 
-    virtual void draw(acmacs::surface::Surface& aSurface, const LegendSettings& /*aSettings*/) const
+    void draw(acmacs::surface::Surface& aSurface, const LegendSettings& /*aSettings*/) const override
         {
             continent_map_draw(aSurface);
         }
 
-    virtual acmacs::Size size() const
+    acmacs::Size size() const override
         {
             return continent_map_size();
         }
@@ -107,7 +107,7 @@ class ColoringByPosLegend : public Legend
     ColoringByPosLegend(const ColoringByPos& aColoring)
         : Legend(), mColoring(aColoring), mTitle(std::to_string(mColoring.pos() + 1)) {}
 
-    virtual void draw(acmacs::surface::Surface& aSurface, const LegendSettings& aSettings) const
+    void draw(acmacs::surface::Surface& aSurface, const LegendSettings& aSettings) const override
         {
               // aSurface.border(0xA0FFA000, 1);
             const auto title_size = aSurface.text_size(mTitle, Pixels{*aSettings.title_size}, aSettings.title_style);
@@ -124,7 +124,7 @@ class ColoringByPosLegend : public Legend
             aSurface.text({(max_width - title_size.width) / 2, title_size.height}, mTitle, BLACK, Pixels{*aSettings.title_size}, aSettings.title_style);
         }
 
-    virtual acmacs::Size size() const
+    acmacs::Size size() const override
         {
             return {static_cast<double>(mTitle.size()) * 10.0, static_cast<double>(mColoring.used_colors().size() + 1) * 10.0};
         }
