@@ -1,4 +1,4 @@
-#include "acmacs-base/debug.hh"
+#include "acmacs-base/log.hh"
 #include "acmacs-base/timeit.hh"
 #include "acmacs-base/stream.hh"
 

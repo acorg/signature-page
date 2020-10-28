@@ -1,4 +1,4 @@
-#include "acmacs-base/debug.hh"
+#include "acmacs-base/log.hh"
 
 #include "time-series-draw.hh"
 #include "tree.hh"
