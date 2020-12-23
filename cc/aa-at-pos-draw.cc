@@ -1,15 +1,14 @@
-#include "acmacs-base/stream.hh"
+#include "acmacs-base/log.hh"
 #include "acmacs-base/enumerate.hh"
 #include "acmacs-base/color-distinct.hh"
-#include "aa-at-pos-draw.hh"
-#include "tree.hh"
-#include "tree-draw.hh"
+#include "signature-page/aa-at-pos-draw.hh"
+#include "signature-page/tree.hh"
+#include "signature-page/tree-draw.hh"
 
 // ----------------------------------------------------------------------
 
 void AAAtPosDraw::prepare()
 {
-    // std::cerr << ">>> AAAtPosDraw::prepare " << mSettings.width << '\n';
     if (mSettings.width > 0.0) {
         if (!mSettings.positions.empty()) {
             positions_.resize(mSettings.positions.size());
@@ -74,12 +73,12 @@ void AAAtPosDraw::find_most_diverse_positions()
     std::transform(all_pos.begin(), last, positions_.begin(), [](const all_pos_t& entry) { return entry.first; });
 
     if (mSettings.report_most_diverse_positions) {
-        std::cout << "\nINFO: most diverse positions" << '\n';
+        fmt::memory_buffer out;
         for (const auto& pos_index : all_pos) {
             if (pos_index.second > 0)
-                std::cout << std::setw(3) << std::right << (pos_index.first + 1) << ' ' << std::setw(4) << std::right << pos_index.second << ' ' << aa_per_pos_[pos_index.first] << '\n';
+                fmt::format_to(out, "{:3d} {:4d} {}\n", pos_index.first + 1, pos_index.second, aa_per_pos_[pos_index.first]);
         }
-        std::cout << '\n';
+        AD_INFO("most diverse positions:\n{}", fmt::to_string(out));
     }
 
 } // AAAtPosDraw::find_most_diverse_positions
@@ -94,7 +93,6 @@ void AAAtPosDraw::set_colors()
             std::vector<char> aas(aa_freq.size());
             std::transform(aa_freq.begin(), aa_freq.end(), aas.begin(), [](const auto& entry) { return entry.first; });
             std::sort(aas.begin(), aas.end(), [&](char aa1, char aa2) { return aa_freq.find(aa1)->second > aa_freq.find(aa2)->second; }); // most frequent aa first
-            // std::cout << pos << ' ' << aas << ' ' << aa_freq << '\n';
             for (size_t no = 1; no < aas.size(); ++no) // no color for the most frequent aa
                 colors_[pos].emplace(aas[no], acmacs::color::distinct(no));
         }
@@ -132,7 +130,7 @@ void AAAtPosDraw::make_aa_pos_sections(bool init_settings, size_t hz_section_thr
                 }
                 else {
                     if (pos < 500)
-                        std::cerr << "WARNING: AAAtPosDraw::make_aa_pos_sections: sequence " << node.seq_id << " is too short: " << sequence.size() << " pos: " << pos << '\n';
+                        AD_WARNING("AAAtPosDraw::make_aa_pos_sections: sequence {} is too short: {} pos: {}", node.seq_id, sequence.size(), pos);
                 }
             });
 

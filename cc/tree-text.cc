@@ -2,7 +2,6 @@
 #include <cmath>
 
 #include "acmacs-base/argv.hh"
-#include "acmacs-base/stream.hh"
 #include "acmacs-chart-2/factory-import.hh"
 #include "tree.hh"
 #include "tree-export.hh"

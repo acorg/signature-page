@@ -2,7 +2,6 @@
 #include <map>
 #include <cmath>
 
-#include "acmacs-base/stream.hh"
 #include "acmacs-base/fmt.hh"
 #include "acmacs-base/enumerate.hh"
 #include "signature-page/tree.hh"
@@ -19,10 +18,12 @@ struct DiffEntry
     AADiff with_other;
 };
 
-inline std::ostream& operator<<(std::ostream& s, const DiffEntry& c)
-{
-    return s << c.previous->seq_id << " -> " << c.current->seq_id << ' ' << c.with_other;
-}
+template <> struct fmt::formatter<DiffEntry> : fmt::formatter<acmacs::fmt_helper::default_formatter> {
+    template <typename FormatCtx> auto format(const DiffEntry& value, FormatCtx& ctx)
+    {
+        return format_to(ctx.out(), "{} -> {} {}", value.previous->seq_id, value.current->seq_id, value.with_other);
+    }
+};
 
 using AllDiffs = std::map<AADiff, std::vector<DiffEntry>>;
 
@@ -46,9 +47,9 @@ int main(int argc, const char* const* argv)
         auto diffs = collect(tree);
         compute_entries_diffs(diffs);
         for (const auto& entry : diffs) {
-            std::cout << entry.first << '\n';
+            fmt::print("{}\n", entry.first);
             for (const auto& diff : entry.second) {
-                std::cout << "  " << diff << '\n';
+                fmt::print("  {}\n", diff);
             }
         }
 
@@ -83,12 +84,12 @@ int main(int argc, const char* const* argv)
             return {src.first, std::lround(shannon_index * 100)};
         });
         std::sort(std::begin(all_pos), std::end(all_pos), [](const auto& p1, const auto& p2) { return p1.second > p2.second; });
-        std::cout << "======================================================================\n";
+        fmt::print("======================================================================\n");
         for (const auto& pos_e : all_pos)
-            std::cout << std::setw(3) << std::right << (pos_e.first + 1) << ' ' << aa_per_pos[pos_e.first] << '\n';
+            fmt::print("{:3d} {}\n", pos_e.first + 1, aa_per_pos[pos_e.first]);
     }
     else {
-        std::cerr << "Usage: " << argv[0] << " tree.json[.xz]\n";
+        fmt::print(stderr, "Usage: {} tree.json[.xz]\n", argv[0]);
         exit_code = 1;
     }
     return exit_code;

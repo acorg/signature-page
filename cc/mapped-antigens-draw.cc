@@ -1,6 +1,5 @@
 #include "acmacs-base/log.hh"
 #include "acmacs-base/timeit.hh"
-#include "acmacs-base/stream.hh"
 
 #include "mapped-antigens-draw.hh"
 #include "tree.hh"
