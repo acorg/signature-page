@@ -2,8 +2,8 @@
 #include <set>
 
 #include "acmacs-base/argv.hh"
-#include "tree.hh"
-#include "tree-export.hh"
+#include "signature-page/tree.hh"
+#include "signature-page/tree-export.hh"
 
 // ----------------------------------------------------------------------
 

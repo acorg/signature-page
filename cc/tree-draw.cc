@@ -7,11 +7,11 @@
 #include "acmacs-base/range.hh"
 #include "acmacs-draw/surface.hh"
 #include "hidb-5/vaccines.hh"
-#include "tree-draw.hh"
-#include "tree.hh"
-#include "coloring.hh"
-#include "settings-initializer.hh"
-#include "signature-page.hh"
+#include "signature-page/tree-draw.hh"
+#include "signature-page/tree.hh"
+#include "signature-page/coloring.hh"
+#include "signature-page/settings-initializer.hh"
+#include "signature-page/signature-page.hh"
 
 // ----------------------------------------------------------------------
 

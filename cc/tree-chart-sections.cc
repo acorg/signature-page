@@ -3,8 +3,8 @@
 #include "acmacs-base/argv.hh"
 #include "acmacs-base/json-writer.hh"
 #include "acmacs-chart-2/factory-import.hh"
-#include "tree.hh"
-#include "tree-export.hh"
+#include "signature-page/tree.hh"
+#include "signature-page/tree-export.hh"
 
 // ----------------------------------------------------------------------
 

@@ -54,11 +54,12 @@ LDLIBS = $(ACMACSD_LIBS) $(CAIRO_LIBS) $(XZ_LIBS)
 # ----------------------------------------------------------------------
 
 install: $(TARGETS)
+	$(call install_all,$(AD_PACKAGE_NAME))
 	$(call install_py_lib,$(SIGNATURE_PAGE_PY_LIB))
-	$(call symbolic_link,$(DIST)/sigp,$(AD_BIN))
-	$(call symbolic_link,$(DIST)/make-isig,$(AD_BIN))
-	$(call symbolic_link_wildcard,$(abspath bin)/sigp-*,$(AD_BIN))
-	$(call symbolic_link_wildcard,$(DIST)/tree-*,$(AD_BIN))
+	# $(call symbolic_link,$(DIST)/sigp,$(AD_BIN))
+	# $(call symbolic_link,$(DIST)/make-isig,$(AD_BIN))
+	# $(call symbolic_link_wildcard,$(abspath bin)/sigp-*,$(AD_BIN))
+	# $(call symbolic_link_wildcard,$(DIST)/tree-*,$(AD_BIN))
 
 test: install $(DIST)/sigp
 	test/test

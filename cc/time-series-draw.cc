@@ -1,9 +1,8 @@
 #include "acmacs-base/log.hh"
-
-#include "time-series-draw.hh"
-#include "tree.hh"
-#include "tree-draw.hh"
-#include "coloring.hh"
+#include "signature-page/time-series-draw.hh"
+#include "signature-page/tree.hh"
+#include "signature-page/tree-draw.hh"
+#include "signature-page/coloring.hh"
 
 // ----------------------------------------------------------------------
 

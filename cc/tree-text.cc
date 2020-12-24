@@ -3,8 +3,8 @@
 
 #include "acmacs-base/argv.hh"
 #include "acmacs-chart-2/factory-import.hh"
-#include "tree.hh"
-#include "tree-export.hh"
+#include "signature-page/tree.hh"
+#include "signature-page/tree-export.hh"
 
 static void print_tree_leaves(const Tree& tree, double step);
 static void print_tree(const Tree& tree, double step);
