@@ -41,10 +41,10 @@ int main(int argc, const char* const* argv)
             for (auto dim : acmacs::range(number_of_dimensions))
                 DF::second_field(data_csv, (*layout)(ag_no, dim));
             DF::second_field(data_csv, antigen->date());
-            DF::second_field(data_csv, antigen->format("{name_full}"));
+            DF::second_field(data_csv, antigen->name_full());
             const auto& entry = per_antigen[ag_no];
             if (entry) {
-                // std::cout << "entry " << entry.entry().name() << " -- " << antigen->format("{name_full}") << '\n';
+                // std::cout << "entry " << entry.entry().name() << " -- " << antigen->name_full() << '\n';
                 const auto seq = entry.aa_aligned(seqdb);
                 for (auto bp : sBjornPos)
                     DF::second_field(data_csv, seq[bp - 1]);

@@ -186,7 +186,7 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, std
                                 std::cout << fmt::format("tracked_antigens by month {} {}\n", month, tracked_antigen_style.fill());
                                 for (auto ag_no : tracked) {
                                     auto antigen = chart().antigen(ag_no);
-                                    std::cout << "    " << ag_no << ' ' << antigen->format("{name_full}") << ' ' << *antigen->date() << '\n';
+                                    std::cout << "    " << ag_no << ' ' << antigen->name_full() << ' ' << *antigen->date() << '\n';
                                 }
                             }
                         }
@@ -211,11 +211,11 @@ void AntigenicMapsLayoutDrawAce::prepare_drawing_chart(size_t aSectionIndex, std
                 const auto tracked_serum_indices = tracked_sera(aSectionIndex);
                 fmt::print("INFO: tracked_sera: {}\n", tracked_serum_indices.size());
                 for (const auto& [sr_no, ag_list] : tracked_serum_indices)
-                    fmt::print("    {:3d} {}\n", sr_no, chart().serum(sr_no)->format("{name_full}"));
+                    fmt::print("    {:3d} {}\n", sr_no, chart().serum(sr_no)->name_full());
                 const auto tracked_antigen_indices = tracked_antigens(aSectionIndex, false);
                 fmt::print("INFO: tracked_antigens: {}\n", tracked_antigen_indices.size());
                 for (auto ag_no : tracked_antigen_indices)
-                    fmt::print("    {:3d} {}\n", ag_no, chart().antigen(ag_no)->format("{name_full}"));
+                    fmt::print("    {:3d} {}\n", ag_no, chart().antigen(ag_no)->name_full());
 
                 // fmt::print("INFO: tracked_sera:     {}\n      tracked_antigens: {}\n", tracked_serum_indices, tracked_antigens(aSectionIndex, false));
                 for (auto [serum_index, ignored] : tracked_serum_indices)
@@ -320,7 +320,7 @@ void AntigenicMapsLayoutDrawAce::tracked_antigens_20200219_gly_outline(size_t aS
                         tracked_antigen_style.outline(loss);
                         break;
                 }
-                fmt::print(stderr, "DEBUG: 2/3del {} {}\n", tracked_antigen_style.outline(), antigen->format("{name_full}"));
+                fmt::print(stderr, "DEBUG: 2/3del {} {}\n", tracked_antigen_style.outline(), antigen->name_full());
             // }
             // else {
             //     tracked_antigen_style.outline = BLACK;
@@ -387,7 +387,7 @@ void AntigenicMapsLayoutDrawAce::make_tracked_serum(size_t serum_index, Pixels s
                 else {
                     if (name_type != "full")
                         std::cerr << "WARNING: unrecognized \"name_type\" for label for serum: " << label_data << '\n';
-                    label.display_name(serum->format("{name_full}"));
+                    label.display_name(serum->name_full());
                 }
             }
             else if (field_name == "display_name")
@@ -417,7 +417,7 @@ acmacs::chart::PointIndexList AntigenicMapsLayoutDrawAce::tracked_antigens(size_
             if (passage == passage_t::all || (passage == passage_t::egg && antigen->passage().is_egg()) || (passage == passage_t::cell && antigen->passage().is_cell())) {
                 tracked_indices.insert(sequenced_section.first);
                 if (report_antigens_in_hz_sections)
-                    std::cout << aSectionIndex << ' ' << sequenced_section.first << ' ' << antigen->format("{name_full}") << '\n';
+                    std::cout << aSectionIndex << ' ' << sequenced_section.first << ' ' << antigen->name_full() << '\n';
             }
         }
     }
@@ -437,7 +437,7 @@ std::map<std::string, acmacs::chart::PointIndexList> AntigenicMapsLayoutDrawAce:
                 const auto month = date->substr(0, 7);
                 tracked_indices[month].insert(sequenced_section.first);
                 if (report_antigens_in_hz_sections) {
-                    fmt::print(stderr, "AG {:4d} {}", sequenced_section.first, antigen->format("{name_full}"));
+                    fmt::print(stderr, "AG {:4d} {}", sequenced_section.first, antigen->name_full());
                     if (const auto* clades = sequenced_section.second.node->data.clades(); clades)
                         fmt::print(stderr, "{}", *clades);
                     fmt::print(stderr, "\n");
@@ -468,10 +468,10 @@ void AntigenicMapsLayoutDrawAce::report_all_sera() const
         find_homologous_antigens_for_sera();
         fmt::print("INFO: All sera: {}\n", chart().number_of_sera());
         for (size_t serum_no = 0; serum_no < chart().number_of_sera(); ++serum_no) {
-            fmt::print("    {:3d} {}\n", serum_no, chart().serum(serum_no)->format("{name_full}"));
+            fmt::print("    {:3d} {}\n", serum_no, chart().serum(serum_no)->name_full());
             const auto homologous_antigens_for_serum = chart().serum(serum_no)->homologous_antigens();
             for (auto ag_no : homologous_antigens_for_serum)
-                fmt::print("        AG {:4d} {}\n", ag_no, chart().antigen(ag_no)->format("{name_full}"));
+                fmt::print("        AG {:4d} {}\n", ag_no, chart().antigen(ag_no)->name_full());
         }
         mAllSeraReported = true;
     }
@@ -496,7 +496,7 @@ std::map<size_t, acmacs::chart::PointIndexList> AntigenicMapsLayoutDrawAce::trac
     // std::cerr << "DEBUG: section " << aSectionIndex << " tracked antigens " << tracked_antigen_indices << '\n';
     // std::cerr << "DEBUG: section " << aSectionIndex << " tracked antigens " << tracked_antigen_indices.size() << '\n';
     // for (auto ag_no : tracked_antigen_indices)
-    //     std::cerr << "    " << ag_no << ' ' << chart().antigen(ag_no)->format("{name_full}") << '\n';
+    //     std::cerr << "    " << ag_no << ' ' << chart().antigen(ag_no)->name_full() << '\n';
 
     std::map<size_t, acmacs::chart::PointIndexList> tracked_indices;
     for (size_t serum_no = 0; serum_no < chart().number_of_sera(); ++serum_no) {
@@ -520,7 +520,7 @@ std::map<size_t, acmacs::chart::PointIndexList> AntigenicMapsLayoutDrawAce::trac
 //     std::cerr << "DEBUG: section " << aSectionIndex << " tracked antigens " << tracked_antigen_indices << '\n';
 //     // std::cerr << "DEBUG: section " << aSectionIndex << " tracked antigens " << tracked_antigen_indices.size() << '\n';
 //     // for (auto ag_no : tracked_antigen_indices)
-//     //     std::cerr << "    " << ag_no << ' ' << chart().antigen(ag_no)->format("{name_full}") << '\n';
+//     //     std::cerr << "    " << ag_no << ' ' << chart().antigen(ag_no)->name_full() << '\n';
 
 //     std::map<size_t, acmacs::chart::PointIndexList> tracked_indices;
 //     for (size_t serum_no = 0; serum_no < chart().number_of_sera(); ++serum_no) {
@@ -582,7 +582,7 @@ bool AntigenicMapsLayoutDrawAce::make_serum_circle(const AntigenicMapMod& mod, s
     const auto report_homologous_antigens = [serum_no,&homologous_antigens](std::ostream& out, const auto& chart) {
         auto titers = chart.titers();
         for (auto ag_no : homologous_antigens)
-            out << " [" << ag_no << ' ' << chart.antigen(ag_no)->format("{name_full}") << " : " << *titers->titer(ag_no, serum_no) << ']';
+            out << " [" << ag_no << ' ' << chart.antigen(ag_no)->name_full() << " : " << *titers->titer(ag_no, serum_no) << ']';
     };
 
     std::vector<double> radii(homologous_antigens->size());
@@ -652,7 +652,7 @@ void AntigenicMapsLayoutDrawAce::serum_circle(const AntigenicMapMod& mod, std::s
         if (make_serum_circle(mod, *serum_index, homologous_antigens_for_serum)) {
             // const auto serum_outline = mod.serum_outline.get_or(serum_circle_outline(mod, chart().serum(*serum_index)->passage().is_egg(), false));
             const auto serum_outline = serum_circle_outline(mod, chart().serum(*serum_index)->is_egg(acmacs::chart::reassortant_as_egg::yes), false);
-            // std::cerr << "DEBUG: serum_outline " << *serum_index << " " << chart().serum(*serum_index)->format("{name_full}") << " : " << serum_outline << '\n';
+            // std::cerr << "DEBUG: serum_outline " << *serum_index << " " << chart().serum(*serum_index)->name_full() << " : " << serum_outline << '\n';
             make_tracked_serum(*serum_index, Pixels{mod.serum_size.get_or(5.0)}, serum_outline, Pixels{mod.serum_outline_width.get_or(0.5)}, *mod.label);
         }
     }
