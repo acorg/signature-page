@@ -381,9 +381,9 @@ void AntigenicMapsLayoutDrawAce::make_tracked_serum(size_t serum_index, Pixels s
                 auto serum = chart().serum(serum_index);
                 const std::string_view name_type{item_value.to<std::string_view>()};
                 if (name_type == "abbreviated")
-                    label.display_name(serum->abbreviated_name());
+                    label.display_name(serum->format("{abbreviated_name}"));
                 else if (name_type == "abbreviated_name_with_serum_id")
-                    label.display_name(serum->abbreviated_name_with_serum_id());
+                    label.display_name(serum->format("{abbreviated_name_with_serum_id}"));
                 else {
                     if (name_type != "full")
                         std::cerr << "WARNING: unrecognized \"name_type\" for label for serum: " << label_data << '\n';
@@ -608,7 +608,7 @@ bool AntigenicMapsLayoutDrawAce::make_serum_circle(const AntigenicMapMod& mod, s
     }
     if (radius > 0) {
         if (!radius_forced) {
-            std::cout << fmt::format("INFO: serum circle {:7.4f}  SR {:3d} {} ({})  AG: ", radius, serum_no, serum->full_name_with_passage(), serum->passage_type());
+            std::cout << fmt::format("INFO: serum circle {:7.4f}  SR {:3d} {} ({})  AG: ", radius, serum_no, serum->format("{name_full_passage}"), serum->passage_type());
             report_homologous_antigens(std::cout, chart());
             std::cout << '\n';
         }
@@ -624,7 +624,7 @@ bool AntigenicMapsLayoutDrawAce::make_serum_circle(const AntigenicMapMod& mod, s
             serum_circle.radius_line_dash2();
     }
     if (radius < 0 || radius_forced) {
-        std::cerr << fmt::format("WARNING: No serum circle SR {:3d} {} ({}) AG:", serum_no, serum->full_name_with_passage(), serum->passage_type());
+        std::cerr << fmt::format("WARNING: No serum circle SR {:3d} {} ({}) AG:", serum_no, serum->format("{name_full_passage}"), serum->passage_type());
         if (homologous_antigens->empty()) {
             std::cerr << " no homologous\n";
         }
